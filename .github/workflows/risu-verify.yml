@@ -1,0 +1,56 @@
+name: RISU Verify — public semantic smoke
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  semantic-smoke:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Materialize content-addressed case bundles
+        run: python tools/materialize_case_bundles.py
+      - name: Replay case provenance
+        run: |
+          python tools/provenance_verify.py cases/github-guarded-merge
+          python tools/provenance_verify.py cases/azure-devops-wiki-etag
+          python tools/provenance_verify.py cases/github-create-update-sha-transition/before
+          python tools/provenance_verify.py cases/github-create-update-sha-transition/after
+      - name: Differentially replay Version-Bound Effect calibration
+        run: python tools/vbe_differential.py
+      - name: Semantic-CI demonstration
+        run: bash tests/semantic_ci_demo.sh
+      - name: Historical transition demonstration
+        run: bash tests/historical_transition_demo.sh
+      - name: Build Browser Workbench handoff artifacts
+        run: |
+          mkdir -p .risu/handoff
+          ./risu-workbench run \
+            .risu/out/hist-github-create-update-sha-003-before \
+            --output .risu/handoff/github-before.risu.json
+          ./risu-workbench run \
+            .risu/out/hist-github-create-update-sha-003-after \
+            --output .risu/handoff/github-after.risu.json
+          ./risu-workbench compare \
+            .risu/out/hist-github-create-update-sha-003-before \
+            .risu/out/hist-github-create-update-sha-003-after \
+            --output .risu/handoff/github-transition.risu-compare.json
+      - name: Write RISU result to the Actions summary
+        run: |
+          echo "## RISU Verify" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Historical transition — AFTER" >> "$GITHUB_STEP_SUMMARY"
+          cat .risu/out/hist-github-create-update-sha-003-after/report.md >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Download the Workbench handoff artifact below to inspect the exact run locally at https://risuinstitute.org/tools/#workbench." >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload Browser Workbench handoffs
+        uses: actions/upload-artifact@v4
+        with:
+          name: risu-workbench-handoffs
+          path: .risu/handoff/*
+          if-no-files-found: error
+          retention-days: 14
