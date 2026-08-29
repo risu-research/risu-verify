@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://risu.institute/schemas/risu.case/v1alpha1",
+  "title": "RISU Verify Case v1alpha1",
+  "type": "object",
+  "required": ["case_id", "adapter", "assurance_dir", "title", "kind"],
+  "properties": {
+    "case_id": {"type": "string", "minLength": 1},
+    "adapter": {"type": "string", "minLength": 1},
+    "assurance_dir": {"type": "string", "minLength": 1},
+    "title": {"type": "string", "minLength": 1},
+    "kind": {"type": "string", "minLength": 1},
+    "provenance": {
+      "type": "object",
+      "required": ["manifest", "sha256"],
+      "properties": {
+        "manifest": {"type": "string"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    }
+  },
+  "additionalProperties": true,
+  "x-risu-maturity": "development"
+}

@@ -1,0 +1,47 @@
+{
+  "cases": [
+    {
+      "expected_status": "CONSEQUENCE_REGRESSION",
+      "id": "CASE-001-GITHUB-REGRESSION",
+      "path": "cases/github-guarded-merge",
+      "role": "negative commissioning control with provenance gate"
+    },
+    {
+      "expected_status": "PRESERVED",
+      "id": "CASE-002-AZDO-PRESERVED",
+      "path": "cases/azure-devops-wiki-etag",
+      "role": "external positive control with provenance gate"
+    },
+    {
+      "expected_status": "CONSEQUENCE_REGRESSION",
+      "id": "CASE-003-GITHUB-SHA-BEFORE",
+      "path": "cases/github-create-update-sha-transition/before",
+      "role": "natural historical transition before PR #2134"
+    },
+    {
+      "expected_status": "PRESERVED",
+      "id": "CASE-003-GITHUB-SHA-AFTER",
+      "path": "cases/github-create-update-sha-transition/after",
+      "role": "natural historical transition after PR #2134"
+    }
+  ],
+  "historical_transitions": [
+    {
+      "after": "CASE-003-GITHUB-SHA-AFTER",
+      "before": "CASE-003-GITHUB-SHA-BEFORE",
+      "expected_pair_classification": "REPAIR_CONSISTENT_HISTORICAL_TRANSITION",
+      "id": "HIST-GITHUB-CREATE-UPDATE-SHA-003",
+      "path": "cases/github-create-update-sha-transition"
+    }
+  ],
+  "index_version": "0.3",
+  "mutations": [
+    {
+      "baseline_lock": "cases/azure-devops-wiki-etag/risu.lock.json",
+      "expected_status": "CONSEQUENCE_REGRESSION",
+      "id": "MUT-002-IGNORE-SUPPLIED-ETAG",
+      "path": "cases/azure-devops-wiki-etag/mutations/ignore-supplied-etag",
+      "role": "semantic CI mutation: schema and If-Match surface retained, reviewed-version binding lost"
+    }
+  ]
+}

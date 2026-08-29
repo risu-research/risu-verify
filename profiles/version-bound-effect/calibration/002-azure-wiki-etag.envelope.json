@@ -1,0 +1,345 @@
+{
+  "adapter_base": {
+    "adapter_id": "EXT-AZDO-WIKI-ETAG-002",
+    "adapter_version": "0.7",
+    "bindings": [
+      {
+        "id": "B-AZDO-WIKI-SOURCE",
+        "kind": "EVIDENCE",
+        "path": "evidence/microsoft_wiki_upsert_pinned.json",
+        "required": true,
+        "role": "PINNED_TARGET_SOURCE_FACTS",
+        "sha256": "2f1249218d0367a7016cdcbe9fec311e62d59d53fcaa8c6bb5c8653786f47fef"
+      },
+      {
+        "id": "B-AZDO-WIKI-REST",
+        "kind": "EVIDENCE",
+        "path": "evidence/azure_devops_wiki_rest_edit_semantics.json",
+        "required": true,
+        "role": "OFFICIAL_SOURCE_CONTRACT",
+        "sha256": "d3668787d5da088d43fa83d0f22d3625698324267a368357e9087d155588c5f7"
+      },
+      {
+        "id": "B-Projection_Assurance_Signature_Grounding_Gate_001",
+        "kind": "QUALIFICATION",
+        "path": "qualification/Projection_Assurance_Signature_Grounding_Gate_001.zip",
+        "required": true,
+        "role": "sealed qualification",
+        "sha256": "bb0edc6da7961175c1ec4236cb969c9f509b78ed2f8828634fdfcd84bd940b5c"
+      },
+      {
+        "id": "B-Projection_Assurance_Exact_Realization_Gate_001",
+        "kind": "QUALIFICATION",
+        "path": "qualification/Projection_Assurance_Exact_Realization_Gate_001.zip",
+        "required": true,
+        "role": "sealed qualification",
+        "sha256": "bc5f7a4758b1a0723c75935cc57c714c1d05dd6793b928c7648f74fa0ab9bee3"
+      }
+    ],
+    "claim_boundary": {
+      "general_source_equivalence": "NOT_CLAIMED",
+      "independent_reproduction": "NOT_CLAIMED",
+      "live_runtime_conformance": "NOT_CLAIMED",
+      "model_relative": true,
+      "scope": "EXISTING_PAGE_EDIT_WITH_REVIEWED_ETAG_ONLY"
+    },
+    "metadata": {
+      "architecture": "SOURCE_CONTRACT_SEPARATED",
+      "kind": "FRESH_EXTERNAL_POSITIVE_CONTROL",
+      "predeclaration_sha256": "42bac8308b45bee1d628f9492fd2f8212aee4c243f9b1d83e8ac5585a4881565",
+      "title": "Microsoft Azure DevOps MCP wiki_upsert_page \u2014 reviewed ETag edit slice"
+    },
+    "provenance": {
+      "claim_roots": {
+        "C": [
+          "CLAIM-C"
+        ],
+        "COVERAGE": [
+          "CLAIM-COVERAGE"
+        ],
+        "D": [
+          "CLAIM-D"
+        ],
+        "EXACT": [
+          "CLAIM-EXACT"
+        ],
+        "O": [
+          "CLAIM-O"
+        ]
+      },
+      "edges": [
+        {
+          "from": "N-B-AZDO-WIKI-SOURCE",
+          "relation": "SUPPORTS",
+          "to": "CLAIM-C"
+        },
+        {
+          "from": "N-B-AZDO-WIKI-REST",
+          "relation": "SUPPORTS",
+          "to": "CLAIM-C"
+        },
+        {
+          "from": "N-B-AZDO-WIKI-SOURCE",
+          "relation": "SUPPORTS",
+          "to": "CLAIM-O"
+        },
+        {
+          "from": "N-B-AZDO-WIKI-REST",
+          "relation": "SUPPORTS",
+          "to": "CLAIM-O"
+        },
+        {
+          "from": "DECL-BOUNDARY",
+          "relation": "DERIVES",
+          "to": "CLAIM-O"
+        },
+        {
+          "from": "DECL-COVERAGE",
+          "relation": "DERIVES",
+          "to": "CLAIM-COVERAGE"
+        },
+        {
+          "from": "N-B-AZDO-WIKI-SOURCE",
+          "relation": "SUPPORTS",
+          "to": "CLAIM-COVERAGE"
+        },
+        {
+          "from": "N-B-AZDO-WIKI-SOURCE",
+          "relation": "ESTABLISHES",
+          "to": "FACT-AZDO-CALLER-BIND"
+        },
+        {
+          "from": "N-B-AZDO-WIKI-SOURCE",
+          "relation": "ESTABLISHES",
+          "to": "FACT-AZDO-IFMATCH"
+        },
+        {
+          "from": "N-B-AZDO-WIKI-REST",
+          "relation": "ESTABLISHES",
+          "to": "FACT-AZDO-PRECONDITION"
+        },
+        {
+          "from": "N-B-Projection_Assurance_Signature_Grounding_Gate_001",
+          "relation": "ESTABLISHES",
+          "to": "FACT-AZDO-SIGNATURE"
+        },
+        {
+          "from": "N-B-Projection_Assurance_Exact_Realization_Gate_001",
+          "relation": "ESTABLISHES",
+          "to": "FACT-AZDO-ER"
+        },
+        {
+          "from": "FACT-AZDO-CALLER-BIND",
+          "relation": "USES",
+          "to": "DERIVE-AZDO-D"
+        },
+        {
+          "from": "FACT-AZDO-PRECONDITION",
+          "relation": "USES",
+          "to": "DERIVE-AZDO-D"
+        },
+        {
+          "from": "DECL-BOUNDARY",
+          "relation": "USES",
+          "to": "DERIVE-AZDO-D"
+        },
+        {
+          "from": "DERIVE-AZDO-D",
+          "relation": "DERIVES",
+          "to": "CLAIM-D"
+        },
+        {
+          "from": "FACT-AZDO-CALLER-BIND",
+          "relation": "USES",
+          "to": "DERIVE-AZDO-EXACT"
+        },
+        {
+          "from": "FACT-AZDO-IFMATCH",
+          "relation": "USES",
+          "to": "DERIVE-AZDO-EXACT"
+        },
+        {
+          "from": "FACT-AZDO-PRECONDITION",
+          "relation": "USES",
+          "to": "DERIVE-AZDO-EXACT"
+        },
+        {
+          "from": "FACT-AZDO-SIGNATURE",
+          "relation": "USES",
+          "to": "DERIVE-AZDO-EXACT"
+        },
+        {
+          "from": "FACT-AZDO-ER",
+          "relation": "USES",
+          "to": "DERIVE-AZDO-EXACT"
+        },
+        {
+          "from": "DECL-BOUNDARY",
+          "relation": "USES",
+          "to": "DERIVE-AZDO-EXACT"
+        },
+        {
+          "from": "DERIVE-AZDO-EXACT",
+          "relation": "DERIVES",
+          "to": "CLAIM-EXACT"
+        }
+      ],
+      "mode": "EVIDENCE_LINKED",
+      "nodes": [
+        {
+          "binding_ids": [
+            "B-AZDO-WIKI-SOURCE"
+          ],
+          "id": "N-B-AZDO-WIKI-SOURCE",
+          "kind": "EVIDENCE",
+          "label": "pinned Microsoft wiki_upsert_page source facts"
+        },
+        {
+          "binding_ids": [
+            "B-AZDO-WIKI-REST"
+          ],
+          "id": "N-B-AZDO-WIKI-REST",
+          "kind": "EVIDENCE",
+          "label": "official Azure DevOps Wiki REST edit contract"
+        },
+        {
+          "binding_ids": [
+            "B-Projection_Assurance_Signature_Grounding_Gate_001"
+          ],
+          "id": "N-B-Projection_Assurance_Signature_Grounding_Gate_001",
+          "kind": "EVIDENCE",
+          "label": "sealed signature-grounding qualification"
+        },
+        {
+          "binding_ids": [
+            "B-Projection_Assurance_Exact_Realization_Gate_001"
+          ],
+          "id": "N-B-Projection_Assurance_Exact_Realization_Gate_001",
+          "kind": "EVIDENCE",
+          "label": "sealed exact-realization qualification"
+        },
+        {
+          "id": "DECL-BOUNDARY",
+          "kind": "DECLARATION",
+          "label": "bounded existing-page edit arm with reviewed ETag E0 and effect-time ETag E0/E1"
+        },
+        {
+          "id": "DECL-COVERAGE",
+          "kind": "DECLARATION",
+          "label": "only EDIT_IF_MATCH_REVIEWED_VERSION is in scope"
+        },
+        {
+          "id": "CLAIM-C",
+          "kind": "CLAIM",
+          "label": "Correspondence"
+        },
+        {
+          "id": "CLAIM-D",
+          "kind": "CLAIM",
+          "label": "Discrimination"
+        },
+        {
+          "id": "CLAIM-O",
+          "kind": "CLAIM",
+          "label": "Operative Placement"
+        },
+        {
+          "id": "CLAIM-EXACT",
+          "kind": "CLAIM",
+          "label": "Exact Realization"
+        },
+        {
+          "id": "CLAIM-COVERAGE",
+          "kind": "CLAIM",
+          "label": "Coverage"
+        },
+        {
+          "id": "FACT-AZDO-CALLER-BIND",
+          "kind": "FACT",
+          "label": "caller reviewed ETag initializes currentEtag on declared arm"
+        },
+        {
+          "id": "FACT-AZDO-IFMATCH",
+          "kind": "FACT",
+          "label": "update request forwards currentEtag through If-Match"
+        },
+        {
+          "id": "FACT-AZDO-PRECONDITION",
+          "kind": "FACT",
+          "label": "official edit contract uses page version in If-Match as edit precondition"
+        },
+        {
+          "id": "FACT-AZDO-SIGNATURE",
+          "kind": "FACT",
+          "label": "signature grounding qualification retained"
+        },
+        {
+          "id": "FACT-AZDO-ER",
+          "kind": "FACT",
+          "label": "exact-realization interpretation qualification retained"
+        },
+        {
+          "id": "DERIVE-AZDO-D",
+          "kind": "DERIVATION",
+          "label": "blind match/mismatch discriminator from reviewed versus current ETag"
+        },
+        {
+          "id": "DERIVE-AZDO-EXACT",
+          "kind": "DERIVATION",
+          "label": "blind If-Match operative mechanism and consequence interpretation"
+        }
+      ]
+    }
+  },
+  "derivation_facts": [
+    {
+      "id": "AZDO_CALLER_ETAG_BOUND",
+      "provenance_node": "FACT-AZDO-CALLER-BIND",
+      "status": "ESTABLISHED"
+    },
+    {
+      "id": "AZDO_IF_MATCH_FORWARDED",
+      "provenance_node": "FACT-AZDO-IFMATCH",
+      "status": "ESTABLISHED"
+    },
+    {
+      "id": "AZDO_EDIT_PRECONDITION_SEMANTICS",
+      "provenance_node": "FACT-AZDO-PRECONDITION",
+      "status": "ESTABLISHED"
+    },
+    {
+      "id": "AZDO_SIGNATURE_GROUNDING_QUALIFIED",
+      "provenance_node": "FACT-AZDO-SIGNATURE",
+      "status": "ESTABLISHED"
+    },
+    {
+      "id": "AZDO_EXACT_INTERPRETATION_QUALIFIED",
+      "provenance_node": "FACT-AZDO-ER",
+      "status": "ESTABLISHED"
+    }
+  ],
+  "envelope_version": "0.1-development",
+  "role": "CARRIER_SPECIFIC_EVIDENCE_ENVELOPE",
+  "structural_base": {
+    "case_id": "EXT_AZDO_WIKI_ETAG_002",
+    "evidence": {
+      "items": [
+        {
+          "digest": "sha256:2f1249218d0367a7016cdcbe9fec311e62d59d53fcaa8c6bb5c8653786f47fef",
+          "id": "AZDO_WIKI_SOURCE"
+        },
+        {
+          "digest": "sha256:d3668787d5da088d43fa83d0f22d3625698324267a368357e9087d155588c5f7",
+          "id": "AZDO_WIKI_REST"
+        }
+      ],
+      "strength": "PINNED_PUBLIC_SOURCE_FACTS_PLUS_OFFICIAL_REST_CONTRACT_NOT_LIVE_RUNTIME"
+    },
+    "ir_version": "0.2",
+    "target_model_status": {
+      "empirical_runtime_validation": "NOT_CLAIMED",
+      "kind": "DECLARED_ANALYTICAL_MODEL",
+      "purpose": "Cross-check only; does not independently establish C, D, or O."
+    }
+  }
+}

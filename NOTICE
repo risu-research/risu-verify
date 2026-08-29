@@ -1,0 +1,6 @@
+RISU Verify
+Copyright 2026 RISU Institute
+
+RISU-authored materials in this release candidate are provided under the Apache License 2.0.
+The package vendors an exact, SHA-256-pinned archive of Consequence-Preserving Projections v0.7.0, also released by RISU Institute under Apache-2.0.
+Selected third-party source excerpts are retained only as public-source evidence for the declared commissioning cases and remain subject to their upstream licenses and notices. See THIRD_PARTY_NOTICES.md.

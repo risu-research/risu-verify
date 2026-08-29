@@ -1,0 +1,27 @@
+{
+  "boundary": "Recorded from explicit rc2 reruns after audit-hardening code changes. This file is a recorded result; tools/release_verify.py integrity-checks it but does not rerun these 83 checks.",
+  "qualification_version": "0.3.0-rc2-base-replay",
+  "status": "PASS",
+  "suites": [
+    {
+      "path": "tests/run_tests.py",
+      "status": "PASS",
+      "tests": 39
+    },
+    {
+      "path": "tests/run_v03_tests.py",
+      "status": "PASS",
+      "tests": 44
+    }
+  ],
+  "taxonomy": [
+    "integrity",
+    "semantic replay",
+    "mutation",
+    "provenance",
+    "historical transition"
+  ],
+  "tests_failed": 0,
+  "tests_passed": 83,
+  "tests_total": 83
+}

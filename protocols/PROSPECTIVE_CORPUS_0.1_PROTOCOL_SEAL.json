@@ -1,0 +1,10 @@
+{
+  "core_archive_sha256": "bc3c0be440b1b729d3131a630491cce62f1f885fb305aa46a4483fee0adad72f",
+  "external_timestamp_status": "PENDING_REQUIRED_BEFORE_SCREENING",
+  "local_seal_status": "SEALED_BEFORE_CANDIDATE_SCREENING",
+  "profile_sha256": "c2dfe979ac9d80fc0fd122ec236ef2c9b669979e66233481f73b6872d4ec626c",
+  "protocol_id": "PROSPECTIVE_CORPUS_0.1_PROTOCOL",
+  "protocol_sha256": "9fbf3fcdf48e5554840c4f2418803779ad82757e1a5df71411212421c225ad70",
+  "seal_schema": "risu.protocol-seal/v0.1alpha1",
+  "vbe_instance_schema_sha256": "eb6657a4401552f1cdc89f8f6d833aa91c8908ba4660b7713d9a614731dac265"
+}

@@ -1,0 +1,333 @@
+{
+  "adapter_base": {
+    "adapter_id": "HIST-GITHUB-CREATE-UPDATE-SHA-003-AFTER",
+    "adapter_version": "0.7",
+    "bindings": [
+      {
+        "id": "B-GH-AFTER-SOURCE-FACTS",
+        "kind": "EVIDENCE",
+        "path": "evidence/extracted_source_facts.json",
+        "required": true,
+        "role": "DETERMINISTIC_SOURCE_FACTS",
+        "sha256": "aafddc173bef5501c0a622fec441ade4a850978bc393f8ba497f92374c394af3"
+      },
+      {
+        "id": "B-GH-CONTENTS-CONTRACT",
+        "kind": "EVIDENCE",
+        "path": "evidence/github_contents_update_contract.json",
+        "required": true,
+        "role": "OFFICIAL_SOURCE_CONTRACT",
+        "sha256": "e0fe5b00c554af9bc70543dbfb1f533b76c7479d076349798676e70b2ea400af"
+      },
+      {
+        "id": "B-SIGNATURE-QUAL",
+        "kind": "QUALIFICATION",
+        "path": "qualification/Projection_Assurance_Signature_Grounding_Gate_001.zip",
+        "required": true,
+        "role": "SEALED_SIGNATURE_QUALIFICATION",
+        "sha256": "bb0edc6da7961175c1ec4236cb969c9f509b78ed2f8828634fdfcd84bd940b5c"
+      },
+      {
+        "id": "B-EXACT-QUAL",
+        "kind": "QUALIFICATION",
+        "path": "qualification/Projection_Assurance_Exact_Realization_Gate_001.zip",
+        "required": true,
+        "role": "SEALED_EXACT_QUALIFICATION",
+        "sha256": "bc5f7a4758b1a0723c75935cc57c714c1d05dd6793b928c7648f74fa0ab9bee3"
+      }
+    ],
+    "claim_boundary": {
+      "general_source_equivalence": "NOT_CLAIMED",
+      "live_runtime_conformance": "NOT_CLAIMED",
+      "model_relative": true,
+      "scope": "EXISTING_FILE_UPDATE_WITH_CALLER_REVIEWED_BLOB_SHA"
+    },
+    "metadata": {
+      "architecture": "SOURCE_CONTRACT_SEPARATED",
+      "kind": "NATURAL_HISTORICAL_TRANSITION_AFTER",
+      "predeclaration_sha256": "0999f6c27e0ceb48ebd9042e9cebc32a24ac0d2dfadab21ce85cbc39658e32d5",
+      "title": "GitHub MCP create_or_update_file after #2134 \u2014 blob-SHA validation"
+    },
+    "provenance": {
+      "claim_roots": {
+        "C": [
+          "CLAIM-C"
+        ],
+        "COVERAGE": [
+          "CLAIM-COVERAGE"
+        ],
+        "D": [
+          "CLAIM-D"
+        ],
+        "EXACT": [
+          "CLAIM-EXACT"
+        ],
+        "O": [
+          "CLAIM-O"
+        ]
+      },
+      "edges": [
+        {
+          "from": "N-B-GH-AFTER-SOURCE-FACTS",
+          "relation": "ESTABLISHES",
+          "to": "FACT-GH_AFTER_BLOB_SHA_INPUT"
+        },
+        {
+          "from": "N-B-GH-CONTENTS-CONTRACT",
+          "relation": "ESTABLISHES",
+          "to": "FACT-GH_AFTER_BLOB_SHA_INPUT"
+        },
+        {
+          "from": "N-B-GH-AFTER-SOURCE-FACTS",
+          "relation": "ESTABLISHES",
+          "to": "FACT-GH_AFTER_CURRENT_BLOB_SHA"
+        },
+        {
+          "from": "N-B-GH-CONTENTS-CONTRACT",
+          "relation": "ESTABLISHES",
+          "to": "FACT-GH_AFTER_CURRENT_BLOB_SHA"
+        },
+        {
+          "from": "N-B-GH-AFTER-SOURCE-FACTS",
+          "relation": "ESTABLISHES",
+          "to": "FACT-GH_AFTER_BLOB_SHA_COMPARE"
+        },
+        {
+          "from": "N-B-GH-CONTENTS-CONTRACT",
+          "relation": "ESTABLISHES",
+          "to": "FACT-GH_AFTER_BLOB_SHA_COMPARE"
+        },
+        {
+          "from": "N-B-SIGNATURE-QUAL",
+          "relation": "ESTABLISHES",
+          "to": "FACT-GH_SIGNATURE_QUALIFIED"
+        },
+        {
+          "from": "N-B-EXACT-QUAL",
+          "relation": "ESTABLISHES",
+          "to": "FACT-GH_EXACT_QUALIFIED"
+        },
+        {
+          "from": "DERIVE-D",
+          "relation": "DERIVES",
+          "to": "CLAIM-D"
+        },
+        {
+          "from": "DERIVE-EXACT",
+          "relation": "DERIVES",
+          "to": "CLAIM-EXACT"
+        },
+        {
+          "from": "FACT-GH_AFTER_BLOB_SHA_INPUT",
+          "relation": "USES",
+          "to": "DERIVE-D"
+        },
+        {
+          "from": "FACT-GH_AFTER_BLOB_SHA_INPUT",
+          "relation": "USES",
+          "to": "DERIVE-EXACT"
+        },
+        {
+          "from": "FACT-GH_AFTER_CURRENT_BLOB_SHA",
+          "relation": "USES",
+          "to": "DERIVE-D"
+        },
+        {
+          "from": "FACT-GH_AFTER_CURRENT_BLOB_SHA",
+          "relation": "USES",
+          "to": "DERIVE-EXACT"
+        },
+        {
+          "from": "FACT-GH_AFTER_BLOB_SHA_COMPARE",
+          "relation": "USES",
+          "to": "DERIVE-D"
+        },
+        {
+          "from": "FACT-GH_AFTER_BLOB_SHA_COMPARE",
+          "relation": "USES",
+          "to": "DERIVE-EXACT"
+        },
+        {
+          "from": "FACT-GH_SIGNATURE_QUALIFIED",
+          "relation": "USES",
+          "to": "DERIVE-EXACT"
+        },
+        {
+          "from": "FACT-GH_EXACT_QUALIFIED",
+          "relation": "USES",
+          "to": "DERIVE-EXACT"
+        },
+        {
+          "from": "N-B-GH-AFTER-SOURCE-FACTS",
+          "relation": "GROUNDS",
+          "to": "CLAIM-C"
+        },
+        {
+          "from": "N-B-GH-AFTER-SOURCE-FACTS",
+          "relation": "GROUNDS",
+          "to": "CLAIM-O"
+        },
+        {
+          "from": "N-B-GH-CONTENTS-CONTRACT",
+          "relation": "GROUNDS",
+          "to": "CLAIM-C"
+        },
+        {
+          "from": "N-B-GH-CONTENTS-CONTRACT",
+          "relation": "GROUNDS",
+          "to": "CLAIM-O"
+        },
+        {
+          "from": "N-B-GH-AFTER-SOURCE-FACTS",
+          "relation": "GROUNDS",
+          "to": "CLAIM-COVERAGE"
+        }
+      ],
+      "mode": "EVIDENCE_LINKED",
+      "nodes": [
+        {
+          "binding_ids": [
+            "B-GH-AFTER-SOURCE-FACTS"
+          ],
+          "id": "N-B-GH-AFTER-SOURCE-FACTS",
+          "kind": "EVIDENCE",
+          "label": "deterministic source facts"
+        },
+        {
+          "binding_ids": [
+            "B-GH-CONTENTS-CONTRACT"
+          ],
+          "id": "N-B-GH-CONTENTS-CONTRACT",
+          "kind": "EVIDENCE",
+          "label": "official source contract"
+        },
+        {
+          "binding_ids": [
+            "B-SIGNATURE-QUAL"
+          ],
+          "id": "N-B-SIGNATURE-QUAL",
+          "kind": "EVIDENCE",
+          "label": "sealed signature qualification"
+        },
+        {
+          "binding_ids": [
+            "B-EXACT-QUAL"
+          ],
+          "id": "N-B-EXACT-QUAL",
+          "kind": "EVIDENCE",
+          "label": "sealed exact qualification"
+        },
+        {
+          "id": "FACT-GH_AFTER_BLOB_SHA_INPUT",
+          "kind": "FACT",
+          "label": "caller sha is a blob SHA"
+        },
+        {
+          "id": "FACT-GH_AFTER_CURRENT_BLOB_SHA",
+          "kind": "FACT",
+          "label": "post-fix validation obtains current blob SHA from Contents metadata"
+        },
+        {
+          "id": "FACT-GH_AFTER_BLOB_SHA_COMPARE",
+          "kind": "FACT",
+          "label": "post-fix validation compares current blob SHA with caller-reviewed blob SHA"
+        },
+        {
+          "id": "FACT-GH_SIGNATURE_QUALIFIED",
+          "kind": "FACT",
+          "label": "operative signature interpretation qualification"
+        },
+        {
+          "id": "FACT-GH_EXACT_QUALIFIED",
+          "kind": "FACT",
+          "label": "exact realization interpretation qualification"
+        },
+        {
+          "id": "CLAIM-C",
+          "kind": "CLAIM",
+          "label": "C"
+        },
+        {
+          "id": "CLAIM-D",
+          "kind": "CLAIM",
+          "label": "D"
+        },
+        {
+          "id": "CLAIM-O",
+          "kind": "CLAIM",
+          "label": "O"
+        },
+        {
+          "id": "CLAIM-COVERAGE",
+          "kind": "CLAIM",
+          "label": "COVERAGE"
+        },
+        {
+          "id": "CLAIM-EXACT",
+          "kind": "CLAIM",
+          "label": "EXACT"
+        },
+        {
+          "id": "DERIVE-D",
+          "kind": "DERIVATION",
+          "label": "consequence discrimination derivation"
+        },
+        {
+          "id": "DERIVE-EXACT",
+          "kind": "DERIVATION",
+          "label": "exact realization derivation"
+        }
+      ]
+    }
+  },
+  "derivation_facts": [
+    {
+      "id": "GH_AFTER_BLOB_SHA_INPUT",
+      "provenance_node": "FACT-GH_AFTER_BLOB_SHA_INPUT",
+      "status": "ESTABLISHED"
+    },
+    {
+      "id": "GH_AFTER_CURRENT_BLOB_SHA",
+      "provenance_node": "FACT-GH_AFTER_CURRENT_BLOB_SHA",
+      "status": "ESTABLISHED"
+    },
+    {
+      "id": "GH_AFTER_BLOB_SHA_COMPARE",
+      "provenance_node": "FACT-GH_AFTER_BLOB_SHA_COMPARE",
+      "status": "ESTABLISHED"
+    },
+    {
+      "id": "GH_SIGNATURE_QUALIFIED",
+      "provenance_node": "FACT-GH_SIGNATURE_QUALIFIED",
+      "status": "ESTABLISHED"
+    },
+    {
+      "id": "GH_EXACT_QUALIFIED",
+      "provenance_node": "FACT-GH_EXACT_QUALIFIED",
+      "status": "ESTABLISHED"
+    }
+  ],
+  "envelope_version": "0.1-development",
+  "role": "CARRIER_SPECIFIC_EVIDENCE_ENVELOPE",
+  "structural_base": {
+    "case_id": "HIST_GH_FILE_SHA_003_AFTER",
+    "evidence": {
+      "items": [
+        {
+          "digest": "sha256:aafddc173bef5501c0a622fec441ade4a850978bc393f8ba497f92374c394af3",
+          "id": "B-GH-AFTER-SOURCE-FACTS"
+        },
+        {
+          "digest": "sha256:e0fe5b00c554af9bc70543dbfb1f533b76c7479d076349798676e70b2ea400af",
+          "id": "B-GH-CONTENTS-CONTRACT"
+        }
+      ],
+      "strength": "PINNED_SOURCE_BYTES_PLUS_OFFICIAL_GITHUB_CONTENTS_CONTRACT"
+    },
+    "target_model_status": {
+      "empirical_runtime_validation": "NOT_CLAIMED",
+      "kind": "DECLARED_ANALYTICAL_MODEL",
+      "purpose": "Cross-check only; does not independently establish C, D, or O."
+    }
+  }
+}

@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+title: "RISU Verify: Consequence Assurance for Agent-Facing Projections"
+message: "If you use this vertical slice, please cite RISU Verify and the underlying Consequence-Preserving Projections v0.7.0 research software."
+type: software
+version: 0.4.0-rc1
+date-released: 2026-08-28
+authors:
+  - family-names: Lee
+    given-names: Moon
+publisher: RISU Institute
+license: Apache-2.0

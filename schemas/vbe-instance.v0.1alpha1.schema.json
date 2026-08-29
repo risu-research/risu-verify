@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://risu.institute/schemas/vbe-instance.v0.1alpha1.schema.json",
+  "title": "RISU Version-Bound Effect Instance v0.1alpha1",
+  "type": "object",
+  "required": ["instance_schema", "profile", "profile_version", "status", "instance_id", "source", "target"],
+  "properties": {
+    "instance_schema": {"const": "risu.vbe.instance/v0.1alpha1"},
+    "profile": {"const": "version-bound-effect"},
+    "profile_version": {"const": "0.1-development"},
+    "status": {"enum": ["DRAFT_UNVERIFIED", "AUTHOR_ACCEPTED", "CALIBRATION_ONLY"]},
+    "instance_id": {"type": "string", "minLength": 1},
+    "carrier_envelope": {"type": "string"},
+    "source": {"type": "object"},
+    "target": {"type": "object"}
+  },
+  "additionalProperties": true
+}

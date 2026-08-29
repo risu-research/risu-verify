@@ -1,0 +1,38 @@
+{
+  "boundary": "This compact public-source index is navigational. The authoritative machine-verifiable claim-to-evidence index and exact 183-file release integrity record live inside the canonical release archive.",
+  "canonical_release_sha256": "df06e8d6a8b072333355e1ef91b80c30e43fa68d6fc4666dd920a3fc0e46fc6f",
+  "claims": [
+    {
+      "bundle": "case-bundles/github-guarded-merge.zip",
+      "claim": "GitHub guarded-merge negative control is a certificate-backed consequence regression.",
+      "id": "C1",
+      "public_doc": "docs/EXTERNAL_CASE_001.md"
+    },
+    {
+      "bundle": "case-bundles/azure-devops-wiki-etag.zip",
+      "claim": "Azure DevOps wiki reviewed-ETag slice is a certificate-backed preservation control.",
+      "id": "C2",
+      "public_doc": "docs/EXTERNAL_CASE_002.md"
+    },
+    {
+      "bundle": "case-bundles/github-create-update-sha-transition.zip",
+      "claim": "GitHub create_or_update_file has a retained historical before/after regression-to-preservation transition under the same source consequence contract.",
+      "id": "C3",
+      "public_doc": "docs/EXTERNAL_CASE_003_HISTORICAL_TRANSITION.md"
+    },
+    {
+      "claim": "A development Version-Bound Effect profile differentially reproduces retained semantics across four calibration cells.",
+      "id": "C4",
+      "public_doc": "docs/VBE_PROFILE_DEVELOPMENT.md",
+      "result": "results/VBE_CALIBRATION_DIFFERENTIAL.json"
+    },
+    {
+      "claim": "Prospective Corpus 0.1 protocol was publicly committed before candidate screening.",
+      "id": "C5",
+      "protocol": "PROSPECTIVE_CORPUS_0.1_PROTOCOL.json",
+      "timestamp_record": "protocols/EXTERNAL_TIMESTAMP_RECORD_001.json"
+    }
+  ],
+  "index_schema": "risu.public-source-evidence-index/v0.1alpha1",
+  "release_version": "0.4.0-rc1"
+}

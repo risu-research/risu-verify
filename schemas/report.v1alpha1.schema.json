@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://risu.institute/schemas/risu.report/v1alpha1",
+  "title": "RISU Verify Machine Report v1alpha1",
+  "type": "object",
+  "required": ["case_id", "product_status", "structural", "exact_realization", "certificate", "commitments"],
+  "properties": {
+    "case_id": {"type": "string"},
+    "product_status": {"type": "string"},
+    "structural": {"type": "object", "required": ["C", "D", "O", "classification"]},
+    "exact_realization": {"type": "object", "required": ["status", "failure_mode"]},
+    "certificate": {"type": "object", "required": ["sha256", "consumer_check"]}
+  },
+  "additionalProperties": true,
+  "x-risu-maturity": "development"
+}

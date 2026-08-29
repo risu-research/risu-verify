@@ -1,0 +1,20 @@
+{
+  "commit_message": "Seal Prospective Corpus 0.1 protocol before screening",
+  "commit_sha": "3316528f22599c808262d10c2c451df672b1cba0",
+  "commit_url": "https://github.com/risu-research/risu-verify/commit/3316528f22599c808262d10c2c451df672b1cba0",
+  "committed_at_utc": "2026-08-29T01:51:24Z",
+  "external_timestamp_requirement": "SATISFIED_BY_PUBLIC_GIT_COMMIT",
+  "github_signature_observation": {
+    "reason": "valid",
+    "verified": true
+  },
+  "note": "The sealed protocol bytes are not edited to reflect this later publication event; this separate record preserves temporal order.",
+  "path": "PROSPECTIVE_CORPUS_0.1_PROTOCOL.json",
+  "protocol_id": "PROSPECTIVE_CORPUS_0.1_PROTOCOL",
+  "protocol_sha256": "9fbf3fcdf48e5554840c4f2418803779ad82757e1a5df71411212421c225ad70",
+  "record_schema": "risu.external-timestamp-record/v0.1alpha1",
+  "remote_sha256_rehash_in_this_record": "NOT_PERFORMED",
+  "repository": "risu-research/risu-verify",
+  "screening_state_when_recorded": "NOT_STARTED",
+  "temporal_claim": "The protocol was publicly committed before RISU Corpus 0.1 candidate screening began."
+}

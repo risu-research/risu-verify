@@ -1,0 +1,419 @@
+{
+  "calibration_count": 4,
+  "profile": "version-bound-effect",
+  "profile_version": "0.1-development",
+  "result_version": "0.1",
+  "rows": [
+    {
+      "checks": {
+        "exact_failure_mode": true,
+        "exact_status": true,
+        "product_status": true,
+        "source_semantic_digest": true,
+        "structural": true,
+        "worlds": true
+      },
+      "compiled": {
+        "exact_failure_mode": "MECHANISM_MISALIGNMENT",
+        "exact_status": "REALIZATION_CONTRADICTED",
+        "product_status": "CONSEQUENCE_REGRESSION",
+        "source_semantic_digest": "0a381d65696a9399b3ea05a61d844d265a682cf1b955e3077073f4f8a042b117",
+        "structural": {
+          "C": "C1",
+          "D": "D1",
+          "O": "O0",
+          "classification": "OPERATIVE_DISCHARGE_MISSING",
+          "coverage_complete": true,
+          "operative_basis": {
+            "evaluation_cut": "NONE",
+            "gates_effect": false,
+            "post_check_material_transition_possible": true
+          }
+        },
+        "worlds": [
+          {
+            "coordinates": {
+              "otherwise_mergeable": true,
+              "request_head": "H1",
+              "reviewed_head": "H0"
+            },
+            "matches": false,
+            "projected_effect": {
+              "native": {
+                "kind": "MERGED_CURRENT_HEAD",
+                "merged_head": "H1"
+              },
+              "space": "OUTSIDE_C"
+            },
+            "required_consequence": "STALE_REQUEST_REJECTED",
+            "world": "W-04af36bfe15c8fdedab0"
+          },
+          {
+            "coordinates": {
+              "otherwise_mergeable": true,
+              "request_head": "H0",
+              "reviewed_head": "H0"
+            },
+            "matches": true,
+            "projected_effect": {
+              "label": "MERGED_REVIEWED_HEAD",
+              "space": "C"
+            },
+            "required_consequence": "MERGED_REVIEWED_HEAD",
+            "world": "W-4ba2c06c73b713d2d2de"
+          }
+        ]
+      },
+      "instance": "001-github-guarded-merge",
+      "legacy": {
+        "exact_failure_mode": "MECHANISM_MISALIGNMENT",
+        "exact_status": "REALIZATION_CONTRADICTED",
+        "product_status": "CONSEQUENCE_REGRESSION",
+        "source_semantic_digest": "0a381d65696a9399b3ea05a61d844d265a682cf1b955e3077073f4f8a042b117",
+        "structural": {
+          "C": "C1",
+          "D": "D1",
+          "O": "O0",
+          "classification": "OPERATIVE_DISCHARGE_MISSING",
+          "coverage_complete": true,
+          "operative_basis": {
+            "evaluation_cut": "NONE",
+            "gates_effect": false,
+            "post_check_material_transition_possible": true
+          }
+        },
+        "worlds": [
+          {
+            "coordinates": {
+              "otherwise_mergeable": true,
+              "request_head": "H1",
+              "reviewed_head": "H0"
+            },
+            "matches": false,
+            "projected_effect": {
+              "native": {
+                "kind": "MERGED_CURRENT_HEAD",
+                "merged_head": "H1"
+              },
+              "space": "OUTSIDE_C"
+            },
+            "required_consequence": "STALE_REQUEST_REJECTED",
+            "world": "W-04af36bfe15c8fdedab0"
+          },
+          {
+            "coordinates": {
+              "otherwise_mergeable": true,
+              "request_head": "H0",
+              "reviewed_head": "H0"
+            },
+            "matches": true,
+            "projected_effect": {
+              "label": "MERGED_REVIEWED_HEAD",
+              "space": "C"
+            },
+            "required_consequence": "MERGED_REVIEWED_HEAD",
+            "world": "W-4ba2c06c73b713d2d2de"
+          }
+        ]
+      },
+      "legacy_case": "cases/github-guarded-merge",
+      "pass": true
+    },
+    {
+      "checks": {
+        "exact_failure_mode": true,
+        "exact_status": true,
+        "product_status": true,
+        "source_semantic_digest": true,
+        "structural": true,
+        "worlds": true
+      },
+      "compiled": {
+        "exact_failure_mode": "NONE",
+        "exact_status": "REALIZATION_ESTABLISHED",
+        "product_status": "PRESERVED",
+        "source_semantic_digest": "ec0a5cf7e68d9d7395f09a206da3609ec0522e4569b511ec5bb24c1b2c1aa6de",
+        "structural": {
+          "C": "C1",
+          "D": "D1",
+          "O": "O1",
+          "classification": "STRUCTURAL_ASSURANCE_ESTABLISHED",
+          "coverage_complete": true,
+          "operative_basis": {
+            "evaluation_cut": "EFFECT",
+            "gates_effect": true,
+            "post_check_material_transition_possible": true
+          }
+        },
+        "worlds": [
+          {
+            "coordinates": {
+              "current_etag": "E0"
+            },
+            "matches": true,
+            "projected_effect": {
+              "label": "UPDATE_COMMITTED",
+              "space": "C"
+            },
+            "required_consequence": "UPDATE_COMMITTED",
+            "world": "W-3a0881af42d2795c7432"
+          },
+          {
+            "coordinates": {
+              "current_etag": "E1"
+            },
+            "matches": true,
+            "projected_effect": {
+              "label": "STALE_EDIT_REJECTED",
+              "space": "C"
+            },
+            "required_consequence": "STALE_EDIT_REJECTED",
+            "world": "W-91d952c20f111d685f4a"
+          }
+        ]
+      },
+      "instance": "002-azure-wiki-etag",
+      "legacy": {
+        "exact_failure_mode": "NONE",
+        "exact_status": "REALIZATION_ESTABLISHED",
+        "product_status": "PRESERVED",
+        "source_semantic_digest": "ec0a5cf7e68d9d7395f09a206da3609ec0522e4569b511ec5bb24c1b2c1aa6de",
+        "structural": {
+          "C": "C1",
+          "D": "D1",
+          "O": "O1",
+          "classification": "STRUCTURAL_ASSURANCE_ESTABLISHED",
+          "coverage_complete": true,
+          "operative_basis": {
+            "evaluation_cut": "EFFECT",
+            "gates_effect": true,
+            "post_check_material_transition_possible": true
+          }
+        },
+        "worlds": [
+          {
+            "coordinates": {
+              "current_etag": "E0"
+            },
+            "matches": true,
+            "projected_effect": {
+              "label": "UPDATE_COMMITTED",
+              "space": "C"
+            },
+            "required_consequence": "UPDATE_COMMITTED",
+            "world": "W-3a0881af42d2795c7432"
+          },
+          {
+            "coordinates": {
+              "current_etag": "E1"
+            },
+            "matches": true,
+            "projected_effect": {
+              "label": "STALE_EDIT_REJECTED",
+              "space": "C"
+            },
+            "required_consequence": "STALE_EDIT_REJECTED",
+            "world": "W-91d952c20f111d685f4a"
+          }
+        ]
+      },
+      "legacy_case": "cases/azure-devops-wiki-etag",
+      "pass": true
+    },
+    {
+      "checks": {
+        "exact_failure_mode": true,
+        "exact_status": true,
+        "product_status": true,
+        "source_semantic_digest": true,
+        "structural": true,
+        "worlds": true
+      },
+      "compiled": {
+        "exact_failure_mode": "OPERATIVE_INSUFFICIENCY",
+        "exact_status": "REALIZATION_CONTRADICTED",
+        "product_status": "CONSEQUENCE_REGRESSION",
+        "source_semantic_digest": "a1da66b05bdccfc39691bdfaec25a9435f26841d43898d71d671a52e287470d1",
+        "structural": {
+          "C": "C0",
+          "D": "NA",
+          "O": "NA",
+          "classification": "CORRESPONDENCE_NOT_ESTABLISHED",
+          "coverage_complete": true,
+          "operative_basis": null
+        },
+        "worlds": [
+          {
+            "coordinates": {
+              "current_blob_sha": "S1"
+            },
+            "matches": true,
+            "projected_effect": {
+              "label": "STALE_UPDATE_REJECTED",
+              "space": "C"
+            },
+            "required_consequence": "STALE_UPDATE_REJECTED",
+            "world": "W-156ec19991f34bd9b865"
+          },
+          {
+            "coordinates": {
+              "current_blob_sha": "S0"
+            },
+            "matches": false,
+            "projected_effect": {
+              "label": "STALE_UPDATE_REJECTED",
+              "space": "C"
+            },
+            "required_consequence": "UPDATE_COMMITTED",
+            "world": "W-3041facb9064b9d8e3e9"
+          }
+        ]
+      },
+      "instance": "003-before-github-blob-sha",
+      "legacy": {
+        "exact_failure_mode": "OPERATIVE_INSUFFICIENCY",
+        "exact_status": "REALIZATION_CONTRADICTED",
+        "product_status": "CONSEQUENCE_REGRESSION",
+        "source_semantic_digest": "a1da66b05bdccfc39691bdfaec25a9435f26841d43898d71d671a52e287470d1",
+        "structural": {
+          "C": "C0",
+          "D": "NA",
+          "O": "NA",
+          "classification": "CORRESPONDENCE_NOT_ESTABLISHED",
+          "coverage_complete": true,
+          "operative_basis": null
+        },
+        "worlds": [
+          {
+            "coordinates": {
+              "current_blob_sha": "S1"
+            },
+            "matches": true,
+            "projected_effect": {
+              "label": "STALE_UPDATE_REJECTED",
+              "space": "C"
+            },
+            "required_consequence": "STALE_UPDATE_REJECTED",
+            "world": "W-156ec19991f34bd9b865"
+          },
+          {
+            "coordinates": {
+              "current_blob_sha": "S0"
+            },
+            "matches": false,
+            "projected_effect": {
+              "label": "STALE_UPDATE_REJECTED",
+              "space": "C"
+            },
+            "required_consequence": "UPDATE_COMMITTED",
+            "world": "W-3041facb9064b9d8e3e9"
+          }
+        ]
+      },
+      "legacy_case": "cases/github-create-update-sha-transition/before",
+      "pass": true
+    },
+    {
+      "checks": {
+        "exact_failure_mode": true,
+        "exact_status": true,
+        "product_status": true,
+        "source_semantic_digest": true,
+        "structural": true,
+        "worlds": true
+      },
+      "compiled": {
+        "exact_failure_mode": "NONE",
+        "exact_status": "REALIZATION_ESTABLISHED",
+        "product_status": "PRESERVED",
+        "source_semantic_digest": "a1da66b05bdccfc39691bdfaec25a9435f26841d43898d71d671a52e287470d1",
+        "structural": {
+          "C": "C1",
+          "D": "D1",
+          "O": "O1",
+          "classification": "STRUCTURAL_ASSURANCE_ESTABLISHED",
+          "coverage_complete": true,
+          "operative_basis": {
+            "evaluation_cut": "EFFECT",
+            "gates_effect": true,
+            "post_check_material_transition_possible": true
+          }
+        },
+        "worlds": [
+          {
+            "coordinates": {
+              "current_blob_sha": "S1"
+            },
+            "matches": true,
+            "projected_effect": {
+              "label": "STALE_UPDATE_REJECTED",
+              "space": "C"
+            },
+            "required_consequence": "STALE_UPDATE_REJECTED",
+            "world": "W-156ec19991f34bd9b865"
+          },
+          {
+            "coordinates": {
+              "current_blob_sha": "S0"
+            },
+            "matches": true,
+            "projected_effect": {
+              "label": "UPDATE_COMMITTED",
+              "space": "C"
+            },
+            "required_consequence": "UPDATE_COMMITTED",
+            "world": "W-3041facb9064b9d8e3e9"
+          }
+        ]
+      },
+      "instance": "003-after-github-blob-sha",
+      "legacy": {
+        "exact_failure_mode": "NONE",
+        "exact_status": "REALIZATION_ESTABLISHED",
+        "product_status": "PRESERVED",
+        "source_semantic_digest": "a1da66b05bdccfc39691bdfaec25a9435f26841d43898d71d671a52e287470d1",
+        "structural": {
+          "C": "C1",
+          "D": "D1",
+          "O": "O1",
+          "classification": "STRUCTURAL_ASSURANCE_ESTABLISHED",
+          "coverage_complete": true,
+          "operative_basis": {
+            "evaluation_cut": "EFFECT",
+            "gates_effect": true,
+            "post_check_material_transition_possible": true
+          }
+        },
+        "worlds": [
+          {
+            "coordinates": {
+              "current_blob_sha": "S1"
+            },
+            "matches": true,
+            "projected_effect": {
+              "label": "STALE_UPDATE_REJECTED",
+              "space": "C"
+            },
+            "required_consequence": "STALE_UPDATE_REJECTED",
+            "world": "W-156ec19991f34bd9b865"
+          },
+          {
+            "coordinates": {
+              "current_blob_sha": "S0"
+            },
+            "matches": true,
+            "projected_effect": {
+              "label": "UPDATE_COMMITTED",
+              "space": "C"
+            },
+            "required_consequence": "UPDATE_COMMITTED",
+            "world": "W-3041facb9064b9d8e3e9"
+          }
+        ]
+      },
+      "legacy_case": "cases/github-create-update-sha-transition/after",
+      "pass": true
+    }
+  ],
+  "status": "PASS"
+}

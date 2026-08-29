@@ -1,0 +1,84 @@
+{
+  "carrier_envelope": "003-before-github-blob-sha.envelope.json",
+  "compiled_case_id": "HIST-GITHUB-CREATE-UPDATE-SHA-003-BEFORE-VBE-COMPILED",
+  "instance_id": "003-before-github-blob-sha",
+  "instance_schema": "risu.vbe.instance/v0.1alpha1",
+  "legacy_case": "cases/github-create-update-sha-transition/before",
+  "profile": "version-bound-effect",
+  "profile_version": "0.1-development",
+  "source": {
+    "admissibility": {
+      "expr": {
+        "op": "literal",
+        "value": true
+      }
+    },
+    "boundary": {
+      "declaration": "Existing regular-file update; caller supplies reviewed blob SHA S0; current file blob SHA at the validation/effect cut may be S0 or S1; unrelated error causes are held admissible and non-material.",
+      "post_check_material_transition_possible": true
+    },
+    "claim_boundary": {
+      "domain_adequacy": "DECLARED_PREMISE",
+      "live_runtime_conformance": "NOT_CLAIMED",
+      "model_relative": true,
+      "source_semantic_adequacy": "PINNED_OFFICIAL_GITHUB_REST_CONTRACT_PLUS_DECLARED_BOUNDED_WORLD"
+    },
+    "constants": {
+      "reviewed_blob_sha": "S0"
+    },
+    "contract_id": "SRC-GITHUB-FILE-UPDATE-REVIEWED-BLOB-SHA",
+    "current_coordinate": "current_blob_sha",
+    "current_domain": [
+      "S0",
+      "S1"
+    ],
+    "extra_coordinates": {},
+    "lens": "L_UPDATE_REVIEWED_BLOB_VERSION",
+    "metadata": {
+      "kind": "EXTERNAL_SOURCE_CONSEQUENCE_CONTRACT",
+      "title": "GitHub existing-file update guarded by reviewed blob SHA"
+    },
+    "reviewed": {
+      "anchor": "S0",
+      "mode": "literal"
+    },
+    "source_family": [
+      "UPDATE_IF_REVIEWED_BLOB_SHA_CURRENT"
+    ],
+    "stale_consequence": "STALE_UPDATE_REJECTED",
+    "success_consequence": "UPDATE_COMMITTED"
+  },
+  "status": "CALIBRATION_ONLY",
+  "target": {
+    "discharge_mode": "ETAG_VALIDATION_NOT_BLOB_SHA_CORRESPONDENCE",
+    "discriminator_literal": "ETAG_VALIDATION_REJECT_PATH",
+    "discriminator_visibility": "INTERNAL_VALIDATION_PATH",
+    "facts": {
+      "discriminator": [
+        "GH_BEFORE_BLOB_SHA_INPUT",
+        "GH_BEFORE_ETAG_VALIDATION",
+        "GH_BEFORE_SPURIOUS_REJECT"
+      ],
+      "interpreter": [
+        "GH_BEFORE_BLOB_SHA_INPUT",
+        "GH_EXACT_QUALIFIED"
+      ],
+      "mechanism": [
+        "GH_BEFORE_SPURIOUS_REJECT"
+      ],
+      "operative_signature": [
+        "GH_BEFORE_ETAG_VALIDATION",
+        "GH_BEFORE_SPURIOUS_REJECT",
+        "GH_SIGNATURE_QUALIFIED"
+      ]
+    },
+    "native_stale_kind": "PRECHECK_REJECTED",
+    "pattern": "WRONG_VALIDATOR_REJECT_PATH",
+    "program_version": "0.5",
+    "reviewed_anchor_constant": "reviewed_blob_sha_anchor",
+    "scope_id": "UPDATE_IF_REVIEWED_BLOB_SHA_CURRENT",
+    "signature_supplied_field": "supplied_value",
+    "signature_validator_field": "validator_kind",
+    "validator_kind": "HTTP_ETAG"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "profile_id": "version-bound-effect",
+  "profile_version": "0.1-development",
+  "maturity": "development",
+  "trusted_status": "UNTRUSTED_AUTHORING_PROFILE",
+  "question": "Does an effect remain bound to the version that was reviewed or otherwise declared authoritative for that effect?",
+  "semantic_core": {
+    "reviewed_version": "the version whose consequence authority is declared before the effect cut",
+    "current_version_at_effect": "the material version observable at validation/effect time",
+    "match_consequence": "declared effect may proceed",
+    "mismatch_consequence": "declared stale-version consequence applies",
+    "boundary_requirement": "the current version may differ from the reviewed version before effect"
+  },
+  "supported_projection_patterns": [
+    "PRESERVED_COMPARE",
+    "OMITTED_REVIEWED_GUARD",
+    "WRONG_VALIDATOR_REJECT_PATH"
+  ],
+  "trust_boundary": {
+    "profile_compiler_may": [
+      "generate source consequence contracts",
+      "generate consequence-blind target semantic programs from accepted profile instances",
+      "combine those programs with carrier-specific evidence envelopes"
+    ],
+    "profile_compiler_may_not": [
+      "decide C, D, or O",
+      "upgrade evidence strength",
+      "declare PRESERVED or CONSEQUENCE_REGRESSION",
+      "replace the frozen v0.7 producer or independent consumer"
+    ]
+  },
+  "stability_rule": "No stable designation before prospective multi-carrier use and at least one independently authored instance."
+}

@@ -1,0 +1,9 @@
+{
+  "core_name": "Consequence-Preserving Projections",
+  "core_version": "0.7.0",
+  "release_state": "FROZEN_SOURCE_CONTRACT_SEPARATED_PROOF_CARRYING_QUALIFIED",
+  "archive": "vendor/Consequence_Preserving_Projections_Software_v0.7.0_DOI_READY.zip",
+  "archive_sha256": "bc3c0be440b1b729d3131a630491cce62f1f885fb305aa46a4483fee0adad72f",
+  "expected_root": "consequence-preserving-projections-0.7.0",
+  "policy": "RISU Verify MUST verify this archive pin before invoking the core. The convenience layer does not modify or reissue the scientific core."
+}

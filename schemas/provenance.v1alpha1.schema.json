@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://risu.institute/schemas/risu.provenance/v1alpha1",
+  "title": "RISU Verify Provenance Manifest v1alpha1",
+  "type": "object",
+  "required": ["provenance_version", "case_id", "artifacts", "assertions", "boundary"],
+  "properties": {
+    "provenance_version": {"type": "string"},
+    "case_id": {"type": "string", "minLength": 1},
+    "artifacts": {"type": "array", "items": {"type": "object", "required": ["id", "kind", "path", "sha256"]}},
+    "assertions": {"type": "array", "items": {"type": "object", "required": ["id", "artifact"]}},
+    "boundary": {"type": "string", "minLength": 1}
+  },
+  "additionalProperties": true,
+  "x-risu-maturity": "development"
+}

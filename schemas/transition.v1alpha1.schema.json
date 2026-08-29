@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://risu.institute/schemas/risu.transition/v1alpha1",
+  "title": "RISU Verify Historical Transition Result v1alpha1",
+  "type": "object",
+  "required": ["transition_result_version", "case_id", "classification", "before", "after", "semantic_delta", "shared_source_contract_sha256"],
+  "properties": {
+    "classification": {"enum": ["REPAIR_CONSISTENT_HISTORICAL_TRANSITION", "REGRESSION_CONSISTENT_HISTORICAL_TRANSITION", "OBSERVED_HISTORICAL_TRANSITION_NO_DIRECTIONAL_LABEL"]},
+    "shared_source_contract_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "additionalProperties": true,
+  "x-risu-maturity": "development"
+}

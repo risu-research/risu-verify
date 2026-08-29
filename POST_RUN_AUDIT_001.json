@@ -1,0 +1,29 @@
+{
+  "audit_version": "1.0",
+  "audit_id": "RISU-VERIFY-V0.3-TOP-TIER-AUDIT-001",
+  "date": "2026-08-28",
+  "applies_to": "RISU Verify v0.3.0-rc1 historical Case 003",
+  "sealed_artifacts_modified": false,
+  "findings": [
+    {
+      "id": "AUDIT-AMENDMENT-CLASSIFICATION",
+      "severity": "DISCLOSURE_HARDENING",
+      "finding": "The sealed pre-run PREDECLARATION_AMENDMENT_001 classified itself as EVIDENCE_ROLE_CLARIFICATION_ONLY. A later hostile review concluded that the change is better understood as a substantive expansion of the admissible empirical-evidence role for the Exact layer.",
+      "important_timing_fact": "The amendment preceded every frozen-v0.7 Case 003 evaluation and did not alter declared scope, source consequence, bounded worlds, revision pins, or pair adjudication.",
+      "remedy": "Preserve the original sealed amendment unchanged and disclose this stricter post-run characterization."
+    },
+    {
+      "id": "AUDIT-PREDECLARATION-TEMPORAL-ANCHOR",
+      "severity": "DISCLOSURE_HARDENING",
+      "finding": "The Case 003 predeclaration was internally sealed before core execution, but the release artifact does not contain an independent external timestamp proving that ordering.",
+      "remedy": "Do not retroactively upgrade the claim. Future empirical cases should publicly commit the predeclaration before any verifier run."
+    },
+    {
+      "id": "AUDIT-EVIDENCE-STRENGTH-LAYERING",
+      "severity": "CLAIM_PRECISION",
+      "finding": "Case 003 structural correspondence findings and the historically corroborated Exact finding have different evidence dependencies.",
+      "remedy": "Report source/contract-derived structural findings separately from Exact findings that use issue #2133 empirical observations."
+    }
+  ],
+  "boundary": "This is a post-run audit record. It does not rewrite or backdate any pre-run artifact and does not add a scientific premise to the frozen v0.7 evaluation."
+}

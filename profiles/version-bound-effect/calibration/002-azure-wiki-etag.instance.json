@@ -1,0 +1,85 @@
+{
+  "carrier_envelope": "002-azure-wiki-etag.envelope.json",
+  "compiled_case_id": "EXT-AZDO-WIKI-ETAG-002-VBE-COMPILED",
+  "instance_id": "002-azure-wiki-etag",
+  "instance_schema": "risu.vbe.instance/v0.1alpha1",
+  "legacy_case": "cases/azure-devops-wiki-etag",
+  "profile": "version-bound-effect",
+  "profile_version": "0.1-development",
+  "source": {
+    "admissibility": {
+      "expr": {
+        "op": "literal",
+        "value": true
+      }
+    },
+    "boundary": {
+      "declaration": "Existing-page edit arm after the initial create attempt is rejected with 409 or 500; caller supplies reviewed ETag E0; effect-time current ETag may be E0 or E1.",
+      "post_check_material_transition_possible": true
+    },
+    "claim_boundary": {
+      "domain_adequacy": "DECLARED_PREMISE",
+      "live_runtime_conformance": "NOT_CLAIMED",
+      "model_relative": true,
+      "source_semantic_adequacy": "PINNED_OFFICIAL_REST_CONTRACT_PLUS_DECLARED_BOUNDED_WORLD"
+    },
+    "constants": {
+      "reviewed_etag": "E0"
+    },
+    "contract_id": "SRC-AZDO-WIKI-EDIT-IF-MATCH-E0",
+    "current_coordinate": "current_etag",
+    "current_domain": [
+      "E0",
+      "E1"
+    ],
+    "extra_coordinates": {},
+    "lens": "L_EDIT_REVIEWED_VERSION",
+    "metadata": {
+      "kind": "EXTERNAL_SOURCE_CONSEQUENCE_CONTRACT",
+      "title": "Azure DevOps Wiki existing-page edit guarded by reviewed page version"
+    },
+    "reviewed": {
+      "anchor": "E0",
+      "mode": "literal"
+    },
+    "source_family": [
+      "EDIT_IF_MATCH_REVIEWED_VERSION"
+    ],
+    "stale_consequence": "STALE_EDIT_REJECTED",
+    "success_consequence": "UPDATE_COMMITTED"
+  },
+  "status": "CALIBRATION_ONLY",
+  "target": {
+    "discharge_mode": "IF_MATCH_REVIEWED_ETAG",
+    "discriminator_visibility": "INTERNAL_EFFECT_PATH",
+    "facts": {
+      "discriminator": [
+        "AZDO_CALLER_ETAG_BOUND",
+        "AZDO_EDIT_PRECONDITION_SEMANTICS"
+      ],
+      "interpreter": [
+        "AZDO_EDIT_PRECONDITION_SEMANTICS",
+        "AZDO_EXACT_INTERPRETATION_QUALIFIED"
+      ],
+      "mechanism": [
+        "AZDO_IF_MATCH_FORWARDED",
+        "AZDO_EDIT_PRECONDITION_SEMANTICS"
+      ],
+      "operative_signature": [
+        "AZDO_CALLER_ETAG_BOUND",
+        "AZDO_IF_MATCH_FORWARDED",
+        "AZDO_SIGNATURE_GROUNDING_QUALIFIED"
+      ]
+    },
+    "mechanism_current_field": "current_etag",
+    "mechanism_reviewed_field": "if_match",
+    "native_accept_kind": "EDIT_ACCEPTED",
+    "native_stale_kind": "PRECONDITION_REJECTED",
+    "pattern": "PRESERVED_COMPARE",
+    "program_version": "0.5",
+    "reviewed_anchor_constant": "reviewed_etag_anchor",
+    "scope_id": "EDIT_IF_MATCH_REVIEWED_VERSION",
+    "signature_current_field": "current_etag",
+    "signature_reviewed_field": "if_match"
+  }
+}

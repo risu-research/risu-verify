@@ -1,0 +1,27 @@
+{
+  "boundary": "These are release-audit hardening checks, not 27 independent semantic experiments.",
+  "hostile_audit_regressions_closed": [
+    "unmanifested extra file accepted by rc1 release verifier",
+    "tampered test suite could coexist with stored qualification PASS wording",
+    "recomputed provenance metadata could be accepted by release verifier without replay"
+  ],
+  "qualification_version": "0.3.0-rc2-audit-hardening",
+  "status": "PASS",
+  "suite": "tests/run_rc2_audit_tests.py",
+  "taxonomy": [
+    "exact release file set",
+    "toolchain integrity",
+    "actual provenance replay",
+    "provenance-strength disclosure",
+    "post-run audit preservation",
+    "evidence dependency ablation",
+    "development schemas",
+    "versioned historical adjudication",
+    "run-manifest toolchain identity",
+    "CI release hierarchy",
+    "third-party evidence packaging"
+  ],
+  "tests_failed": 0,
+  "tests_passed": 27,
+  "tests_total": 27
+}

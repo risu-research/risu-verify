@@ -1,0 +1,27 @@
+{
+  "bundle_index_version": "1.0",
+  "bundles": [
+    {
+      "file": "case-bundles/github-guarded-merge.zip",
+      "file_count": 11,
+      "id": "github-guarded-merge",
+      "materializes_to": "cases/github-guarded-merge",
+      "sha256": "4026162f79b1f59fc781de9b3fc50d2e6b91dd0e5224d7cb16338226d7881db6"
+    },
+    {
+      "file": "case-bundles/azure-devops-wiki-etag.zip",
+      "file_count": 26,
+      "id": "azure-devops-wiki-etag",
+      "materializes_to": "cases/azure-devops-wiki-etag",
+      "sha256": "d51ee7cc729d17f3ad515cc48e38ad53caa61a2487bcb311135c3f912cc4ea2c"
+    },
+    {
+      "file": "case-bundles/github-create-update-sha-transition.zip",
+      "file_count": 50,
+      "id": "github-create-update-sha-transition",
+      "materializes_to": "cases/github-create-update-sha-transition",
+      "sha256": "1d908560996bb6e543f89d96e848671f1140f51f21f84c3f3549735104aa1229"
+    }
+  ],
+  "purpose": "Content-addressed exact case trees from the canonical v0.4.0-rc1 release. Materialize before semantic replay."
+}

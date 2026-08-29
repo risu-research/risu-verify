@@ -1,0 +1,29 @@
+name: RISU Verify — public semantic smoke
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  semantic-smoke:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Materialize content-addressed case bundles
+        run: python tools/materialize_case_bundles.py
+      - name: Replay case provenance
+        run: |
+          python tools/provenance_verify.py cases/github-guarded-merge
+          python tools/provenance_verify.py cases/azure-devops-wiki-etag
+          python tools/provenance_verify.py cases/github-create-update-sha-transition/before
+          python tools/provenance_verify.py cases/github-create-update-sha-transition/after
+      - name: Differentially replay Version-Bound Effect calibration
+        run: python tools/vbe_differential.py
+      - name: Semantic-CI demonstration
+        run: bash tests/semantic_ci_demo.sh
+      - name: Historical transition demonstration
+        run: bash tests/historical_transition_demo.sh

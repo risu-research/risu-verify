@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://risu.institute/schemas/risu.lock/v1alpha1",
+  "title": "RISU Verify Semantic Lock v1alpha1",
+  "type": "object",
+  "required": ["lock_version", "case_id", "baseline_policy", "commitments", "commitments_sha256", "provenance_commitments", "provenance_commitments_sha256"],
+  "properties": {
+    "baseline_policy": {"enum": ["PRESERVATION_GATE", "RESEARCH_REPRODUCTION"]},
+    "commitments_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "provenance_commitments_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "additionalProperties": true,
+  "x-risu-maturity": "development"
+}

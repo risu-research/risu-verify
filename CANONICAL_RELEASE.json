@@ -1,0 +1,14 @@
+{
+  "canonical_archive": "RISU_Verify_v0.4.0-rc1_Profile_Driven_Evidence_Indexed_Final.zip",
+  "canonical_archive_sha256": "df06e8d6a8b072333355e1ef91b80c30e43fa68d6fc4666dd920a3fc0e46fc6f",
+  "canonical_manifested_file_count": 183,
+  "case_bundle_materialization_is_semantic-development-convenience": true,
+  "full_release_required_for_exact_release_integrity_reproduction": true,
+  "note": "The GitHub browser edition keeps source, schemas, profiles, docs, tests, and content-addressed exact case bundles under the web uploader file limit. It is not byte-identical to the canonical audited archive.",
+  "project": "RISU Verify",
+  "public_source_layout": "COMPACT_GITHUB_BROWSER_EDITION",
+  "record_schema": "risu.canonical-release-pointer/v0.1alpha1",
+  "scientific_core_sha256": "bc3c0be440b1b729d3131a630491cce62f1f885fb305aa46a4483fee0adad72f",
+  "scientific_core_version": "0.7.0",
+  "version": "0.4.0-rc1"
+}
