@@ -1,0 +1,134 @@
+{
+  "adjudication": {
+    "core_decides": [
+      "C",
+      "D",
+      "O",
+      "coverage",
+      "Exact Realization"
+    ],
+    "implementation_pins": {
+      "risu_verify_py_sha256": "431f73a8df146470a97b57270b676447b0b5c3381d46708f80fed2b40f9e1210",
+      "vbe_compile_py_sha256": "ad5fb723a0758807ad79ec0b1cdc91f97ea489a550607d0c26e1e47b2962587b",
+      "vbe_differential_py_sha256": "94a62340d9e25ae85efac4c87a72ead1efc79c1cdad65111405feec0a7c0674c"
+    },
+    "product_status_mapping": "RISU_VERIFY_0.4_EXISTING_MAPPING_OVER_FROZEN_V0.7_RESULTS",
+    "profile_compiler_does_not_decide_verdict": true
+  },
+  "authoring": {
+    "ai_policy": "AI or heuristics may propose authoring material but may not establish evidence facts or issue a RISU assurance verdict.",
+    "drafts_not_verdict_eligible": true,
+    "entrypoint": "risu init --profile version-bound-effect",
+    "human_acceptance_required": true,
+    "profile_compiler_status": "UNTRUSTED_CONVENIENCE_LAYER",
+    "required_freeze_before_verification": [
+      "selection record",
+      "VBE semantic instance",
+      "declared scope and boundary",
+      "carrier evidence envelope",
+      "adjudication/toolchain identities"
+    ]
+  },
+  "batch_design": {
+    "enrollment_target": 8,
+    "null_result_policy": "A batch with no regressions remains a valid result.",
+    "permitted_results": [
+      "PRESERVED",
+      "PRESERVED_IN_DECLARED_SCOPE",
+      "CONSEQUENCE_REGRESSION",
+      "INCOMPLETE_ASSURANCE",
+      "INTEGRITY_FAILURE"
+    ],
+    "result_quota": "NONE",
+    "stopping_rule": "Enroll the first 8 eligible units under the frozen selection procedure. Do not replace or extend units based on RISU verdict. If diversity gates cannot be met using eligible units, report INSUFFICIENT_DIVERSITY rather than outcome-driven substitution.",
+    "unit": "one independently developed agent-facing or API/tool projection of a version-bound consequential effect"
+  },
+  "change_control": {
+    "after_external_timestamp": "No in-place edits. Any change requires a numbered amendment with reason, timing, affected fields, and explicit statement of whether candidate screening had begun.",
+    "after_first_verdict": "No change to selection, stopping, inclusion/exclusion, result handling, or adjudication for Corpus 0.1."
+  },
+  "diversity_gates": {
+    "maximum_units_from_one_organization": 2,
+    "minimum_carrier_or_mechanism_families": 3,
+    "minimum_independent_organizations": 4,
+    "note": "Diversity is a predeclared design constraint, not a verdict quota.",
+    "require_agent_facing_and_non_agent_specific_strata": true
+  },
+  "evidence_policy": {
+    "full_git_blob_preferred_when_available": true,
+    "layers": [
+      "upstream identity or snapshot",
+      "pinned local bytes",
+      "deterministic extracted facts",
+      "semantic interpretation",
+      "frozen-core verification"
+    ],
+    "live_runtime_conformance": "NOT_REQUIRED_AND_NOT_CLAIMED_UNLESS_SEPARATELY_MEASURED",
+    "no_silent_layer_upgrade": true,
+    "recorded_object_id_only_must_be_labeled_as_such": true
+  },
+  "external_timestamp": {
+    "acceptable_mechanism": "public Git commit of the exact protocol bytes; optional Sigstore/Rekor attestation may be added without changing the protocol bytes",
+    "current_status": "NOT_YET_EXTERNALLY_TIMESTAMPED",
+    "reason": "No dedicated RISU Verify public repository is currently available through the connected GitHub account. This local seal must be published unchanged before corpus screening begins.",
+    "required_before_first_candidate_screening": true
+  },
+  "profile": {
+    "id": "version-bound-effect",
+    "profile_sha256": "c2dfe979ac9d80fc0fd122ec236ef2c9b669979e66233481f73b6872d4ec626c",
+    "version": "0.1-development"
+  },
+  "protocol_id": "PROSPECTIVE_CORPUS_0.1_PROTOCOL",
+  "protocol_schema": "risu.prospective-corpus/v0.1alpha1",
+  "protocol_version": "0.1",
+  "purpose": "Prospectively test whether the development Version-Bound Effect profile transfers across independently developed projections without outcome-based case selection.",
+  "reporting": {
+    "all_enrolled_units_reported": true,
+    "friction_ledger_fields": [
+      "operation_identification",
+      "source_semantic_reconstruction",
+      "boundary_definition",
+      "evidence_acquisition",
+      "version_binding_discovery",
+      "adapter_or_envelope_authoring",
+      "human_correction",
+      "verification_runtime"
+    ],
+    "manual_authoring_time_ledger_required": true,
+    "screening_rejections_reported": true,
+    "verdict_blind_replacement_prohibited": true
+  },
+  "scientific_core": {
+    "archive_sha256": "bc3c0be440b1b729d3131a630491cce62f1f885fb305aa46a4483fee0adad72f",
+    "frozen": true,
+    "version": "0.7.0"
+  },
+  "screening_state_at_local_seal": {
+    "candidate_screening_started": false,
+    "case_004_selected": false,
+    "risu_verdicts_observed_for_corpus_0_1": false
+  },
+  "selection": {
+    "exclusion": [
+      "case selected because a known RISU-detectable regression is already documented",
+      "toy or RISU-authored target except explicit controls",
+      "insufficient evidence to identify source and target operations",
+      "case whose material consequence is not version-bound under the accepted declaration",
+      "case requiring expansion of the frozen scientific core before enrollment"
+    ],
+    "inclusion": [
+      "independently developed external system",
+      "operation can cause a consequential write or state transition",
+      "operation has a plausible version/revision/precondition semantic relevant to the effect",
+      "source operation and projected/agent-facing operation can be pinned to public or otherwise reproducible evidence",
+      "bounded VBE worlds can be declared without inspecting a RISU verdict",
+      "carrier-specific evidence can be separated from semantic interpretation"
+    ],
+    "known_bug_hunt_prohibited": true,
+    "known_issue_may_be_recorded_after_selection": true,
+    "rejected_candidate_log_required": true,
+    "screening_log_required": true,
+    "selection_must_precede_verdict": true
+  },
+  "status": "SEALED_LOCALLY_BEFORE_CANDIDATE_SCREENING"
+}
