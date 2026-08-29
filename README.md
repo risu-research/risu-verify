@@ -4,7 +4,9 @@
 
 > An agent-facing tool can keep the same name and schema while losing a distinction that changes what the action can actually do. RISU Verify checks whether a **declared consequence-relevant distinction** survives that projection.
 
-RISU Verify is a developer-facing assurance layer over the frozen **Consequence-Preserving Projections v0.7.0** core. The current release includes external preservation/regression controls, one real GitHub historical bug-to-repair transition, audit-hardened provenance, and the development **Version-Bound Effect (VBE)** profile.
+RISU Verify is a developer-facing assurance layer over the frozen **Consequence-Preserving Projections v0.7.0** core. The archived **v0.4.0-rc1** release includes external preservation/regression controls, one real GitHub historical bug-to-repair transition, audit-hardened provenance, and the development **Version-Bound Effect (VBE)** profile.
+
+> **Release boundary.** The GitHub/Zenodo v0.4.0-rc1 archive remains immutable. The `main` branch may contain clearly marked post-release convenience and consumer-layer work that does not modify the frozen scientific core or the protocol-pinned verifier/VBE implementations. The one-file Browser Workbench handoff described below is such a post-release development layer and is **not retroactively part of the archived v0.4.0-rc1 DOI artifact**.
 
 ## Public chronology
 
@@ -59,6 +61,32 @@ bash tests/semantic_ci_demo.sh
 bash tests/historical_transition_demo.sh
 ```
 
+
+## One-file Browser Workbench handoff — post-release development
+
+RISU Verify run artifacts can be packaged into one content-addressed file for the public browser-local Workbench:
+
+```bash
+./risu-workbench run \
+  .risu/out/<case-id> \
+  --output <case-id>.risu.json
+```
+
+The `.risu.json` handoff embeds the exact report, certificate, run manifest, and available logs/Markdown with per-artifact SHA-256 commitments. The exporter refuses to package a run whose recorded report/certificate/run-manifest digests disagree. It is a transport layer only; it does not rerun or replace the frozen scientific producer/checker.
+
+For baseline/current or before/after analysis:
+
+```bash
+./risu-workbench compare \
+  .risu/out/<baseline-case> \
+  .risu/out/<current-case> \
+  --output transition.risu-compare.json
+```
+
+The comparison handoff explicitly records whether both runs share the same `source_semantic_digest`. The Workbench only presents a focused same-source projection comparison when that digest is unchanged. See [`docs/WORKBENCH_HANDOFF.md`](docs/WORKBENCH_HANDOFF.md).
+
+Public Workbench: <https://risuinstitute.org/tools/#workbench>
+
 ## Commissioning record
 
 | Case | Role | Result |
@@ -86,7 +114,7 @@ The profile compiler is an untrusted authoring convenience layer. It does **not*
 
 ## Repository workflow
 
-`GITHUB_ACTION_WORKFLOW_TEMPLATE.yml` is intentionally visible rather than stored under a hidden `.github/` path in this browser-upload edition. It first materializes the content-addressed case bundles, then runs provenance replay, VBE differential calibration, the semantic-CI demonstration, and the historical-transition demonstration.
+`GITHUB_ACTION_WORKFLOW_TEMPLATE.yml` is intentionally visible rather than stored under a hidden `.github/` path in this browser-upload edition. It first materializes the content-addressed case bundles, then runs provenance replay, VBE differential calibration, the semantic-CI demonstration, and the historical-transition demonstration. It also packages the historical before/after outputs into one-file Browser Workbench handoffs and uploads them as CI artifacts.
 
 For the exact 180-check release qualification and exact-file-set verification, use the **canonical release archive**, not this compact GitHub layout.
 

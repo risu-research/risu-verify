@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://risuinstitute.org/schemas/workbench-handoff.v0.1.schema.json",
+  "title": "RISU Verify Browser Workbench handoff bundle",
+  "description": "Development transport schema for moving already-produced RISU Verify run artifacts into the browser-local Workbench. It is not an assurance certificate schema.",
+  "oneOf": [
+    {"$ref": "#/$defs/runBundle"},
+    {"$ref": "#/$defs/comparisonBundle"}
+  ],
+  "$defs": {
+    "artifact": {
+      "type": "object",
+      "required": ["name", "kind", "media_type", "size", "sha256", "encoding", "content"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "kind": {"type": "string", "minLength": 1},
+        "media_type": {"type": "string", "minLength": 1},
+        "size": {"type": "integer", "minimum": 0},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "encoding": {"const": "base64"},
+        "content": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "runMeta": {
+      "type": "object",
+      "required": ["case_id", "product_status", "source_semantic_digest", "core_version", "core_archive_sha256", "run_manifest_version"],
+      "properties": {
+        "case_id": {"type": ["string", "null"]},
+        "title": {"type": ["string", "null"]},
+        "risu_verify_version": {"type": ["string", "null"]},
+        "product_status": {"type": ["string", "null"]},
+        "semantic_exit_code": {"type": ["integer", "null"]},
+        "source_semantic_digest": {"type": ["string", "null"]},
+        "core_version": {"type": ["string", "null"]},
+        "core_archive_sha256": {"type": ["string", "null"]},
+        "run_manifest_version": {"type": ["string", "null"]}
+      }
+    },
+    "runBundle": {
+      "type": "object",
+      "required": ["bundle_schema", "bundle_kind", "created_by", "boundary", "run", "artifact_manifest_sha256", "artifacts"],
+      "properties": {
+        "bundle_schema": {"const": "risu.workbench-run/v0.1"},
+        "bundle_kind": {"const": "RISU_VERIFY_RUN_HANDOFF"},
+        "created_by": {"type": "object"},
+        "boundary": {"type": "string"},
+        "run": {"$ref": "#/$defs/runMeta"},
+        "artifact_manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "artifacts": {"type": "array", "minItems": 3, "items": {"$ref": "#/$defs/artifact"}}
+      }
+    },
+    "comparisonMeta": {
+      "type": "object",
+      "required": ["comparison_scope", "source_semantic_digest_same", "case_id_same", "baseline", "current"],
+      "properties": {
+        "comparison_scope": {"enum": ["SAME_DECLARED_SOURCE_SEMANTICS", "SOURCE_SEMANTIC_COMMITMENT_CHANGED"]},
+        "source_semantic_digest_same": {"type": "boolean"},
+        "case_id_same": {"type": "boolean"},
+        "baseline": {"type": "object"},
+        "current": {"type": "object"}
+      }
+    },
+    "comparisonBundle": {
+      "type": "object",
+      "required": ["bundle_schema", "bundle_kind", "created_by", "boundary", "comparison", "baseline_run", "current_run"],
+      "properties": {
+        "bundle_schema": {"const": "risu.workbench-comparison/v0.1"},
+        "bundle_kind": {"const": "RISU_VERIFY_COMPARISON_HANDOFF"},
+        "created_by": {"type": "object"},
+        "boundary": {"type": "string"},
+        "comparison": {"$ref": "#/$defs/comparisonMeta"},
+        "baseline_run": {"$ref": "#/$defs/runBundle"},
+        "current_run": {"$ref": "#/$defs/runBundle"}
+      }
+    }
+  }
+}
