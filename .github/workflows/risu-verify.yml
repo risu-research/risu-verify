@@ -13,6 +13,13 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
+
+      - name: Restore executable entrypoints
+        run: |
+          chmod +x risu-verify
+          chmod +x risu-workbench
+          chmod +x tests/*.sh
+          
       - name: Materialize content-addressed case bundles
         run: python tools/materialize_case_bundles.py
       - name: Replay case provenance
