@@ -1,0 +1,430 @@
+{
+  "adapter_base": {
+    "adapter_id": "CORPUS01-U001-GITHUB-MCP-MERGE",
+    "adapter_version": "0.7",
+    "bindings": [
+      {
+        "id": "B-U001-SOURCE",
+        "kind": "EVIDENCE",
+        "path": "evidence/corpus01-unit001/source-github-merge-sha.json",
+        "required": true,
+        "role": "PINNED_SOURCE_CONTRACT_EVIDENCE",
+        "sha256": "deb38a6e4a51bdaca231988fa142e269d9ebede59296bc97b212da9152f813ee"
+      },
+      {
+        "id": "B-U001-TARGET-IMPL",
+        "kind": "EVIDENCE",
+        "path": "evidence/corpus01-unit001/target-github-mcp-merge-implementation.json",
+        "required": true,
+        "role": "PINNED_TARGET_IMPLEMENTATION",
+        "sha256": "8e85393d39c1eac2c9739c821e5371225c0894699d03158e54590d68056a6fab"
+      },
+      {
+        "id": "B-U001-TARGET-TEST",
+        "kind": "EVIDENCE",
+        "path": "evidence/corpus01-unit001/target-github-mcp-sha-pinning-test.json",
+        "required": true,
+        "role": "PINNED_TARGET_FAIL_CLOSED_TEST",
+        "sha256": "e2881bdbac2a254968ba0c1d883b05160245961bcaa7385efdb5be6146ec7af2"
+      },
+      {
+        "id": "B-U001-TARGET-DEP",
+        "kind": "EVIDENCE",
+        "path": "evidence/corpus01-unit001/target-go-github-pin.json",
+        "required": true,
+        "role": "PINNED_TARGET_DEPENDENCY",
+        "sha256": "d6eb30136885453ee0be4dbe37648ec896edc4269897d3c02e483c739d3fffe3"
+      },
+      {
+        "id": "B-SIGNATURE-QUAL",
+        "kind": "QUALIFICATION",
+        "path": "qualification/Projection_Assurance_Signature_Grounding_Gate_001.zip",
+        "required": true,
+        "role": "SEALED_SIGNATURE_QUALIFICATION",
+        "sha256": "bb0edc6da7961175c1ec4236cb969c9f509b78ed2f8828634fdfcd84bd940b5c"
+      },
+      {
+        "id": "B-EXACT-QUAL",
+        "kind": "QUALIFICATION",
+        "path": "qualification/Projection_Assurance_Exact_Realization_Gate_001.zip",
+        "required": true,
+        "role": "SEALED_EXACT_QUALIFICATION",
+        "sha256": "bc5f7a4758b1a0723c75935cc57c714c1d05dd6793b928c7648f74fa0ab9bee3"
+      }
+    ],
+    "claim_boundary": {
+      "general_source_equivalence": "NOT_CLAIMED",
+      "general_unguarded_calls": "OUT_OF_SCOPE",
+      "independent_live_reproduction": "NOT_CLAIMED",
+      "live_runtime_conformance": "NOT_CLAIMED",
+      "model_relative": true,
+      "scope": "GUARDED_MERGE_CALL_WITH_SUPPLIED_REVIEWED_HEAD_SHA"
+    },
+    "metadata": {
+      "architecture": "SOURCE_CONTRACT_SEPARATED",
+      "kind": "PROSPECTIVE_CORPUS_PREVERDICT_AUTHORING",
+      "title": "Corpus 0.1 Unit 001 current GitHub MCP guarded merge"
+    },
+    "provenance": {
+      "claim_roots": {
+        "C": [
+          "CLAIM-C"
+        ],
+        "COVERAGE": [
+          "CLAIM-COVERAGE"
+        ],
+        "D": [
+          "CLAIM-D"
+        ],
+        "EXACT": [
+          "CLAIM-EXACT"
+        ],
+        "O": [
+          "CLAIM-O"
+        ]
+      },
+      "edges": [
+        {
+          "from": "N-U001-SOURCE",
+          "relation": "ESTABLISHES",
+          "to": "FACT-U001-SOURCE-PRECONDITION"
+        },
+        {
+          "from": "N-U001-TARGET-IMPL",
+          "relation": "ESTABLISHES",
+          "to": "FACT-U001-EXPECTED-INPUT"
+        },
+        {
+          "from": "N-U001-TARGET-IMPL",
+          "relation": "ESTABLISHES",
+          "to": "FACT-U001-FORWARDED"
+        },
+        {
+          "from": "N-U001-TARGET-DEP",
+          "relation": "ESTABLISHES",
+          "to": "FACT-U001-LIBRARY-PIN"
+        },
+        {
+          "from": "N-U001-TARGET-TEST",
+          "relation": "ESTABLISHES",
+          "to": "FACT-U001-FAIL-CLOSED-TEST"
+        },
+        {
+          "from": "N-SIGNATURE-QUAL",
+          "relation": "ESTABLISHES",
+          "to": "FACT-U001-SIGNATURE-QUAL"
+        },
+        {
+          "from": "N-EXACT-QUAL",
+          "relation": "ESTABLISHES",
+          "to": "FACT-U001-EXACT-QUAL"
+        },
+        {
+          "from": "FACT-U001-SOURCE-PRECONDITION",
+          "relation": "USES",
+          "to": "DERIVE-C"
+        },
+        {
+          "from": "FACT-U001-EXPECTED-INPUT",
+          "relation": "USES",
+          "to": "DERIVE-C"
+        },
+        {
+          "from": "FACT-U001-EXPECTED-INPUT",
+          "relation": "USES",
+          "to": "DERIVE-D"
+        },
+        {
+          "from": "FACT-U001-FORWARDED",
+          "relation": "USES",
+          "to": "DERIVE-D"
+        },
+        {
+          "from": "FACT-U001-SOURCE-PRECONDITION",
+          "relation": "USES",
+          "to": "DERIVE-D"
+        },
+        {
+          "from": "FACT-U001-FORWARDED",
+          "relation": "USES",
+          "to": "DERIVE-O"
+        },
+        {
+          "from": "FACT-U001-LIBRARY-PIN",
+          "relation": "USES",
+          "to": "DERIVE-O"
+        },
+        {
+          "from": "FACT-U001-SOURCE-PRECONDITION",
+          "relation": "USES",
+          "to": "DERIVE-O"
+        },
+        {
+          "from": "FACT-U001-FAIL-CLOSED-TEST",
+          "relation": "USES",
+          "to": "DERIVE-O"
+        },
+        {
+          "from": "FACT-U001-SIGNATURE-QUAL",
+          "relation": "USES",
+          "to": "DERIVE-EXACT"
+        },
+        {
+          "from": "FACT-U001-EXACT-QUAL",
+          "relation": "USES",
+          "to": "DERIVE-EXACT"
+        },
+        {
+          "from": "FACT-U001-SOURCE-PRECONDITION",
+          "relation": "USES",
+          "to": "DERIVE-EXACT"
+        },
+        {
+          "from": "FACT-U001-FORWARDED",
+          "relation": "USES",
+          "to": "DERIVE-EXACT"
+        },
+        {
+          "from": "FACT-U001-FAIL-CLOSED-TEST",
+          "relation": "USES",
+          "to": "DERIVE-EXACT"
+        },
+        {
+          "from": "FACT-U001-SOURCE-PRECONDITION",
+          "relation": "USES",
+          "to": "DERIVE-COVERAGE"
+        },
+        {
+          "from": "DERIVE-C",
+          "relation": "DERIVES",
+          "to": "CLAIM-C"
+        },
+        {
+          "from": "DERIVE-D",
+          "relation": "DERIVES",
+          "to": "CLAIM-D"
+        },
+        {
+          "from": "DERIVE-O",
+          "relation": "DERIVES",
+          "to": "CLAIM-O"
+        },
+        {
+          "from": "DERIVE-EXACT",
+          "relation": "DERIVES",
+          "to": "CLAIM-EXACT"
+        },
+        {
+          "from": "DERIVE-COVERAGE",
+          "relation": "DERIVES",
+          "to": "CLAIM-COVERAGE"
+        }
+      ],
+      "mode": "EVIDENCE_LINKED",
+      "nodes": [
+        {
+          "binding_ids": [
+            "B-U001-SOURCE"
+          ],
+          "id": "N-U001-SOURCE",
+          "kind": "EVIDENCE",
+          "label": "pinned source merge precondition"
+        },
+        {
+          "binding_ids": [
+            "B-U001-TARGET-IMPL"
+          ],
+          "id": "N-U001-TARGET-IMPL",
+          "kind": "EVIDENCE",
+          "label": "pinned target implementation"
+        },
+        {
+          "binding_ids": [
+            "B-U001-TARGET-TEST"
+          ],
+          "id": "N-U001-TARGET-TEST",
+          "kind": "EVIDENCE",
+          "label": "pinned target SHA-pinning test"
+        },
+        {
+          "binding_ids": [
+            "B-U001-TARGET-DEP"
+          ],
+          "id": "N-U001-TARGET-DEP",
+          "kind": "EVIDENCE",
+          "label": "pinned target go-github dependency"
+        },
+        {
+          "binding_ids": [
+            "B-SIGNATURE-QUAL"
+          ],
+          "id": "N-SIGNATURE-QUAL",
+          "kind": "EVIDENCE",
+          "label": "sealed signature qualification"
+        },
+        {
+          "binding_ids": [
+            "B-EXACT-QUAL"
+          ],
+          "id": "N-EXACT-QUAL",
+          "kind": "EVIDENCE",
+          "label": "sealed exact qualification"
+        },
+        {
+          "id": "FACT-U001-SOURCE-PRECONDITION",
+          "kind": "FACT",
+          "label": "source merge supports reviewed-head SHA precondition"
+        },
+        {
+          "id": "FACT-U001-EXPECTED-INPUT",
+          "kind": "FACT",
+          "label": "target exposes expectedHeadSha input"
+        },
+        {
+          "id": "FACT-U001-FORWARDED",
+          "kind": "FACT",
+          "label": "target forwards expectedHeadSha to PullRequestOptions.SHA"
+        },
+        {
+          "id": "FACT-U001-LIBRARY-PIN",
+          "kind": "FACT",
+          "label": "target pins the source library revision used by the mechanism"
+        },
+        {
+          "id": "FACT-U001-FAIL-CLOSED-TEST",
+          "kind": "FACT",
+          "label": "pinned handler test rejects head mismatch without retry"
+        },
+        {
+          "id": "FACT-U001-SIGNATURE-QUAL",
+          "kind": "FACT",
+          "label": "operative signature interpretation qualification"
+        },
+        {
+          "id": "FACT-U001-EXACT-QUAL",
+          "kind": "FACT",
+          "label": "exact realization interpretation qualification"
+        },
+        {
+          "id": "DERIVE-C",
+          "kind": "DERIVATION",
+          "label": "source-target operation correspondence"
+        },
+        {
+          "id": "DERIVE-D",
+          "kind": "DERIVATION",
+          "label": "version-world discrimination"
+        },
+        {
+          "id": "DERIVE-O",
+          "kind": "DERIVATION",
+          "label": "operative placement at merge effect cut"
+        },
+        {
+          "id": "DERIVE-EXACT",
+          "kind": "DERIVATION",
+          "label": "exact consequence realization"
+        },
+        {
+          "id": "DERIVE-COVERAGE",
+          "kind": "DERIVATION",
+          "label": "declared guarded-call scope coverage"
+        },
+        {
+          "id": "CLAIM-C",
+          "kind": "CLAIM",
+          "label": "Correspondence"
+        },
+        {
+          "id": "CLAIM-D",
+          "kind": "CLAIM",
+          "label": "Discrimination"
+        },
+        {
+          "id": "CLAIM-O",
+          "kind": "CLAIM",
+          "label": "Operative Placement"
+        },
+        {
+          "id": "CLAIM-EXACT",
+          "kind": "CLAIM",
+          "label": "Exact Realization"
+        },
+        {
+          "id": "CLAIM-COVERAGE",
+          "kind": "CLAIM",
+          "label": "Coverage"
+        }
+      ]
+    }
+  },
+  "derivation_facts": [
+    {
+      "id": "GH_U001_SOURCE_SHA_PRECONDITION",
+      "provenance_node": "FACT-U001-SOURCE-PRECONDITION",
+      "status": "ESTABLISHED"
+    },
+    {
+      "id": "GH_U001_EXPECTED_HEAD_INPUT",
+      "provenance_node": "FACT-U001-EXPECTED-INPUT",
+      "status": "ESTABLISHED"
+    },
+    {
+      "id": "GH_U001_EXPECTED_HEAD_FORWARDED",
+      "provenance_node": "FACT-U001-FORWARDED",
+      "status": "ESTABLISHED"
+    },
+    {
+      "id": "GH_U001_LIBRARY_PIN",
+      "provenance_node": "FACT-U001-LIBRARY-PIN",
+      "status": "ESTABLISHED"
+    },
+    {
+      "id": "GH_U001_MISMATCH_FAILS_CLOSED_TEST",
+      "provenance_node": "FACT-U001-FAIL-CLOSED-TEST",
+      "status": "ESTABLISHED"
+    },
+    {
+      "id": "GH_U001_SIGNATURE_QUALIFIED",
+      "provenance_node": "FACT-U001-SIGNATURE-QUAL",
+      "status": "ESTABLISHED"
+    },
+    {
+      "id": "GH_U001_EXACT_QUALIFIED",
+      "provenance_node": "FACT-U001-EXACT-QUAL",
+      "status": "ESTABLISHED"
+    }
+  ],
+  "envelope_version": "0.1-development",
+  "role": "CARRIER_SPECIFIC_EVIDENCE_ENVELOPE",
+  "structural_base": {
+    "case_id": "CORPUS01_U001_GITHUB_MCP_MERGE",
+    "evidence": {
+      "items": [
+        {
+          "digest": "sha256:deb38a6e4a51bdaca231988fa142e269d9ebede59296bc97b212da9152f813ee",
+          "id": "B-U001-SOURCE"
+        },
+        {
+          "digest": "sha256:8e85393d39c1eac2c9739c821e5371225c0894699d03158e54590d68056a6fab",
+          "id": "B-U001-TARGET-IMPL"
+        },
+        {
+          "digest": "sha256:e2881bdbac2a254968ba0c1d883b05160245961bcaa7385efdb5be6146ec7af2",
+          "id": "B-U001-TARGET-TEST"
+        },
+        {
+          "digest": "sha256:d6eb30136885453ee0be4dbe37648ec896edc4269897d3c02e483c739d3fffe3",
+          "id": "B-U001-TARGET-DEP"
+        }
+      ],
+      "strength": "PINNED_CURRENT_TARGET_IMPLEMENTATION_PLUS_PINNED_SOURCE_OBJECT_PLUS_PINNED_FAIL_CLOSED_TEST"
+    },
+    "ir_version": "0.2",
+    "target_model_status": {
+      "empirical_runtime_validation": "NOT_CLAIMED",
+      "kind": "DECLARED_ANALYTICAL_MODEL",
+      "purpose": "Prospective bounded cross-check. It does not independently establish source semantics or live deployment conformance."
+    }
+  }
+}
