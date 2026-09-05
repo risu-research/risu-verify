@@ -1,0 +1,139 @@
+{
+  "protocol_id": "RISU_CORPUS_0.1_AUTHORING_PROTOCOL_001",
+  "protocol_schema": "risu.corpus-authoring-protocol/v0.1alpha1",
+  "status_at_commit": "PRECOMMITTED_AFTER_ENROLLMENT_FREEZE_BEFORE_PRIMARY_VERDICTS",
+  "parent_protocol_sha256": "9fbf3fcdf48e5554840c4f2418803779ad82757e1a5df71411212421c225ad70",
+  "enrollment": "corpus/0.1/ENROLLMENT.json",
+  "purpose": "Constrain post-enrollment semantic authoring so no primary RISU result can influence unit order, source consequence declaration, evidence-strength classification, target-model repair, or retention.",
+  "authoring_order": [
+    "corpus01-unit-001",
+    "corpus01-unit-002",
+    "corpus01-unit-003",
+    "corpus01-unit-004",
+    "corpus01-unit-005",
+    "corpus01-unit-006",
+    "corpus01-unit-007",
+    "corpus01-unit-008"
+  ],
+  "order_rule": "Primary authoring and primary verifier execution proceed in enrollment order. A blocked or incomplete unit remains in place; later units may proceed only after the earlier unit has either an AUTHOR_ACCEPTED freeze or a committed AUTHORING_BLOCKED record explaining the unresolved evidence boundary.",
+  "lanes": {
+    "SOURCE": {
+      "goal": "Reconstruct the source operation's consequence-defining version distinction independently of the target projection result.",
+      "required_outputs": [
+        "source operation identity and immutable evidence references",
+        "reviewed or otherwise authoritative version coordinate",
+        "current version coordinate observable at the declared effect cut",
+        "match consequence",
+        "mismatch consequence",
+        "admissibility and bounded world declaration",
+        "claim boundary and evidence strength"
+      ],
+      "forbidden": [
+        "using a target omission or target implementation quirk to invent the source consequence",
+        "strengthening documentation evidence into live-runtime conformance",
+        "selecting a source semantic because it makes the target fail"
+      ]
+    },
+    "TARGET": {
+      "goal": "Reconstruct only what the pinned target actually exposes and executes, without importing the desired source consequence into missing target facts.",
+      "required_outputs": [
+        "immutable target revision",
+        "operation schema or callable surface",
+        "implementation path or generated binding path",
+        "version-binding input if any",
+        "mechanism path to effect",
+        "result/interpreter evidence",
+        "carrier-specific evidence envelope"
+      ],
+      "forbidden": [
+        "assuming an omitted guard exists because the source API supports it",
+        "treating documentation wording as operative placement unless implementation or equivalent evidence establishes it",
+        "repairing the target model after observing a primary RISU result without a numbered authoring amendment"
+      ]
+    }
+  },
+  "merge_gate": {
+    "rule": "SOURCE and TARGET lanes are merged into a VBE instance only after both lane records are frozen for the unit.",
+    "required_checks": [
+      "same operation identity mapping",
+      "same effect cut",
+      "same bounded version coordinate interpretation",
+      "carrier facts remain distinct from semantic interpretation",
+      "no evidence layer silently upgraded",
+      "all unresolved uncertainty either narrows the claim or blocks author acceptance"
+    ]
+  },
+  "freeze_sequence_per_unit": [
+    "01_SCREENING_RECORD_ALREADY_COMMITTED",
+    "02_SOURCE_LANE_FREEZE",
+    "03_TARGET_LANE_FREEZE",
+    "04_BOUNDARY_AND_WORLD_FREEZE",
+    "05_VBE_INSTANCE_DRAFT",
+    "06_HUMAN_ACCEPTANCE_RECORD",
+    "07_AUTHOR_ACCEPTED_INSTANCE_FREEZE",
+    "08_PRIMARY_RISU_EXECUTION",
+    "09_PRIMARY_RESULT_FREEZE",
+    "10_POST_RESULT_DIAGNOSTICS_OPTIONAL"
+  ],
+  "human_acceptance": {
+    "required_before_primary_execution": true,
+    "record_must_state": [
+      "evidence references were checked against pinned identities",
+      "source consequence was not chosen from the target result",
+      "target facts were not inferred solely from desired semantics",
+      "bounded worlds and effect cut are accepted",
+      "remaining uncertainty and evidence limits are listed",
+      "no RISU primary verdict for this unit has been observed"
+    ],
+    "acceptance_values": ["AUTHOR_ACCEPTED", "AUTHORING_BLOCKED"]
+  },
+  "uncertainty_policy": {
+    "rule": "Uncertainty is not a defect to hide. If a material source or target fact cannot be established at the declared evidence strength, narrow the claim or commit AUTHORING_BLOCKED / INCOMPLETE_ASSURANCE rather than filling the gap by interpretation.",
+    "prohibited": "Do not create evidence facts merely to fit one of the existing compiler patterns."
+  },
+  "evidence_layers": [
+    "L0_IDENTITY_OR_UPSTREAM_REFERENCE",
+    "L1_PINNED_BYTES_OR_IMMUTABLE_ARTIFACT",
+    "L2_DETERMINISTIC_EXTRACTED_FACT",
+    "L3_SEMANTIC_INTERPRETATION",
+    "L4_FROZEN_CORE_MODEL_INPUT",
+    "L5_PRIMARY_VERIFIER_RESULT"
+  ],
+  "evidence_rule": "Every material statement records the strongest layer actually supported. A higher layer may depend on lower layers, but no lower-layer observation is relabeled as a stronger layer without an explicit derivation record.",
+  "issue_tracker_policy": {
+    "before_primary_result": "PROHIBITED_FOR_TARGET_BUG_DISCOVERY",
+    "after_primary_result": "OPTIONAL_HINDSIGHT_AUDIT_ONLY",
+    "rule": "Any post-result issue or bug evidence is reported separately and cannot alter enrollment or retroactively strengthen the primary pre-result evidence record."
+  },
+  "diagnostics_after_primary_result": {
+    "allowed": [
+      "evidence ablation",
+      "counterfactual repair modeling",
+      "known-issue hindsight search",
+      "newer-version comparison",
+      "live-runtime experiment if separately scoped and labeled"
+    ],
+    "rule": "Diagnostics are secondary records. They do not rewrite the primary AUTHOR_ACCEPTED input or primary verdict."
+  },
+  "friction_measurement": {
+    "template": "corpus/0.1/FRICTION_LEDGER_TEMPLATE.json",
+    "start": "first post-enrollment unit-specific authoring action",
+    "stop": "primary result freeze for the unit",
+    "record": [
+      "wall clock where actually measured",
+      "active effort estimate",
+      "correction count",
+      "tool-call count",
+      "evidence objects pinned",
+      "uncertainties left open",
+      "automation opportunities observed"
+    ],
+    "no_fabricated_timing": true,
+    "automation_decision_rule": "Do not redesign the product from a single unit. Aggregate repeated friction across units before promoting a manual step into a compiler or extractor feature."
+  },
+  "historical_overlap_policy": {
+    "unit_001": "The older GitHub merge case is disclosure context only. Its old result may not be used to author the current revision's source or target facts. The current pinned target revision must be reconstructed independently.",
+    "general": "Prior RISU cases may identify reusable evidence schemas or tooling, but a prior verdict may not substitute for current-revision evidence."
+  },
+  "change_control": "No in-place changes after the first unit SOURCE lane begins. Any correction requires AUTHORING_PROTOCOL_AMENDMENT_NNN with timing, affected rule, reason, whether any primary verdict had been observed, and whether the correction could alter a primary outcome."
+}
