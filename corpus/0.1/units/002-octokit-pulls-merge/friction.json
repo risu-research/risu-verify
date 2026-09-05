@@ -1,0 +1,32 @@
+{
+  "schema": "risu.corpus-friction-ledger/v0.1alpha1",
+  "unit_id": "corpus01-unit-002",
+  "status": "OPEN_UNTIL_PRIMARY_RESULT_FREEZE",
+  "start_boundary": "First post-enrollment Unit 002-R authoring action after selection inheritance was explicitly frozen.",
+  "timing": {
+    "wall_clock": "NOT_RECONSTRUCTED",
+    "active_effort": "NOT_FABRICATED"
+  },
+  "observed_friction": [
+    {
+      "id": "U002R-F01",
+      "class": "EVIDENCE_CHAIN",
+      "observation": "The selected @octokit/rest target delegates endpoint definitions and transport behavior across separately versioned Octokit packages; target semantics therefore require dependency-lock resolution rather than inspection of one repository file.",
+      "automation_candidate": "dependency-aware provenance traversal",
+      "promote_to_infrastructure_now": false
+    },
+    {
+      "id": "U002R-F02",
+      "class": "STATIC_TO_OPERATIVE",
+      "observation": "Static source inspection can show that sha should become a PUT body parameter and 409 should reject, but a target-only black-box qualification materially strengthens the operative-path claim without contacting the live provider or running RISU.",
+      "automation_candidate": "generated carrier qualification probes",
+      "promote_to_infrastructure_now": false
+    }
+  ],
+  "corrections": [],
+  "uncertainties_open": [
+    "Live GitHub provider conformance remains outside the pre-primary target-only qualification unless separately scoped.",
+    "The primary semantic outcome has not been observed."
+  ],
+  "rule": "Do not redesign infrastructure from this unit alone; compare repeated friction across later units before promotion."
+}
