@@ -53,10 +53,20 @@
       "primary_verifier_executed_in_failed_run": false,
       "primary_verdict_observed_before_correction": false,
       "reason": "The freeze gate rejected the execution before compilation or verification because the manifest checksum did not match the frozen acceptance bytes."
+    },
+    {
+      "affected_scientific_input": false,
+      "amendment": "corpus/0.1/AUTHORING_PROTOCOL_AMENDMENT_001.json",
+      "correction": "Allow diagnostic-only workflow output of the already-generated failure.log after an invalid verifier exit.",
+      "failed_run_id": 33936266357,
+      "primary_verdict_observed_before_correction": false,
+      "reason": "The verifier returned exit 30 after valid freeze and compilation, but the workflow did not expose failure.log, so the invalidity could not be classified."
     }
   ],
   "post_freeze_allowed_paths": [
-    "corpus/0.1/units/001-github-mcp-merge/PRIMARY_RUN_MANIFEST.json"
+    "corpus/0.1/units/001-github-mcp-merge/PRIMARY_RUN_MANIFEST.json",
+    "corpus/0.1/AUTHORING_PROTOCOL_AMENDMENT_001.json",
+    ".github/workflows/corpus-0.1-primary.yml"
   ],
   "primary_verdict_observed_before_manifest": false,
   "schema": "risu.corpus-primary-run-manifest/v0.1alpha1",
