@@ -1,0 +1,50 @@
+{
+  "anchors": [
+    {
+      "git_blob_sha1": "f2a342b68c0e516ee42e170f1d904f9959690058",
+      "observation": "The selected target composes legacyRestEndpointMethods into the exported Octokit instance.",
+      "path": "src/index.ts",
+      "repository": "octokit/rest.js",
+      "revision": "cd9cb8cd4965d99c7dac8c87d249308956250be3"
+    },
+    {
+      "git_blob_sha1": "34669af5fcfee9ffed5dd48158d885a7193a65ea",
+      "observation": "legacyRestEndpointMethods returns the generated endpoint API both directly and under rest.",
+      "path": "src/index.ts",
+      "repository": "octokit/plugin-rest-endpoint-methods.js",
+      "revision": "c82898ae7a9ad9e92e39fc62e570a1cd4783a45b"
+    },
+    {
+      "observation": "pulls.merge maps to PUT /repos/{owner}/{repo}/pulls/{pull_number}/merge.",
+      "path": "src/generated/endpoints.ts",
+      "repository": "octokit/plugin-rest-endpoint-methods.js",
+      "revision": "c82898ae7a9ad9e92e39fc62e570a1cd4783a45b"
+    },
+    {
+      "git_blob_sha1": "dbee269ad381fe9b056db0d4c99192cf49c48ffb",
+      "observation": "The callable parameter sha is documented as the pull-request head SHA that must match to allow merge.",
+      "path": "docs/pulls/merge.md",
+      "repository": "octokit/plugin-rest-endpoint-methods.js",
+      "revision": "c82898ae7a9ad9e92e39fc62e570a1cd4783a45b"
+    }
+  ],
+  "boundary": "Establishes the pinned callable surface and endpoint mapping, not provider-side evaluation.",
+  "claims": [
+    {
+      "id": "OCT_U002_REST_METHOD_WIRED",
+      "status": "ESTABLISHED"
+    },
+    {
+      "id": "OCT_U002_MERGE_ROUTE_PINNED",
+      "status": "ESTABLISHED"
+    },
+    {
+      "id": "OCT_U002_SHA_INPUT_EXPOSED",
+      "status": "ESTABLISHED"
+    }
+  ],
+  "evidence_id": "OCT_U002_MERGE_SURFACE",
+  "role": "PINNED_TARGET_CALLABLE_SURFACE",
+  "schema": "risu.corpus-evidence/v0.1alpha1",
+  "unit_id": "corpus01-unit-002"
+}
