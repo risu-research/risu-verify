@@ -1,7 +1,7 @@
 {
   "adapter_base": {
     "adapter_id": "CORPUS01-U002-OCTOKIT-PULLS-MERGE",
-    "adapter_version": "0.8",
+    "adapter_version": "0.7",
     "bindings": [
       {
         "id": "B-U002-SOURCE",
