@@ -1,0 +1,182 @@
+{
+  "base_commit": "078d73c1f0bf1975edf3063e40c20de066c94676",
+  "claim_boundary": {
+    "does_not_by_itself_establish": [
+      "population prevalence of consequence regressions",
+      "universal safety or correctness",
+      "live deployment conformance",
+      "accuracy outside represented languages/mechanisms/scopes",
+      "causal attribution of performance to one implementation language",
+      "independent external authorship or maintainer utility",
+      "repair effectiveness",
+      "validity of a second consequence profile"
+    ],
+    "may_establish": [
+      "paired descriptive E2-versus-E1 selective coverage on the frozen fresh block",
+      "constructive fresh regression detections with independently checked witnesses",
+      "fresh stable resolutions within declared scopes",
+      "fail-closed behavior and abstention structure on the frozen block",
+      "deterministic acquisition/flow/certificate behavior within qualified implementation scope"
+    ]
+  },
+  "contract_id": "RISU_DIFF_E2_EVALUATION_CONTRACT_001",
+  "diagnostic_metrics": {
+    "acquisition": [
+      "selected_file_count",
+      "zero_evidence_count",
+      "language_parse_failure_count",
+      "budget_exhaustion_count"
+    ],
+    "certificate": [
+      "independent_checker_pass_count",
+      "independent_checker_disagreement_count",
+      "minimum_witness_size_if_defined"
+    ],
+    "efficiency": [
+      "machine_runtime",
+      "acquisition_rounds",
+      "bytes_consumed"
+    ],
+    "rule": "Diagnostic and efficiency metrics may explain outcomes but may not retroactively change primary semantic scoring.",
+    "structural": [
+      "material_roles_supported",
+      "material_roles_unresolved",
+      "coordinate_survival_path_found",
+      "retrieved_but_discarded_path_found",
+      "guard_effect_link_established"
+    ]
+  },
+  "evaluation_unit": "one preselected consequential operation at one exact repository revision under one declared Version-Bound Effect profile",
+  "fresh_block_promotion_logic": {
+    "eligible_for_claim_of_improved_selective_coverage": "E2 usable_coverage > E1 usable_coverage on the paired pristine gold-scorable block and E2 unsafe_false_stability_count == 0.",
+    "eligible_for_claim_of_positive_regression_detection": "gold block contains at least one GOLD_REGRESSION and E2 positive_regression_detection_count > 0 with independently validated witness(es).",
+    "eligible_for_claim_of_regression_recall_improvement": "both E1 and E2 regression_recall are defined and E2 regression_recall > E1 regression_recall; report exact counts and denominator.",
+    "no_detection_promotion_if": "the fresh pristine block contains zero GOLD_REGRESSION, regardless of mutation/development success.",
+    "no_safety_promotion_if": "E2 unsafe_false_stability_count > 0.",
+    "unassessable_block_rule": "Do not add or swap outcome-selected cases merely to make a primary metric defined."
+  },
+  "gold_classes": {
+    "ASSURANCE_INCOMPLETE": "GOLD_INCOMPLETE",
+    "CONSEQUENCE_REGRESSION": "GOLD_REGRESSION",
+    "CONSEQUENCE_STABLE_IN_DECLARED_SCOPE": "GOLD_STABLE",
+    "INFRASTRUCTURE_FAILURE": "GOLD_INFRASTRUCTURE_INVALID"
+  },
+  "gold_order": {
+    "phase_1": "freeze E2 engine, qualification, development universe, and fresh-selection protocol",
+    "phase_2": "select/bind full fresh block without outcome hunting",
+    "phase_3": "run and seal paired E1 plus E2 first-prediction matrices for all pristine slots",
+    "phase_4": "freeze a gold adjudication protocol without importing machine predictions as evidence or authority",
+    "phase_5": "author source/target/boundary/evidence and author acceptance for all gold slots",
+    "phase_6": "run frozen generic primary and independent checkers",
+    "phase_7": "only after archive identity verification inspect machine-versus-gold classifications and compute metrics"
+  },
+  "machine_output_mapping": {
+    "E1_PREDICTED_ASSURANCE_INCOMPLETE": "ASSURANCE_INCOMPLETE",
+    "E1_PREDICTED_PRESERVATION_EVIDENCE": "PRESERVATION_EVIDENCE",
+    "E1_PREDICTED_REGRESSION_WITNESS": "REGRESSION_WITNESS",
+    "E2_PREDICTED_ASSURANCE_INCOMPLETE": "ASSURANCE_INCOMPLETE",
+    "E2_PREDICTED_PRESERVATION_EVIDENCE": "PRESERVATION_EVIDENCE",
+    "E2_PREDICTED_REGRESSION_WITNESS": "REGRESSION_WITNESS",
+    "INFRASTRUCTURE_INVALID_BEFORE_PREDICTION": "INFRASTRUCTURE_INVALID"
+  },
+  "paired_e1_to_e2_metrics": {
+    "coverage_delta": "E2 usable_coverage - E1 usable_coverage on the identical pristine gold-scorable slots",
+    "interpretation_rule": "Paired deltas describe only this frozen block; no population-effect claim follows from n=8.",
+    "per_unit_transition_matrix": "for every pristine slot record E1 class -> E2 class -> gold class",
+    "regression_detection_delta": "E2 positive_regression_detection_count - E1 positive_regression_detection_count",
+    "stable_resolution_delta": "E2 stable_resolution_count - E1 stable_resolution_count",
+    "unsafe_false_stability_delta": "E2 unsafe_false_stability_count - E1 unsafe_false_stability_count"
+  },
+  "primary_fresh_block": {
+    "batch_rule": "All pristine E2 and paired E1 first predictions for the full block must be sealed before any gold semantic adjudication begins.",
+    "contaminated_slot_rule": "Preserve and exclude from pristine primary scoring; do not replace merely to restore n.",
+    "development_repo_exclusion": true,
+    "early_stopping_by_outcome": false,
+    "engine_constancy": "One exact E2 byte identity and one exact E1 baseline identity across the entire block; no test-then-train updates within the block.",
+    "ineligible_presemantic_candidate_rule": "A substitution is allowed only if a precommitted objective eligibility rule rejects the candidate before semantic target/gold information is consumed; every rejection and substitution must remain logged.",
+    "known_bug_hunting_as_selection_rationale": false,
+    "minimum_strata": {
+      "agent_facing_slots": 2,
+      "carrier_or_mechanism_families": 3,
+      "implementation_language_ecosystems": 3,
+      "independent_organizations": 4,
+      "maximum_slots_per_organization": 2,
+      "non_agent_specific_slots": 2
+    },
+    "no_outcome_replacement": true,
+    "planned_enrolled_slots": 8,
+    "selection_timing": "after exact E2 engine/qualification freeze and after a fresh-selection protocol is independently frozen, but before target semantic source inspection"
+  },
+  "primary_metrics": {
+    "abstention_rate_on_gold_scorable": "ASSURANCE_INCOMPLETE on gold_scorable / gold_scorable",
+    "conditional_correctness": "correct definitive predictions on gold_scorable / machine_definitive on gold_scorable",
+    "contaminated_slot_count": "number of slots excluded by the frozen firewall",
+    "false_regression_count": "count(false_regression)",
+    "gold_incomplete_definitive_count": "count(gold_incomplete_definitive_machine_prediction)",
+    "positive_regression_detection_count": "count(positive_regression_detection)",
+    "pristine_slot_count": "number of uncontaminated first-prediction slots",
+    "regression_recall": "positive_regression_detection / GOLD_REGRESSION; UNDEFINED if denominator is zero",
+    "selective_error_rate": "(unsafe_false_stability + false_regression) / machine_definitive on gold_scorable; UNDEFINED if denominator is zero",
+    "stable_recall": "stable_resolution / GOLD_STABLE; UNDEFINED if denominator is zero",
+    "stable_resolution_count": "count(stable_resolution)",
+    "unsafe_false_stability_count": "count(unsafe_false_stability)",
+    "usable_coverage": "machine_definitive on gold_scorable / gold_scorable"
+  },
+  "qualification_before_fresh_selection": {
+    "hard_safety_gates": [
+      "no regression assertion from mere absence of evidence",
+      "no preservation assertion from name-only or decorative-flow evidence",
+      "negative-control semantic-preserving renames/wrapper/serialization transformations do not become regression solely due to representation change",
+      "independent checker disagreement blocks definitive promotion for that artifact"
+    ],
+    "required": [
+      "exact E2 engine/qualification identity freeze",
+      "development-universe manifest and fresh-repository exclusion set",
+      "specialization audit",
+      "determinism replay on identical inputs",
+      "mutation-algebra positive and negative controls",
+      "independent checker qualification for every definitive prediction type",
+      "frozen fresh-selection protocol"
+    ]
+  },
+  "repair_and_second_profile_boundary": {
+    "repair_after_slot_closure": "allowed only as post-result repair research; never counted as first-prediction performance",
+    "repair_on_fresh_slot_before_first_machine_and_gold_closure": false,
+    "second_profile_before_primary_fresh_block_closure": false
+  },
+  "reporting_rules": [
+    "Publish every pristine slot, contaminated slot, objective screening rejection, machine abstention, gold incomplete result, and infrastructure invalidity.",
+    "Report exact numerators and denominators next to every rate.",
+    "With the planned n=8 block, do not present p-values or population precision/recall/accuracy as established facts.",
+    "If an interval is shown, label it exploratory/descriptive and do not use it to manufacture a population claim.",
+    "Separate machine structural prediction from canonical gold consequence verdict in all tables and prose.",
+    "No cherry-picked subset may replace the frozen primary block; post-hoc strata are explicitly exploratory.",
+    "All first machine artifacts, gold artifacts, checker outputs, and archive identities must remain reproducible from exact frozen revisions where licensing and retention permit."
+  ],
+  "schema": "risu.diff-e2-evaluation-contract/v0.1",
+  "scientific_question": "Can a prospectively frozen E2 increase selective consequence coverage and positive regression detection relative to frozen E1 on a new blind block without introducing unsafe false-stability or unsupported regression claims?",
+  "scoring_definitions": {
+    "conservative_abstention_on_stable": "machine ASSURANCE_INCOMPLETE and gold GOLD_STABLE",
+    "fail_closed_abstention_on_regression": "machine ASSURANCE_INCOMPLETE and gold GOLD_REGRESSION",
+    "false_regression": "machine REGRESSION_WITNESS and gold GOLD_STABLE",
+    "gold_incomplete_definitive_machine_prediction": "machine definitive and gold GOLD_INCOMPLETE; report separately as an epistemic-boundary diagnostic, not silently score as correct or incorrect",
+    "gold_scorable": "gold is GOLD_STABLE or GOLD_REGRESSION",
+    "infrastructure_invalid": "machine or gold infrastructure invalid; exclude from semantic denominators and report separately",
+    "machine_definitive": "machine is PRESERVATION_EVIDENCE or REGRESSION_WITNESS",
+    "positive_regression_detection": "machine REGRESSION_WITNESS and gold GOLD_REGRESSION",
+    "stable_resolution": "machine PRESERVATION_EVIDENCE and gold GOLD_STABLE",
+    "unsafe_false_stability": "machine PRESERVATION_EVIDENCE and gold GOLD_REGRESSION"
+  },
+  "semantic_authority": {
+    "gold_theory": "CTV v0.1 plus already-frozen amendment 001",
+    "machine_candidate": "future exact E2 freeze produced under the E2 development charter",
+    "paired_legacy_baseline": {
+      "engine_identity_digest": "ed33d12881fa1395d1332ae165b5638518b2d472a7a520f0ae893d07e3b146b7",
+      "freeze_git_blob": "37bf9b02d6fa4d3bd6f29d194635211481876998",
+      "freeze_path": "experiments/risu-diff-e1/E1_FREEZE.json",
+      "may_be_modified_for_comparison": false,
+      "system": "frozen E1"
+    }
+  },
+  "status": "FROZEN_AFTER_E1_CLOSURE_BEFORE_E2_IMPLEMENTATION"
+}

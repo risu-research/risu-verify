@@ -1,0 +1,142 @@
+{
+  "audit_requirements": [
+    "pre-E2-freeze development-universe manifest",
+    "specialization-literal/configuration audit",
+    "fresh-selection protocol timestamped before candidate screening",
+    "exact E2 engine and qualification identity freeze before fresh selection",
+    "block-level first-prediction matrix seal before gold authoring",
+    "contamination ledger including null/no-incident statement",
+    "post-run tree/commit and artifact identity audit"
+  ],
+  "authority_firewall": {
+    "canonical_gold_requires": "the frozen CTV adjudication protocol, admissible authoritative evidence, author acceptance, frozen generic primary checker, and independent checker as applicable",
+    "gold_to_machine_preseal_leak_forbidden": true,
+    "llm_or_static_extractor_is_gold": false,
+    "machine_prediction_is_gold": false,
+    "machine_to_gold_leak_forbidden": true,
+    "repair_synthesizer_is_gold": false
+  },
+  "base_commit": "078d73c1f0bf1975edf3063e40c20de066c94676",
+  "contamination_events": {
+    "examples": [
+      "human reads fresh target semantic source before its first machine seal",
+      "gold consequence semantics are authored or imported before the full machine matrix seal",
+      "engine, prompts, thresholds, acquisition rules, or expected outcomes change after seeing any fresh prediction or gold result",
+      "a selected fresh repository is discovered to have been used in E2 development target bytes",
+      "known-bug/issue evidence influenced inclusion despite a protocol ban",
+      "first machine prediction is replaced after failure rather than preserved",
+      "manual evidence is injected to rescue an unresolved machine obligation before seal"
+    ],
+    "mandatory_response": [
+      "freeze and preserve the contaminated attempt",
+      "record a machine-readable contamination incident with timing and exposed information",
+      "exclude the affected slot from pristine primary scoring",
+      "do not relabel the slot as pristine even if later replay is clean",
+      "do not substitute a new slot merely to restore the desired number of successful or scorable outcomes unless substitution was prospectively rule-bound to non-outcome eligibility failure"
+    ]
+  },
+  "development_universe_rule": {
+    "fresh_repo_exclusion": "Any exact repository whose target bytes are in the development universe is ineligible for the primary fresh held-out block.",
+    "manifest_must_include": [
+      "every exact repository and revision whose target bytes were used to implement/debug/qualify E2",
+      "every development fixture derived from real target bytes",
+      "every target-specific expected outcome used in a development assertion"
+    ],
+    "manifest_required_before_e2_freeze": true,
+    "organization_exclusion": "Not automatic; organization-level dependence is controlled by the fresh selection strata and reported explicitly."
+  },
+  "firewall_id": "RISU_DIFF_E2_CONTAMINATION_FIREWALL_001",
+  "fresh_block_preseal_embargo": {
+    "begins": "At first candidate screening under the fresh-selection protocol.",
+    "ends": "Only after the complete fresh-block E2 first-prediction matrix and paired E1 baseline matrix are cryptographically sealed.",
+    "human_may_not_see": [
+      "selected target source-file contents",
+      "machine prediction values before the full block matrix is sealed when the workflow can technically avoid revealing them",
+      "gold source-semantic reconstruction",
+      "issue/PR discussions identifying a known semantic bug as a selection rationale",
+      "manual semantic interpretation of acquired target bytes",
+      "repair suggestions for any fresh slot"
+    ],
+    "human_may_see": [
+      "protocol-approved repository metadata necessary for deterministic eligibility screening",
+      "operation surface metadata explicitly allowed by the selection protocol",
+      "machine-produced nonsemantic run/infrastructure status required to complete the seal"
+    ],
+    "machine_may_consume": "Only inputs permitted by the frozen E2 engine and fresh-selection protocol; no human semantic answer injection or web search may be added during the block.",
+    "strict_zero_byte_claim_rule": "Do not claim strict zero-byte human blindness if connector/API metadata overreturn or logs exposed target content; disclose the exact exposure and classify impact."
+  },
+  "information_classes": {
+    "F0_FROZEN_HISTORY": {
+      "definition": "Immutable E0/E1 protocols, predictions, gold models, closures, checker outputs, and provenance.",
+      "may_be_counted_as_fresh_e2_evaluation": false,
+      "may_be_rewritten": false,
+      "may_inform_e2_development": true
+    },
+    "F1_POST_RESULT_DEVELOPMENT": {
+      "fresh_e2_evaluation_eligible": false,
+      "gold_may_be_used_for_debugging": true,
+      "members": [
+        "corpus01-unit-003",
+        "corpus01-unit-004",
+        "corpus01-unit-006",
+        "corpus01-unit-007",
+        "corpus01-unit-008"
+      ],
+      "required_label": "DEVELOPMENT_ONLY_NOT_HELDOUT",
+      "target_bytes_may_be_inspected_for_development": true
+    },
+    "F2_CONTAMINATED_FORENSICS": {
+      "allowed_use": [
+        "contamination-protocol lessons",
+        "infrastructure forensics"
+      ],
+      "fresh_e2_evaluation_eligible": false,
+      "may_be_rehabilitated_as_pristine": false,
+      "members": [
+        "corpus01-unit-005"
+      ],
+      "semantic_development_benchmark_eligible": false
+    },
+    "F3_SYNTHETIC_OR_MUTATION_DEVELOPMENT": {
+      "definition": "New synthetic or carrier-neutral mutation fixtures created before the E2 implementation freeze.",
+      "expected_truth_must_be_predeclared_before_running_e2": true,
+      "fresh_e2_evaluation_eligible": false
+    },
+    "F4_FRESH_HELDOUT": {
+      "definition": "A target slot selected only after the exact E2 engine/qualification freeze and under a separately frozen fresh-selection protocol.",
+      "engine_or_threshold_changes_during_block": false,
+      "first_machine_result_replaceable": false,
+      "gold_semantics_consumed_before_first_machine_seal": false,
+      "human_target_semantic_inspection_before_first_machine_seal": false
+    }
+  },
+  "purpose": "Prevent post-result learning, target-specific specialization, human semantic leakage, contamination replacement, and post-hoc rescoring from being mistaken for fresh E2 evidence.",
+  "replay_and_learning_rules": {
+    "early_stopping_by_outcome": false,
+    "exact_replay_before_gold": "Allowed for infrastructure recovery only when inputs and frozen bytes are identical; original first seal remains canonical.",
+    "learn_from_fresh_slot": "Allowed only after the complete fresh block's machine-first and gold classification are closed; the entire closed block then becomes development data for a later engine generation.",
+    "rerun_after_engine_change": "May be reported only as post-result development/ablation, never as the fresh first prediction."
+  },
+  "schema": "risu.diff-e2-contamination-firewall/v0.1",
+  "specialization_firewall": {
+    "allowed_generalization": [
+      "language-generic AST/dataflow improvements",
+      "carrier-neutral version/identity coordinate rules",
+      "general object-property and serialization flow",
+      "general read-bind-compare-guard-effect relations",
+      "general retrieved-but-discarded and overwritten-before-effect relations",
+      "bounded deterministic acquisition rules"
+    ],
+    "forbidden_engine_features": [
+      "repository-name special cases",
+      "organization-name special cases",
+      "API-name special cases",
+      "development-target file-path allowlists or ranking bonuses",
+      "development-target symbol/function/class special cases",
+      "hard-coded expected outcomes from development cases",
+      "gold-derived thresholds that are not represented as general carrier-neutral rules and qualified on synthetic/mutation controls"
+    ],
+    "review_requirement": "Before E2 freeze, a specialization audit must show that no forbidden development-target literal or equivalent target-specific rule is present in engine, configuration, prompts, fixtures used as authorities, or selection weights."
+  },
+  "status": "FROZEN_AFTER_E1_CLOSURE_BEFORE_E2_IMPLEMENTATION"
+}

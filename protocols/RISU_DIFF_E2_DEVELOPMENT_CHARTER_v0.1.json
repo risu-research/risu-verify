@@ -1,0 +1,195 @@
+{
+  "allowed_development_inputs": [
+    "new synthetic fixtures with predeclared expected structural truth",
+    "mutation-algebra fixtures derived from carrier-neutral transformations",
+    "exact bytes from explicitly classified POST_RESULT_DEVELOPMENT_ONLY cases for integration/debugging",
+    "historical frozen artifacts for diagnosis and paired replay",
+    "authoritative public semantics used only as development evidence, never as hidden future-gold input"
+  ],
+  "base_scientific_state": {
+    "base_commit": "078d73c1f0bf1975edf3063e40c20de066c94676",
+    "base_tree": "ef12e8a6a36e019be1373409d80bd4c9a747d819",
+    "ctv_amendment_001": {
+      "git_blob": "7ca86d42fa56a4aecb67c7ca1c9fc4418ec4c716",
+      "path": "protocols/CTV_META_THEORY_v0.1_AMENDMENT_001.json"
+    },
+    "ctv_meta_theory": {
+      "git_blob": "c53766c7bb1b322b4b706ddac5e90d957eb8e397",
+      "path": "protocols/CTV_META_THEORY_v0.1.json"
+    },
+    "e1_freeze": {
+      "engine_identity_digest": "ed33d12881fa1395d1332ae165b5638518b2d472a7a520f0ae893d07e3b146b7",
+      "git_blob": "37bf9b02d6fa4d3bd6f29d194635211481876998",
+      "path": "experiments/risu-diff-e1/E1_FREEZE.json"
+    },
+    "e1_gold_closure": {
+      "git_blob": "d41a80dd850db56cb22ce2e46e68693d4eb6e488",
+      "path": "experiments/e1-heldout-matrix-005-008/E1_GOLD_CLOSURE.json",
+      "status_required": "E1_REMAINING_HELDOUT_GOLD_CLOSED"
+    },
+    "e1_machine_vs_gold": {
+      "git_blob": "3ab26d124e404ee09ef7243b9c7e9d688ac071f0",
+      "path": "experiments/e1-heldout-matrix-005-008/MACHINE_VS_GOLD_CANONICAL.json"
+    },
+    "e1_protocol": {
+      "git_blob": "61c8d11cc16930e48b502438e39c760fecd1938b",
+      "path": "experiments/risu-diff-e1/E1_PROTOCOL.json"
+    },
+    "repository": "risu-research/risu-verify"
+  },
+  "charter_id": "RISU_DIFF_E2_DEVELOPMENT_CHARTER_001",
+  "development_behavioral_anchors": {
+    "purpose": "Development-only objectives; success here is not fresh generalization evidence.",
+    "unit004": "E2 should be capable of emitting a positive regression witness or an explicitly diagnosed remaining obligation; a repository-specific special case is prohibited.",
+    "unit006": "E2 should be capable of establishing the carried resourceVersion/guard path or explicitly localizing the remaining structural obligation.",
+    "unit007": "E2 must not invent the missing authoritative external consequence/refinement; continued abstention is admissible and may be the correct endpoint.",
+    "unit008": "E2 should be capable of identifying retrieved-but-discarded last_commit_id and the resulting effect-boundary guard loss or explicitly localizing the remaining structural obligation."
+  },
+  "development_case_roles": {
+    "corpus01-unit-003": {
+      "fresh_heldout_eligible": false,
+      "historical_machine": "E0_PREDICTED_ASSURANCE_INCOMPLETE",
+      "known_signal": "acquisition precision and structural extraction ceiling",
+      "role": "POST_RESULT_DEVELOPMENT_ONLY"
+    },
+    "corpus01-unit-004": {
+      "fresh_heldout_eligible": false,
+      "gold": "CONSEQUENCE_REGRESSION",
+      "historical_machine": "E1_PREDICTED_ASSURANCE_INCOMPLETE",
+      "known_signal": "conditional effect collapsed to unconditional delete; zero-evidence fail-closed acquisition failure",
+      "role": "POST_RESULT_DEVELOPMENT_ONLY"
+    },
+    "corpus01-unit-005": {
+      "fresh_heldout_eligible": false,
+      "historical_classification": "PROTOCOL_CONTAMINATED_NO_PRISTINE_E1_ATTEMPT",
+      "role": "CONTAMINATED_FORENSICS_ONLY",
+      "semantic_development_benchmark_eligible": false
+    },
+    "corpus01-unit-006": {
+      "fresh_heldout_eligible": false,
+      "gold": "CONSEQUENCE_STABLE_IN_DECLARED_SCOPE",
+      "historical_machine": "E1_PREDICTED_ASSURANCE_INCOMPLETE",
+      "known_signal": "resourceVersion survives object modeling and serialization into effectful PATCH",
+      "role": "POST_RESULT_DEVELOPMENT_ONLY"
+    },
+    "corpus01-unit-007": {
+      "fresh_heldout_eligible": false,
+      "gold": "ASSURANCE_INCOMPLETE",
+      "historical_machine": "E1_PREDICTED_ASSURANCE_INCOMPLETE",
+      "known_signal": "target forwards version but authoritative external stale/non-next consequence and refinement remain unresolved",
+      "role": "POST_RESULT_DEVELOPMENT_ONLY"
+    },
+    "corpus01-unit-008": {
+      "fresh_heldout_eligible": false,
+      "gold": "CONSEQUENCE_REGRESSION",
+      "historical_machine": "E1_PREDICTED_ASSURANCE_INCOMPLETE",
+      "known_signal": "current identity can be retrieved but is discarded before existing-file PUT; stale and match worlds collapse",
+      "role": "POST_RESULT_DEVELOPMENT_ONLY"
+    }
+  },
+  "development_exit_gates": [
+    "deterministic outputs under repeated identical inputs",
+    "zero regression-from-absence in adversarial qualification",
+    "zero preservation-from-name-only or decorative-flow evidence in adversarial qualification",
+    "negative-control transformations that preserve consequence semantics do not become regression solely because of renaming, wrapper depth, or serialization spelling",
+    "positive mutation families that remove, overwrite, discard, bypass, or misbind a consequence-defining coordinate are detectable when the required evidence is within the declared E2 scope",
+    "all exact repositories/bytes used in development are frozen into a development-universe manifest before the fresh evaluation block",
+    "exact E2 engine and qualification bytes are frozen before any fresh held-out target is selected or semantically inspected"
+  ],
+  "development_target_byte_rule": {
+    "condition": "Their use must be recorded in the E2 development-universe manifest before the E2 implementation freeze.",
+    "consequence": "Any repository whose target bytes are used for E2 development or qualification becomes ineligible for the primary fresh held-out block.",
+    "engine_specialization_forbidden": true,
+    "exact_development_target_bytes_may_be_used": true
+  },
+  "e2_architecture_obligations": {
+    "A1_acquisition": {
+      "must_fail_closed_on": [
+        "unsupported material language",
+        "material parse failure",
+        "budget exhaustion before role closure"
+      ],
+      "required": [
+        "bounded deterministic acquisition",
+        "TypeScript/JavaScript support in addition to retained Python/Go support",
+        "content-derived dependency expansion without unbounded crawl"
+      ]
+    },
+    "A2_normalized_flow": {
+      "goal": "Represent consequential coordinate survival across aliases, object properties, keyword/field mappings, helper calls, wrappers, and serialization renames.",
+      "required_relations": [
+        "CARRIES",
+        "DERIVES",
+        "BINDS_TO",
+        "COMPARES",
+        "GUARDS",
+        "PRECEDES",
+        "MUTATES",
+        "REJECTS_AS",
+        "EVIDENCED_BY"
+      ]
+    },
+    "A3_coordinate_survival": {
+      "required_capabilities": [
+        "surface-or-source coordinate to effect-boundary survival",
+        "current-state read to returned identity propagation",
+        "retrieved-but-discarded identity detection",
+        "overwritten-or-bypassed carrier detection",
+        "wrong-coordinate or wrong-resource binding discrimination",
+        "serialization rename tracking such as snake_case to wire-field spelling"
+      ]
+    },
+    "A4_guard_effect_linkage": {
+      "goal": "Distinguish a decorative comparison from a guard that actually conditions the declared effect or stale-mismatch outcome.",
+      "minimum_evidence": "explicit evidence-backed control/data-flow relation; name similarity alone is insufficient"
+    },
+    "A5_explanation_certificate": {
+      "every_edge_requires": [
+        "exact revision",
+        "evidence path",
+        "source span or deterministic structural reference",
+        "extractor/derivation identity"
+      ],
+      "producer_trusted": false,
+      "required_path_shape": "semantic coordinate -> representation/flow -> guard or loss point -> effect -> consequence obligation"
+    },
+    "A6_prediction_namespace": [
+      "E2_PREDICTED_PRESERVATION_EVIDENCE",
+      "E2_PREDICTED_REGRESSION_WITNESS",
+      "E2_PREDICTED_ASSURANCE_INCOMPLETE",
+      "INFRASTRUCTURE_INVALID_BEFORE_PREDICTION"
+    ],
+    "A7_independent_checking": {
+      "preservation": "mandatory independent finite/refinement certificate check within the declared scope",
+      "regression": "mandatory independent recomputation of the concrete distinction-collapse witness",
+      "symbolic_proof_lane": "optional shadow lane until separately qualified; producer proof search remains outside the trusted base"
+    }
+  },
+  "effective_scope": "E2 development only; does not alter any E0/E1 or CTV scientific record",
+  "normative_invariants": [
+    "CTV v0.1 plus its already-frozen amendment remains the semantic authority for canonical gold verdicts; E2 does not rewrite those semantics.",
+    "All E0/E1 first predictions, gold models, closure records, and checker outputs are immutable historical scientific objects.",
+    "E2 machine outputs remain predictions/evidence and never become canonical scientific consequence authority by themselves.",
+    "Absence of evidence may cause abstention but may never by itself produce a regression or preservation upgrade.",
+    "Every definitive E2 prediction must be independently checkable from a bounded evidence-bearing certificate or witness.",
+    "Repository-specific names, paths, symbols, organizations, or API identifiers from development targets may not become special-case engine logic.",
+    "Any post-freeze normative change to this charter requires a new numbered version or amendment stating timing relative to all observed E2 development and evaluation results."
+  ],
+  "post_development_rule": {
+    "fresh_evaluation": "Only a new precommitted block governed by the frozen E2 evaluation contract may support fresh E2 generalization claims.",
+    "repair_synthesis": "May be developed after or alongside E2, but repairs to fresh held-out targets may occur only after that target's first machine result and gold classification are irreversibly closed.",
+    "second_profile": "Forbidden as a primary E2 objective; may be proposed only after the fresh E2 block is closed and repeated evidence supports another carrier-neutral primitive."
+  },
+  "schema": "risu.diff-e2-development-charter/v0.1",
+  "scientific_objective": {
+    "non_objectives": [
+      "reinterpret or upgrade E0/E1 results",
+      "claim population accuracy from development cases",
+      "make the machine producer canonical consequence authority",
+      "open a second consequence profile before the E2 fresh held-out block is closed",
+      "optimize for a desired number of regressions or stable cases"
+    ],
+    "primary": "Increase machine-first selective coverage and positive consequence-regression detection while preserving fail-closed behavior and the frozen CTV verdict semantics."
+  },
+  "status": "FROZEN_AFTER_E1_CLOSURE_BEFORE_E2_IMPLEMENTATION"
+}
