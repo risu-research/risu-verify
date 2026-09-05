@@ -1,0 +1,79 @@
+{
+  "author_acceptance_path": "corpus/0.1/units/002-octokit-pulls-merge/AUTHOR_ACCEPTANCE.json",
+  "authoring_freeze_commit": "ce4c3a311bcf9f6b74b43af24e8732d1af8fd5ac",
+  "execution_infrastructure": {
+    "bound_evidence_compiler": "tools/corpus01_bound_evidence.py",
+    "name": "RISU Corpus protocol-preserving infrastructure",
+    "primary_runner": "tools/corpus01_primary_v08.py",
+    "version": "0.8",
+    "zero_hand_edited_hash_scope": "PRIMARY_SEALING_AND_EXECUTION_METADATA"
+  },
+  "frozen_paths": [
+    {
+      "path": "corpus/0.1/units/002-octokit-pulls-merge/AUTHOR_ACCEPTANCE.json",
+      "sha256": "2d0eb90c0175a6454ca67d5e5817119cdc590e5a28eb7d5a6f7529caf5d35e71"
+    },
+    {
+      "path": "corpus/0.1/units/002-octokit-pulls-merge/BOUNDARY_MODEL.json",
+      "sha256": "8284797a0ccd3c7bbb23c75ecb617e284ac00f28589a42a0b21492f55ced6430"
+    },
+    {
+      "path": "corpus/0.1/units/002-octokit-pulls-merge/SOURCE_LANE.json",
+      "sha256": "a141d38509796aaf871e812ad4007d14706b9625150641ffc8e190774c4fb79b"
+    },
+    {
+      "path": "corpus/0.1/units/002-octokit-pulls-merge/TARGET_LANE.json",
+      "sha256": "206650add24f2dbb5a0567f4cf034d5c3eb99098507a3f06c046392c552ad810"
+    },
+    {
+      "path": "corpus/0.1/units/002-octokit-pulls-merge/evidence/source-github-merge-sha.json",
+      "sha256": "5a74889a43eb45dc5b9cb24c1931ac82f75bf40d4305137c4a822d5295c8c050"
+    },
+    {
+      "path": "corpus/0.1/units/002-octokit-pulls-merge/evidence/target-octokit-dependency-pin.json",
+      "sha256": "6b71de7990d2c5e617f0e47f6c7022b1c98f0e2b49ae7eddcf09ecb2754a82cd"
+    },
+    {
+      "path": "corpus/0.1/units/002-octokit-pulls-merge/evidence/target-octokit-error-path.json",
+      "sha256": "b706268dc8ea68fb265646efec021bf4d7ff5ad5996d7a827b227dce65749cca"
+    },
+    {
+      "path": "corpus/0.1/units/002-octokit-pulls-merge/evidence/target-octokit-merge-surface.json",
+      "sha256": "ff2e8f757aee42642fed087e49ef504ea0107c09763cce95fb49f68cafb2a2d5"
+    },
+    {
+      "path": "corpus/0.1/units/002-octokit-pulls-merge/evidence/target-octokit-request-path.json",
+      "sha256": "dd8b12ad2a84ceb69bb0a36d97b26415ed7e866c31cf0e93f6cd55a1605e43cf"
+    },
+    {
+      "path": "corpus/0.1/units/002-octokit-pulls-merge/evidence/target-octokit-runtime-qualification.json",
+      "sha256": "c1ad608332405e21b24c6744371156fa09d4e7bb7b37193b42e7b3244c63df77"
+    },
+    {
+      "path": "corpus/0.1/units/002-octokit-pulls-merge/vbe.envelope.json",
+      "sha256": "1c82258ec2c174354740a2377403442e05f731059f178490ba574bf778cc71d0"
+    },
+    {
+      "path": "corpus/0.1/units/002-octokit-pulls-merge/vbe.instance.json",
+      "sha256": "5e3552f5805039f17bece68a99a1830e634f185e2d1cbd9017ba178f364eda5c"
+    }
+  ],
+  "generated_by": "tools/corpus01_unit_harness.py build-manifest",
+  "instance_id": "corpus01-002-octokit-pulls-merge-current",
+  "instance_path": "corpus/0.1/units/002-octokit-pulls-merge/vbe.instance.json",
+  "post_freeze_allowed_paths": [
+    "corpus/0.1/units/002-octokit-pulls-merge/PRIMARY_RUN_MANIFEST_AMENDMENT005.json",
+    "corpus/0.1/units/002-octokit-pulls-merge/UNIT_SEAL_AMENDMENT005.json"
+  ],
+  "primary_verdict_observed_before_manifest": false,
+  "protocol_preserving_generation": {
+    "hashes_computed_from_frozen_bytes": true,
+    "scientific_input_bytes_modified": false,
+    "semantic_fields_inferred": false
+  },
+  "schema": "risu.corpus-primary-run-manifest/v0.1alpha1",
+  "seal_record_path": "corpus/0.1/units/002-octokit-pulls-merge/UNIT_SEAL_AMENDMENT005.json",
+  "status": "READY_FOR_FIRST_PRIMARY_EXECUTION",
+  "tracked_primary_result_path": "corpus/0.1/units/002-octokit-pulls-merge/primary-result/PRIMARY_RESULT.json",
+  "unit_id": "corpus01-unit-002"
+}
