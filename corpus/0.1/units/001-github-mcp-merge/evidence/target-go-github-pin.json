@@ -1,0 +1,24 @@
+{
+  "boundary": "This establishes the source-library revision selected by the target repository; it does not by itself establish target runtime behavior.",
+  "byte_observations": [
+    {
+      "id": "TGT_LIBRARY_PIN",
+      "observation": "go.mod pins github.com/google/go-github/v89 to pseudo-version commit 34349a88bac3."
+    }
+  ],
+  "evidence_id": "CORPUS01-U001-TARGET-GO-GITHUB-PIN",
+  "evidence_layers": [
+    "L0_IDENTITY_OR_UPSTREAM_REFERENCE",
+    "L1_PINNED_BYTES_OR_IMMUTABLE_ARTIFACT"
+  ],
+  "evidence_schema": "risu.corpus-evidence/v0.1alpha1",
+  "lane": "TARGET",
+  "strength": "PINNED_TARGET_DEPENDENCY_MANIFEST",
+  "unit_id": "corpus01-unit-001",
+  "upstream": {
+    "commit": "9205304fedf10540c33ae41fcf6352fa97dcc9be",
+    "git_blob_sha1": "f0237a1625c1ce28b86475e26c59f1c9aded6ee5",
+    "path": "go.mod",
+    "repository": "github/github-mcp-server"
+  }
+}
