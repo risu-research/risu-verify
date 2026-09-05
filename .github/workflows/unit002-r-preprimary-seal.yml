@@ -12,7 +12,7 @@ permissions:
   contents: read
 
 jobs:
-  audit-and-seal:
+  independent-audit:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout exact authoring head
@@ -21,10 +21,7 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
 
-      - name: Restore executable entrypoints
-        run: chmod +x risu-verify tools/*.py
-
-      - name: Prove AUTHOR_ACCEPTED is status-only from frozen draft
+      - name: Prove amended AUTHOR_ACCEPTED instance remains status-only from corrected draft
         run: python tools/unit002r_acceptance_verify.py
 
       - name: Read-only protocol-preserving Unit 002-R audit
@@ -32,6 +29,24 @@ jobs:
           python tools/corpus01_unit_harness.py audit \
             corpus/0.1/units/002-octokit-pulls-merge \
             --json
+
+  clean-seal:
+    needs: independent-audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fresh checkout of exact authoring head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+
+      - name: Assert pristine seal boundary
+        run: |
+          test -z "$(git status --porcelain)"
+          test "$(git rev-parse HEAD)" = "${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}"
+
+      - name: Re-verify acceptance and Amendment 003 on pristine runner
+        run: python tools/unit002r_acceptance_verify.py
 
       - name: Generate v0.8 manifest and seal from committed bytes
         run: |
@@ -43,17 +58,23 @@ jobs:
       - name: Assert seal is non-primary and mechanically ready
         run: |
           python - <<'PY'
-          import json
+          import json, subprocess
           from pathlib import Path
           u = Path('corpus/0.1/units/002-octokit-pulls-merge')
           seal = json.loads((u/'UNIT_SEAL.json').read_text())
           manifest = json.loads((u/'PRIMARY_RUN_MANIFEST.json').read_text())
+          head = subprocess.check_output(['git','rev-parse','HEAD'], text=True).strip()
           assert seal['status'] == 'READY_FOR_PRIMARY'
+          assert seal['authoring_freeze_commit'] == head
           assert seal['controls']['primary_verifier_executed_during_seal'] is False
           assert seal['controls']['semantic_outcome_observed_during_seal'] is False
+          assert seal['controls']['scientific_input_bytes_modified'] is False
           assert seal['controls']['hashes_in_primary_manifest_generated_from_frozen_bytes'] is True
           assert manifest['primary_verdict_observed_before_manifest'] is False
-          assert manifest['authoring_freeze_commit'] == __import__('subprocess').check_output(['git','rev-parse','HEAD'], text=True).strip()
+          assert manifest['authoring_freeze_commit'] == head
+          assert manifest['protocol_preserving_generation']['semantic_fields_inferred'] is False
+          assert manifest['protocol_preserving_generation']['scientific_input_bytes_modified'] is False
+          assert manifest['protocol_preserving_generation']['hashes_computed_from_frozen_bytes'] is True
           PY
 
       - name: Upload generated seal outputs
