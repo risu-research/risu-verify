@@ -1,0 +1,56 @@
+name: RISU CTV meta-theory freeze
+
+on:
+  pull_request:
+    paths:
+      - docs/CONSEQUENCE_TRANSLATION_VALIDATION_v0.1.md
+      - protocols/CTV_META_THEORY_v0.1.json
+      - protocols/CTV_META_THEORY_v0.1_SEAL.json
+      - schemas/consequence-ir.v0.1alpha1.schema.json
+      - schemas/refinement-map.v0.1alpha1.schema.json
+      - tools/ctv_meta_theory_verify.py
+      - tests/test_ctv_meta_theory.py
+      - .github/workflows/ctv-meta-theory.yml
+  push:
+    branches: [main]
+    paths:
+      - docs/CONSEQUENCE_TRANSLATION_VALIDATION_v0.1.md
+      - protocols/CTV_META_THEORY_v0.1.json
+      - protocols/CTV_META_THEORY_v0.1_SEAL.json
+      - schemas/consequence-ir.v0.1alpha1.schema.json
+      - schemas/refinement-map.v0.1alpha1.schema.json
+      - tools/ctv_meta_theory_verify.py
+      - tests/test_ctv_meta_theory.py
+      - .github/workflows/ctv-meta-theory.yml
+
+permissions:
+  contents: read
+
+jobs:
+  meta-theory:
+    runs-on: ubuntu-24.04
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Validate normative JSON syntax
+        run: |
+          python - <<'PY'
+          import json, pathlib
+          for p in [
+              pathlib.Path("protocols/CTV_META_THEORY_v0.1.json"),
+              pathlib.Path("protocols/CTV_META_THEORY_v0.1_SEAL.json"),
+              pathlib.Path("schemas/consequence-ir.v0.1alpha1.schema.json"),
+              pathlib.Path("schemas/refinement-map.v0.1alpha1.schema.json"),
+          ]:
+              json.loads(p.read_text())
+              print("PASS", p)
+          PY
+      - name: Verify exact freeze, CIR contract, and anti-retroactivity
+        run: python tools/ctv_meta_theory_verify.py
+      - name: Exhaustive finite theory sanity checks
+        run: python -m unittest tests.test_ctv_meta_theory
+      - name: Existing prospective Corpus protocol remains valid
+        run: python tools/corpus01_validate.py --json
