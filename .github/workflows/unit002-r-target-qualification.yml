@@ -1,0 +1,85 @@
+name: RISU Unit 002-R target qualification
+
+on:
+  pull_request:
+    paths:
+      - "corpus/0.1/units/002-octokit-pulls-merge/**"
+      - "tools/unit002r_octokit_probe.mjs"
+      - ".github/workflows/unit002-r-target-qualification.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  octokit-carrier:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout RISU authoring branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+
+      - name: Checkout prospectively enrolled Octokit target
+        uses: actions/checkout@v4
+        with:
+          repository: octokit/rest.js
+          ref: cd9cb8cd4965d99c7dac8c87d249308956250be3
+          path: .external/octokit-rest
+          persist-credentials: false
+
+      - name: Verify exact target and locked dependency identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C .external/octokit-rest rev-parse HEAD)" = "cd9cb8cd4965d99c7dac8c87d249308956250be3"
+          test "$(git -C .external/octokit-rest hash-object package.json)" = "f9b3335266b8b51fdf1e8a58a0a9e4eeea32d9ba"
+          test "$(git -C .external/octokit-rest hash-object package-lock.json)" = "1efd40aec3a38f25102554579e1fd31cf6c14aab"
+          node - <<'NODE'
+          const lock = require("./.external/octokit-rest/package-lock.json");
+          const expect = {
+            "node_modules/@octokit/plugin-rest-endpoint-methods": "17.0.0",
+            "node_modules/@octokit/endpoint": "11.0.2",
+            "node_modules/@octokit/request": "10.0.6",
+          };
+          for (const [key, version] of Object.entries(expect)) {
+            if (lock.packages[key]?.version !== version) {
+              throw new Error(`${key}: expected ${version}, saw ${lock.packages[key]?.version}`);
+            }
+          }
+          NODE
+
+      - name: Install exact target lockfile and build target
+        working-directory: .external/octokit-rest
+        run: |
+          npm ci --ignore-scripts
+          node scripts/build.mjs
+
+      - name: Execute target-only 200/409 carrier qualification
+        run: |
+          mkdir -p .risu/unit002-r-target-qualification
+          node tools/unit002r_octokit_probe.mjs \
+            .external/octokit-rest \
+            .risu/unit002-r-target-qualification/RESULT.json
+
+      - name: Assert qualification cannot masquerade as a primary
+        run: |
+          python - <<'PY'
+          import json
+          p = ".risu/unit002-r-target-qualification/RESULT.json"
+          x = json.load(open(p, encoding="utf-8"))
+          assert x["status"] == "PASS"
+          assert x["provider_live_service_contacted"] is False
+          assert x["primary_risu_verifier_executed"] is False
+          assert x["assertions"]["reviewed_sha_preserved_in_json_body"] is True
+          assert x["assertions"]["mismatch_409_rejects"] is True
+          PY
+
+      - name: Upload target qualification
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit002-r-octokit-target-qualification-${{ github.sha }}-${{ github.run_id }}
+          path: .risu/unit002-r-target-qualification/RESULT.json
+          if-no-files-found: error
+          retention-days: 90
