@@ -1,0 +1,142 @@
+{
+  "schema": "risu.e1-heldout-matrix-execution-freeze/v0.1alpha1",
+  "freeze_id": "E1_REMAINING_HELDOUT_MATRIX_005_008_EXECUTION_FREEZE_001",
+  "status": "FINAL_MATRIX_EXECUTION_FROZEN_BEFORE_TARGET_TREE_ACCESS",
+  "parent_binding_commit": "86ed08305b352444e22ede2dc3525f89c39acb27",
+  "selection_protocol_id": "E1_REMAINING_HELDOUT_MATRIX_005_008_SELECTION_001",
+  "selection_protocol_git_blob": "ca2f46766b45ee81ce063d68e71a549979dc05c4",
+  "protocol_violation_git_blob": "1bf09b987340e16ecd51d375be505ff2fef80e9d",
+  "binding_freeze_git_blob": "7feb6f15acf8446b388732f36669ec1c037de433",
+  "binding_git_blobs": {
+    "unit005": "5d00c1ba537b1d428ddd39c43b998590c94aced9",
+    "unit006": "d753cca16d06b51d6291da66c1ea99046a81f4a5",
+    "unit007": "1a32a7cc879fe4b60181872d7ff3329d648d1849",
+    "unit008": "16a167840bd3d08bd14b817234b1ba03d10dc1e7"
+  },
+  "frozen_e1": {
+    "freeze_id": "RISU_DIFF_E1_FREEZE_001",
+    "e1_freeze_git_blob": "37bf9b02d6fa4d3bd6f29d194635211481876998",
+    "engine_identity_digest": "ed33d12881fa1395d1332ae165b5638518b2d472a7a520f0ae893d07e3b146b7",
+    "engine_bytes_may_change": false,
+    "acquisition_algorithm_may_change": false,
+    "prediction_logic_may_change": false,
+    "unit004_gold_may_be_used_as_machine_input": false
+  },
+  "e1_freeze_git_blob": "37bf9b02d6fa4d3bd6f29d194635211481876998",
+  "reused_harness": {
+    "path": "tools/unit004_e1_exam.py",
+    "git_blob": "5272b62db86571c8ec19fe3770a7514d1d246e92",
+    "test_path": "tests/test_unit004_e1_exam.py",
+    "test_git_blob": "b483dfa4f98605cb721766635d9ca027865b5559",
+    "modified_for_matrix": false,
+    "legacy_unit004_schema_and_run_id_strings": "NONSEMANTIC_ARCHIVAL_IDENTIFIERS_ONLY"
+  },
+  "workflow": {
+    "path": ".github/workflows/e1-heldout-matrix-005-008.yml",
+    "workflow_git_blob": "2332c303ed66c1d9107d0ba9823064dd8cb58da1",
+    "trigger": "FIRST_PUSH_OF_THIS_ATOMIC_FREEZE_COMMIT",
+    "later_receipt_or_canonicalization_commits_retrigger": false,
+    "manual_or_rerun_after_first_attempt": "REPLICATION_OR_RECOVERY_ONLY_NEVER_REPLACEMENT"
+  },
+  "workflow_git_blob": "2332c303ed66c1d9107d0ba9823064dd8cb58da1",
+  "pristine_execution_order": [
+    "unit006",
+    "unit007",
+    "unit008"
+  ],
+  "unit005": {
+    "enrolled_slot_preserved": true,
+    "pristine_attempt_eligible": false,
+    "fresh_accuracy_eligible": false,
+    "replacement_allowed": false,
+    "first_matrix_role": "PROTOCOL_CONTAMINATED_NO_PRISTINE_E1_ATTEMPT",
+    "reason": "E1_MATRIX_005_008_PROTOCOL_VIOLATION_001",
+    "later_e1_role_if_run": "CONTAMINATED_CONTROL_ONLY"
+  },
+  "protocol_divergence_resolution": {
+    "original_protocol_text_required_all_four_attempts": true,
+    "later_recorded_unit005_contamination_makes_a_pristine_unit005_attempt_scientifically_invalid": true,
+    "resolution": "Preserve Unit005 as an enrolled contaminated slot with no pristine attempt, execute all and only the three still-pristine slots, make no substitution, and record this consequence before any remaining target tree access.",
+    "target_set_changed": false,
+    "enrollment_order_changed": false,
+    "e1_or_acquisition_changed": false,
+    "unit005_silently_dropped": false,
+    "scientific_integrity_precedence": "A known contaminated unit cannot be relabeled pristine merely to satisfy an earlier attempt-count sentence."
+  },
+  "preexecution_attestation": {
+    "unit006_008_target_tree_paths_consumed_before_freeze": false,
+    "unit006_008_target_blobs_consumed_before_freeze": false,
+    "unit006_008_predictions_executed_before_freeze": false,
+    "unit006_008_gold_started_before_freeze": false,
+    "prediction_values_observed_before_freeze": false,
+    "unit005_unexpected_prebinding_patch_content_exposure_recorded": true,
+    "unit005_e1_prediction_executed_before_freeze": false,
+    "unit005_gold_started_before_freeze": false
+  },
+  "execution_firewall": {
+    "all_three_pristine_exact_revisions_must_preflight_before_any_prediction": true,
+    "preflight_fetch_mode": "GIT_PROTOCOL_V2_DEPTH1_FILTER_BLOB_NONE",
+    "preselection_blob_object_count_required": 0,
+    "tree_path_lists_may_be_machine_generated": true,
+    "tree_path_lists_may_be_human_inspected_before_archive_receipt": false,
+    "round0_selection": "EXACT_REUSED_FROZEN_E1_HARNESS",
+    "adaptive_rounds": "EXACT_REUSED_FROZEN_E1_HARNESS_AT_MOST_TWO",
+    "manual_file_filler": false,
+    "human_semantic_reranking": false,
+    "nonselected_blob_access": false,
+    "prediction_stdout_and_stderr_redirected_into_archive": true,
+    "workflow_logs_may_disclose_prediction_values": false,
+    "workflow_logs_may_disclose_selected_paths": false,
+    "workflow_logs_may_disclose_target_content": false
+  },
+  "first_attempt_policy": {
+    "canonical_attempt": "FIRST_WORKFLOW_RUN_AT_THE_ATOMIC_EXECUTION_FREEZE_COMMIT",
+    "preflight_failure_blocks_all_pristine_predictions": true,
+    "after_prediction_phase_starts_each_pristine_slot_is_attempted_even_if_an_earlier_slot_fails": true,
+    "partial_first_attempt_is_archived": true,
+    "single_combined_artifact_after_all_attempts": true,
+    "per_unit_prediction_artifact_before_combined_archive": false,
+    "semantic_outcome_may_be_used_to_control_whether_archive_is_uploaded": false,
+    "workflow_may_fail_only_after_archive_upload": true,
+    "successful_first_prediction_may_be_replaced_by_rerun": false
+  },
+  "disclosure_barrier": {
+    "before_archive_identity_receipt_commit": {
+      "artifact_download_allowed": false,
+      "prediction_value_inspection_allowed": false,
+      "unresolved_role_inspection_allowed": false,
+      "selected_path_inspection_allowed": false,
+      "unit006_008_target_content_human_inspection_allowed": false
+    },
+    "archive_receipt_must_precede_human_result_inspection": true,
+    "gold_adjudication_must_remain_later_and_separate": true
+  },
+  "archive_requirements": {
+    "include_protocol": true,
+    "include_violation_record": true,
+    "include_binding_freeze": true,
+    "include_all_four_bindings": true,
+    "include_execution_freeze": true,
+    "include_e1_freeze": true,
+    "include_reused_harness_provenance": true,
+    "include_all_machine_generated_tree_path_and_selection_records": true,
+    "include_all_successful_or_failed_pristine_attempt_records": true,
+    "include_recursive_sha256_manifest": true,
+    "matrix_first_attempt_record_may_copy_prediction_values": false,
+    "matrix_first_attempt_record_may_copy_selected_paths": false
+  },
+  "admissible_pristine_machine_outcomes": [
+    "E1_PREDICTED_PRESERVATION_EVIDENCE",
+    "E1_PREDICTED_REGRESSION_WITNESS",
+    "E1_PREDICTED_ASSURANCE_INCOMPLETE",
+    "INFRASTRUCTURE_INVALID_BEFORE_OR_DURING_PREDICTION"
+  ],
+  "scientific_authority": {
+    "machine_prediction_is_gold_verdict": false,
+    "gold_required_for_accuracy_classification": true,
+    "unit005_counts_in_pristine_accuracy_denominator": false,
+    "unit006_008_may_count_after_independent_gold": true,
+    "population_prevalence_claimed": false
+  },
+  "freeze_rule": "Commit this execution freeze and the exact pinned workflow atomically as a child of the matrix binding freeze. After that commit, no workflow, harness, E1, binding, target set, target order, contamination status, acquisition rule, or disclosure rule may be changed in response to Unit006-008 target tree paths, target blobs, machine acquisition behavior, machine predictions, or later gold."
+}

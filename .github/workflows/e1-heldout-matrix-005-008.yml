@@ -1,0 +1,298 @@
+name: E1 remaining held-out matrix 005-008
+
+on:
+  push:
+    branches: [e1-heldout-matrix-005-008]
+    paths:
+      - '.github/workflows/e1-heldout-matrix-005-008.yml'
+      - 'experiments/e1-heldout-matrix-005-008/MATRIX_EXECUTION_FREEZE.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  qualify-frozen-matrix:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify final matrix freeze and unchanged frozen E1
+        run: |
+          python - <<'PY'
+          import json, subprocess
+          from pathlib import Path
+
+          root = Path('.')
+          freeze = json.loads(Path('experiments/e1-heldout-matrix-005-008/MATRIX_EXECUTION_FREEZE.json').read_text())
+          protocol = json.loads(Path('experiments/e1-heldout-matrix-005-008/MATRIX_SELECTION_PROTOCOL.json').read_text())
+          violation = json.loads(Path('experiments/e1-heldout-matrix-005-008/PROTOCOL_VIOLATION_001.json').read_text())
+          binding_freeze = json.loads(Path('experiments/e1-heldout-matrix-005-008/MATRIX_BINDING_FREEZE.json').read_text())
+          e1_freeze = json.loads(Path('experiments/risu-diff-e1/E1_FREEZE.json').read_text())
+
+          def blob(path):
+              return subprocess.check_output(['git','rev-parse',f'HEAD:{path}'], text=True).strip()
+
+          assert freeze['status'] == 'FINAL_MATRIX_EXECUTION_FROZEN_BEFORE_TARGET_TREE_ACCESS'
+          assert subprocess.check_output(['git','rev-parse','HEAD^'], text=True).strip() == freeze['parent_binding_commit']
+          assert blob('.github/workflows/e1-heldout-matrix-005-008.yml') == freeze['workflow_git_blob']
+          assert blob('experiments/e1-heldout-matrix-005-008/MATRIX_SELECTION_PROTOCOL.json') == freeze['selection_protocol_git_blob']
+          assert blob('experiments/e1-heldout-matrix-005-008/PROTOCOL_VIOLATION_001.json') == freeze['protocol_violation_git_blob']
+          assert blob('experiments/e1-heldout-matrix-005-008/MATRIX_BINDING_FREEZE.json') == freeze['binding_freeze_git_blob']
+          assert blob('experiments/risu-diff-e1/E1_FREEZE.json') == freeze['e1_freeze_git_blob']
+          assert blob('tools/unit004_e1_exam.py') == freeze['reused_harness']['git_blob']
+          assert blob('tests/test_unit004_e1_exam.py') == freeze['reused_harness']['test_git_blob']
+
+          assert protocol['protocol_id'] == freeze['selection_protocol_id']
+          assert violation['affected_unit'] == 'corpus01-unit-005'
+          assert violation['scientific_consequence']['unit005_is_pristine_heldout_after_violation'] is False
+          assert binding_freeze['matrix_counts']['pristine_heldout_slots'] == 3
+          assert binding_freeze['matrix_counts']['contaminated_slots'] == 1
+
+          expected_binding_blobs = freeze['binding_git_blobs']
+          for unit, expected in expected_binding_blobs.items():
+              path = f'experiments/e1-heldout-matrix-005-008/bindings/{unit}.json'
+              assert blob(path) == expected, (unit, blob(path), expected)
+              b = json.loads(Path(path).read_text())
+              if unit == 'unit005':
+                  assert b['pristine_heldout']['eligible'] is False
+                  assert b['pristine_heldout']['may_count_toward_fresh_accuracy'] is False
+              else:
+                  assert b['status'] == 'BOUND_BEFORE_TARGET_TREE_OR_CONTENT_ACCESS'
+                  assert b['pristine_heldout']['eligible'] is True
+                  assert b['pristine_heldout']['target_content_consumed_before_binding'] is False
+                  assert b['pristine_heldout']['target_tree_path_listing_consumed_before_binding'] is False
+                  assert b['pristine_heldout']['gold_consumed_before_binding'] is False
+
+          assert e1_freeze['engine_identity_digest'] == freeze['frozen_e1']['engine_identity_digest']
+          for path, row in e1_freeze['engine_identity_components'].items():
+              assert blob(path) == row['git_blob_sha'], (path, blob(path), row['git_blob_sha'])
+
+          controls = freeze['preexecution_attestation']
+          for key in (
+              'unit006_008_target_tree_paths_consumed_before_freeze',
+              'unit006_008_target_blobs_consumed_before_freeze',
+              'unit006_008_predictions_executed_before_freeze',
+              'unit006_008_gold_started_before_freeze',
+              'prediction_values_observed_before_freeze',
+          ):
+              assert controls[key] is False, key
+          assert freeze['unit005']['pristine_attempt_eligible'] is False
+          assert freeze['unit005']['replacement_allowed'] is False
+          assert freeze['pristine_execution_order'] == ['unit006','unit007','unit008']
+          print(json.dumps({'status':'PASS','pristine_slots':3,'contaminated_slots':1,'e1_identity':e1_freeze['engine_identity_digest']}, sort_keys=True))
+          PY
+
+      - name: Qualify exact reused target-agnostic harness
+        run: |
+          python -m py_compile tools/unit004_e1_exam.py tests/test_unit004_e1_exam.py
+          python -m unittest -v tests.test_unit004_e1_exam
+          if grep -Eqi 'sooperset|mcp-atlassian|kubernetes-client|aashari|yoda-digital|confluence_update_page|patch_namespaced_config_map|create_or_update_file|22369b76|9b65f41e|13f3b4fd|177adc87' tools/unit004_e1_exam.py tests/test_unit004_e1_exam.py; then
+            echo 'Remaining-target-specific identifier found in frozen generic harness bytes' >&2
+            exit 1
+          fi
+
+  execute-first-matrix:
+    needs: qualify-frozen-matrix
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Preflight all pristine trees, then execute all first seals behind disclosure barrier
+        id: matrix
+        shell: bash
+        run: |
+          set -u
+          ROOT="$PWD"
+          OUT="$ROOT/e1-heldout-matrix-first"
+          WORK="$ROOT/.matrix-work"
+          mkdir -p "$OUT/units" "$OUT/preflight" "$WORK"
+
+          cp experiments/e1-heldout-matrix-005-008/MATRIX_SELECTION_PROTOCOL.json "$OUT/"
+          cp experiments/e1-heldout-matrix-005-008/PROTOCOL_VIOLATION_001.json "$OUT/"
+          cp experiments/e1-heldout-matrix-005-008/MATRIX_BINDING_FREEZE.json "$OUT/"
+          cp experiments/e1-heldout-matrix-005-008/MATRIX_EXECUTION_FREEZE.json "$OUT/"
+          cp experiments/risu-diff-e1/E1_FREEZE.json "$OUT/"
+          cp experiments/unit004-blind-e1/RUN_FREEZE.json "$OUT/UNIT004_REUSED_HARNESS_RUN_FREEZE.json"
+          mkdir -p "$OUT/bindings"
+          cp experiments/e1-heldout-matrix-005-008/bindings/*.json "$OUT/bindings/"
+
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          f=json.loads(Path('experiments/e1-heldout-matrix-005-008/MATRIX_EXECUTION_FREEZE.json').read_text())
+          rows=[]
+          for unit in f['pristine_execution_order']:
+              p=Path('experiments/e1-heldout-matrix-005-008/bindings')/(unit+'.json')
+              b=json.loads(p.read_text())
+              t=b['target']
+              rows.append('\t'.join([unit,str(p),t['repository'],t['revision'],t['tree_sha']]))
+          Path('.matrix-work/pristine.tsv').write_text('\n'.join(rows)+'\n')
+          PY
+
+          PREFLIGHT_FAILED=0
+          while IFS=$'\t' read -r unit binding repo revision tree; do
+            [ -n "$unit" ] || continue
+            td="$WORK/$unit-target"
+            pd="$OUT/preflight/$unit"
+            mkdir -p "$pd"
+            git init -q "$td" >"$pd/git-init.stdout" 2>"$pd/git-init.stderr"
+            git -C "$td" remote add origin "https://github.com/$repo.git" >"$pd/remote-add.stdout" 2>"$pd/remote-add.stderr"
+            git -C "$td" -c protocol.version=2 fetch -q --depth=1 --filter=blob:none origin "$revision" >"$pd/fetch.stdout" 2>"$pd/fetch.stderr"
+            fetch_rc=$?
+            if [ "$fetch_rc" -ne 0 ]; then
+              PREFLIGHT_FAILED=1
+              printf '%s\n' "$fetch_rc" >"$pd/fetch.rc"
+              continue
+            fi
+            actual_tree=$(git -C "$td" rev-parse 'FETCH_HEAD^{tree}' 2>"$pd/rev-parse.stderr")
+            if [ "$actual_tree" != "$tree" ]; then
+              PREFLIGHT_FAILED=1
+              printf '%s\n' 'TREE_IDENTITY_MISMATCH' >"$pd/status.txt"
+              continue
+            fi
+            BLOB_COUNT=0
+            for idx in "$td"/.git/objects/pack/*.idx; do
+              [ -e "$idx" ] || continue
+              c=$(git verify-pack -v "$idx" | awk '$2=="blob"{n++} END{print n+0}')
+              BLOB_COUNT=$((BLOB_COUNT+c))
+            done
+            printf '%s\n' "$BLOB_COUNT" >"$pd/preselection-blob-count.txt"
+            if [ "$BLOB_COUNT" -ne 0 ]; then
+              PREFLIGHT_FAILED=1
+              printf '%s\n' 'NONZERO_BLOB_COUNT_BEFORE_SELECTION' >"$pd/status.txt"
+              continue
+            fi
+            git -C "$td" ls-tree -r --name-only FETCH_HEAD | LC_ALL=C sort >"$pd/target-paths.txt"
+            python -m tools.unit004_e1_exam select \
+              --binding "$binding" \
+              --tree-paths "$pd/target-paths.txt" \
+              --out "$pd/ROUND0_SELECTION.json" \
+              >"$pd/select.stdout.json" 2>"$pd/select.stderr.txt"
+            select_rc=$?
+            printf '%s\n' "$select_rc" >"$pd/select.rc"
+            if [ "$select_rc" -ne 0 ]; then
+              PREFLIGHT_FAILED=1
+              printf '%s\n' 'ROUND0_SELECTION_FAILED' >"$pd/status.txt"
+              continue
+            fi
+            printf '%s\n' 'PASS' >"$pd/status.txt"
+          done < "$WORK/pristine.tsv"
+
+          EXECUTION_ALLOWED=1
+          if [ "$PREFLIGHT_FAILED" -ne 0 ]; then
+            EXECUTION_ALLOWED=0
+          fi
+          printf '%s\n' "$EXECUTION_ALLOWED" >"$OUT/EXECUTION_ALLOWED.txt"
+
+          ANY_EXEC_FAILURE=0
+          if [ "$EXECUTION_ALLOWED" -eq 1 ]; then
+            while IFS=$'\t' read -r unit binding repo revision tree; do
+              [ -n "$unit" ] || continue
+              td="$WORK/$unit-target"
+              pd="$OUT/preflight/$unit"
+              ud="$OUT/units/$unit"
+              mkdir -p "$ud"
+              python -m tools.unit004_e1_exam execute \
+                --binding "$binding" \
+                --round0 "$pd/ROUND0_SELECTION.json" \
+                --tree-paths "$pd/target-paths.txt" \
+                --target-git "$td" \
+                --artifact-dir "$ud" \
+                >"$ud/HARNESS_STDOUT.json" 2>"$ud/HARNESS_STDERR.txt"
+              rc=$?
+              printf '%s\n' "$rc" >"$ud/HARNESS_EXIT_CODE.txt"
+              if [ "$rc" -ne 0 ]; then
+                ANY_EXEC_FAILURE=1
+              fi
+            done < "$WORK/pristine.tsv"
+          else
+            ANY_EXEC_FAILURE=1
+          fi
+
+          python - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+
+          root=Path('e1-heldout-matrix-first')
+          freeze=json.loads((root/'MATRIX_EXECUTION_FREEZE.json').read_text())
+          units=[]
+          units.append({
+              'unit':'unit005',
+              'unit_id':'corpus01-unit-005',
+              'matrix_role':'ENROLLED_CONTAMINATED_SLOT',
+              'first_pristine_e1_attempt':'NOT_ATTEMPTED',
+              'reason':'E1_MATRIX_005_008_PROTOCOL_VIOLATION_001',
+              'fresh_accuracy_eligible':False,
+          })
+          for unit in freeze['pristine_execution_order']:
+              ud=root/'units'/unit
+              pd=root/'preflight'/unit
+              seal=ud/'FIRST_SEAL_RECORD.json'
+              rc_file=ud/'HARNESS_EXIT_CODE.txt'
+              preflight_status=(pd/'status.txt').read_text().strip() if (pd/'status.txt').exists() else 'NOT_COMPLETED'
+              rc=int(rc_file.read_text().strip()) if rc_file.exists() else None
+              units.append({
+                  'unit':unit,
+                  'unit_id':json.loads((root/'bindings'/(unit+'.json')).read_text())['enrollment']['unit_id'],
+                  'matrix_role':'PRISTINE_HELDOUT',
+                  'preflight_status':preflight_status,
+                  'harness_exit_code':rc,
+                  'first_seal_record_present':seal.is_file(),
+                  'first_pristine_e1_attempt':'ATTEMPTED' if rc_file.exists() else 'NOT_ATTEMPTED',
+                  'fresh_accuracy_eligible':True,
+              })
+          record={
+              'schema':'risu.e1-heldout-matrix-first-attempt/v0.1alpha1',
+              'status':'FIRST_MATRIX_ATTEMPT_ARCHIVED',
+              'execution_commit':os.environ['GITHUB_SHA'],
+              'github_run_id':os.environ['GITHUB_RUN_ID'],
+              'github_run_attempt':os.environ['GITHUB_RUN_ATTEMPT'],
+              'prediction_values_copied_into_record':False,
+              'selected_paths_copied_into_record':False,
+              'human_result_inspection_before_upload':False,
+              'unit005_contamination_preserved':True,
+              'units':units,
+          }
+          (root/'MATRIX_FIRST_ATTEMPT_RECORD.json').write_text(json.dumps(record,indent=2,sort_keys=True)+'\n')
+
+          entries=[]
+          for p in sorted(x for x in root.rglob('*') if x.is_file() and x.name!='ARCHIVE_MANIFEST.json'):
+              b=p.read_bytes()
+              entries.append({'path':p.relative_to(root).as_posix(),'size':len(b),'sha256':hashlib.sha256(b).hexdigest()})
+          manifest={
+              'schema':'risu.e1-heldout-matrix-archive/v0.1alpha1',
+              'status':'SEALED_FIRST_MATRIX_ARCHIVE',
+              'execution_commit':os.environ['GITHUB_SHA'],
+              'entry_count':len(entries),
+              'entries':entries,
+          }
+          (root/'ARCHIVE_MANIFEST.json').write_text(json.dumps(manifest,indent=2,sort_keys=True)+'\n')
+          PY
+
+          printf '%s\n' "$PREFLIGHT_FAILED" >"$OUT/PREFLIGHT_FAILED.txt"
+          printf '%s\n' "$ANY_EXEC_FAILURE" >"$OUT/ANY_EXEC_FAILURE.txt"
+          echo "archive_ready=true" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: e1-heldout-matrix-first-${{ github.sha }}-${{ github.run_id }}
+          path: e1-heldout-matrix-first/
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Report only generic first-attempt completion state
+        shell: bash
+        run: |
+          pf=$(cat e1-heldout-matrix-first/PREFLIGHT_FAILED.txt)
+          ef=$(cat e1-heldout-matrix-first/ANY_EXEC_FAILURE.txt)
+          if [ "$pf" -eq 0 ] && [ "$ef" -eq 0 ]; then
+            echo 'ALL_PRISTINE_FIRST_SEALS_EMITTED'
+            exit 0
+          fi
+          echo 'FIRST_MATRIX_ATTEMPT_ARCHIVED_WITH_INFRASTRUCTURE_FAILURE'
+          exit 1
