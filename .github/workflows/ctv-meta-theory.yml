@@ -4,23 +4,33 @@ on:
   pull_request:
     paths:
       - docs/CONSEQUENCE_TRANSLATION_VALIDATION_v0.1.md
+      - docs/CONSEQUENCE_TRANSLATION_VALIDATION_v0.1_AMENDMENT_001.md
       - protocols/CTV_META_THEORY_v0.1.json
       - protocols/CTV_META_THEORY_v0.1_SEAL.json
+      - protocols/CTV_META_THEORY_v0.1_AMENDMENT_001.json
+      - protocols/CTV_META_THEORY_v0.1_AMENDMENT_001_SEAL.json
       - schemas/consequence-ir.v0.1alpha1.schema.json
       - schemas/refinement-map.v0.1alpha1.schema.json
       - tools/ctv_meta_theory_verify.py
+      - tools/ctv_meta_theory_amendment001_verify.py
       - tests/test_ctv_meta_theory.py
+      - tests/test_ctv_meta_theory_amendment001.py
       - .github/workflows/ctv-meta-theory.yml
   push:
     branches: [main]
     paths:
       - docs/CONSEQUENCE_TRANSLATION_VALIDATION_v0.1.md
+      - docs/CONSEQUENCE_TRANSLATION_VALIDATION_v0.1_AMENDMENT_001.md
       - protocols/CTV_META_THEORY_v0.1.json
       - protocols/CTV_META_THEORY_v0.1_SEAL.json
+      - protocols/CTV_META_THEORY_v0.1_AMENDMENT_001.json
+      - protocols/CTV_META_THEORY_v0.1_AMENDMENT_001_SEAL.json
       - schemas/consequence-ir.v0.1alpha1.schema.json
       - schemas/refinement-map.v0.1alpha1.schema.json
       - tools/ctv_meta_theory_verify.py
+      - tools/ctv_meta_theory_amendment001_verify.py
       - tests/test_ctv_meta_theory.py
+      - tests/test_ctv_meta_theory_amendment001.py
       - .github/workflows/ctv-meta-theory.yml
 
 permissions:
@@ -42,15 +52,21 @@ jobs:
           for p in [
               pathlib.Path("protocols/CTV_META_THEORY_v0.1.json"),
               pathlib.Path("protocols/CTV_META_THEORY_v0.1_SEAL.json"),
+              pathlib.Path("protocols/CTV_META_THEORY_v0.1_AMENDMENT_001.json"),
+              pathlib.Path("protocols/CTV_META_THEORY_v0.1_AMENDMENT_001_SEAL.json"),
               pathlib.Path("schemas/consequence-ir.v0.1alpha1.schema.json"),
               pathlib.Path("schemas/refinement-map.v0.1alpha1.schema.json"),
           ]:
               json.loads(p.read_text())
               print("PASS", p)
           PY
-      - name: Verify exact freeze, CIR contract, and anti-retroactivity
+      - name: Verify parent v0.1 freeze, CIR contract, and anti-retroactivity
         run: python tools/ctv_meta_theory_verify.py
-      - name: Exhaustive finite theory sanity checks
+      - name: Verify A001 non-vacuity, compatibility structure, and timing
+        run: python tools/ctv_meta_theory_amendment001_verify.py
+      - name: Exhaustive finite parent-theory sanity checks
         run: python -m unittest tests.test_ctv_meta_theory
+      - name: A001 non-vacuity and deterministic-bridge checks
+        run: python -m unittest tests.test_ctv_meta_theory_amendment001
       - name: Existing prospective Corpus protocol remains valid
         run: python tools/corpus01_validate.py --json
