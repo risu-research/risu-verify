@@ -1,0 +1,87 @@
+{
+  "boundary_schema": "risu.corpus-vbe-boundary/v0.1alpha1",
+  "claim_scope": {
+    "all_merge_failures": "OUT_OF_SCOPE",
+    "general_unguarded_calls": "OUT_OF_SCOPE",
+    "live_remote_deployment": "NOT_CLAIMED",
+    "model_relative": true,
+    "operation": "github/github-mcp-server merge_pull_request at revision 9205304fedf10540c33ae41fcf6352fa97dcc9be",
+    "profile": "guarded merge call with expectedHeadSha equal to the reviewed head H0"
+  },
+  "coordinates": {
+    "otherwise_mergeable": {
+      "domain": [
+        true
+      ]
+    },
+    "request_head_sha": {
+      "domain": [
+        "H0",
+        "H1"
+      ]
+    },
+    "reviewed_head_sha": {
+      "anchor": "H0",
+      "mode": "literal"
+    }
+  },
+  "effect_cut": {
+    "definition": "The point at which GitHub evaluates the supplied merge sha against the current pull-request head before permitting merge effect.",
+    "name": "MERGE_SHA_PRECONDITION_EFFECT_CUT",
+    "post_review_transition": "request_head_sha may change from H0 to H1 after review and before this cut."
+  },
+  "exact_realization_question": "For every admissible bounded world, does the projected mechanism produce the same consequence label as the frozen source contract?",
+  "freeze_rule": "The world set, effect cut, in-scope guarded-call profile, and excluded dimensions are frozen before VBE compilation and primary execution.",
+  "held_fixed": [
+    "owner, repository, and pull request identity",
+    "supported merge method",
+    "authorization and repository permissions",
+    "otherwise-mergeable state",
+    "absence of unrelated provider, transport, validation, abuse-rate, and policy failures"
+  ],
+  "independence_controls": {
+    "historical_result_used_to_set_worlds": false,
+    "known_issue_or_bug_evidence_used": false,
+    "primary_risu_verdict_observed": false
+  },
+  "source_lane": {
+    "freeze_commit": "499c34838c9ec10a4b7318d866d76af84a4687d5",
+    "path": "corpus/0.1/units/001-github-mcp-merge/SOURCE_LANE.json",
+    "sha256": "880d9d88269d3c702f96b4d50066d847fc7f660ff2fb55109f596f84445eae57"
+  },
+  "status": "FROZEN_BOUNDARY_AND_WORLD_MODEL",
+  "target_lane": {
+    "freeze_commit": "cf9bec4cec5ba6aaf7a4bc43fc76528f8754636f",
+    "path": "corpus/0.1/units/001-github-mcp-merge/TARGET_LANE.json",
+    "sha256": "97eb4ed3987bb50b2ce169b8695f30ba590235c7422d733ccfcd6c86e15c51f8"
+  },
+  "target_observation_model": {
+    "current_head_coordinate": "provider-side current PR head at effect cut",
+    "local_current_head_read": "NOT_REQUIRED_BY_DECLARED_MECHANISM",
+    "operative_binding": "expectedHeadSha -> PullRequestOptions.SHA -> GitHub merge sha precondition",
+    "reviewed_head_carrier": "MCP expectedHeadSha argument supplied as H0",
+    "stale_native_kind": "REJECTED_EXPECTED_HEAD_MISMATCH",
+    "success_native_kind": "MERGE_ACCEPTED"
+  },
+  "unit_id": "corpus01-unit-001",
+  "worlds": [
+    {
+      "coordinates": {
+        "otherwise_mergeable": true,
+        "request_head_sha": "H0",
+        "reviewed_head_sha": "H0"
+      },
+      "id": "W_MATCH",
+      "required_source_consequence": "MERGED_REVIEWED_HEAD"
+    },
+    {
+      "coordinates": {
+        "otherwise_mergeable": true,
+        "request_head_sha": "H1",
+        "reviewed_head_sha": "H0"
+      },
+      "id": "W_STALE",
+      "required_source_consequence": "STALE_REQUEST_REJECTED"
+    }
+  ]
+}
