@@ -1,0 +1,42 @@
+{
+  "schema": "risu.unit004-e1-run-correction/v0.1alpha1",
+  "correction_id": "UNIT004_E1_RUN_CORRECTION_001",
+  "status": "PRESELECTION_IMPORT_MODE_CORRECTION",
+  "invalid_run": {
+    "run_id": 33982923997,
+    "job_id": 101351255015,
+    "head_sha": "c3affcc5135ce0e9c4e872b8518e77c5a21edc34",
+    "failure_step": "Frozen E1 round-zero path selection",
+    "failure_class": "PYTHON_MODULE_IMPORT_MODE",
+    "error": "ModuleNotFoundError: No module named 'risu_e1'",
+    "frozen_e1_identity_verified": true,
+    "generic_harness_tests_passed": true,
+    "exact_target_tree_verified": true,
+    "zero_blob_audit_passed": true,
+    "round0_selection_emitted": false,
+    "target_file_blob_content_consumed": false,
+    "execute_first_seal_job_started": false,
+    "e1_prediction_executed": false,
+    "first_seal_emitted": false
+  },
+  "original_workflow_git_blob": "2267bf04cb3342b9676e1440bf53ac09dab76ba3",
+  "replacement_workflow_git_blob": "263daddc72b239aad5e55fd0be313ae4f46f9c28",
+  "allowed_change": "Invoke the already-frozen generic harness as a repository module (`python -m tools.unit004_e1_exam`) instead of a file path so repository-root imports resolve. Add lineage-aware verification and archive this correction record.",
+  "invariants": {
+    "target_content_consumed_before_correction": false,
+    "e1_prediction_executed_before_correction": false,
+    "first_seal_observed_before_correction": false,
+    "selection_algorithm_changed": false,
+    "acquisition_algorithm_changed": false,
+    "generic_harness_python_blob_changed": false,
+    "generic_harness_test_blob_changed": false,
+    "e1_engine_bytes_changed": false,
+    "target_changed": false,
+    "target_revision_changed": false,
+    "surface_arguments_changed": false,
+    "scoring_or_outcome_semantics_changed": false
+  },
+  "retained_generic_harness_git_blob": "5272b62db86571c8ec19fe3770a7514d1d246e92",
+  "retained_generic_test_git_blob": "b483dfa4f98605cb721766635d9ca027865b5559",
+  "claim_boundary": "Infrastructure-only preselection correction. It creates no Unit004 semantic observation and cannot be used to replace any future first valid E1 seal."
+}

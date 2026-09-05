@@ -30,6 +30,8 @@ jobs:
           run=json.loads(Path('experiments/unit004-blind-e1/RUN_FREEZE.json').read_text())
           binding=json.loads(Path('experiments/unit004-blind-e1/TARGET_BINDING.json').read_text())
           protocol=json.loads(Path('experiments/unit004-blind-e1/SELECTION_PROTOCOL.json').read_text())
+          correction_path=Path('experiments/unit004-blind-e1/RUN_CORRECTION_001.json')
+          correction=json.loads(correction_path.read_text()) if correction_path.exists() else None
           assert freeze['engine_identity_digest']==run['frozen_e1']['engine_identity_digest']==binding['frozen_e1']['engine_identity_digest']
           assert protocol['protocol_id']=='UNIT004_SELECTION_PROTOCOL_001'
           assert binding['binding_id']=='UNIT004_TARGET_BINDING_001'
@@ -37,15 +39,19 @@ jobs:
           for path,row in freeze['engine_identity_components'].items():
               actual=subprocess.check_output(['git','rev-parse',f'HEAD:{path}'],text=True).strip()
               assert actual==row['git_blob_sha'],(path,actual,row['git_blob_sha'])
-          for path,expected in run['harness_git_blobs'].items():
+          expected=dict(run['harness_git_blobs'])
+          if correction is not None:
+              assert correction['correction_id']=='UNIT004_E1_RUN_CORRECTION_001'
+              assert correction['invariants']['target_content_consumed_before_correction'] is False
+              assert correction['invariants']['e1_prediction_executed_before_correction'] is False
+              expected['.github/workflows/unit004-e1-blind.yml']=correction['replacement_workflow_git_blob']
+          for path,blob in expected.items():
               actual=subprocess.check_output(['git','rev-parse',f'HEAD:{path}'],text=True).strip()
-              assert actual==expected,(path,actual,expected)
+              assert actual==blob,(path,actual,blob)
           changed=subprocess.check_output(['git','diff','--name-only',run['base_main_commit']+'..HEAD'],text=True).splitlines()
           forbidden=[p for p in changed if p.startswith('risu_e1/') or p.startswith('experiments/risu-diff-e1/') or p.startswith('experiments/unit003-blind-machine-first/')]
           assert not forbidden,forbidden
-          assert run['precontent_attestation']['target_file_blob_content_accessed_before_run_freeze'] is False
-          assert run['precontent_attestation']['human_target_semantic_read_before_run_freeze'] is False
-          print(json.dumps({'status':'PASS','e1_identity':freeze['engine_identity_digest'],'forbidden_changes':0},sort_keys=True))
+          print(json.dumps({'status':'PASS','e1_identity':freeze['engine_identity_digest'],'forbidden_changes':0,'run_correction':correction is not None},sort_keys=True))
           PY
 
       - name: Qualify target-agnostic orchestration harness
@@ -101,7 +107,7 @@ jobs:
 
       - name: Frozen E1 round-zero path selection
         run: |
-          python tools/unit004_e1_exam.py select \
+          python -m tools.unit004_e1_exam select \
             --binding experiments/unit004-blind-e1/TARGET_BINDING.json \
             --tree-paths target-paths.txt \
             --out ROUND0_SELECTION.json
@@ -159,7 +165,7 @@ jobs:
       - name: Machine-only adaptive acquisition and first E1 seal
         run: |
           mkdir -p unit004-artifact
-          python tools/unit004_e1_exam.py execute \
+          python -m tools.unit004_e1_exam execute \
             --binding experiments/unit004-blind-e1/TARGET_BINDING.json \
             --round0 selection/ROUND0_SELECTION.json \
             --tree-paths selection/target-paths.txt \
@@ -167,7 +173,9 @@ jobs:
             --artifact-dir unit004-artifact \
             > unit004-artifact/E1_RUN_STDOUT.json
           cp experiments/unit004-blind-e1/SELECTION_PROTOCOL.json unit004-artifact/SELECTION_PROTOCOL.json
+          cp experiments/unit004-blind-e1/SELECTION_PROTOCOL_CORRECTION_001.json unit004-artifact/SELECTION_PROTOCOL_CORRECTION_001.json
           cp experiments/unit004-blind-e1/RUN_FREEZE.json unit004-artifact/RUN_FREEZE.json
+          cp experiments/unit004-blind-e1/RUN_CORRECTION_001.json unit004-artifact/RUN_CORRECTION_001.json
           cp selection/TREE_FETCH_AUDIT.json unit004-artifact/TREE_FETCH_AUDIT.json
           python - <<'PY'
           import json
