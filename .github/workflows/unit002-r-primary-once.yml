@@ -1,0 +1,71 @@
+name: RISU Unit 002-R one-shot primary
+
+on:
+  push:
+    branches:
+      - unit002-r-primary-once
+
+permissions:
+  contents: read
+
+jobs:
+  primary:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      SEALED_SCIENTIFIC_HEAD: "743b30050753afdbcd416f48b8ac48b91d1bb9f2"
+      UNIT002R_MANIFEST: "corpus/0.1/units/002-octokit-pulls-merge/PRIMARY_RUN_MANIFEST.json"
+    steps:
+      - name: Checkout exact sealed scientific head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: 743b30050753afdbcd416f48b8ac48b91d1bb9f2
+
+      - name: Assert execution checkout identity
+        run: |
+          test "$(git rev-parse HEAD)" = "$SEALED_SCIENTIFIC_HEAD"
+          test -f "$UNIT002R_MANIFEST"
+          test -f corpus/0.1/units/002-octokit-pulls-merge/UNIT_SEAL.json
+
+      - name: Restore executable entrypoints
+        run: |
+          chmod +x risu-verify
+          chmod +x tools/*.py
+
+      - name: Execute exactly one sealed Unit 002-R primary
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p .risu
+          GITHUB_SHA="$SEALED_SCIENTIFIC_HEAD" \
+          python tools/corpus01_primary_v08.py \
+            "$UNIT002R_MANIFEST" \
+            --json 2>&1 | tee .risu/unit002-r-primary-once.log
+
+      - name: Assert valid scientific outcome surface exists
+        if: success()
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          roots = list(Path('.risu/corpus01-v08').glob('**/HARNESS_RESULT.json'))
+          if len(roots) != 1:
+              raise SystemExit(f'expected exactly one HARNESS_RESULT.json, found {len(roots)}')
+          result = json.loads(roots[0].read_text())
+          assert result['status'] == 'VALID_SEMANTIC_OUTCOME'
+          assert result['product_status'] in {'PRESERVED', 'PRESERVED_IN_DECLARED_SCOPE', 'CONSEQUENCE_REGRESSION', 'INCOMPLETE_ASSURANCE'}
+          assert result['semantic_exit_code'] in {0, 10, 20}
+          print(json.dumps(result, indent=2, sort_keys=True))
+          PY
+
+      - name: Upload complete first-primary evidence even on infrastructure failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit002-r-first-primary-${{ github.run_id }}
+          path: |
+            .risu/corpus01-v08/**
+            .risu/unit002-r-primary-once.log
+          if-no-files-found: warn
+          retention-days: 90
