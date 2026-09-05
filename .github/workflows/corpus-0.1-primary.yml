@@ -1,0 +1,129 @@
+name: RISU Corpus 0.1 primary
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  unit-001-primary:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Restore executable entrypoints
+        run: |
+          chmod +x risu-verify
+          chmod +x tools/*.py
+
+      - name: Validate prospective corpus integrity
+        run: python tools/corpus01_validate.py --json
+
+      - name: Enforce AUTHOR_ACCEPTED freeze
+        run: |
+          python tools/corpus01_primary_gate.py \
+            corpus/0.1/units/001-github-mcp-merge/PRIMARY_RUN_MANIFEST.json \
+            --json
+
+      - name: Materialize retained case infrastructure
+        run: python tools/materialize_case_bundles.py
+
+      - name: Compile Unit 001 prospectively
+        run: |
+          rm -rf .risu/corpus01-unit001-case .risu/corpus01-unit001-output
+          python tools/corpus01_compile.py \
+            corpus/0.1/units/001-github-mcp-merge/vbe.instance.json \
+            --output .risu/corpus01-unit001-case
+          mkdir -p .risu/corpus01-unit001-case/assurance/evidence/corpus01-unit001
+          cp corpus/0.1/units/001-github-mcp-merge/evidence/*.json \
+            .risu/corpus01-unit001-case/assurance/evidence/corpus01-unit001/
+
+      - name: Run frozen primary verifier without outcome filtering
+        id: primary
+        shell: bash
+        run: |
+          set +e
+          ./risu-verify verify .risu/corpus01-unit001-case \
+            --output .risu/corpus01-unit001-output \
+            --json > .risu/corpus01-unit001-console.json
+          rc=$?
+          set -e
+          printf '%s\n' "$rc" > .risu/corpus01-unit001-semantic-exit-code.txt
+          case "$rc" in
+            0|10|20)
+              echo "Valid semantic outcome exit code: $rc"
+              ;;
+            *)
+              echo "Invalid verifier/toolchain failure exit code: $rc" >&2
+              cat .risu/corpus01-unit001-console.json >&2 || true
+              exit "$rc"
+              ;;
+          esac
+
+      - name: Seal primary observation artifact
+        env:
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          HEAD_SHA: ${{ github.sha }}
+        run: |
+          python - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+
+          root = Path('.')
+          manifest = json.loads((root / 'corpus/0.1/units/001-github-mcp-merge/PRIMARY_RUN_MANIFEST.json').read_text())
+          report = json.loads((root / '.risu/corpus01-unit001-output/report.json').read_text())
+          rc = int((root / '.risu/corpus01-unit001-semantic-exit-code.txt').read_text().strip())
+
+          def h(path):
+              return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+          expected = {0: {'PRESERVED', 'PRESERVED_IN_DECLARED_SCOPE'}, 10: {'CONSEQUENCE_REGRESSION'}, 20: {'INCOMPLETE_ASSURANCE'}}
+          if report.get('product_status') not in expected[rc]:
+              raise SystemExit(f"semantic exit/status mismatch: rc={rc} status={report.get('product_status')}")
+
+          observation = {
+              'schema': 'risu.corpus-primary-observation/v0.1alpha1',
+              'unit_id': manifest['unit_id'],
+              'instance_id': manifest['instance_id'],
+              'authoring_freeze_commit': manifest['authoring_freeze_commit'],
+              'workflow_head_sha': os.environ['HEAD_SHA'],
+              'github_run_id': os.environ['RUN_ID'],
+              'github_run_attempt': os.environ['RUN_ATTEMPT'],
+              'semantic_exit_code': rc,
+              'product_status': report['product_status'],
+              'report_json_sha256': h('.risu/corpus01-unit001-output/report.json'),
+              'report_md_sha256': h('.risu/corpus01-unit001-output/report.md'),
+              'certificate_sha256': report['certificate']['sha256'],
+              'compile_manifest_sha256': h('.risu/corpus01-unit001-case/VBE_COMPILE_MANIFEST.json'),
+              'result_is_observation_only': True,
+              'input_rewrite_after_result': 'PROHIBITED'
+          }
+          out = root / '.risu/corpus01-unit001-primary-observation.json'
+          out.write_text(json.dumps(observation, indent=2, sort_keys=True) + '\n')
+          PY
+          (
+            cd .risu
+            find corpus01-unit001-case corpus01-unit001-output \
+              corpus01-unit001-console.json \
+              corpus01-unit001-semantic-exit-code.txt \
+              corpus01-unit001-primary-observation.json \
+              -type f -print0 | sort -z | xargs -0 sha256sum
+          ) > .risu/corpus01-unit001-artifact.sha256
+
+      - name: Upload immutable primary-run evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: corpus01-unit001-primary-${{ github.sha }}
+          path: |
+            .risu/corpus01-unit001-case/VBE_COMPILE_MANIFEST.json
+            .risu/corpus01-unit001-output/**
+            .risu/corpus01-unit001-console.json
+            .risu/corpus01-unit001-semantic-exit-code.txt
+            .risu/corpus01-unit001-primary-observation.json
+            .risu/corpus01-unit001-artifact.sha256
+          if-no-files-found: error
+          retention-days: 90
