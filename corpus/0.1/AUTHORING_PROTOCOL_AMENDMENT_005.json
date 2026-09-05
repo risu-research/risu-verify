@@ -1,0 +1,56 @@
+{
+  "amendment_id": "RISU_CORPUS_0.1_AUTHORING_PROTOCOL_AMENDMENT_005",
+  "amendment_schema": "risu.corpus-authoring-protocol-amendment/v0.1alpha1",
+  "status": "RECORDED_AFTER_STATIC_FROZEN_CORE_GRAMMAR_INSPECTION_BEFORE_CORRECTIVE_AUTHORING_AND_BEFORE_ANY_VALID_UNIT002_R_PRIMARY_SEMANTIC_VERDICT",
+  "unit_id": "corpus01-unit-002",
+  "parent_authoring_protocol": "corpus/0.1/AUTHORING_PROTOCOL.json",
+  "previous_amendment": "corpus/0.1/AUTHORING_PROTOCOL_AMENDMENT_004.json",
+  "primary_verdict_observed_before_amendment": false,
+  "valid_semantic_outcome_observed_before_amendment": false,
+  "issue_tracker_bug_discovery_performed_before_amendment": false,
+  "diagnosis": {
+    "classification": "FROZEN_CORE_PROGRAM_PROTOCOL_VERSION_COMPATIBILITY_DEFECT",
+    "discovered_by": "STATIC_FROZEN_CORE_SOURCE_INSPECTION_ONLY",
+    "frozen_core_program_grammar_run_id": 33946715701,
+    "frozen_core_program_grammar_artifact_id": 9963551243,
+    "frozen_core_program_grammar_artifact_zip_sha256": "6f69acccc3dec12665ae54c50b5dd1b4c6e96801ab9d036c80ccc4e27e741bf3",
+    "semantic_verifier_executed_in_grammar_inspection": false,
+    "frozen_core_archive_sha256": "bc3c0be440b1b729d3131a630491cce62f1f885fb305aa46a4483fee0adad72f",
+    "parser_facts": [
+      "checker/risu_pcc_check.py compile_blind requires program.program_version == 0.5",
+      "compiler/implementations/reference_compiler.py validate_payload requires program_version == 0.5",
+      "the known-valid Unit 001 VBE instance uses target.program_version == 0.5",
+      "the pre-correction Unit 002-R VBE instance uses target.program_version == 0.8",
+      "program_version is a compiler protocol discriminator and does not encode the source consequence, target expressions, world partition, fact status, evidence, or desired verdict"
+    ]
+  },
+  "correction": {
+    "mode": "SINGLE_PROGRAM_PROTOCOL_LABEL_COMPATIBILITY_CORRECTION",
+    "paths": [
+      "corpus/0.1/units/002-octokit-pulls-merge/vbe.instance.draft.json",
+      "corpus/0.1/units/002-octokit-pulls-merge/vbe.instance.json"
+    ],
+    "json_pointer": "/target/program_version",
+    "old_value": "0.8",
+    "new_value": "0.5",
+    "rationale": "Infrastructure v0.8 names the prospective execution harness. The frozen v0.7 scientific core consumes consequence-blind program grammar version 0.5, so the harness version must not be written into target.program_version."
+  },
+  "allowed_changes": [
+    "Change only target.program_version in the Unit 002-R draft and accepted VBE instances from 0.8 to 0.5, in addition to the distinct adapter_version correction already authorized by Amendment 004.",
+    "Mechanically update the dependent envelope SHA/commit pointers in both instances after Amendment 004 changes vbe.envelope.json.",
+    "Mechanically update AUTHOR_ACCEPTANCE.json to bind the corrected envelope and draft bytes and to disclose Amendments 004 and 005.",
+    "Generate a fresh manifest and readiness seal from the corrected committed authoring bytes under new filenames so the superseded pre-Amendment readiness bytes remain available as immutable history."
+  ],
+  "forbidden_changes": [
+    "Changing any source consequence, source coordinate, admissibility condition, bounded world, or effect cut.",
+    "Changing any target expression in discriminator, operative_signature, mechanism, or interpreter.",
+    "Changing any target fact ID, fact status, provenance relation, evidence binding, qualification binding, target revision, operation identity, or runtime carrier evidence.",
+    "Changing the PRESERVED_COMPARE pattern or choosing another pattern because of the invalid execution attempt.",
+    "Replacing, reordering, or reselecting the prospectively enrolled Unit 002 target.",
+    "Using parser inspection to infer or prefer a semantic verdict."
+  ],
+  "could_alter_execution_validity": true,
+  "could_alter_primary_semantic_outcome": false,
+  "scientific_interpretation": "The program_version correction changes only which frozen compiler grammar recognizes the already-frozen consequence-blind program. The discriminator, operative signature, mechanism, interpreter, required facts, evidence, worlds, and consequence mapping remain unchanged.",
+  "relationship_to_amendment_004": "Amendment 004 corrects the outer Projection Adapter protocol label from 0.8 to 0.7. Amendment 005 separately corrects the inner consequence-blind program protocol label from 0.8 to 0.5. Both were identified before any valid Unit 002-R semantic outcome."
+}
