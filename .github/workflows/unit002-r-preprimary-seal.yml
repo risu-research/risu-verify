@@ -1,0 +1,68 @@
+name: RISU Unit 002-R pre-primary seal
+
+on:
+  pull_request:
+    paths:
+      - "corpus/0.1/units/002-octokit-pulls-merge/**"
+      - "tools/unit002r_acceptance_verify.py"
+      - ".github/workflows/unit002-r-preprimary-seal.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit-and-seal:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact authoring head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+
+      - name: Restore executable entrypoints
+        run: chmod +x risu-verify tools/*.py
+
+      - name: Prove AUTHOR_ACCEPTED is status-only from frozen draft
+        run: python tools/unit002r_acceptance_verify.py
+
+      - name: Read-only protocol-preserving Unit 002-R audit
+        run: |
+          python tools/corpus01_unit_harness.py audit \
+            corpus/0.1/units/002-octokit-pulls-merge \
+            --json
+
+      - name: Generate v0.8 manifest and seal from committed bytes
+        run: |
+          python tools/corpus01_seal.py \
+            corpus/0.1/units/002-octokit-pulls-merge \
+            --freeze-ref HEAD \
+            --json | tee .risu-unit002r-seal-console.json
+
+      - name: Assert seal is non-primary and mechanically ready
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          u = Path('corpus/0.1/units/002-octokit-pulls-merge')
+          seal = json.loads((u/'UNIT_SEAL.json').read_text())
+          manifest = json.loads((u/'PRIMARY_RUN_MANIFEST.json').read_text())
+          assert seal['status'] == 'READY_FOR_PRIMARY'
+          assert seal['controls']['primary_verifier_executed_during_seal'] is False
+          assert seal['controls']['semantic_outcome_observed_during_seal'] is False
+          assert seal['controls']['hashes_in_primary_manifest_generated_from_frozen_bytes'] is True
+          assert manifest['primary_verdict_observed_before_manifest'] is False
+          assert manifest['authoring_freeze_commit'] == __import__('subprocess').check_output(['git','rev-parse','HEAD'], text=True).strip()
+          PY
+
+      - name: Upload generated seal outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit002-r-preprimary-seal-${{ github.sha }}-${{ github.run_id }}
+          path: |
+            corpus/0.1/units/002-octokit-pulls-merge/PRIMARY_RUN_MANIFEST.json
+            corpus/0.1/units/002-octokit-pulls-merge/UNIT_SEAL.json
+            .risu-unit002r-seal-console.json
+          if-no-files-found: error
+          retention-days: 90
