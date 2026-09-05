@@ -2,75 +2,24 @@
   "author_acceptance_path": "corpus/0.1/units/001-github-mcp-merge/AUTHOR_ACCEPTANCE.json",
   "authoring_freeze_commit": "355a4b77187d5b2118ac71eae9dec1cadc036847",
   "frozen_paths": [
-    {
-      "path": "corpus/0.1/units/001-github-mcp-merge/evidence/source-github-merge-sha.json",
-      "sha256": "deb38a6e4a51bdaca231988fa142e269d9ebede59296bc97b212da9152f813ee"
-    },
-    {
-      "path": "corpus/0.1/units/001-github-mcp-merge/evidence/target-github-mcp-merge-implementation.json",
-      "sha256": "8e85393d39c1eac2c9739c821e5371225c0894699d03158e54590d68056a6fab"
-    },
-    {
-      "path": "corpus/0.1/units/001-github-mcp-merge/evidence/target-github-mcp-sha-pinning-test.json",
-      "sha256": "e2881bdbac2a254968ba0c1d883b05160245961bcaa7385efdb5be6146ec7af2"
-    },
-    {
-      "path": "corpus/0.1/units/001-github-mcp-merge/evidence/target-go-github-pin.json",
-      "sha256": "d6eb30136885453ee0be4dbe37648ec896edc4269897d3c02e483c739d3fffe3"
-    },
-    {
-      "path": "corpus/0.1/units/001-github-mcp-merge/SOURCE_LANE.json",
-      "sha256": "880d9d88269d3c702f96b4d50066d847fc7f660ff2fb55109f596f84445eae57"
-    },
-    {
-      "path": "corpus/0.1/units/001-github-mcp-merge/TARGET_LANE.json",
-      "sha256": "97eb4ed3987bb50b2ce169b8695f30ba590235c7422d733ccfcd6c86e15c51f8"
-    },
-    {
-      "path": "corpus/0.1/units/001-github-mcp-merge/BOUNDARY_MODEL.json",
-      "sha256": "4021ce16c26d734ea227eccbd8e46cde87e002eae6d3147877974f4cbc48861a"
-    },
-    {
-      "path": "corpus/0.1/units/001-github-mcp-merge/vbe.envelope.json",
-      "sha256": "6f091ef58d1bd36707aa88c9a50e2f35aace7dd5d9045440c0b20f9915657fbe"
-    },
-    {
-      "path": "corpus/0.1/units/001-github-mcp-merge/AUTHOR_ACCEPTANCE.json",
-      "sha256": "71ec1f795b42b2a7896947c21b7ee7a8ed3ecd5abf7124f9fcbba4a040565ee9"
-    },
-    {
-      "path": "corpus/0.1/units/001-github-mcp-merge/vbe.instance.json",
-      "sha256": "80f1748fe1d0bf3e1185170fab38232323bb8def60bd0525126b7012b2dfc9ec"
-    }
+    {"path":"corpus/0.1/units/001-github-mcp-merge/evidence/source-github-merge-sha.json","sha256":"deb38a6e4a51bdaca231988fa142e269d9ebede59296bc97b212da9152f813ee"},
+    {"path":"corpus/0.1/units/001-github-mcp-merge/evidence/target-github-mcp-merge-implementation.json","sha256":"8e85393d39c1eac2c9739c821e5371225c0894699d03158e54590d68056a6fab"},
+    {"path":"corpus/0.1/units/001-github-mcp-merge/evidence/target-github-mcp-sha-pinning-test.json","sha256":"e2881bdbac2a254968ba0c1d883b05160245961bcaa7385efdb5be6146ec7af2"},
+    {"path":"corpus/0.1/units/001-github-mcp-merge/evidence/target-go-github-pin.json","sha256":"d6eb30136885453ee0be4dbe37648ec896edc4269897d3c02e483c739d3fffe3"},
+    {"path":"corpus/0.1/units/001-github-mcp-merge/SOURCE_LANE.json","sha256":"880d9d88269d3c702f96b4d50066d847fc7f660ff2fb55109f596f84445eae57"},
+    {"path":"corpus/0.1/units/001-github-mcp-merge/TARGET_LANE.json","sha256":"97eb4ed3987bb50b2ce169b8695f30ba590235c7422d733ccfcd6c86e15c51f8"},
+    {"path":"corpus/0.1/units/001-github-mcp-merge/BOUNDARY_MODEL.json","sha256":"4021ce16c26d734ea227eccbd8e46cde87e002eae6d3147877974f4cbc48861a"},
+    {"path":"corpus/0.1/units/001-github-mcp-merge/vbe.envelope.json","sha256":"6f091ef58d1bd36707aa88c9a50e2f35aace7dd5d9045440c0b20f9915657fbe"},
+    {"path":"corpus/0.1/units/001-github-mcp-merge/AUTHOR_ACCEPTANCE.json","sha256":"71ec1f795b42b2a7896947c21b7ee7a8ed3ecd5abf7124f9fcbba4a040565ee9"},
+    {"path":"corpus/0.1/units/001-github-mcp-merge/vbe.instance.json","sha256":"80f1748fe1d0bf3e1185170fab38232323bb8def60bd0525126b7012b2dfc9ec"}
   ],
   "instance_id": "corpus01-001-github-mcp-merge-current",
   "instance_path": "corpus/0.1/units/001-github-mcp-merge/vbe.instance.json",
   "manifest_corrections": [
-    {
-      "affected_scientific_input": false,
-      "correction": "Replaced an incorrectly precomputed AUTHOR_ACCEPTANCE.json SHA-256 with the SHA-256 of the already frozen bytes at authoring_freeze_commit.",
-      "failed_run_id": 33936192199,
-      "primary_verifier_executed_in_failed_run": false,
-      "primary_verdict_observed_before_correction": false,
-      "reason": "The freeze gate rejected the execution before compilation or verification because the manifest checksum did not match the frozen acceptance bytes."
-    },
-    {
-      "affected_scientific_input": false,
-      "amendment": "corpus/0.1/AUTHORING_PROTOCOL_AMENDMENT_001.json",
-      "correction": "Allow diagnostic-only workflow output of the already-generated failure.log after an invalid verifier exit.",
-      "failed_run_id": 33936266357,
-      "primary_verdict_observed_before_correction": false,
-      "reason": "The verifier returned exit 30 after valid freeze and compilation, but the workflow did not expose failure.log, so the invalidity could not be classified."
-    },
-    {
-      "affected_scientific_input": false,
-      "amendment": "corpus/0.1/AUTHORING_PROTOCOL_AMENDMENT_002.json",
-      "correction": "Apply a predeclared provenance-only overlay to generated adapter provenance edges, leaving all ten AUTHOR_ACCEPTED input bytes unchanged.",
-      "failed_run_id": 33936365055,
-      "failure_classification": "PROVENANCE_GRAPH_COMPLETENESS_DEFECT",
-      "primary_verdict_observed_before_correction": false,
-      "reason": "The frozen verifier rejected the generated adapter because GH_U001_EXPECTED_HEAD_INPUT was not upstream of the EXACT claim. Audit showed that this fact and GH_U001_LIBRARY_PIN were already frozen, ESTABLISHED, and required by the target program; only their EXACT provenance edges were absent."
-    }
+    {"affected_scientific_input":false,"correction":"Replaced an incorrectly precomputed AUTHOR_ACCEPTANCE.json SHA-256 with the SHA-256 of the already frozen bytes at authoring_freeze_commit.","failed_run_id":33936192199,"primary_verifier_executed_in_failed_run":false,"primary_verdict_observed_before_correction":false,"reason":"The freeze gate rejected the execution before compilation or verification because the manifest checksum did not match the frozen acceptance bytes."},
+    {"affected_scientific_input":false,"amendment":"corpus/0.1/AUTHORING_PROTOCOL_AMENDMENT_001.json","correction":"Allow diagnostic-only workflow output of the already-generated failure.log after an invalid verifier exit.","failed_run_id":33936266357,"primary_verdict_observed_before_correction":false,"reason":"The verifier returned exit 30 after valid freeze and compilation, but the workflow did not expose failure.log, so the invalidity could not be classified."},
+    {"affected_scientific_input":false,"amendment":"corpus/0.1/AUTHORING_PROTOCOL_AMENDMENT_002.json","correction":"Apply a predeclared provenance-only overlay to generated adapter provenance edges, leaving all ten AUTHOR_ACCEPTED input bytes unchanged.","failed_run_id":33936365055,"failure_classification":"PROVENANCE_GRAPH_COMPLETENESS_DEFECT","primary_verdict_observed_before_correction":false,"reason":"The frozen verifier rejected the generated adapter because GH_U001_EXPECTED_HEAD_INPUT was not upstream of the EXACT claim. Audit showed that this fact and GH_U001_LIBRARY_PIN were already frozen, ESTABLISHED, and required by the target program; only their EXACT provenance edges were absent."},
+    {"affected_scientific_input":false,"correction":"Removed three duplicate, unreferenced recovery-only evidence files added after authoring freeze. The freeze gate rejected them before compilation or verifier execution.","failed_run_id":33938895241,"primary_verifier_executed_in_failed_run":false,"primary_verdict_observed_before_correction":false,"reason":"Recovery accidentally recreated evidence summaries under new filenames after the scientific input freeze. They were never referenced by the AUTHOR_ACCEPTED instance, carrier envelope, adapter, or primary manifest and were deleted before the first valid primary semantic run."}
   ],
   "post_freeze_allowed_paths": [
     "corpus/0.1/units/001-github-mcp-merge/PRIMARY_RUN_MANIFEST.json",
@@ -84,13 +33,13 @@
   ],
   "primary_verdict_observed_before_manifest": false,
   "provenance_overlay": {
-    "amendment_id": "RISU_CORPUS_0.1_AUTHORING_PROTOCOL_AMENDMENT_002",
-    "amendment_path": "corpus/0.1/AUTHORING_PROTOCOL_AMENDMENT_002.json",
-    "amendment_sha256": "5672daeb1b3d905d6a29110bc16e41b2e4a7a22bdddccb233eae1f96a2df3ac3",
-    "original_envelope_sha256": "6f091ef58d1bd36707aa88c9a50e2f35aace7dd5d9045440c0b20f9915657fbe",
-    "path": "corpus/0.1/units/001-github-mcp-merge/PROVENANCE_OVERLAY_002.json",
-    "primary_verdict_observed_before_overlay": false,
-    "sha256": "67358e9a49b13ae5e6ac865df6e9f11277566917d0a1b1ce7f61f8cb5eeead65"
+    "amendment_id":"RISU_CORPUS_0.1_AUTHORING_PROTOCOL_AMENDMENT_002",
+    "amendment_path":"corpus/0.1/AUTHORING_PROTOCOL_AMENDMENT_002.json",
+    "amendment_sha256":"5672daeb1b3d905d6a29110bc16e41b2e4a7a22bdddccb233eae1f96a2df3ac3",
+    "original_envelope_sha256":"6f091ef58d1bd36707aa88c9a50e2f35aace7dd5d9045440c0b20f9915657fbe",
+    "path":"corpus/0.1/units/001-github-mcp-merge/PROVENANCE_OVERLAY_002.json",
+    "primary_verdict_observed_before_overlay":false,
+    "sha256":"67358e9a49b13ae5e6ac865df6e9f11277566917d0a1b1ce7f61f8cb5eeead65"
   },
   "schema": "risu.corpus-primary-run-manifest/v0.1alpha1",
   "status": "READY_FOR_FIRST_PRIMARY_EXECUTION",
