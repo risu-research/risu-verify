@@ -20,9 +20,10 @@
       "target_revision": "9205304fedf10540c33ae41fcf6352fa97dcc9be",
       "screened_operation": "merge_pull_request",
       "verdict_observed_at_enrollment": false,
-      "authoring_started": false,
-      "authoring_frozen": false,
-      "friction_ledger": null,
+      "authoring_started": true,
+      "authoring_frozen": true,
+      "friction_ledger": "corpus/0.1/units/001-github-mcp-merge/friction.json",
+      "authoring_acceptance_path": "corpus/0.1/units/001-github-mcp-merge/AUTHOR_ACCEPTANCE.json",
       "historical_overlap_disclosed": true
     },
     {
