@@ -1,0 +1,136 @@
+{
+  "schema": "risu.e1-heldout-matrix-selection-protocol/v0.1alpha1",
+  "protocol_id": "E1_REMAINING_HELDOUT_MATRIX_005_008_SELECTION_001",
+  "status": "FROZEN_BEFORE_REMAINING_TARGET_METADATA_ACCESS",
+  "base_scientific_state": {
+    "unit004_closure_commit": "77bc077be924ec0874e66012c7ec7f560bc95f61",
+    "unit004_status": "CLOSED_NO_RESCORING",
+    "frozen_e1_freeze_id": "RISU_DIFF_E1_FREEZE_001",
+    "frozen_e1_engine_identity_digest": "ed33d12881fa1395d1332ae165b5638518b2d472a7a520f0ae893d07e3b146b7",
+    "corpus_enrollment_path": "corpus/0.1/ENROLLMENT.json",
+    "corpus_enrollment_git_blob": "8d86c35fe361f0bed78b9bbacdefbf6d06fbcaf2",
+    "corpus_enrollment_status": "COMPLETE_VERDICT_BLIND_ENROLLMENT_FROZEN"
+  },
+  "selection_authority": {
+    "source": "ONLY_THE_PREEXISTING_FROZEN_CORPUS_ENROLLMENT",
+    "enrollment_positions": [5, 6, 7, 8],
+    "unit_ids": [
+      "corpus01-unit-005",
+      "corpus01-unit-006",
+      "corpus01-unit-007",
+      "corpus01-unit-008"
+    ],
+    "human_candidate_search_after_unit004": false,
+    "current_web_search_as_selection_authority": false,
+    "reordering_allowed": false,
+    "dropping_due_to_expected_e1_difficulty": false,
+    "dropping_due_to_expected_gold_verdict": false,
+    "substitution_allowed": false,
+    "unavailable_target_policy": "PRESERVE_THE_ENROLLED_SLOT_AND_RECORD_TARGET_UNAVAILABLE_BEFORE_CONTENT; DO_NOT REPLACE IT"
+  },
+  "matrix_objective": "Obtain one prospective frozen-E1 first prediction for each still-untouched enrolled Unit005-008 before any gold adjudication or E1 modification for those units, while preventing one unit's observed result from influencing another unit's selection, acquisition rules, or execution bytes.",
+  "strict_stage_order": [
+    "1_PROTOCOL_FREEZE",
+    "2_METADATA_ONLY_EXACT_REVISION_MATERIALIZABILITY_FOR_ALL_FOUR",
+    "3_ATOMIC_BINDING_OF_ALL_FOUR_TARGETS_BEFORE_ANY_TREE_PATH_OR_BLOB_ACCESS",
+    "4_ATOMIC_MATRIX_EXECUTION_FREEZE_USING_THE_UNMODIFIED_FROZEN_E1_AND_UNMODIFIED_UNIT004_E1_EXAM_HARNESS",
+    "5_ONE_WORKFLOW_FIRST_ATTEMPT_PREFLIGHTS_ALL_FOUR_BLOBLESS_TREES_BEFORE_ANY_E1_PREDICTION",
+    "6_FIRST_E1_SEAL_ATTEMPT_FOR_ALL_FOUR_WITHOUT_PREDICTION_DISCLOSURE_IN_LOGS",
+    "7_SINGLE_COMBINED_ARCHIVE_UPLOAD_AFTER_ALL_FOUR_ATTEMPTS",
+    "8_ARCHIVE_IDENTITY_RECEIPT_COMMITTED_BEFORE_HUMAN_RESULT_INSPECTION",
+    "9_ONLY_THEN_DISCLOSE_AND_CANONICALIZE_THE_FOUR_MACHINE_PREDICTIONS",
+    "10_GOLD_ADJUDICATION_REMAINS_LATER_AND_SEPARATE"
+  ],
+  "metadata_boundary_before_binding": {
+    "allowed": [
+      "repository existence",
+      "exact enrolled commit object existence",
+      "exact commit tree object SHA",
+      "ordinary commit metadata required to prove materializability"
+    ],
+    "forbidden": [
+      "target tree path listing",
+      "target blob content",
+      "target README content",
+      "target source inspection",
+      "issue or pull-request content used to infer semantics",
+      "search for likely semantic files"
+    ]
+  },
+  "cross_unit_contamination_firewall": {
+    "all_four_targets_bound_before_any_tree_path_access": true,
+    "all_four_execution_rules_frozen_before_any_remaining_target_tree_path_access": true,
+    "unit005_result_may_change_unit006_008_code_or_rules": false,
+    "unit006_result_may_change_unit007_008_code_or_rules": false,
+    "any_prediction_may_change_another_unit_binding": false,
+    "any_prediction_may_change_another_unit_acquisition_policy": false,
+    "any_prediction_may_change_enrollment_order": false,
+    "human_semantic_reranking": false,
+    "manual_filler_when_machine_selects_zero_files": false
+  },
+  "e1_immutability": {
+    "engine_identity_digest": "ed33d12881fa1395d1332ae165b5638518b2d472a7a520f0ae893d07e3b146b7",
+    "engine_bytes_may_change_for_matrix": false,
+    "acquisition_algorithm_may_change_for_matrix": false,
+    "synthetic_expected_outcomes_may_change_for_matrix": false,
+    "unit004_gold_may_be_used_as_e1_input": false,
+    "unit004_target_content_may_be_used_as_e1_input": false
+  },
+  "harness_rule": {
+    "semantic_orchestration": "REUSE_TOOLS_UNIT004_E1_EXAM_PY_EXACT_BYTES_UNMODIFIED",
+    "reason": "Avoid introducing a post-Unit004 acquisition-semantic change before the remaining held-out matrix.",
+    "legacy_unit004_schema_or_run_id_strings_are": "NONSEMANTIC_ARCHIVAL_IDENTIFIERS_ONLY",
+    "wrapper_may": [
+      "iterate frozen bindings",
+      "redirect stdout away from logs",
+      "record exit status",
+      "package artifacts",
+      "verify hashes and frozen identities"
+    ],
+    "wrapper_may_not": [
+      "alter round0_select inputs beyond the frozen binding and tree paths",
+      "alter dependency token extraction",
+      "alter expansion_select behavior",
+      "add target-specific extensions",
+      "add manually selected files",
+      "change E1 verdict logic"
+    ]
+  },
+  "first_attempt_and_failure_policy": {
+    "canonical_machine_attempt": "THE_FIRST_MATRIX_WORKFLOW_RUN_AT_THE_FINAL_MATRIX_FREEZE_COMMIT",
+    "workflow_must_attempt_all_four_even_if_one_unit_attempt_fails": true,
+    "partial_attempts_must_be_archived": true,
+    "successful_early_unit_predictions_in_a_partial_run_may_be_erased": false,
+    "rerun_may_replace_a_successful_first_prediction": false,
+    "rerun_after_any_observed_prediction_is": "REPLICATION_OR_RECOVERY_ONLY",
+    "infrastructure_failure_is_not_a_semantic_e1_outcome": true
+  },
+  "disclosure_barrier": {
+    "before_combined_archive_identity_is_locked": {
+      "human_target_tree_path_inspection": false,
+      "human_selected_path_inspection": false,
+      "human_target_blob_inspection": false,
+      "human_e1_prediction_inspection": false,
+      "human_unresolved_role_inspection": false,
+      "artifact_download": false
+    },
+    "workflow_logs_may_disclose_prediction": false,
+    "workflow_logs_may_disclose_selected_paths": false,
+    "workflow_logs_may_disclose_target_content": false,
+    "per_unit_prediction_artifact_uploaded_before_all_attempts_finish": false,
+    "combined_archive_uploaded_only_after_all_attempts_finish": true
+  },
+  "allowed_machine_outcomes_per_unit": [
+    "E1_PREDICTED_PRESERVATION_EVIDENCE",
+    "E1_PREDICTED_REGRESSION_WITNESS",
+    "E1_PREDICTED_ASSURANCE_INCOMPLETE",
+    "INFRASTRUCTURE_INVALID_BEFORE_OR_DURING_PREDICTION"
+  ],
+  "scientific_authority": {
+    "machine_prediction_is_gold_verdict": false,
+    "all_machine_outcomes_equally_admissible": true,
+    "gold_adjudication_required_for_accuracy_scoring": true,
+    "no_prevalence_claim_from_four_units": true
+  },
+  "freeze_rule": "After this file is committed, the target set, enrollment order, no-substitution rule, frozen E1 identity, cross-unit firewall, first-attempt rule, disclosure barrier, and stage order may not be changed in response to any Unit005-008 target metadata, tree paths, target content, acquisition result, machine prediction, or later gold verdict."
+}
