@@ -1,0 +1,59 @@
+{
+  "$id": "https://risu-research.example/schemas/risu-diff-e0-output-seal.v0.1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "artifact_schema": {
+      "const": "risu.diff-e0-output-seal/v0.1"
+    },
+    "engine_identity_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "input_packet_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "observation_sidecar_excluded": {
+      "const": true
+    },
+    "required_artifacts": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 8,
+      "minItems": 8,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "run_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "seal_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "semantic_artifact_sha256": {
+      "additionalProperties": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxProperties": 8,
+      "minProperties": 8,
+      "type": "object"
+    }
+  },
+  "required": [
+    "artifact_schema",
+    "run_id",
+    "input_packet_digest",
+    "engine_identity_digest",
+    "semantic_artifact_sha256",
+    "required_artifacts",
+    "observation_sidecar_excluded",
+    "seal_digest"
+  ],
+  "title": "RISU Diff E0 semantic output seal",
+  "type": "object"
+}
