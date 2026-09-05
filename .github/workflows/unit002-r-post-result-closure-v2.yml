@@ -32,14 +32,15 @@ jobs:
           path: orchestrator
           persist-credentials: false
 
-      - name: Static-compile closure orchestrator before touching scientific tree
+      - name: Static-compile orchestrator and checked wrapper before touching scientific tree
         run: |
           set -euo pipefail
           python -m py_compile orchestrator/tools/unit002r_closure_apply_v2.py
+          python -m py_compile orchestrator/tools/unit002r_closure_apply_v3.py
           test "$(git -C scientific rev-parse HEAD)" = "b52bde0d0fdef0a2be7d5973e564daccd12296c9"
           test -z "$(git -C scientific status --porcelain)"
 
       - name: Apply, validate twice, commit, and fast-forward closure candidate
         run: |
           set -euo pipefail
-          python orchestrator/tools/unit002r_closure_apply_v2.py
+          python orchestrator/tools/unit002r_closure_apply_v3.py
