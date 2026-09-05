@@ -1,0 +1,38 @@
+{
+  "schema": "risu.e1-heldout-target-binding/v0.1alpha1",
+  "binding_id": "E1_MATRIX_UNIT007_BINDING_001",
+  "status": "BOUND_BEFORE_TARGET_TREE_OR_CONTENT_ACCESS",
+  "enrollment": {
+    "enrollment_position": 7,
+    "unit_id": "corpus01-unit-007",
+    "candidate_id": "aashari/mcp-server-atlassian-confluence::confluence-versioned-write",
+    "organization": "aashari",
+    "stratum": "AGENT_FACING",
+    "mechanism_family": "REVISION_OR_RESOURCE_VERSION"
+  },
+  "selection": {
+    "authority": "corpus/0.1/ENROLLMENT.json position 7",
+    "substitution_used": false,
+    "human_candidate_choice_after_unit004": false
+  },
+  "target": {
+    "repository": "aashari/mcp-server-atlassian-confluence",
+    "revision": "13f3b4fdf75da6948d9ce4e8a0b47799e9059537",
+    "tree_sha": "9c8a0d5bed33b65b982a743a4d9423e43e2c9dfb",
+    "screened_operation": "Confluence PUT API tool on /wiki/api/v2/pages/{id}",
+    "materializable": true,
+    "materializability_confirmation": "Git-data commit-object endpoint returned exact enrolled commit and tree SHA"
+  },
+  "frozen_e1": {
+    "freeze_id": "RISU_DIFF_E1_FREEZE_001",
+    "engine_identity_digest": "ed33d12881fa1395d1332ae165b5638518b2d472a7a520f0ae893d07e3b146b7"
+  },
+  "pristine_heldout": {
+    "eligible": true,
+    "target_content_consumed_before_binding": false,
+    "target_tree_path_listing_consumed_before_binding": false,
+    "gold_consumed_before_binding": false,
+    "may_count_toward_fresh_accuracy_after_later_gold": true
+  },
+  "freeze_rule": "Target identity, revision, tree SHA, screened operation, enrollment position, and frozen E1 identity may not change after this binding in response to tree paths, target content, acquisition behavior, machine prediction, or later gold."
+}

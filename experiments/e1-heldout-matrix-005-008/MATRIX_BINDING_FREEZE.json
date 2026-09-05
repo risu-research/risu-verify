@@ -1,0 +1,85 @@
+{
+  "schema": "risu.e1-heldout-matrix-binding-freeze/v0.1alpha1",
+  "freeze_id": "E1_MATRIX_005_008_BINDING_FREEZE_001",
+  "status": "MATRIX_BINDING_STATE_FROZEN_BEFORE_ANY_TARGET_TREE_PATH_ACCESS",
+  "matrix_protocol_id": "E1_REMAINING_HELDOUT_MATRIX_005_008_SELECTION_001",
+  "protocol_commit": "d661ff03e803f5227067ee96e0ddff451de630fc",
+  "protocol_violation_record_commit": "879e8985bc78c691e821e4dd00716c289057c114",
+  "frozen_e1": {
+    "freeze_id": "RISU_DIFF_E1_FREEZE_001",
+    "engine_identity_digest": "ed33d12881fa1395d1332ae165b5638518b2d472a7a520f0ae893d07e3b146b7"
+  },
+  "slots": [
+    {
+      "enrollment_position": 5,
+      "unit_id": "corpus01-unit-005",
+      "binding_path": "experiments/e1-heldout-matrix-005-008/bindings/unit005.json",
+      "binding_git_blob": "5d00c1ba537b1d428ddd39c43b998590c94aced9",
+      "tree_sha": "7ca9e239b605f22198e079c0cff5c0f6c5360d77",
+      "materializable": true,
+      "pristine_heldout": false,
+      "matrix_role": "ENROLLED_CONTAMINATED_SLOT",
+      "fresh_accuracy_eligible": false,
+      "reason": "E1_MATRIX_005_008_PROTOCOL_VIOLATION_001"
+    },
+    {
+      "enrollment_position": 6,
+      "unit_id": "corpus01-unit-006",
+      "binding_path": "experiments/e1-heldout-matrix-005-008/bindings/unit006.json",
+      "binding_git_blob": "d753cca16d06b51d6291da66c1ea99046a81f4a5",
+      "tree_sha": "ce3c9e5626fb62a081fc075a8886da6ad803a286",
+      "materializable": true,
+      "pristine_heldout": true,
+      "matrix_role": "PRISTINE_HELDOUT",
+      "fresh_accuracy_eligible": true
+    },
+    {
+      "enrollment_position": 7,
+      "unit_id": "corpus01-unit-007",
+      "binding_path": "experiments/e1-heldout-matrix-005-008/bindings/unit007.json",
+      "binding_git_blob": "1a32a7cc879fe4b60181872d7ff3329d648d1849",
+      "tree_sha": "9c8a0d5bed33b65b982a743a4d9423e43e2c9dfb",
+      "materializable": true,
+      "pristine_heldout": true,
+      "matrix_role": "PRISTINE_HELDOUT",
+      "fresh_accuracy_eligible": true
+    },
+    {
+      "enrollment_position": 8,
+      "unit_id": "corpus01-unit-008",
+      "binding_path": "experiments/e1-heldout-matrix-005-008/bindings/unit008.json",
+      "binding_git_blob": "16a167840bd3d08bd14b817234b1ba03d10dc1e7",
+      "tree_sha": "b8803a5a553ada80a6dc421faa8e2b181443cb48",
+      "materializable": true,
+      "pristine_heldout": true,
+      "matrix_role": "PRISTINE_HELDOUT",
+      "fresh_accuracy_eligible": true
+    }
+  ],
+  "matrix_counts": {
+    "enrolled_slots": 4,
+    "materializable_slots": 4,
+    "pristine_heldout_slots": 3,
+    "contaminated_slots": 1,
+    "substituted_slots": 0
+  },
+  "access_audit_at_freeze": {
+    "unit005_unexpected_patch_content_exposed": true,
+    "unit006_target_tree_paths_consumed": false,
+    "unit006_target_blob_content_consumed": false,
+    "unit007_target_tree_paths_consumed": false,
+    "unit007_target_blob_content_consumed": false,
+    "unit008_target_tree_paths_consumed": false,
+    "unit008_target_blob_content_consumed": false,
+    "any_unit006_008_gold_consumed": false,
+    "any_unit006_008_e1_prediction_executed": false
+  },
+  "no_retrofit": {
+    "unit005_pristine_status_may_change": false,
+    "unit005_may_be_replaced": false,
+    "unit006_008_binding_may_change_after_tree_access": false,
+    "unit006_008_order_may_change": false,
+    "frozen_e1_identity_may_change": false
+  },
+  "next_gate": "Freeze the exact matrix execution wrapper/workflow bytes before opening any Unit006-008 target tree paths."
+}

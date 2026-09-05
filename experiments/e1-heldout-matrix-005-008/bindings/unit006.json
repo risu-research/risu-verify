@@ -1,0 +1,38 @@
+{
+  "schema": "risu.e1-heldout-target-binding/v0.1alpha1",
+  "binding_id": "E1_MATRIX_UNIT006_BINDING_001",
+  "status": "BOUND_BEFORE_TARGET_TREE_OR_CONTENT_ACCESS",
+  "enrollment": {
+    "enrollment_position": 6,
+    "unit_id": "corpus01-unit-006",
+    "candidate_id": "kubernetes-client/python::kubernetes-write-update",
+    "organization": "kubernetes-client",
+    "stratum": "NON_AGENT_SPECIFIC",
+    "mechanism_family": "REVISION_OR_RESOURCE_VERSION"
+  },
+  "selection": {
+    "authority": "corpus/0.1/ENROLLMENT.json position 6",
+    "substitution_used": false,
+    "human_candidate_choice_after_unit004": false
+  },
+  "target": {
+    "repository": "kubernetes-client/python",
+    "revision": "9b65f41e065aa5158b09868cf043a8636752ce4f",
+    "tree_sha": "ce3c9e5626fb62a081fc075a8886da6ad803a286",
+    "screened_operation": "patch_namespaced_config_map with metadata.resource_version precondition",
+    "materializable": true,
+    "materializability_confirmation": "Git-data commit-object endpoint returned exact enrolled commit and tree SHA"
+  },
+  "frozen_e1": {
+    "freeze_id": "RISU_DIFF_E1_FREEZE_001",
+    "engine_identity_digest": "ed33d12881fa1395d1332ae165b5638518b2d472a7a520f0ae893d07e3b146b7"
+  },
+  "pristine_heldout": {
+    "eligible": true,
+    "target_content_consumed_before_binding": false,
+    "target_tree_path_listing_consumed_before_binding": false,
+    "gold_consumed_before_binding": false,
+    "may_count_toward_fresh_accuracy_after_later_gold": true
+  },
+  "freeze_rule": "Target identity, revision, tree SHA, screened operation, enrollment position, and frozen E1 identity may not change after this binding in response to tree paths, target content, acquisition behavior, machine prediction, or later gold."
+}

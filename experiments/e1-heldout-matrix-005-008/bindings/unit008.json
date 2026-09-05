@@ -1,0 +1,38 @@
+{
+  "schema": "risu.e1-heldout-target-binding/v0.1alpha1",
+  "binding_id": "E1_MATRIX_UNIT008_BINDING_001",
+  "status": "BOUND_BEFORE_TARGET_TREE_OR_CONTENT_ACCESS",
+  "enrollment": {
+    "enrollment_position": 8,
+    "unit_id": "corpus01-unit-008",
+    "candidate_id": "yoda-digital/mcp-gitlab-server::gitlab-version-bound-write",
+    "organization": "yoda-digital",
+    "stratum": "AGENT_FACING",
+    "mechanism_family": "COMMIT_OR_OBJECT_IDENTITY"
+  },
+  "selection": {
+    "authority": "corpus/0.1/ENROLLMENT.json position 8",
+    "substitution_used": false,
+    "human_candidate_choice_after_unit004": false
+  },
+  "target": {
+    "repository": "yoda-digital/mcp-gitlab-server",
+    "revision": "177adc871ef94c39902bcdb8c89200d000e02e64",
+    "tree_sha": "b8803a5a553ada80a6dc421faa8e2b181443cb48",
+    "screened_operation": "create_or_update_file",
+    "materializable": true,
+    "materializability_confirmation": "Git-data commit-object endpoint returned exact enrolled commit and tree SHA"
+  },
+  "frozen_e1": {
+    "freeze_id": "RISU_DIFF_E1_FREEZE_001",
+    "engine_identity_digest": "ed33d12881fa1395d1332ae165b5638518b2d472a7a520f0ae893d07e3b146b7"
+  },
+  "pristine_heldout": {
+    "eligible": true,
+    "target_content_consumed_before_binding": false,
+    "target_tree_path_listing_consumed_before_binding": false,
+    "gold_consumed_before_binding": false,
+    "may_count_toward_fresh_accuracy_after_later_gold": true
+  },
+  "freeze_rule": "Target identity, revision, tree SHA, screened operation, enrollment position, and frozen E1 identity may not change after this binding in response to tree paths, target content, acquisition behavior, machine prediction, or later gold."
+}

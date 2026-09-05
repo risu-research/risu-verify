@@ -1,0 +1,43 @@
+{
+  "schema": "risu.e1-heldout-target-binding/v0.1alpha1",
+  "binding_id": "E1_MATRIX_UNIT005_BINDING_001",
+  "status": "ENROLLED_BUT_NOT_PRISTINE_DUE_TO_PREBINDING_CONTENT_EXPOSURE",
+  "enrollment": {
+    "enrollment_position": 5,
+    "unit_id": "corpus01-unit-005",
+    "candidate_id": "sooperset/mcp-atlassian::atlassian-versioned-write",
+    "organization": "sooperset",
+    "stratum": "AGENT_FACING",
+    "mechanism_family": "REVISION_OR_RESOURCE_VERSION"
+  },
+  "selection": {
+    "authority": "corpus/0.1/ENROLLMENT.json position 5",
+    "substitution_used": false,
+    "human_candidate_choice_after_unit004": false
+  },
+  "target": {
+    "repository": "sooperset/mcp-atlassian",
+    "revision": "22369b76d6c1775a9730ba7d7cb37d49f7da671a",
+    "tree_sha": "7ca9e239b605f22198e079c0cff5c0f6c5360d77",
+    "screened_operation": "confluence_update_page",
+    "materializable": true,
+    "materializability_confirmation": "Git-data commit-object endpoint returned exact enrolled commit and tree SHA"
+  },
+  "frozen_e1": {
+    "freeze_id": "RISU_DIFF_E1_FREEZE_001",
+    "engine_identity_digest": "ed33d12881fa1395d1332ae165b5638518b2d472a7a520f0ae893d07e3b146b7"
+  },
+  "pristine_heldout": {
+    "eligible": false,
+    "reason": "E1_MATRIX_005_008_PROTOCOL_VIOLATION_001",
+    "may_count_toward_fresh_accuracy": false,
+    "may_be_replaced": false,
+    "later_fixed_protocol_prediction_role": "CONTAMINATED_CONTROL_ONLY"
+  },
+  "prebinding_access": {
+    "target_tree_path_listing_consumed": false,
+    "target_blob_fetch_requested": false,
+    "unexpected_commit_patch_content_exposed": true
+  },
+  "claim_boundary": "This binding preserves the enrolled Unit005 identity after a recorded protocol contamination. It is not a pristine held-out binding and cannot be upgraded to one later."
+}
