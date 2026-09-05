@@ -1,0 +1,62 @@
+name: RISU Unit 002-R frozen-core program grammar inspection
+
+on:
+  push:
+    branches:
+      - unit002-r-core-parser-inspect
+
+permissions:
+  contents: read
+
+jobs:
+  inspect-program-grammar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact sealed scientific head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: 743b30050753afdbcd416f48b8ac48b91d1bb9f2
+
+      - name: Inspect frozen core program grammar without semantic execution
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/core-program /tmp/program-evidence
+          mkdir -p /tmp/core-program /tmp/program-evidence
+          python - <<'PY'
+          import hashlib, json, zipfile
+          from pathlib import Path
+          pin=json.loads(Path('CORE_PIN.json').read_text())
+          p=Path(pin['archive'])
+          assert hashlib.sha256(p.read_bytes()).hexdigest() == pin['archive_sha256']
+          with zipfile.ZipFile(p) as z:
+              z.extractall('/tmp/core-program')
+          PY
+          grep -R -n -E 'program_version|PRESERVED_COMPARE|required_fact_ids|program.*version' /tmp/core-program > /tmp/program-evidence/grep.txt || true
+          python - <<'PY'
+          from pathlib import Path
+          terms=('program_version','PRESERVED_COMPARE','required_fact_ids')
+          out=Path('/tmp/program-evidence/source-excerpts.txt')
+          with out.open('w',encoding='utf-8') as f:
+              for p in sorted(Path('/tmp/core-program').rglob('*.py')):
+                  lines=p.read_text(encoding='utf-8',errors='replace').splitlines()
+                  hit=[i for i,x in enumerate(lines) if any(t in x for t in terms)]
+                  if not hit: continue
+                  f.write(f'===== {p} =====\n')
+                  emitted=set()
+                  for i in hit:
+                      lo=max(0,i-15); hi=min(len(lines),i+21)
+                      for j in range(lo,hi):
+                          if j in emitted: continue
+                          emitted.add(j); f.write(f'{j+1:05d}: {lines[j]}\n')
+                      f.write('\n')
+          print(out.read_text())
+          PY
+
+      - name: Upload program grammar evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit002-r-frozen-core-program-grammar-${{ github.run_id }}
+          path: /tmp/program-evidence/**
+          if-no-files-found: error
+          retention-days: 90
