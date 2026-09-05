@@ -1,0 +1,56 @@
+{
+  "author_acceptance_path": "corpus/0.1/units/001-github-mcp-merge/AUTHOR_ACCEPTANCE.json",
+  "authoring_freeze_commit": "355a4b77187d5b2118ac71eae9dec1cadc036847",
+  "frozen_paths": [
+    {
+      "path": "corpus/0.1/units/001-github-mcp-merge/evidence/source-github-merge-sha.json",
+      "sha256": "deb38a6e4a51bdaca231988fa142e269d9ebede59296bc97b212da9152f813ee"
+    },
+    {
+      "path": "corpus/0.1/units/001-github-mcp-merge/evidence/target-github-mcp-merge-implementation.json",
+      "sha256": "8e85393d39c1eac2c9739c821e5371225c0894699d03158e54590d68056a6fab"
+    },
+    {
+      "path": "corpus/0.1/units/001-github-mcp-merge/evidence/target-github-mcp-sha-pinning-test.json",
+      "sha256": "e2881bdbac2a254968ba0c1d883b05160245961bcaa7385efdb5be6146ec7af2"
+    },
+    {
+      "path": "corpus/0.1/units/001-github-mcp-merge/evidence/target-go-github-pin.json",
+      "sha256": "d6eb30136885453ee0be4dbe37648ec896edc4269897d3c02e483c739d3fffe3"
+    },
+    {
+      "path": "corpus/0.1/units/001-github-mcp-merge/SOURCE_LANE.json",
+      "sha256": "880d9d88269d3c702f96b4d50066d847fc7f660ff2fb55109f596f84445eae57"
+    },
+    {
+      "path": "corpus/0.1/units/001-github-mcp-merge/TARGET_LANE.json",
+      "sha256": "97eb4ed3987bb50b2ce169b8695f30ba590235c7422d733ccfcd6c86e15c51f8"
+    },
+    {
+      "path": "corpus/0.1/units/001-github-mcp-merge/BOUNDARY_MODEL.json",
+      "sha256": "4021ce16c26d734ea227eccbd8e46cde87e002eae6d3147877974f4cbc48861a"
+    },
+    {
+      "path": "corpus/0.1/units/001-github-mcp-merge/vbe.envelope.json",
+      "sha256": "6f091ef58d1bd36707aa88c9a50e2f35aace7dd5d9045440c0b20f9915657fbe"
+    },
+    {
+      "path": "corpus/0.1/units/001-github-mcp-merge/AUTHOR_ACCEPTANCE.json",
+      "sha256": "89386bac47b376c3fb18b16a49411c09651d20df328927fd30b8d1ac6570a252"
+    },
+    {
+      "path": "corpus/0.1/units/001-github-mcp-merge/vbe.instance.json",
+      "sha256": "80f1748fe1d0bf3e1185170fab38232323bb8def60bd0525126b7012b2dfc9ec"
+    }
+  ],
+  "instance_id": "corpus01-001-github-mcp-merge-current",
+  "instance_path": "corpus/0.1/units/001-github-mcp-merge/vbe.instance.json",
+  "post_freeze_allowed_paths": [
+    "corpus/0.1/units/001-github-mcp-merge/PRIMARY_RUN_MANIFEST.json"
+  ],
+  "primary_verdict_observed_before_manifest": false,
+  "schema": "risu.corpus-primary-run-manifest/v0.1alpha1",
+  "status": "READY_FOR_FIRST_PRIMARY_EXECUTION",
+  "tracked_primary_result_path": "corpus/0.1/units/001-github-mcp-merge/primary-result/PRIMARY_RESULT.json",
+  "unit_id": "corpus01-unit-001"
+}
