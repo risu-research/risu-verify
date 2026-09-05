@@ -1,0 +1,130 @@
+{
+  "schema": "risu.corpus-authoritative-closure/v0.1alpha1",
+  "status": "CLOSED",
+  "unit_id": "corpus01-unit-002",
+  "canonical_phrase": "Corpus 0.1 — Unit 002-R: CLOSED",
+  "target": {
+    "candidate_id": "octokit/rest.js::github-version-bound-write",
+    "repository": "octokit/rest.js",
+    "revision": "cd9cb8cd4965d99c7dac8c87d249308956250be3",
+    "operation": "octokit.rest.pulls.merge",
+    "enrollment_position": 2,
+    "selection_inherited_from_original_verdict_blind_enrollment": true
+  },
+  "scientific_pr": {
+    "number": 6,
+    "head_sha": "468f2d49f9ad34aaed053dc76d95f91a02ff3643",
+    "merged": true,
+    "merge_commit_sha": "ef32f1fa9abb850fd4d14949e7ea30a321106699",
+    "guarded_by_expected_head_sha": true,
+    "merged_main_state_verified": true
+  },
+  "canonical_primary": {
+    "run_id": 33947031284,
+    "job_id": 101254891951,
+    "artifact_id": 9963646702,
+    "semantic_exit_code": 0,
+    "product_status": "PRESERVED_IN_DECLARED_SCOPE",
+    "C": "C1",
+    "D": "D1",
+    "O": "O1",
+    "exact_realization": "REALIZATION_ESTABLISHED",
+    "exact_failure_mode": "NONE",
+    "minimal_counterexample": null,
+    "repair_obligations": [],
+    "actions_artifact_sha256": "a622c27422d36a9d28302893e4ad9001114bd86e62815aa4f62f3e68918f8a9b",
+    "self_contained_bundle_sha256": "eb0dcf71ea5ae6b0f40c9899dc8fe3e0e6e54fab84bcc1ee927f44e627f8cf95",
+    "primary_result_sha256": "0d7c940e5f5b1918a9b832644df779a1afb3355d8092cb151ee45d8abbe76351",
+    "artifact_index_sha256": "3586a6e6c1307376e0463c6c22a138fc45ab77db9f72d2c64c86d9152182b805",
+    "report_json_sha256": "a09e52ac538f8a43646703eeb81e6d5dee36b1e4ad282e54885bb6090169ddb2",
+    "certificate_sha256": "75cbdba31eb7717ea3b30f084b3b5f77a05cecbd3eeba26a20cb7f55bf38d418",
+    "primary_observation_sha256": "4b0d87ca6be5001ba3fcf552f475748b6ac7769573eb2f28b1325933d3479262"
+  },
+  "retained_limitations": {
+    "coverage_complete": false,
+    "unqualified_preserved_claim_prohibited": true,
+    "coverage_gap": {
+      "source_only": [
+        "GUARDED_MERGE_REVIEWED_HEAD_SHA"
+      ],
+      "in_scope_only": [
+        "GUARDED_OCTOKIT_PULLS_MERGE_REVIEWED_HEAD_SHA"
+      ]
+    },
+    "coverage_gap_interpretation": "The bounded two-world guarded-call realization is exact, but no pre-result equivalence mapping froze the SOURCE-family identifier and TARGET in-scope identifier as equivalent. Closure retains that distinction and does not post-hoc alias it.",
+    "general_unguarded_calls": "OUT_OF_SCOPE",
+    "all_merge_failures": "OUT_OF_SCOPE",
+    "live_github_service_conformance": "NOT_CLAIMED",
+    "model_relative": true
+  },
+  "immutability": {
+    "authoring_freeze_commit": "ce4c3a311bcf9f6b74b43af24e8732d1af8fd5ac",
+    "sealed_scientific_head": "1f9fba3a270f05d06763a5c81216d2edddffad8b",
+    "primary_result_freeze_commit": "b52bde0d0fdef0a2be7d5973e564daccd12296c9",
+    "primary_result_sha256": "0d7c940e5f5b1918a9b832644df779a1afb3355d8092cb151ee45d8abbe76351",
+    "artifact_index_sha256": "3586a6e6c1307376e0463c6c22a138fc45ab77db9f72d2c64c86d9152182b805",
+    "actions_artifact_sha256": "a622c27422d36a9d28302893e4ad9001114bd86e62815aa4f62f3e68918f8a9b",
+    "self_contained_bundle_sha256": "eb0dcf71ea5ae6b0f40c9899dc8fe3e0e6e54fab84bcc1ee927f44e627f8cf95",
+    "self_contained_manifest_entries_verified": 24,
+    "primary_bytes_rewritten_after_result_freeze": false,
+    "scientific_primary_rerun_after_first_valid_outcome": false
+  },
+  "merged_main_validation": {
+    "scientific_merge_commit_sha": "ef32f1fa9abb850fd4d14949e7ea30a321106699",
+    "main_head_observed_equal_to_scientific_merge_commit": true,
+    "github_merge_commit_signature_verified": true,
+    "workflow_runs": {
+      "unit002_r_closure": {
+        "run_id": 33963975591,
+        "conclusion": "success"
+      },
+      "public_semantic_smoke": {
+        "run_id": 33963975594,
+        "conclusion": "success"
+      },
+      "corpus_infrastructure": {
+        "run_id": 33963975605,
+        "conclusion": "success"
+      },
+      "corpus_infrastructure_v08": {
+        "run_id": 33963975600,
+        "conclusion": "success"
+      },
+      "unit002_m_mutation_control": {
+        "run_id": 33963975588,
+        "conclusion": "success"
+      }
+    }
+  },
+  "failure_history_retained": {
+    "invalid_prevalid_toolchain_run": {
+      "run_id": 33946439332,
+      "valid_semantic_outcome_observed": false
+    },
+    "presemantic_filesystem_mode_gate_stop": {
+      "run_id": 33947000387,
+      "valid_semantic_outcome_observed": false
+    },
+    "canonical_primary_post_result_wrapper_failure": {
+      "run_id": 33947031284,
+      "primary_execution_succeeded_before_wrapper_failure": true,
+      "semantic_result_affected": false,
+      "rerun_permitted_for_scientific_result": false
+    },
+    "closure_v1_failed_closed": {
+      "run_id": 33947411380,
+      "scientific_primary_affected": false
+    },
+    "closure_generation_and_transport_failures_retained": true,
+    "history_rewritten_to_hide_failures": false
+  },
+  "closure_protocol": {
+    "premerge_closure_record": "PREMERGE_CLOSURE.json",
+    "coverage_diagnostic": "post-result/COVERAGE_DIAGNOSTIC.json",
+    "phase_aware_closure_verifier": "tools/unit002r_closure_verify.py",
+    "scientific_pr_guarded_merge_complete": true,
+    "authoritative_closure_record_is_post_scientific_merge_only": true,
+    "preprimary_automatic_workflows_retired": true,
+    "target_qualification_automatic_workflow_retired": true
+  }
+}
