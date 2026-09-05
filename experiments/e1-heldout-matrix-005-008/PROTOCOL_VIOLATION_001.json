@@ -1,0 +1,48 @@
+{
+  "schema": "risu.e1-heldout-matrix-protocol-violation/v0.1alpha1",
+  "violation_id": "E1_MATRIX_005_008_PROTOCOL_VIOLATION_001",
+  "status": "RECORDED_IMMEDIATELY_AFTER_DETECTION",
+  "matrix_protocol_id": "E1_REMAINING_HELDOUT_MATRIX_005_008_SELECTION_001",
+  "affected_unit": "corpus01-unit-005",
+  "stage": "METADATA_ONLY_EXACT_REVISION_MATERIALIZABILITY",
+  "intended_access": "repository existence, exact enrolled commit existence, and commit tree SHA only",
+  "actual_access": {
+    "endpoint_family": "GitHub REST ordinary commit endpoint /repos/{owner}/{repo}/commits/{sha}",
+    "repository": "sooperset/mcp-atlassian",
+    "revision": "22369b76d6c1775a9730ba7d7cb37d49f7da671a",
+    "returned_tree_sha": "7ca9e239b605f22198e079c0cff5c0f6c5360d77",
+    "unexpected_payload": "The endpoint also returned changed-file records and patch text from the target commit.",
+    "target_content_exposed_before_binding": true,
+    "target_tree_path_listing_requested": false,
+    "target_blob_fetch_requested": false,
+    "e1_prediction_executed": false,
+    "gold_adjudication_executed": false
+  },
+  "root_cause": "ENDPOINT_SEMANTICS_MISMATCH: an ordinary commit endpoint was used where the Git-data commit-object endpoint was required to guarantee metadata-only retrieval.",
+  "scientific_consequence": {
+    "unit005_remains_enrolled": true,
+    "unit005_may_be_replaced": false,
+    "unit005_is_pristine_heldout_after_violation": false,
+    "unit005_may_count_toward_fresh_heldout_accuracy": false,
+    "unit005_may_still_receive_fixed_protocol_e1_prediction": true,
+    "unit005_fixed_protocol_prediction_role": "CONTAMINATED_CONTROL_ONLY",
+    "unit006_008_pristine_status_changed_by_this_event": false
+  },
+  "containment": {
+    "no_selection_rule_changed": true,
+    "no_e1_engine_byte_changed": true,
+    "no_acquisition_rule_changed": true,
+    "no_target_substitution": true,
+    "no_unit005_semantic_inference_may_be_used_to_modify_matrix": true,
+    "future_metadata_only_commit_checks_must_use": "Git data commit object endpoint /repos/{owner}/{repo}/git/commits/{sha}",
+    "unit005_exposed_content_may_be_used_as_input_to_e1": false,
+    "unit005_exposed_content_may_be_used_to_select_files": false
+  },
+  "claim_boundary": "This record does not assert any Unit005 source or target semantics. It records a contamination event that disqualifies Unit005 from pristine held-out scoring while preserving it as an enrolled fixed-protocol control.",
+  "immutability": {
+    "violation_may_be_reclassified_as_no_violation_later": false,
+    "unit005_pristine_status_may_be_restored": false,
+    "unit005_may_be_silently_dropped": false,
+    "unit005_may_be_replaced_by_reserve_candidate": false
+  }
+}
