@@ -14,6 +14,8 @@ permissions:
 jobs:
   independent-audit:
     runs-on: ubuntu-latest
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
     steps:
       - name: Checkout exact authoring head
         uses: actions/checkout@v4
@@ -33,6 +35,8 @@ jobs:
   clean-seal:
     needs: independent-audit
     runs-on: ubuntu-latest
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
     steps:
       - name: Fresh checkout of exact authoring head
         uses: actions/checkout@v4
@@ -45,15 +49,13 @@ jobs:
           test -z "$(git status --porcelain)"
           test "$(git rev-parse HEAD)" = "${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}"
 
-      - name: Re-verify acceptance and Amendment 003 on pristine runner
-        run: python tools/unit002r_acceptance_verify.py
-
-      - name: Generate v0.8 manifest and seal from committed bytes
+      - name: Generate v0.8 manifest and seal as first Python action
         run: |
           python tools/corpus01_seal.py \
             corpus/0.1/units/002-octokit-pulls-merge \
             --freeze-ref HEAD \
-            --json | tee .risu-unit002r-seal-console.json
+            --json > /tmp/risu-unit002r-seal-console.json
+          cat /tmp/risu-unit002r-seal-console.json
 
       - name: Assert seal is non-primary and mechanically ready
         run: |
@@ -76,6 +78,9 @@ jobs:
           assert manifest['protocol_preserving_generation']['scientific_input_bytes_modified'] is False
           assert manifest['protocol_preserving_generation']['hashes_computed_from_frozen_bytes'] is True
           PY
+
+      - name: Stage console only after seal boundary is complete
+        run: cp /tmp/risu-unit002r-seal-console.json .risu-unit002r-seal-console.json
 
       - name: Upload generated seal outputs
         uses: actions/upload-artifact@v4
