@@ -1,0 +1,96 @@
+{
+  "schema": "risu.diff-e2-synthetic-qualification-truth-freeze-audit/v0.1",
+  "audit_id": "RISU_DIFF_E2_SYNTHETIC_QUALIFICATION_TRUTH_FREEZE_AUDIT_001",
+  "status": "PASS",
+  "normative_freeze_commit": {
+    "sha": "5738a2025457afeb408a44b446019347c1289a80",
+    "tree": "5e52fbf1e63c38a7ba40a0ac8a3ba39420a3aa8d",
+    "sole_parent": "d29d1099b7a7d783c60fafe6727b9d25db99e358",
+    "parent_count": 1
+  },
+  "tree_diff_audit": {
+    "added_files": 12,
+    "modified_preexisting_files": 0,
+    "deleted_preexisting_files": 0,
+    "unexpected_files": 0,
+    "all_additions_are_seed_truth_qualification_or_freeze_material": true
+  },
+  "branch_ref_audit": {
+    "branch": "e2-development",
+    "branch_sha_after_normative_freeze": "5738a2025457afeb408a44b446019347c1289a80",
+    "force_used": false
+  },
+  "actions_audit": {
+    "workflow_run_count_on_e2_development_after_freeze": 0,
+    "unintended_experiment_execution_detected": false
+  },
+  "seed_execution_preseal": {
+    "runtimes_observed": {
+      "python": "3.13.5",
+      "go": "go1.23.2",
+      "node": "v22.16.0"
+    },
+    "programs_executed": 6,
+    "all_exit_success": true,
+    "all_W_MATCH": {"outcome":"WRITE_APPLIED","effect":true},
+    "all_W_STALE": {"outcome":"STALE_REJECTED_NO_EFFECT","effect":false},
+    "semantic_output_agreement_across_six": true
+  },
+  "frozen_object_audit": {
+    "seed_source_git_blobs": {
+      "SYN-PY-01": "ac730a4896aa260d5cdb78b47e21c3baa2e66458",
+      "SYN-PY-02": "3e7a1d1599806e5e46b99f7e953f6b1260d4f931",
+      "SYN-GO-01": "3c236a3cc6472bc1895a7a7940d8dcb40a0bfe7e",
+      "SYN-GO-02": "b4e2ab24a4bf5484684612ae8750fd9a7e3b40db",
+      "SYN-TS-01": "2ed95f2c3c37a1d48a42f81dbc94703321600d0b",
+      "SYN-TS-02": "acbaf1a9f2ef335f3b2f46b0eaa22d3b372525a4"
+    },
+    "seed_catalog_blob": "2a0c01ad5850d3a701fb243d307ff441e9cae358",
+    "matrix_contract_blob": "b6d7d9c4d172a6e38ab59e93ae9748fafefc9fd0",
+    "expanded_matrix_blob": "0ab0c31377d7e03bc279943af151c687f51ffc93",
+    "truth_oracle_blob": "1e5fe69f302df6fdd367797649b17eb3c4ea5950",
+    "truth_oracle_contract_blob": "98e53e13472c9d1287c3114734464994a6693778",
+    "freeze_manifest_blob": "8367da617cd2a9cabdefc82a8d6a9bac681885b1"
+  },
+  "matrix_audit": {
+    "expanded_row_count": 58,
+    "expanded_jsonl_sha256": "afd681d308a6f4ec8c183edd9b139c6b914fe501936cf84e5845a6a1c0d6b7cb",
+    "positive_semantic_loss_cells": 24,
+    "semantic_preserving_cells": 24,
+    "epistemic_adversarial_cells": 10,
+    "per_language_positive": {"python":8,"go":8,"typescript_javascript":8},
+    "per_language_negative": {"python":8,"go":8,"typescript_javascript":8},
+    "P01_to_P06_cross_language_minimum_satisfied": true,
+    "N01_to_N05_cross_language_minimum_satisfied": true,
+    "P07_to_P10_all_exercised": true,
+    "N06_to_N10_all_exercised": true,
+    "repeat_runs_per_cell": 2
+  },
+  "truth_oracle_preseal_self_test": {
+    "full_verification_status": "PASS",
+    "errors": [],
+    "seed_count": 6,
+    "cell_count": 58,
+    "e2_prediction_consumed": false,
+    "q049_status": "PASS",
+    "q049_truth": "INFRASTRUCTURE_INVALID_BEFORE_PREDICTION"
+  },
+  "scientific_firewall": {
+    "fresh_target_selected": false,
+    "fresh_target_bytes_consumed": false,
+    "fresh_gold_consumed": false,
+    "real_target_bytes_used_to_define_seed_truth": false,
+    "historical_unit002m_counts_reused": false,
+    "e2_machine_output_used_to_define_or_select_truth": false,
+    "e2_engine_runtime_implementation_added_in_normative_freeze": false,
+    "truth_oracle_role": "QUALIFICATION_TRUTH_AUTHORITY_ONLY_NOT_E2_ENGINE"
+  },
+  "audit_conclusion": {
+    "synthetic_seed_truth_freeze_integrity": "PASS",
+    "collateral_drift": "ZERO_DETECTED",
+    "mutation_materialization_authorized_to_begin_after_this_audit_commit": true,
+    "e2_engine_implementation_authorized_to_begin_after_this_audit_commit": true,
+    "fresh_e2_evaluation_authorized": false
+  },
+  "claim_boundary": "This audit closes the preimplementation six-seed, 58-cell synthetic truth universe and prediction-independent oracle. It does not claim E2 qualification success or fresh real-target performance."
+}
