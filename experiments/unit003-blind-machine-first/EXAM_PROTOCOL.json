@@ -1,0 +1,112 @@
+{
+  "schema": "risu.unit003-blind-machine-first-exam/v0.1",
+  "exam_id": "UNIT003_BLIND_MACHINE_FIRST_E0_001",
+  "status": "PROSPECTIVE_EXAM_PROTOCOL_FROZEN_BEFORE_TARGET_SEMANTIC_INSPECTION",
+  "purpose": "Run the already-frozen RISU Diff E0 machine-first engine on the third verdict-blind Corpus 0.1 enrollment without human semantic steering, outcome selection, or post-hoc target substitution.",
+  "authoritative_freeze": {
+    "main_merge_commit": "2e423a86339daa031f4b98f79f288b82e5ce621b",
+    "engine_identity_digest": "7979ff811765cf1617602b2ef9ed89935f24da2c1f32eceb417dfd209e335c60",
+    "protocol_freeze_commit": "d51700e5fc24ba777c830f11ca18b0299b6a6f4f",
+    "engine_is_immutable_for_this_exam": true,
+    "scoring_affecting_change_requires_new_engine_identity": true
+  },
+  "heldout_target": {
+    "unit_id": "corpus01-unit-003",
+    "candidate_id": "kubernetes/kubectl::kubernetes-write-update",
+    "repository": "kubernetes/kubernetes",
+    "target_revision": "04f459470f58642063b0374361bee0011278f6d8",
+    "screened_operation": "kubectl annotate --resource-version",
+    "stratum": "NON_AGENT_SPECIFIC",
+    "mechanism_family": "REVISION_OR_RESOURCE_VERSION",
+    "selection_source": "corpus/0.1/ENROLLMENT.json",
+    "target_substitution_forbidden": true
+  },
+  "preinspection_attestation": {
+    "allowed_information_consumed": [
+      "Unit003 identity, order, repository, target revision, screened operation, stratum, and mechanism family from frozen enrollment",
+      "the already-frozen E0 engine/evaluation contracts"
+    ],
+    "target_specific_source_code_consumed": false,
+    "target_specific_documentation_consumed": false,
+    "target_specific_tests_consumed": false,
+    "target_specific_issues_or_discussions_consumed": false,
+    "target_behavior_experiments_consumed": false,
+    "human_gold_semantics_consumed": false,
+    "e0_prediction_observed": false
+  },
+  "outcome_neutrality": {
+    "admissible_first_seal_predictions": [
+      "E0_PREDICTED_CONSEQUENCE_REGRESSION",
+      "E0_PREDICTED_CONSEQUENCE_STABLE_IN_DECLARED_SCOPE",
+      "E0_PREDICTED_ASSURANCE_INCOMPLETE"
+    ],
+    "infrastructure_failure_is_not_a_scientific_prediction": true,
+    "no_outcome_is_a_promotion_requirement": true,
+    "no_result_may_trigger_target_replacement": true
+  },
+  "machine_first_acquisition": {
+    "acquisition_is_outside_semantic_core": true,
+    "first_round_human_semantic_selection_forbidden": true,
+    "source_authority": "Exact committed bytes reachable from kubernetes/kubernetes target_revision only.",
+    "first_round_algorithm": {
+      "step_1": "Resolve and record exact target commit and recursive Git tree identity.",
+      "step_2": "Enumerate target-revision repository paths without reading file contents.",
+      "step_3": "Score paths deterministically using only frozen lexical anchors derived before inspection from the screened operation: annotate, resource-version, resourceversion, resource_version, resourceVersion.",
+      "step_4": "Select the lexicographically tie-broken top bounded path set under the frozen path policy; fetch exact bytes for those paths only.",
+      "step_5": "Construct MACHINE_INPUT.json plus exact evidence-file SHA-256 closure; no semantic assertions, human gold, canonical verdict, witness, or ESTABLISHED relation may be inserted by acquisition.",
+      "step_6": "Run frozen E0 and seal the complete first-round semantic artifacts before any human semantic reading of target evidence or prediction."
+    },
+    "path_policy": {
+      "maximum_first_round_files": 24,
+      "include_extensions": [".go", ".md", ".yaml", ".yml", ".json", ".txt"],
+      "exclude_path_fragments": ["vendor/", "staging/src/k8s.io/client-go/vendor/", "third_party/", "translations/"],
+      "ranking": [
+        "exact basename/token match to annotate",
+        "path contains kubectl and annotate",
+        "path contains resource-version/resourceversion/resource_version/resourceVersion",
+        "path contains command or cmd near annotate",
+        "lexicographic path as final tie-break"
+      ]
+    },
+    "network_policy": "Acquisition may use GitHub read-only retrieval of exact pinned target bytes; frozen semantic core remains network-free.",
+    "no_current_default_branch_substitution": true
+  },
+  "first_seal_rule": {
+    "first_machine_input_packet_is_immutable_once_e0_starts": true,
+    "first_semantic_output_seal_is_immutable_once_emitted": true,
+    "first_prediction_must_be_archived_even_if_assurance_incomplete": true,
+    "human_gold_may_not_be_read_before_first_seal": true,
+    "human_semantic_adjudication_may_not_rewrite_first_round_artifacts": true
+  },
+  "machine_driven_refinement": {
+    "permitted_only_after_first_seal": true,
+    "trigger": "Frozen E0 emits target-only PROBE_PLAN.json or REFINEMENT_REQUESTS.json.",
+    "human_may_not_choose_additional_evidence_for_semantic_help": true,
+    "acquisition_may_only_satisfy_machine-emitted target-only requests using exact target-revision bytes or reproducible machine observations",
+    "each_round_gets_a_new_input_packet_digest_and_output seal while preserving all prior rounds": true,
+    "engine_identity_must_remain_constant": true,
+    "stop_conditions": [
+      "E0 emits a valid regression witness",
+      "E0 emits stable-in-declared-scope under all frozen obligations",
+      "E0 remains assurance-incomplete with no satisfiable machine-requested target-only refinement",
+      "infrastructure failure"
+    ]
+  },
+  "gold_firewall": {
+    "canonical_human_gold_authoring_starts_only_after_machine-first phase is permanently archived": true,
+    "gold_author_must_not_edit machine-first artifacts": true,
+    "machine-first outputs are predictions only and never canonical Corpus authority": true,
+    "post-machine comparison must report disagreements without retrofitting either side": true
+  },
+  "audit_requirements": {
+    "retain_every_input_packet": true,
+    "retain_every_output_seal": true,
+    "retain_exact_target_evidence_sha256": true,
+    "retain_acquisition_path_ranking": true,
+    "retain_commit_tree_identity": true,
+    "retain_infrastructure_failures": true,
+    "retain_all_machine_refinement_requests": true,
+    "record_tool_and_workflow_run_ids": true
+  },
+  "claim_boundary": "This protocol tests the frozen E0 machine-first layer on one prospectively enrolled held-out target. It does not establish canonical Unit003 semantics, population accuracy, prevalence, or general Kubernetes correctness."
+}

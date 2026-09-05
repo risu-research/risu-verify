@@ -1,0 +1,141 @@
+{
+  "schema": "risu.unit003-blind-machine-first-canonical-first-seal/v0.1",
+  "exam_id": "UNIT003_BLIND_MACHINE_FIRST_E0_001",
+  "unit_id": "corpus01-unit-003",
+  "status": "CANONICAL_FIRST_SEAL_ARCHIVED",
+  "scientific_class": "HELDOUT_MACHINE_FIRST_E0_STRUCTURAL_CEILING_EXAM",
+  "target": {
+    "repository": "kubernetes/kubectl",
+    "revision": "04f459470f58642063b0374361bee0011278f6d8",
+    "tree_sha": "d1eb526feea2a1815554db775a343d751f4892b1",
+    "screened_operation": "kubectl annotate --resource-version"
+  },
+  "engine": {
+    "identity_digest": "7979ff811765cf1617602b2ef9ed89935f24da2c1f32eceb417dfd209e335c60",
+    "frozen_components_verified": 26,
+    "changed_for_unit003": false
+  },
+  "selection": {
+    "semantic_selection_sha256": "912bc1241519e95fe2e3a3aa02267c2bf4a5e2e3377dd31a963fc0757e40d74b",
+    "selection_manifest_file_sha256": "c77a3e37b662da5f330035d3f28f5d376b89d978e83d8b96858a2ae7b959a4de",
+    "selected_count": 24,
+    "tree_blob_entries": 763,
+    "eligible_entries": 516,
+    "local_target_blob_objects_before_selection": 0,
+    "exact_annotate_feature_rows": 2,
+    "rows_with_any_positive_ranking_feature": 2,
+    "lexical_fallback_rows": 22,
+    "first_two_paths": [
+      "pkg/cmd/annotate/annotate.go",
+      "pkg/cmd/annotate/annotate_test.go"
+    ],
+    "selection_used_target_file_contents": false
+  },
+  "first_emission": {
+    "run_id": 33979191679,
+    "head_sha": "0b15aacd280fe5e669aa0de5bc9a7775b9e709ce",
+    "execute_job_id": 101341213176,
+    "machine_input_sha256": "7e8a34a4cf384529b34826555a5dc9f4ec0d1e7913c00f8fb77f053829fe379c",
+    "input_packet_digest": "6b0d4280fe26dc61fd09663b3fcbb5ee6f5797c8bd0b6f72017faaebe306704c",
+    "seal_digest": "e9b14a6f948436b837a5abd6054d4468e93c84922d5bc35a3866673c234b2c36",
+    "e0_status": "PASS",
+    "archive_completed_in_same_run": false,
+    "archive_failure_class": "POST_SEAL_RECORD_HELPER_IMPORT_PATH",
+    "prediction_value_read_before_archive": false
+  },
+  "exact_archival_replay": {
+    "run_id": 33979316666,
+    "head_sha": "9b3f65851536c0f1f1f2bf4e0b672f2ce5a09d66",
+    "select_job_id": 101341541058,
+    "execute_job_id": 101341568460,
+    "classification": "DETERMINISTIC_EXACT_SEAL_ARCHIVAL_REPLAY_NOT_INDEPENDENT_REPLICATION",
+    "machine_input_sha256_exact_match": true,
+    "seal_digest_exact_match": true,
+    "first_seal_binding_pass": true,
+    "structural_ceiling_gate_pass": true,
+    "workflow_conclusion": "success",
+    "artifact": {
+      "id": 9973268426,
+      "name": "unit003-e0-first-seal-9b3f65851536c0f1f1f2bf4e0b672f2ce5a09d66",
+      "file_count": 45,
+      "size_bytes": 78963,
+      "zip_sha256": "54408113ae05b88b4acf52f18f18f8e59b911aac84aadf0f895982e9d257f027",
+      "downloaded_zip_sha256_verified_equal": true,
+      "retention_days": 90
+    },
+    "selection_artifact": {
+      "id": 9973265203,
+      "zip_sha256": "57d29a418b34f862ff005f4ed2dfb4dbebf9355a4ded88b34ae15b840a3028d8"
+    }
+  },
+  "sealed_core": {
+    "first_seal_record_sha256": "dae4a6646d2c751612475c6ed426729600e4885b295fcc2c658b7e4ed169596f",
+    "e0_output_seal_file_sha256": "f5f57340fb6edfa671faf72d0457741bda3b31043810a91918d17bbc13317d0e",
+    "seal_digest": "e9b14a6f948436b837a5abd6054d4468e93c84922d5bc35a3866673c234b2c36",
+    "prediction_artifact_sha256": "fd955626c42c84c9a9da92157a589ced5ffc118a4ce0cf7b9b0688432f07c709",
+    "probe_plan_sha256": "5e4454d97042566b5fb4a587797ba62f2cd7cf7d17922c7e5299fe7b8cce351c",
+    "refinement_requests_sha256": "902430c4c0f7f83ddd530806a5c60c8804b7a85e66a417028cf8bc59a34ae6b2",
+    "vbe_obligations_sha256": "c59cb6199e77720e11805c22030a93a418b820e554fbeb239990209a785663f8",
+    "e0_run_manifest_sha256": "48bf059f94f617159271f08d69dc8e0d569015c7fe9fff50cc317937483cd499",
+    "semantic_artifact_sha256": {
+      "BASELINE_RESULTS.json": "488cbe4b576fa703f888caf9ec3c3ba35a576faaffc3c6221dfe2298007ae3f9",
+      "CIR_CANDIDATE.json": "1ee69628ad361c392f86e3127daea90ba9697c63a82bc499897577431f250d6f",
+      "E0_PREDICTION.json": "fd955626c42c84c9a9da92157a589ced5ffc118a4ce0cf7b9b0688432f07c709",
+      "E0_RUN_MANIFEST.json": "48bf059f94f617159271f08d69dc8e0d569015c7fe9fff50cc317937483cd499",
+      "PROBE_PLAN.json": "5e4454d97042566b5fb4a587797ba62f2cd7cf7d17922c7e5299fe7b8cce351c",
+      "REFINEMENT_MAP_CANDIDATE.json": "2d008dbeb3303e3bc784b869f2d37c6b790b9ff0d0308541d6e976d6ea1fd84d",
+      "REFINEMENT_REQUESTS.json": "902430c4c0f7f83ddd530806a5c60c8804b7a85e66a417028cf8bc59a34ae6b2",
+      "VBE_OBLIGATIONS.json": "c59cb6199e77720e11805c22030a93a418b820e554fbeb239990209a785663f8"
+    }
+  },
+  "result": {
+    "prediction": "E0_PREDICTED_ASSURANCE_INCOMPLETE",
+    "hard_stop": "UNRESOLVED_MATERIAL_OBLIGATION",
+    "canonical_scientific_authority": false,
+    "consequence_authority": false,
+    "unresolved_material_obligations": 9,
+    "probe_count": 9,
+    "refinement_request_count": 9,
+    "all_obligations_satisfied": false,
+    "predeclared_first_prediction_target_discriminative": false,
+    "structural_refinement_ceiling_predeclared": true,
+    "human_probe_translation_used": false
+  },
+  "baseline_observations": {
+    "B0_SURFACE_argument_names": ["resource-version"],
+    "B1_NAME_SHAPE_detected_versionish_names": true,
+    "B2_FLOW_ONLY_candidate_count": 0,
+    "B2_FLOW_ONLY_comparison_count": 0,
+    "all_baselines_consequence_authority": false
+  },
+  "interpretation": {
+    "supported": [
+      "The frozen E0 machine-first pipeline completed on the held-out Unit003 packet and failed closed rather than upgrading unresolved material semantics.",
+      "The path-only selector deterministically enrolled the two annotate command files first but spent 22 of 24 slots on lexical fallback paths under the frozen no-threshold policy.",
+      "The first E0 prediction reached the predeclared structural refinement ceiling with nine target-only probes and no human probe translation.",
+      "The exact first seal emitted in Attempt 005 was deterministically replayed and archived byte-identically at the seal and MACHINE_INPUT identity layers."
+    ],
+    "not_supported": [
+      "A canonical consequence-preservation or consequence-regression verdict for kubectl annotate.",
+      "Target-discriminative prediction accuracy from this first E0 result.",
+      "Population accuracy, prevalence, live deployment conformance, or universal correctness.",
+      "Independent replication of the first seal archival replay."
+    ]
+  },
+  "blindness_and_contamination": {
+    "human_gold_consumed_before_first_seal": false,
+    "selected_target_semantic_contents_manually_read_before_first_seal": false,
+    "strict_zero_byte_preseal_blindness_claimed": false,
+    "preseal_metadata_overreturn_incident_001_disclosed": true
+  },
+  "learning_boundary": {
+    "e0_may_be_modified_retroactively_for_unit003": false,
+    "unit003_may_be_used_as_post_result_learning_signal_for_e1": true,
+    "first_prospective_e1_validation_unit": "corpus01-unit-004",
+    "identified_bottlenecks": [
+      "path-only evidence acquisition precision after exact anchor hits",
+      "Go consequence-coordinate and comparison extraction",
+      "machine-ingestible semantic refinement from generated probes"
+    ]
+  }
+}

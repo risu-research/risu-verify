@@ -1,0 +1,73 @@
+{
+  "schema": "risu.unit003-blind-machine-first-run-freeze-correction/v0.1",
+  "correction_id": "UNIT003_BLIND_MACHINE_FIRST_RUN_FREEZE_CORRECTION_004",
+  "applies_to_run_freeze_id": "UNIT003_BLIND_MACHINE_FIRST_E0_RUN_FREEZE_001",
+  "status": "SELECTION_IDENTITY_GUARD_CORRECTION_004",
+  "scientific_or_scoring_change": false,
+  "purpose": "Correct only the identity layer used by the Attempt 004 selection replay guard. The selector itself reproduced the exact canonical semantic selection digest from Attempt 003; the workflow incorrectly compared the SHA-256 of the entire manifest file to that canonical-basis digest.",
+  "attempt_004": {
+    "run_id": 33979003797,
+    "head_sha": "bf88569664fd0c78f737afa12453c2cd13b23ccb",
+    "select_job_id": 101340689672,
+    "failed_step": "Require exact replay of Attempt 3 machine-frozen selection",
+    "failure_class": "SELECTION_IDENTITY_LAYER_MISMATCH_PRE_CONTENT",
+    "frozen_e0_identity_gate_passed": true,
+    "engine_identity_digest": "7979ff811765cf1617602b2ef9ed89935f24da2c1f32eceb417dfd209e335c60",
+    "target_tree_fetch_passed": true,
+    "local_target_blob_objects_before_selection": 0,
+    "tree_blob_entries": 763,
+    "eligible_entries": 516,
+    "selected_count": 24,
+    "selector_reported_selection_sha256": "912bc1241519e95fe2e3a3aa02267c2bf4a5e2e3377dd31a963fc0757e40d74b",
+    "attempt003_selection_sha256": "912bc1241519e95fe2e3a3aa02267c2bf4a5e2e3377dd31a963fc0757e40d74b",
+    "canonical_semantic_selection_exact_match": true,
+    "selected_target_content_fetch_executed": false,
+    "machine_packet_created": false,
+    "e0_semantic_core_executed": false,
+    "prediction_emitted": false,
+    "first_seal_created": false,
+    "scientific_prediction": null
+  },
+  "defect": {
+    "superseded_guard": "sha256sum ROUND0_SELECTION.json == Attempt003 selection_sha256",
+    "why_invalid": "selection_sha256 is defined by the frozen runner as SHA-256 over canonical selection basis fields only; ROUND0_SELECTION.json additionally carries non-basis audit metadata. Raw-file SHA-256 and semantic selection SHA-256 are distinct identities by construction.",
+    "evidence_of_determinism": "Attempt 004 selector independently emitted the exact Attempt 003 semantic selection_sha256 before the erroneous raw-file comparison failed."
+  },
+  "correction": {
+    "corrected_guard": "Run frozen verify-selection, parse ROUND0_SELECTION.json, and require manifest.selection_sha256 == Attempt003 canonical semantic selection digest.",
+    "required_selection_sha256": "912bc1241519e95fe2e3a3aa02267c2bf4a5e2e3377dd31a963fc0757e40d74b",
+    "semantic_selection_definition_changed": false,
+    "selection_rows_changed": false,
+    "ranking_changed": false
+  },
+  "superseded_workflow_git_blob_sha": "3d5c07bc29ead2eb5b4544bf8f0c523ebadd975d",
+  "corrected_workflow_git_blob_sha": "c25d0d74ed4dbc51a70e6035db57cf4ef418c05e",
+  "corrected_workflow_sha256": "528b71ad28d36df3c1dcaa266b85e6e8bbc7542df1192e97d96b720762e7785e",
+  "immutability": {
+    "engine_identity_changed": false,
+    "frozen_e0_bytes_changed": false,
+    "evaluation_contract_changed": false,
+    "target_revision_changed": false,
+    "target_tree_sha_changed": false,
+    "screened_operation_changed": false,
+    "selection_policy_changed": false,
+    "maximum_first_round_files_changed": false,
+    "surface_derivation_changed": false,
+    "content_fetch_method_changed": false,
+    "acquisition_runner_changed": false,
+    "acquisition_tests_changed": false,
+    "prediction_logic_changed": false,
+    "structural_refinement_ceiling_changed": false,
+    "target_substitution_occurred": false,
+    "human_gold_consumed": false
+  },
+  "timing": {
+    "after_attempt_004_selector_exact_semantic_replay": true,
+    "before_attempt_005_selected_target_content_fetch": true,
+    "before_attempt_005_machine_packet": true,
+    "before_e0_semantic_core_execution": true,
+    "before_prediction": true,
+    "before_first_e0_seal": true,
+    "before_human_gold": true
+  }
+}

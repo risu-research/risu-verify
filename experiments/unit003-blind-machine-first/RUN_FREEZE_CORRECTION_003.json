@@ -1,0 +1,73 @@
+{
+  "schema": "risu.unit003-blind-machine-first-run-freeze-correction/v0.1",
+  "correction_id": "UNIT003_BLIND_MACHINE_FIRST_RUN_FREEZE_CORRECTION_003",
+  "applies_to_run_freeze_id": "UNIT003_BLIND_MACHINE_FIRST_E0_RUN_FREEZE_001",
+  "status": "POST_ACQUISITION_PRE_E0_INVOCATION_CORRECTION_003",
+  "scientific_or_scoring_change": false,
+  "purpose": "Correct only the Python module invocation path after Attempt 003 had already produced the machine-frozen selection and exact-revision packet but failed at import time before any E0 semantic code, prediction, or seal executed.",
+  "attempt_003": {
+    "run_id": 33978746002,
+    "head_sha": "b4950547ad0c15f36c8a35939964ab088ab52c74",
+    "select_job_id": 101340008278,
+    "execute_job_id": 101340032323,
+    "selection_artifact_id": 9973103226,
+    "selection_artifact_zip_sha256": "948a2fe16867b5eca4f5e8aa57016afae6325ffb5cd42c8353499d22672f0d3e",
+    "selected_count": 24,
+    "selection_sha256": "912bc1241519e95fe2e3a3aa02267c2bf4a5e2e3377dd31a963fc0757e40d74b",
+    "evidence_count": 24,
+    "machine_input_sha256": "b704c2ebcc00cb749251d902a3c76e23bb5d29ea27d110545b2f4b221eb10006",
+    "failed_step": "Run frozen E0 and emit first semantic seal",
+    "failure_class": "PYTHON_ENTRYPOINT_IMPORT_PATH_BEFORE_E0_CORE",
+    "failure": "ModuleNotFoundError: No module named 'risu_e0'",
+    "exact_target_tree_selection_passed": true,
+    "selected_exact_revision_content_acquired": true,
+    "machine_packet_created": true,
+    "e0_process_invoked": true,
+    "e0_semantic_core_executed": false,
+    "prediction_emitted": false,
+    "first_seal_created": false,
+    "scientific_prediction": null
+  },
+  "correction": {
+    "superseded_invocation": "python tools/risu_e0_machine_first.py <packet> <output> --no-observation",
+    "corrected_invocation": "python -m tools.risu_e0_machine_first <packet> <output> --no-observation",
+    "reason": "Module execution from repository root preserves the frozen CLI and risu_e0 package bytes while making the repository root importable. No E0 source file is modified.",
+    "selection_replay_requirement": "ROUND0_SELECTION.json SHA-256 must equal Attempt 003 value before upload and again before selected-content acquisition.",
+    "selection_sha256_required": "912bc1241519e95fe2e3a3aa02267c2bf4a5e2e3377dd31a963fc0757e40d74b"
+  },
+  "superseded_workflow_git_blob_sha": "86aec46494fd64e35efdb2cb5df2a098d6225b56",
+  "corrected_workflow_git_blob_sha": "3d5c07bc29ead2eb5b4544bf8f0c523ebadd975d",
+  "corrected_workflow_sha256": "44635dbc35d39f3520232f71ec8f6261ba98510af8bdb160a58d8b94d1f5dec9",
+  "immutability": {
+    "engine_identity_changed": false,
+    "frozen_e0_bytes_changed": false,
+    "evaluation_contract_changed": false,
+    "target_revision_changed": false,
+    "target_tree_sha_changed": false,
+    "screened_operation_changed": false,
+    "selection_policy_changed": false,
+    "maximum_first_round_files_changed": false,
+    "surface_derivation_changed": false,
+    "content_fetch_method_changed": false,
+    "acquisition_runner_changed": false,
+    "acquisition_tests_changed": false,
+    "prediction_logic_changed": false,
+    "structural_refinement_ceiling_changed": false,
+    "target_substitution_occurred": false,
+    "human_gold_consumed": false
+  },
+  "timing": {
+    "after_machine_frozen_round0_selection": true,
+    "after_selected_exact_revision_content_acquisition": true,
+    "after_machine_input_packet_creation": true,
+    "before_e0_semantic_core_execution": true,
+    "before_prediction": true,
+    "before_first_e0_seal": true,
+    "before_human_gold": true
+  },
+  "human_inspection_boundary": {
+    "selected_target_semantic_content_manually_read_before_correction": false,
+    "attempt003_failure_diagnosed_from_infrastructure_log_only": true,
+    "strict_zero_byte_preseal_blindness_claimed": false
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "applies_to_run_freeze_id": "UNIT003_BLIND_MACHINE_FIRST_E0_RUN_FREEZE_001",
+  "corrected_workflow_git_blob": "cbb712fbd72970293cb41aff00a32dca52f765c5",
+  "corrected_workflow_sha256": "2cea15aa8de9614fc2b97dcd8bfec27984f84216bf586dce4aa948b90f720d22",
+  "correction_id": "UNIT003_BLIND_MACHINE_FIRST_RUN_FREEZE_CORRECTION_001",
+  "correction_scope": {
+    "acquisition_runner_changed": false,
+    "acquisition_tests_changed": false,
+    "content_fetch_method_changed": false,
+    "engine_identity_changed": false,
+    "frozen_e0_files_changed": false,
+    "only_change": "Replace use of the freeze-construction allowlist verifier with a post-freeze exact engine-identity verifier that checks all 26 frozen engine components by committed Git-object SHA-256 plus checkout equality, recomputes the frozen engine identity digest, and requires the authoritative E0 main freeze commit to be an ancestor.",
+    "outcome_or_scoring_rule_changed": false,
+    "prediction_logic_changed": false,
+    "screened_operation_changed": false,
+    "selection_policy_changed": false,
+    "structural_ceiling_interpretation_changed": false,
+    "surface_derivation_changed": false,
+    "target_revision_changed": false,
+    "target_tree_changed": false
+  },
+  "engine_postfreeze_verification": {
+    "authority": "COMMITTED_GIT_OBJECT_SHA256_PLUS_CHECKOUT_EQUALITY",
+    "authoritative_freeze_ancestor": "2e423a86339daa031f4b98f79f288b82e5ce621b",
+    "component_count": 26,
+    "manifest": "experiments/risu-diff-e0/MACHINE_FIRST_FREEZE_QUALIFICATION.json",
+    "recomputed_digest_expected": "7979ff811765cf1617602b2ef9ed89935f24da2c1f32eceb417dfd209e335c60"
+  },
+  "invalid_attempt": {
+    "e0_executed": false,
+    "failed_job_id": 101336638350,
+    "failed_step": "Verify frozen E0 and prospective Unit003 run freeze",
+    "failure_class": "POST_FREEZE_VERIFIER_SCOPE_MISUSE",
+    "first_seal_created": false,
+    "head_sha": "bddd6b4a2f8c4d0749f06ee239ba7b720aed4211",
+    "machine_input_created": false,
+    "round0_selection_executed": false,
+    "run_id": 33977484176,
+    "scientific_prediction_observed": false,
+    "selected_target_content_fetch_executed": false,
+    "syntax_tests_executed": false,
+    "target_commit_tree_fetch_executed": false,
+    "cause": "tools/risu_e0_machine_freeze_verify.py intentionally enforces the original E0 freeze-branch changed-path allowlist and therefore rejects legitimate post-freeze Unit003 experiment files."
+  },
+  "schema": "risu.unit003-blind-machine-first-run-freeze-correction/v0.1",
+  "scientific_or_scoring_change": false,
+  "status": "PRE_CONTENT_HARNESS_CORRECTION_001",
+  "superseded_workflow_git_blob": "917cbef7bb8bcf03f075a296e1410f0abc9361df",
+  "superseded_workflow_sha256": "6497bdb2997992bed3dc3797184959dba04da39cd7c6ec17ad202b427c80c347",
+  "target_content_fetch_occurred_in_invalid_attempt": false,
+  "timing": {
+    "after_invalid_execution_attempt_001": true,
+    "before_first_e0_seal": true,
+    "before_human_gold": true,
+    "before_machine_input_packet": true,
+    "before_round0_selection": true,
+    "before_selected_target_content_fetch": true,
+    "before_target_commit_tree_fetch_in_workflow": true
+  }
+}

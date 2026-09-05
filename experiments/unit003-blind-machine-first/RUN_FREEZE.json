@@ -1,0 +1,103 @@
+{
+  "acquisition_freeze": {
+    "content_fetch_source": "raw.githubusercontent.com exact target revision, selected paths only",
+    "every_fetched_byte_must_recompute_to_selected_git_blob_sha1": true,
+    "human_path_selection_allowed": false,
+    "human_semantic_evidence_addition_allowed": false,
+    "machine_input_surface_derivation": {
+      "algorithm": "leading non-flag tokens form surface.name; --flag names stripped of leading -- form sorted unique surface.arguments",
+      "expected": {
+        "arguments": [
+          "resource-version"
+        ],
+        "name": "kubectl annotate"
+      },
+      "source": "frozen screened_operation string only"
+    },
+    "maximum_first_round_files": 24,
+    "no_score_threshold": true,
+    "selection_and_content_fetch_are_separate_jobs": true,
+    "selection_must_verify_local_target_blob_count_zero": true,
+    "selection_policy_sha256": "93fc314812be60f5e631590220bcbc7f4e1f597c9c8b166b41bc7ff35d5f96bf",
+    "selection_source": "exact target Git tree metadata only"
+  },
+  "base_main_commit": "2e423a86339daa031f4b98f79f288b82e5ce621b",
+  "claim_boundary": "This freeze establishes the chronology and mechanics of the Unit003 E0 machine-first exam. It does not establish canonical Unit003 semantics, target correctness, compatibility, population accuracy, or a target-discriminative E0 prediction.",
+  "engine_identity_digest": "7979ff811765cf1617602b2ef9ed89935f24da2c1f32eceb417dfd209e335c60",
+  "file_git_blob": {
+    ".github/workflows/unit003-blind-machine-first.yml": "917cbef7bb8bcf03f075a296e1410f0abc9361df",
+    "tests/test_unit003_blind_acquire.py": "2a5913c31a250299bd2bb4f6f4d899a25bade635",
+    "tools/unit003_blind_acquire.py": "0ec531fb84273338a074494cf72557e997c19a5c"
+  },
+  "file_sha256": {
+    ".github/workflows/unit003-blind-machine-first.yml": "6497bdb2997992bed3dc3797184959dba04da39cd7c6ec17ad202b427c80c347",
+    "tests/test_unit003_blind_acquire.py": "48bfbdc6980597db53b3ccb16009ef8f98f516fe626e0dde81dda9f13a9f735c",
+    "tools/unit003_blind_acquire.py": "dbcea0b3214f28377cee574c561656988a3318f82d4d62286ae639e04e70f822"
+  },
+  "first_seal": {
+    "all_e0_semantic_outputs_must_be_verified_by_E0_OUTPUT_SEAL": true,
+    "all_three_scientific_prediction_namespaces_were_prospectively_admissible_but_frozen_e0_structural_audit_predeclares_the_actual_e0_first_seal_ceiling": true,
+    "first_seal_archive_must_retain_selection_packet_outputs_and_protocol_lineage": true,
+    "prediction_artifact_sha256_may_be_logged": true,
+    "prediction_value_must_not_be_logged_before_archive_upload": true,
+    "semantic_observation_sidecar_disabled": true
+  },
+  "protocol_lineage": {
+    "correction_001_git_blob": "90bb97f4ca37461398eb8f00cd479756ae2d10e9",
+    "effective_protocol_git_blob": "95a72c1857fe797be11d4f5a21d23156a69711d4",
+    "historical_protocol_commit": "118ef9d0fcc87235b044e00e334db26c01f298cd",
+    "historical_protocol_git_blob": "7825386feb717047eae5c67e2aabac626243b989",
+    "preseal_incident_001_mandatorily_disclosed": true,
+    "strict_zero_byte_blindness_claimed": false
+  },
+  "qualification_before_execution": {
+    "branch_changes_outside_unit003_exam_allowlist_forbidden": true,
+    "frozen_e0_exact_byte_verifier_must_pass_in_both_jobs": true,
+    "runner_file_hashes_must_match_in_ci": true,
+    "script_syntax_checked_locally": true,
+    "synthetic_tests_checked_locally": 10
+  },
+  "run_freeze_id": "UNIT003_BLIND_MACHINE_FIRST_E0_RUN_FREEZE_001",
+  "schema": "risu.unit003-blind-machine-first-run-freeze/v0.1",
+  "status": "FROZEN_BEFORE_SELECTED_SCREENED_OPERATION_CONTENT_ACQUISITION",
+  "structural_audit_before_target_content": {
+    "audited_frozen_files": {
+      "risu_e0/cegar.py_git_blob": "9d9344c041a5726340625b26a359c308605af24d",
+      "risu_e0/machine_first.py_git_blob": "f58f437392911ee4af0085c14cc64dd9c3a5c0b2"
+    },
+    "candidate_graph_material_roles_start_unresolved": true,
+    "e1_learning_rule": "After the complete E0 machine-first phase and Unit003 gold are archived, Unit003 may inform a new E1, but E1 may not claim Unit003 as held-out evaluation; earliest held-out evaluation is Unit004.",
+    "first_prediction_is_asserted_by_frozen_core_to_equal": "E0_PREDICTED_ASSURANCE_INCOMPLETE",
+    "first_prediction_target_discriminative": false,
+    "human_translation_of_generic_probe_names_before_e0_stop_forbidden": true,
+    "input_contract_forbids_injection_of_established_semantics": true,
+    "machine_semantic_upgrade_ingestion_path_present": false,
+    "post_first_seal_rule": "STOP_E0_AT_STRUCTURAL_REFINEMENT_CEILING_WITHOUT_HUMAN_TRANSLATION",
+    "probe_plan_emits_symbolic_target_only_requests_but_not_executable_semantic_upgrade_rules": true,
+    "refinement_complete_is_hardcoded_false_in_first_semantic_build": true,
+    "refinement_map_relations_start_unresolved": true,
+    "scientific_meaning": "Unit003 E0 is an honest prequential measurement of fail-closed acquisition, evidence burden, requested obligations, and the frozen engine's refinement ceiling; it is not a target-discriminative three-class accuracy trial."
+  },
+  "target": {
+    "candidate_id": "kubernetes/kubectl::kubernetes-write-update",
+    "repository": "kubernetes/kubectl",
+    "screened_operation": "kubectl annotate --resource-version",
+    "target_revision": "04f459470f58642063b0374361bee0011278f6d8",
+    "target_substitution_forbidden": true,
+    "target_tree_sha": "d1eb526feea2a1815554db775a343d751f4892b1",
+    "unit_id": "corpus01-unit-003"
+  },
+  "target_revision": "04f459470f58642063b0374361bee0011278f6d8",
+  "target_tree_sha": "d1eb526feea2a1815554db775a343d751f4892b1",
+  "timing": {
+    "after_e0_main_freeze": true,
+    "after_exam_protocol_freeze": true,
+    "after_protocol_correction_001": true,
+    "before_deterministic_round0_selection_execution": true,
+    "before_first_e0_output_seal": true,
+    "before_human_gold": true,
+    "before_machine_input_packet": true,
+    "before_prediction_artifact_observation": true,
+    "before_selected_screened_operation_content_fetch": true
+  }
+}
