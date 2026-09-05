@@ -1,0 +1,73 @@
+{
+  "schema": "risu.unit004-target-binding/v0.1alpha1",
+  "binding_id": "UNIT004_TARGET_BINDING_001",
+  "status": "BOUND_BEFORE_TARGET_TREE_OR_CONTENT_ACCESS",
+  "selection": {
+    "protocol_id": "UNIT004_SELECTION_PROTOCOL_001",
+    "protocol_commit": "dc98c07465a7ecb823d3a07a9f7b6f4047face2f",
+    "protocol_git_blob": "9192816948f9679b6570df117e571ce9b85accb6",
+    "authority_mode": "PREEXISTING_FROZEN_ENROLLMENT_ORDER",
+    "enrollment_position": 4,
+    "substitution_used": false,
+    "substitution_reason": null
+  },
+  "enrollment": {
+    "enrollment_id": "RISU_CORPUS_0.1_ENROLLMENT_001",
+    "record_path": "corpus/0.1/ENROLLMENT.json",
+    "record_git_blob_at_e1_freeze_main": "8d86c35fe361f0bed78b9bbacdefbf6d06fbcaf2",
+    "unit_id": "corpus01-unit-004",
+    "candidate_id": "ofershap/mcp-server-s3::s3-version-bound-write",
+    "organization": "ofershap",
+    "stratum": "AGENT_FACING",
+    "mechanism_family": "HTTP_PRECONDITION_OR_ETAG",
+    "verdict_observed_at_enrollment": false,
+    "authoring_started_at_enrollment_record": false,
+    "authoring_frozen_at_enrollment_record": false
+  },
+  "target": {
+    "repository": "ofershap/mcp-server-s3",
+    "repository_id": 1162151845,
+    "revision": "f16b3715de4bd61dc8262b03d8e04f10e2142141",
+    "tree_sha": "4a9670aaebd49dd8a04030cba21b1d358325a6e2",
+    "screened_operation": "delete_object",
+    "materializable": true,
+    "materializability_checks": [
+      "public repository metadata resolved",
+      "exact enrolled Git commit object resolved",
+      "exact commit tree identity resolved"
+    ]
+  },
+  "frozen_e1": {
+    "freeze_id": "RISU_DIFF_E1_FREEZE_001",
+    "freeze_commit": "80ac477f7111a0119415388c11c83c62cf212829",
+    "main_merge_commit": "28ea74b2180c7c408b8d306592cf8d6839ca2437",
+    "engine_identity_digest": "ed33d12881fa1395d1332ae165b5638518b2d472a7a520f0ae893d07e3b146b7"
+  },
+  "prebinding_access_attestation": {
+    "target_recursive_tree_enumerated_before_binding": false,
+    "target_file_blob_content_accessed_before_binding": false,
+    "target_semantic_source_inspected_before_binding": false,
+    "e1_prediction_observed_before_binding": false,
+    "human_gold_started_before_binding": false,
+    "eligibility_used_expected_e1_outcome": false,
+    "eligibility_used_semantic_ease_or_publication_value": false
+  },
+  "postbinding_rules": {
+    "round_0_may_inspect_only_tree_or_surface_metadata": true,
+    "human_file_selection": false,
+    "human_semantic_reranking": false,
+    "only_machine_selected_content_may_enter_first_prediction_packet": true,
+    "e1_engine_mutation_for_unit004": false,
+    "unit003_rescoring": false
+  },
+  "claim_boundary": {
+    "establishes": "Exact identity and prospective eligibility of the frozen enrollment-position-4 target under the already-frozen Unit004 selection protocol.",
+    "does_not_establish": [
+      "any target consequence semantics",
+      "preservation or regression",
+      "E1 correctness on this target",
+      "human-gold semantics",
+      "live deployment conformance"
+    ]
+  }
+}
