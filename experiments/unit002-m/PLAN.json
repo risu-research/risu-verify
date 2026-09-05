@@ -1,0 +1,138 @@
+{
+  "schema": "risu.unit002-m-mutation-control-plan/v0.1alpha1",
+  "experiment_id": "UNIT002_M_PAIRED_MUTATION_CONTROL",
+  "status": "PREDECLARED_BEFORE_MUTATION_EXECUTION",
+  "purpose": "Falsify detector quality before Unit 002-R by measuring sensitivity, specificity, witness localization, and deterministic repeatability on predeclared synthetic mutations of already-qualified preserved calibration seeds.",
+  "scientific_role": "DETECTOR_CONTROL_NOT_REAL_TARGET_RESULT",
+  "protocol_boundary": {
+    "real_target_claim": false,
+    "external_system_safety_claim": false,
+    "live_runtime_claim": false,
+    "unit002_r_target_selection_from_this_result": "PROHIBITED",
+    "mutation_selection_after_detector_output": "PROHIBITED",
+    "source_contract_mutation": "PROHIBITED",
+    "frozen_core_mutation": "PROHIBITED",
+    "verdict_rule_mutation": "PROHIBITED"
+  },
+  "seeds": [
+    {
+      "seed_id": "AZDO_ETAG_PRESERVED",
+      "instance_path": "profiles/version-bound-effect/calibration/002-azure-wiki-etag.instance.json",
+      "expected_baseline": {
+        "product_status": "PRESERVED",
+        "structural": {"C": "C1", "D": "D1", "O": "O1"},
+        "exact_status": "REALIZATION_ESTABLISHED",
+        "stale_witness_coordinate": {"current_etag": "E1"},
+        "stale_required_consequence": "STALE_EDIT_REJECTED"
+      }
+    },
+    {
+      "seed_id": "GITHUB_BLOB_SHA_AFTER_PRESERVED",
+      "instance_path": "profiles/version-bound-effect/calibration/003-after-github-blob-sha.instance.json",
+      "expected_baseline": {
+        "product_status": "PRESERVED",
+        "structural": {"C": "C1", "D": "D1", "O": "O1"},
+        "exact_status": "REALIZATION_ESTABLISHED",
+        "stale_witness_coordinate": {"current_blob_sha": "S1"},
+        "stale_required_consequence": "STALE_UPDATE_REJECTED"
+      }
+    }
+  ],
+  "mutation_stage": "AFTER_VBE_COMPILE_BEFORE_RISU_VERIFY",
+  "positive_semantic_loss_operators": [
+    {
+      "operator_id": "P_MECHANISM_ALWAYS_ACCEPTS",
+      "mutation": "Replace target.derivation.program.mechanism.expr with a literal native accept-kind result while leaving the source contract and all other compiled fields unchanged.",
+      "expected_detection": {
+        "product_status": "CONSEQUENCE_REGRESSION",
+        "exact_status": "REALIZATION_CONTRADICTED",
+        "minimal_witness_must_match_seed_stale_coordinate": true,
+        "stale_world_projected_effect_must_not_equal_required_consequence": true
+      }
+    },
+    {
+      "operator_id": "P_DISCRIMINATOR_COLLAPSE",
+      "mutation": "Replace target.derivation.program.discriminator.expr with a literal constant while leaving mechanism, interpreter, source contract, and remaining compiled fields unchanged.",
+      "expected_detection": {
+        "must_not_be_preserved_with_D1": true,
+        "structural_D_must_not_equal": "D1",
+        "allowed_product_status": ["INCOMPLETE_ASSURANCE", "CONSEQUENCE_REGRESSION"]
+      }
+    },
+    {
+      "operator_id": "P_INTERPRETER_ALWAYS_SUCCESS",
+      "mutation": "Replace target.derivation.program.interpreter.expr with a literal C-space success consequence while leaving the source contract and all other compiled fields unchanged.",
+      "expected_detection": {
+        "product_status": "CONSEQUENCE_REGRESSION",
+        "exact_status": "REALIZATION_CONTRADICTED",
+        "minimal_witness_must_match_seed_stale_coordinate": true,
+        "stale_world_projected_effect_must_not_equal_required_consequence": true
+      }
+    }
+  ],
+  "negative_nonsemantic_operators": [
+    {
+      "operator_id": "N_CASE_METADATA_ONLY",
+      "mutation": "Change only case.json convenience metadata fields that are not semantic assurance inputs.",
+      "expected_detection": {
+        "semantic_view_must_equal_baseline": true,
+        "product_status_must_equal_baseline": true
+      }
+    },
+    {
+      "operator_id": "N_PROVENANCE_EDGE_ORDER_ONLY",
+      "mutation": "Reverse only the order of target adapter provenance.edges; preserve the exact node and edge set.",
+      "expected_detection": {
+        "semantic_view_must_equal_baseline": true,
+        "product_status_must_equal_baseline": true,
+        "digest_equality_not_required": true
+      }
+    },
+    {
+      "operator_id": "N_DERIVATION_FACT_ORDER_ONLY",
+      "mutation": "Reverse only the order of target.derivation.facts; preserve the exact fact objects and set.",
+      "expected_detection": {
+        "semantic_view_must_equal_baseline": true,
+        "product_status_must_equal_baseline": true,
+        "digest_equality_not_required": true
+      }
+    }
+  ],
+  "matrix": {
+    "seed_count": 2,
+    "positive_operator_count": 3,
+    "negative_operator_count": 3,
+    "mutants_per_class": 6,
+    "mutants_total": 12,
+    "repetitions_per_mutant": 2,
+    "mutant_verifications_total": 24,
+    "baseline_verifications_per_seed": 2,
+    "baseline_verifications_total": 4
+  },
+  "predeclared_metrics": {
+    "baseline_validity": "2/2 seeds must satisfy the expected preserved semantic baseline on both repeats.",
+    "positive_sensitivity": "6/6 distinct positive mutants must satisfy their operator-specific detection predicate on both repeats.",
+    "negative_specificity": "6/6 distinct negative mutants must retain the seed baseline semantic view on both repeats; false semantic alarms must be 0/6.",
+    "regression_witness_localization": "For P_MECHANISM_ALWAYS_ACCEPTS and P_INTERPRETER_ALWAYS_SUCCESS, 4/4 seed/operator pairs must localize a minimal mismatch to the seed's predeclared stale coordinate on both repeats.",
+    "discriminator_detection": "For P_DISCRIMINATOR_COLLAPSE, 2/2 seeds must cease to report D1 on both repeats.",
+    "deterministic_repeatability": "All 12 distinct mutants must produce identical semantic views across their two repeats; baseline repeats must also match.",
+    "source_contract_invariance": "Every mutant source-contract file SHA-256 must equal its seed baseline source-contract file SHA-256.",
+    "mutation_locality": "Each operator must change only its predeclared compiled-field surface; any extra semantic-field delta invalidates that mutant rather than being silently accepted."
+  },
+  "semantic_view_definition": [
+    "product_status",
+    "structural.C",
+    "structural.D",
+    "structural.O",
+    "structural.coverage_complete",
+    "exact_realization.status",
+    "exact_realization.failure_mode",
+    "worlds[].coordinates",
+    "worlds[].required_consequence",
+    "worlds[].projected_effect",
+    "worlds[].matches"
+  ],
+  "promotion_rule": "Unit 002-M passes only if every baseline, sensitivity, specificity, localization, repeatability, source-invariance, and mutation-locality requirement passes. Partial success is not promoted.",
+  "failure_interpretation": "A failed control falsifies the current detector/control implementation or reveals a predeclared expectation mismatch. It must not be repaired by deleting or replacing a failed mutation after outputs are observed; any redesigned matrix is a new versioned experiment.",
+  "next_gate_if_promoted": "Unit 002-R real prospective falsification with target selection independent of Unit 002-M outcomes."
+}
