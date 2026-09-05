@@ -1,0 +1,68 @@
+name: RISU Diff E1 exact-byte freeze verification
+
+on:
+  push:
+    branches:
+      - risu-diff-e1-prospective
+    paths:
+      - experiments/risu-diff-e1/E1_FREEZE.json
+      - .github/workflows/risu-diff-e1-freeze.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-freeze:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify exact E1 freeze and contamination boundary
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib, json, pathlib, subprocess
+          root=pathlib.Path('.')
+          f=json.loads((root/'experiments/risu-diff-e1/E1_FREEZE.json').read_text())
+          assert f['status']=='FROZEN_BEFORE_UNIT004_SELECTION_AND_TARGET_CONTENT'
+          assert f['protocol_commit']=='93fed963a04fb33b3fe68ec47b2aec38a1f39f86'
+          assert f['implementation_qualification_head']=='eda8a3a2955ec01874c3a1bb117ca74b5d25a087'
+          subprocess.check_call(['git','merge-base','--is-ancestor',f['implementation_qualification_head'],'HEAD'])
+          assert subprocess.check_output(['git','rev-parse','HEAD:experiments/risu-diff-e1/E1_PROTOCOL.json'],text=True).strip()==f['protocol_git_blob']
+          assert subprocess.check_output(['git','rev-parse','HEAD:experiments/risu-diff-e1/UNIT003_LEARNING_FIREWALL.json'],text=True).strip()==f['unit003_firewall_git_blob']
+          assert subprocess.check_output(['git','rev-parse','HEAD:experiments/unit003-blind-machine-first/FIRST_SEAL_CANONICAL.json'],text=True).strip()==f['unit003_canonical_record_git_blob']
+          def audit(section):
+              m={}
+              for rel,row in sorted(f[section].items()):
+                  blob=subprocess.check_output(['git','rev-parse',f'HEAD:{rel}'],text=True).strip()
+                  git_bytes=subprocess.check_output(['git','show',f'HEAD:{rel}'])
+                  work=(root/rel).read_bytes()
+                  h=hashlib.sha256(git_bytes).hexdigest()
+                  assert blob==row['git_blob_sha'],(rel,blob,row['git_blob_sha'])
+                  assert h==row['sha256']==hashlib.sha256(work).hexdigest(),rel
+                  m[rel]=h
+              return hashlib.sha256((json.dumps(m,sort_keys=True,separators=(',',':'),ensure_ascii=False)+'\n').encode()).hexdigest()
+          assert audit('engine_identity_components')==f['engine_identity_digest']=='ed33d12881fa1395d1332ae165b5638518b2d472a7a520f0ae893d07e3b146b7'
+          assert audit('qualification_harness_components')==f['qualification_harness_digest']=='0cfda2b5fee9ed092d33e86178c40f3de8524bcb11eebb9ed0a53eb5d0b04eb5'
+          q=json.loads((root/'experiments/risu-diff-e0/MACHINE_FIRST_FREEZE_QUALIFICATION.json').read_text())
+          actual={}
+          for rel,expected in sorted(q['engine_identity_components'].items()):
+              b=subprocess.check_output(['git','show',f'HEAD:{rel}'])
+              h=hashlib.sha256(b).hexdigest()
+              assert h==expected==hashlib.sha256((root/rel).read_bytes()).hexdigest(),rel
+              actual[rel]=h
+          e0=hashlib.sha256((json.dumps(actual,sort_keys=True,separators=(',',':'),ensure_ascii=False)+'\n').encode()).hexdigest()
+          assert e0==f['e0_engine_identity_digest']=='7979ff811765cf1617602b2ef9ed89935f24da2c1f32eceb417dfd209e335c60'
+          changed=subprocess.check_output(['git','diff','--name-only','b3da8d9e5cec1f79d3bf462e629c2e0b8bbcd314..HEAD'],text=True).splitlines()
+          forbidden=('experiments/unit003-blind-machine-first/','risu_e0/','experiments/risu-diff-e0/')
+          assert not [p for p in changed if p.startswith(forbidden) or p=='tools/risu_e0_machine_first.py']
+          assert not (root/'experiments/unit004-blind-e1').exists()
+          assert f['immutability_and_contamination']['unit004_target_content_consumed_before_freeze'] is False
+          print(json.dumps({'status':'PASS','engine_identity_digest':f['engine_identity_digest'],'e0_identity_digest':e0,'unit004_absent':True},sort_keys=True))
+          PY
+      - name: Re-run frozen synthetic qualification
+        run: |
+          python -m unittest -v tests.test_risu_e1
+          python -m tools.risu_e1_qualify
