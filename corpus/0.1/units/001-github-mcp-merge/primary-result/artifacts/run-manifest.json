@@ -13,7 +13,15 @@
   "report_json_sha256": "65946b88c7a5da3b7a1289ed2dacbaf37636d7d206e6c19731448dbdcfc3fef4",
   "report_md_sha256": "1991e7b4418b01929d4930ccf1e5489f75b480a4d1831cf1c488a32dd0fd97c4",
   "risu_verify_version": "0.4.0-rc1",
-  "runtime": {"implementation":"CPython","platform":"Linux-6.17.0-1022-azure-x86_64-with-glibc2.39","python":"3.12.3"},
+  "runtime": {
+    "implementation": "CPython",
+    "platform": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
   "source_contract_sha256": "4b80861fc7aa28891fc3d1590cc8ae7a6e95b249e5791ae61c654d398e524925",
-  "toolchain": {"historical_transition":"3e78ad55f0adbd8f72d2066a54774685897e7ae7c5b19380a94c6248662cc9e2","provenance_verify":"9a3beb28bc9de7cc4e8a13f10bf6c7e22a5ca2537cb62053087ec19196886c18","risu_verify":"431f73a8df146470a97b57270b676447b0b5c3381d46708f80fed2b40f9e1210"}
+  "toolchain": {
+    "historical_transition": "3e78ad55f0adbd8f72d2066a54774685897e7ae7c5b19380a94c6248662cc9e2",
+    "provenance_verify": "9a3beb28bc9de7cc4e8a13f10bf6c7e22a5ca2537cb62053087ec19196886c18",
+    "risu_verify": "431f73a8df146470a97b57270b676447b0b5c3381d46708f80fed2b40f9e1210"
+  }
 }
