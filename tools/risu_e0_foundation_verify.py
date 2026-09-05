@@ -19,12 +19,24 @@ def fail(reason: str, **extra: object) -> None:
     raise SystemExit(1)
 
 
+def sha256_bytes(data: bytes) -> str:
+    return hashlib.sha256(data).hexdigest()
+
+
 def sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    return sha256_bytes(path.read_bytes())
 
 
 def git(*args: str) -> str:
     return subprocess.check_output(["git", *args], cwd=ROOT, text=True).strip()
+
+
+def git_object_bytes(rel: str) -> bytes:
+    try:
+        return subprocess.check_output(["git", "show", f"HEAD:{rel}"], cwd=ROOT)
+    except subprocess.CalledProcessError as exc:
+        fail("manifested Git object missing", path=rel, returncode=exc.returncode)
+        raise AssertionError("unreachable")
 
 
 def main() -> None:
@@ -39,15 +51,24 @@ def main() -> None:
         fail("foundation base changed", actual=manifest["base_main_sha"])
     subprocess.check_call(["git", "merge-base", "--is-ancestor", FOUNDATION_BASE, "HEAD"], cwd=ROOT)
 
-    # Exact E0 foundation bytes: the qualification record commits to every implementation,
-    # test, workflow, checker, and documentation byte except itself.
+    # Repository-canonical exact bytes. The committed Git object is the identity
+    # authority; the tested checkout must additionally be byte-identical to it.
     for rel, expected in sorted(manifest["file_sha256"].items()):
         path = ROOT / rel
         if not path.is_file():
             fail("manifested foundation file missing", path=rel)
-        actual = sha256(path)
-        if actual != expected:
-            fail("foundation byte digest mismatch", path=rel, expected=expected, actual=actual)
+        object_bytes = git_object_bytes(rel)
+        git_sha256 = sha256_bytes(object_bytes)
+        if git_sha256 != expected:
+            fail("foundation Git-object digest mismatch", path=rel, expected=expected, actual=git_sha256)
+        worktree_sha256 = sha256(path)
+        if worktree_sha256 != git_sha256:
+            fail(
+                "tested working-tree bytes differ from committed Git object",
+                path=rel,
+                git_object_sha256=git_sha256,
+                working_tree_sha256=worktree_sha256,
+            )
 
     # The earlier firewall verifier is a historical PR-surface auditor. Future E0 work instead
     # preserves its sealed normative bytes and rechecks the still-held-out state directly.
@@ -99,6 +120,8 @@ def main() -> None:
         "status": "PASS",
         "qualification_id": manifest["qualification_id"],
         "foundation_base": FOUNDATION_BASE,
+        "identity_authority": "COMMITTED_GIT_OBJECT_SHA256",
+        "working_tree_equals_git_object": True,
         "manifested_files_verified": len(manifest["file_sha256"]),
         "heldout_sequence": expected_heldout,
         "heldout_pristine": True,
