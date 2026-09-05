@@ -1,0 +1,52 @@
+{
+  "automated_actions_allowed": [
+    "Read and validate already-authored SOURCE, TARGET, BOUNDARY, envelope, acceptance, and instance records.",
+    "Compute SHA-256 values from frozen bytes and generate a primary-run manifest.",
+    "Compile an AUTHOR_ACCEPTED instance through the existing frozen VBE compiler and Corpus wrapper.",
+    "Check provenance reachability and cross-record identity consistency.",
+    "Replace report-only inherited scaffold display metadata with identity fields copied from the frozen TARGET lane while asserting adapter and source-contract bytes remain unchanged.",
+    "Copy empirical evidence into compiled-case binding paths by exact SHA-256 identity.",
+    "Execute the already-selected verifier command and preserve valid semantic exit codes 0, 10, and 20 as scientific outcomes rather than CI failures.",
+    "Create deterministic, self-contained archives containing the complete compiled case tree and verifier output.",
+    "Measure mechanical harness runtime prospectively."
+  ],
+  "automated_actions_forbidden": [
+    "Infer a source consequence from target behavior or a prior RISU result.",
+    "Choose or change a target pattern, world set, effect cut, admissibility rule, claim strength, or evidence-strength label.",
+    "Invent missing evidence facts or silently strengthen evidence.",
+    "Automatically repair a provenance gap after AUTHOR_ACCEPTED freeze.",
+    "Convert PRESERVED, CONSEQUENCE_REGRESSION, or INCOMPLETE_ASSURANCE into a preferred outcome.",
+    "Rewrite a closed historical unit.",
+    "Backfill unmeasured authoring time."
+  ],
+  "fail_closed_rules": [
+    "Missing or inconsistent semantic fields block primary execution.",
+    "Any ESTABLISHED derivation fact not upstream of the EXACT claim blocks primary execution before the verifier.",
+    "Any frozen-byte mismatch blocks primary execution.",
+    "Any empirical evidence binding that cannot be mapped one-to-one by SHA-256 to a frozen evidence path blocks primary execution.",
+    "Verifier/toolchain exit codes outside 0, 10, and 20 are infrastructure failures and must expose and archive diagnostics."
+  ],
+  "objective": "Remove mechanical error and packaging friction without automating or rewriting scientific judgment.",
+  "promotion_gate": {
+    "required_before_using_for_unit002_primary": [
+      "unit tests PASS",
+      "Unit 001 historical calibration matches exactly",
+      "public semantic smoke remains PASS",
+      "generic primary workflow is manual-dispatch only",
+      "self-contained bundle test proves full compiled tree retention",
+      "no Unit 001 scientific or primary-result bytes are changed"
+    ]
+  },
+  "schema": "risu.corpus-infrastructure-contract/v0.1alpha1",
+  "scope": "PROSPECTIVE_CORPUS_0.1_UNIT_EXECUTION_INFRASTRUCTURE",
+  "status": "EXPERIMENTAL_PROTOCOL_PRESERVING_INFRASTRUCTURE",
+  "unit001_calibration": {
+    "expected_blocker_keys": [
+      "PROVENANCE_NOT_UPSTREAM_OF_EXACT:GH_U001_EXPECTED_HEAD_INPUT",
+      "PROVENANCE_NOT_UPSTREAM_OF_EXACT:GH_U001_LIBRARY_PIN"
+    ],
+    "expected_nonblocking_observation": "Historical scaffold projection metadata requires deterministic sanitation from the frozen TARGET identity.",
+    "historical_unit_is_immutable": true,
+    "purpose": "Use Unit 001 only as a read-only calibration witness for friction that actually occurred."
+  }
+}
