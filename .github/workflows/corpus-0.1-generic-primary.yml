@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       manifest:
-        description: "Repository-relative PRIMARY_RUN_MANIFEST.json path"
+        description: "Repository-relative generated PRIMARY_RUN_MANIFEST.json path"
         required: true
         type: string
 
@@ -24,22 +24,22 @@ jobs:
           chmod +x risu-verify
           chmod +x tools/*.py
 
-      - name: Execute manifest-driven primary harness
+      - name: Execute sealed manifest-driven primary under infrastructure v0.8
         shell: bash
         run: |
           set -o pipefail
           mkdir -p .risu
-          python tools/corpus01_unit_harness.py run \
+          python tools/corpus01_primary_v08.py \
             "${{ inputs.manifest }}" \
-            --json 2>&1 | tee .risu/corpus-primary-harness.log
+            --json 2>&1 | tee .risu/corpus-primary-v08.log
 
-      - name: Upload complete harness evidence even on infrastructure failure
+      - name: Upload complete v0.8 primary evidence even on infrastructure failure
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: corpus-primary-harness-${{ github.sha }}-${{ github.run_id }}
+          name: corpus-primary-v08-${{ github.sha }}-${{ github.run_id }}
           path: |
-            .risu/corpus01-harness/**
-            .risu/corpus-primary-harness.log
+            .risu/corpus01-v08/**
+            .risu/corpus-primary-v08.log
           if-no-files-found: warn
           retention-days: 90
