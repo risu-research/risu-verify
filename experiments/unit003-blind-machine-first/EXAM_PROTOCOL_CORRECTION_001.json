@@ -1,0 +1,62 @@
+{
+  "schema": "risu.unit003-blind-machine-first-protocol-correction/v0.1",
+  "correction_id": "UNIT003_BLIND_MACHINE_FIRST_PROTOCOL_CORRECTION_001",
+  "applies_to_exam_id": "UNIT003_BLIND_MACHINE_FIRST_E0_001",
+  "historical_protocol": {
+    "path": "experiments/unit003-blind-machine-first/EXAM_PROTOCOL.json",
+    "freeze_commit": "118ef9d0fcc87235b044e00e334db26c01f298cd",
+    "git_blob_sha": "7825386feb717047eae5c67e2aabac626243b989",
+    "retained_unchanged": true
+  },
+  "effective_protocol": {
+    "path": "experiments/unit003-blind-machine-first/EXAM_PROTOCOL_EFFECTIVE_001.json",
+    "git_blob_sha": "95a72c1857fe797be11d4f5a21d23156a69711d4",
+    "normative_for_execution": true
+  },
+  "timing": {
+    "after_engine_main_freeze": true,
+    "after_exam_protocol_freeze": true,
+    "before_screened_operation_source_or_documentation_inspection": true,
+    "before_first_machine_input_packet": true,
+    "before_first_e0_output_seal": true,
+    "before_human_gold": true,
+    "before_e0_prediction": true
+  },
+  "defects": [
+    {
+      "id": "D1_REPOSITORY_BINDING",
+      "historical_value": "kubernetes/kubernetes",
+      "corrected_value": "kubernetes/kubectl",
+      "basis": "Frozen candidate_id is kubernetes/kubectl::kubernetes-write-update and the frozen target revision resolves in kubernetes/kubectl but not kubernetes/kubernetes.",
+      "scientific_or_scoring_change": false
+    },
+    {
+      "id": "D2_JSON_MATERIALIZATION",
+      "historical_defect": "One machine_driven_refinement member was emitted as a bare JSON string without a value, making the historical file non-parseable JSON.",
+      "correction": "Create a separate parseable effective protocol; do not rewrite the historical protocol bytes.",
+      "scientific_or_scoring_change": false
+    }
+  ],
+  "preseal_incident_001": {
+    "classification": "METADATA_ENDPOINT_OVERRETURN_BEFORE_FIRST_SEAL",
+    "request": "Exact commit existence/tree metadata lookup.",
+    "overreturned_bytes": ["go.mod patch excerpt", "go.sum patch excerpt"],
+    "screened_operation_semantics_consumed": false,
+    "human_gold_consumed": false,
+    "behavior_experiment_performed": false,
+    "used_for_path_selection": false,
+    "used_for_scientific_judgment": false,
+    "path_ranking_changed": false,
+    "disclosure_rule": "Strict zero-byte target preseal blindness may not be claimed. Report this incident in all Unit003 machine-first summaries."
+  },
+  "immutability": {
+    "engine_identity_changed": false,
+    "evaluation_contract_changed": false,
+    "outcome_space_changed": false,
+    "path_ranking_algorithm_changed": false,
+    "maximum_first_round_files_changed": false,
+    "target_revision_changed": false,
+    "screened_operation_changed": false,
+    "target_substitution_occurred": false
+  }
+}
