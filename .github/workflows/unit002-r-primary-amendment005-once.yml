@@ -1,0 +1,99 @@
+name: RISU Unit 002-R Amendment 005 one-shot primary
+
+on:
+  push:
+    branches:
+      - unit002-r-primary-amendment005-once
+
+permissions:
+  contents: read
+
+jobs:
+  first-valid-primary:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      AUTHORING_FREEZE: "ce4c3a311bcf9f6b74b43af24e8732d1af8fd5ac"
+      SEALED_SCIENTIFIC_HEAD: "1f9fba3a270f05d06763a5c81216d2edddffad8b"
+      MANIFEST: "corpus/0.1/units/002-octokit-pulls-merge/PRIMARY_RUN_MANIFEST_AMENDMENT005.json"
+      SEAL: "corpus/0.1/units/002-octokit-pulls-merge/UNIT_SEAL_AMENDMENT005.json"
+      PRIMARY_RESULT: "corpus/0.1/units/002-octokit-pulls-merge/primary-result/PRIMARY_RESULT.json"
+    steps:
+      - name: Checkout exact corrected sealed scientific head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: 1f9fba3a270f05d06763a5c81216d2edddffad8b
+
+      - name: Execution capsule identity and no-prior-result gate
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SEALED_SCIENTIFIC_HEAD"
+          test -z "$(git status --porcelain)"
+          test -f "$MANIFEST"
+          test -f "$SEAL"
+          test ! -e "$PRIMARY_RESULT"
+          test "$(sha256sum "$MANIFEST" | awk '{print $1}')" = "6460d6391385db3f7d71fa93065c700480420d38bdef2677946bdb87d573256a"
+          test "$(sha256sum "$SEAL" | awk '{print $1}')" = "da47f9789083beefa87c3f2545fcd89a0da8f2ce84c1023a233d2f8e0b17c794"
+          changed="$(git diff --name-only "$AUTHORING_FREEZE".."$SEALED_SCIENTIFIC_HEAD" | sort)"
+          expected="$(printf '%s\n%s\n' "$MANIFEST" "$SEAL" | sort)"
+          test "$changed" = "$expected"
+          git cat-file -e "$AUTHORING_FREEZE^{commit}"
+          git merge-base --is-ancestor "$AUTHORING_FREEZE" "$SEALED_SCIENTIFIC_HEAD"
+          test "$(git show "$AUTHORING_FREEZE:corpus/0.1/units/002-octokit-pulls-merge/SOURCE_LANE.json" | sha256sum | awk '{print $1}')" = "a141d38509796aaf871e812ad4007d14706b9625150641ffc8e190774c4fb79b"
+          test "$(git show "$AUTHORING_FREEZE:corpus/0.1/units/002-octokit-pulls-merge/TARGET_LANE.json" | sha256sum | awk '{print $1}')" = "206650add24f2dbb5a0567f4cf034d5c3eb99098507a3f06c046392c552ad810"
+          test "$(git show "$AUTHORING_FREEZE:corpus/0.1/units/002-octokit-pulls-merge/BOUNDARY_MODEL.json" | sha256sum | awk '{print $1}')" = "8284797a0ccd3c7bbb23c75ecb617e284ac00f28589a42a0b21492f55ced6430"
+          test "$(git show "$AUTHORING_FREEZE:corpus/0.1/units/002-octokit-pulls-merge/vbe.envelope.json" | sha256sum | awk '{print $1}')" = "1c82258ec2c174354740a2377403442e05f731059f178490ba574bf778cc71d0"
+          test "$(git show "$AUTHORING_FREEZE:corpus/0.1/units/002-octokit-pulls-merge/vbe.instance.json" | sha256sum | awk '{print $1}')" = "5e3552f5805039f17bece68a99a1830e634f185e2d1cbd9017ba178f364eda5c"
+          echo "EXECUTION CAPSULE: PASS"
+
+      - name: Re-run frozen AUTHOR_ACCEPTED gate before any semantic execution
+        run: |
+          python tools/corpus01_primary_gate.py "$MANIFEST" --json
+
+      - name: Confirm executable frozen verifier entrypoint
+        run: |
+          test -x risu-verify
+
+      - name: Execute exactly one corrected sealed Unit 002-R primary
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p .risu
+          GITHUB_SHA="$SEALED_SCIENTIFIC_HEAD" \
+          python tools/corpus01_primary_v08.py "$MANIFEST" --json \
+            2>&1 | tee .risu/unit002-r-primary-amendment005-once.log
+
+      - name: Assert valid first semantic outcome without preference
+        if: success()
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          roots=list(Path('.risu/corpus01-v08').glob('**/HARNESS_RESULT.json'))
+          assert len(roots)==1, roots
+          result=json.loads(roots[0].read_text())
+          assert result['status']=='VALID_SEMANTIC_OUTCOME'
+          assert result['semantic_exit_code'] in {0,10,20}
+          assert result['product_status'] in {
+            'PRESERVED','PRESERVED_IN_DECLARED_SCOPE','CONSEQUENCE_REGRESSION','INCOMPLETE_ASSURANCE'
+          }
+          observations=list(Path('.risu/corpus01-v08').glob('**/primary-observation.json'))
+          assert len(observations)==1, observations
+          obs=json.loads(observations[0].read_text())
+          assert obs['workflow_head_sha']=='1f9fba3a270f05d06763a5c81216d2edddffad8b'
+          assert obs['authoring_freeze_commit']=='ce4c3a311bcf9f6b74b43af24e8732d1af8fd5ac'
+          assert obs['result_is_observation_only'] is True
+          print(json.dumps({'result':result,'observation':obs},indent=2,sort_keys=True))
+          PY
+
+      - name: Upload complete first-valid-primary evidence even on infrastructure failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit002-r-amendment005-first-primary-${{ github.run_id }}
+          path: |
+            .risu/corpus01-v08/**
+            .risu/unit002-r-primary-amendment005-once.log
+          if-no-files-found: warn
+          retention-days: 90
