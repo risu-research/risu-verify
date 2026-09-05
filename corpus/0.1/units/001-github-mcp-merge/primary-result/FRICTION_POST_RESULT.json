@@ -1,0 +1,11 @@
+{
+  "original_ledger":"corpus/0.1/units/001-github-mcp-merge/friction.json",
+  "process_friction_observed":{
+    "automation_candidates":["Generate frozen-path checksum manifest directly from committed bytes rather than hand-entering digests.","Run provenance graph reachability preflight before AUTHOR_ACCEPTED freeze.","Create a generic per-unit compiler/run harness that copies only explicitly bound evidence, never wildcard evidence directories.","Separate immutable scientific input allowlist from mutable post-result archival/reporting paths.","Archive full compiled case tree by default."],
+    "pre_primary_infrastructure_failures":["Frozen AUTHOR_ACCEPTANCE checksum was initially miscomputed; gate stopped before verifier.","Failure.log was not exposed after invalid verifier exit; diagnostic-only amendment added.","Provenance graph completeness defect was caught before valid semantic outcome; provenance-only overlay predeclared.","Post-freeze duplicate recovery evidence files were blocked by the freeze gate and removed."]
+  },
+  "rule":"This post-result supplement does not backfill unmeasured authoring time into the frozen pre-result ledger.",
+  "schema":"risu.corpus-post-result-friction/v0.1alpha1",
+  "unit_id":"corpus01-unit-001",
+  "verification_runtime":{"active_seconds":null,"measurement_source":"GitHub Actions job log timestamps","product_status":"PRESERVED","semantic_exit_code":0,"status":"COMPLETE","step_started_at":"2026-09-05T02:25:00.4841512Z","valid_semantic_exit_observed_at":"2026-09-05T02:25:01.0278962Z","wall_clock_seconds":0.543745}
+}
