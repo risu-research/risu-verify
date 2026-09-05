@@ -1,0 +1,16 @@
+{
+  "seal_id": "RISU_CTV_META_THEORY_AMENDMENT_001_SEAL",
+  "amendment_id": "RISU_CTV_META_THEORY_AMENDMENT_001",
+  "status": "SEALED_PRE_UNIT003_PRE_VERDICT",
+  "parent_merge_sha": "1f8fffd9705751fbe568d646eb4703a250a566c0",
+  "hash_staging": {
+    "workflow_run_id": 33970534765,
+    "checkout_sha": "f473074aedc6ecc1702d2e587cc140fe28acc850",
+    "method": "github_actions_sha256sum_exact_checked_out_bytes"
+  },
+  "normative_file_sha256": {
+    "protocols/CTV_META_THEORY_v0.1_AMENDMENT_001.json": "162af865aa0c21c26a423eb6772c6ea8b261852dbf97026fb7c9a23b236ef450",
+    "docs/CONSEQUENCE_TRANSLATION_VALIDATION_v0.1_AMENDMENT_001.md": "6dee0df19d8e098371b610b86057b52fa6ce1e6b124e0a7b13030daae71f8d71"
+  },
+  "timing_attestation": "Hashes were captured after A001 text was authored and before Unit003 authoring or any Unit003 verdict. The staging workflow is not normative and is removed from the final amendment surface."
+}
