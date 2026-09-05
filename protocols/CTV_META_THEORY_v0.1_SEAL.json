@@ -1,0 +1,27 @@
+{
+  "anti_retroactivity": {
+    "rule": "CLOSED_CANONICAL_RESULTS_ARE_NOT_REINTERPRETED_BY_CTV_V0_1",
+    "units": [
+      "corpus01-unit-001",
+      "corpus01-unit-002"
+    ]
+  },
+  "base_main_sha": "9e1c293ee20be741f2326e04a011c602ed9ef66e",
+  "change_control": "Any normative edit requires a new version or explicit amendment; never rewrite this seal in place after merge.",
+  "effective_from_unit": "corpus01-unit-003",
+  "freeze_condition": "Unit003 authoring_started=false and authoring_frozen=false at seal verification.",
+  "normative_file_sha256": {
+    "docs/CONSEQUENCE_TRANSLATION_VALIDATION_v0.1.md": "6aada8c9a3c253f2e0bb493f18718197c30a31b49f217e8d29fd2057c9223b2d",
+    "protocols/CTV_META_THEORY_v0.1.json": "a62e327d075b9e459ef4ac6be226fbefa264b358c1a387395f8dd08f3d1da7cd",
+    "schemas/consequence-ir.v0.1alpha1.schema.json": "105c115b7b81a34b64f1be2b385e9155b1adf9c765fc088df69f91d66a3a6f08",
+    "schemas/refinement-map.v0.1alpha1.schema.json": "3093bb60a84690f92038464002e47958ce0e98ed8f037273c2c2519adea704ac"
+  },
+  "seal_id": "RISU_CTV_META_THEORY_SEAL_001",
+  "seal_schema": "risu.ctv-meta-theory-seal/v0.1",
+  "staging_hash_run": {
+    "commit_sha": "2626d34d902b725310dea5d0f7270ce177ac2a74",
+    "run_id": 33965676129,
+    "role": "DISPOSABLE_EXACT_BYTE_HASHING_ONLY_NOT_SCIENTIFIC_EXECUTION"
+  },
+  "status": "SEALED_BEFORE_UNIT003_AUTHORING"
+}
