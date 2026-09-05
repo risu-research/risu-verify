@@ -22,7 +22,7 @@ jobs:
       - name: Validate prospective corpus integrity
         run: python tools/corpus01_validate.py --json
 
-      - name: Enforce AUTHOR_ACCEPTED freeze
+      - name: Enforce AUTHOR_ACCEPTED freeze and amendment pins
         run: |
           python tools/corpus01_primary_gate.py \
             corpus/0.1/units/001-github-mcp-merge/PRIMARY_RUN_MANIFEST.json \
@@ -31,15 +31,22 @@ jobs:
       - name: Materialize retained case infrastructure
         run: python tools/materialize_case_bundles.py
 
-      - name: Compile Unit 001 prospectively
+      - name: Compile Unit 001 with predeclared provenance overlay
         run: |
           rm -rf .risu/corpus01-unit001-case .risu/corpus01-unit001-output
           python tools/corpus01_compile.py \
             corpus/0.1/units/001-github-mcp-merge/vbe.instance.json \
-            --output .risu/corpus01-unit001-case
+            --output .risu/corpus01-unit001-case \
+            --provenance-overlay corpus/0.1/units/001-github-mcp-merge/PROVENANCE_OVERLAY_002.json
           mkdir -p .risu/corpus01-unit001-case/assurance/evidence/corpus01-unit001
           cp corpus/0.1/units/001-github-mcp-merge/evidence/*.json \
             .risu/corpus01-unit001-case/assurance/evidence/corpus01-unit001/
+
+      - name: Preflight compiled provenance before frozen verifier
+        run: |
+          python tools/corpus01_provenance_preflight.py \
+            .risu/corpus01-unit001-case/assurance/adapter.json \
+            --json
 
       - name: Run frozen primary verifier without outcome filtering
         id: primary
@@ -81,6 +88,8 @@ jobs:
           root = Path('.')
           manifest = json.loads((root / 'corpus/0.1/units/001-github-mcp-merge/PRIMARY_RUN_MANIFEST.json').read_text())
           report = json.loads((root / '.risu/corpus01-unit001-output/report.json').read_text())
+          compile_manifest = json.loads((root / '.risu/corpus01-unit001-case/VBE_COMPILE_MANIFEST.json').read_text())
+          overlay_application = json.loads((root / '.risu/corpus01-unit001-case/PROVENANCE_OVERLAY_APPLICATION.json').read_text())
           rc = int((root / '.risu/corpus01-unit001-semantic-exit-code.txt').read_text().strip())
 
           def h(path):
@@ -89,6 +98,10 @@ jobs:
           expected = {0: {'PRESERVED', 'PRESERVED_IN_DECLARED_SCOPE'}, 10: {'CONSEQUENCE_REGRESSION'}, 20: {'INCOMPLETE_ASSURANCE'}}
           if report.get('product_status') not in expected[rc]:
               raise SystemExit(f"semantic exit/status mismatch: rc={rc} status={report.get('product_status')}")
+          if compile_manifest.get('provenance_overlay', {}).get('overlay_sha256') != manifest['provenance_overlay']['sha256']:
+              raise SystemExit('compile manifest provenance overlay pin mismatch')
+          if overlay_application.get('non_edge_adapter_content_identical') is not True:
+              raise SystemExit('provenance overlay did not preserve non-edge adapter content')
 
           observation = {
               'schema': 'risu.corpus-primary-observation/v0.1alpha1',
@@ -104,6 +117,8 @@ jobs:
               'report_md_sha256': h('.risu/corpus01-unit001-output/report.md'),
               'certificate_sha256': report['certificate']['sha256'],
               'compile_manifest_sha256': h('.risu/corpus01-unit001-case/VBE_COMPILE_MANIFEST.json'),
+              'provenance_overlay_sha256': manifest['provenance_overlay']['sha256'],
+              'provenance_overlay_application_sha256': h('.risu/corpus01-unit001-case/PROVENANCE_OVERLAY_APPLICATION.json'),
               'result_is_observation_only': True,
               'input_rewrite_after_result': 'PROHIBITED'
           }
@@ -125,6 +140,7 @@ jobs:
           name: corpus01-unit001-primary-${{ github.sha }}
           path: |
             .risu/corpus01-unit001-case/VBE_COMPILE_MANIFEST.json
+            .risu/corpus01-unit001-case/PROVENANCE_OVERLAY_APPLICATION.json
             .risu/corpus01-unit001-output/**
             .risu/corpus01-unit001-console.json
             .risu/corpus01-unit001-semantic-exit-code.txt

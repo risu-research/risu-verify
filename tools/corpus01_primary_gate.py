@@ -142,6 +142,61 @@ def main() -> int:
             if instance.get("instance_id") != m.get("instance_id"):
                 fail(errors, "VBE instance_id mismatch")
 
+    overlay_meta = m.get("provenance_overlay")
+    overlay_status = "NONE"
+    if overlay_meta:
+        overlay_status = "INVALID"
+        overlay_path = str(overlay_meta.get("path") or "")
+        overlay_sha = str(overlay_meta.get("sha256") or "")
+        amendment_id = str(overlay_meta.get("amendment_id") or "")
+        amendment_path = str(overlay_meta.get("amendment_path") or "")
+        amendment_sha = str(overlay_meta.get("amendment_sha256") or "")
+        if not overlay_path or not overlay_sha or not amendment_id or not amendment_path or not amendment_sha:
+            fail(errors, "provenance_overlay requires path, sha256, amendment identity, and amendment pin")
+        else:
+            p = ROOT / overlay_path
+            if not p.is_file():
+                fail(errors, f"provenance overlay missing: {overlay_path}")
+            else:
+                actual = sha256_bytes(p.read_bytes())
+                if actual != overlay_sha:
+                    fail(errors, "provenance overlay SHA-256 mismatch")
+                overlay = read_json(p)
+                if overlay.get("schema") != "risu.corpus-provenance-overlay/v0.1alpha1":
+                    fail(errors, "unsupported provenance overlay schema")
+                if overlay.get("amendment_id") != amendment_id:
+                    fail(errors, "provenance overlay amendment_id mismatch")
+                amendment_file = ROOT / amendment_path
+                if not amendment_file.is_file():
+                    fail(errors, f"provenance overlay amendment missing: {amendment_path}")
+                elif sha256_bytes(amendment_file.read_bytes()) != amendment_sha:
+                    fail(errors, "provenance overlay amendment SHA-256 mismatch")
+                else:
+                    amendment = read_json(amendment_file)
+                    if amendment.get("amendment_id") != amendment_id:
+                        fail(errors, "provenance overlay amendment file identity mismatch")
+                    if amendment.get("primary_verdict_observed_before_amendment") is not False:
+                        fail(errors, "provenance amendment does not record pre-verdict timing")
+                    correction = amendment.get("correction") or {}
+                    if correction.get("overlay_sha256") != overlay_sha:
+                        fail(errors, "provenance amendment does not pin this overlay")
+                if overlay.get("unit_id") != m.get("unit_id"):
+                    fail(errors, "provenance overlay unit_id mismatch")
+                if overlay.get("original_authoring_freeze_commit") != freeze:
+                    fail(errors, "provenance overlay freeze commit mismatch")
+                if overlay.get("primary_verdict_observed_before_overlay") is not False:
+                    fail(errors, "provenance overlay does not record pre-verdict timing")
+                if overlay.get("mode") != "ADD_EXISTING_FACT_PROVENANCE_EDGES_ONLY":
+                    fail(errors, "provenance overlay mode is not narrowly permitted")
+                original = overlay.get("original_envelope") or {}
+                frozen_by_path = {x.get("path"): x.get("sha256") for x in frozen_paths}
+                if frozen_by_path.get(original.get("path")) != original.get("sha256"):
+                    fail(errors, "provenance overlay original envelope is not one of the frozen bytes")
+                expected = overlay.get("expected_added_edges") or []
+                if len(expected) != 2 or len(overlay.get("add_exact_provenance_for_fact_ids") or []) != 2:
+                    fail(errors, "Unit 001 amendment 002 overlay must contain exactly two predeclared corrections")
+                overlay_status = "PASS" if not errors else "INVALID"
+
     if freeze:
         changed = git("diff", "--name-only", f"{freeze}..HEAD").stdout.decode("utf-8").splitlines()
         allowed = set(m.get("post_freeze_allowed_paths") or [])
@@ -164,13 +219,17 @@ def main() -> int:
         "instance_id": m.get("instance_id"),
         "authoring_freeze_commit": freeze,
         "frozen_path_count": len(frozen_paths),
+        "provenance_overlay": overlay_status,
         "errors": errors,
     }
     if args.json:
         print(json.dumps(result, indent=2, sort_keys=True))
     else:
         print(f"Corpus 0.1 primary freeze gate: {result['status']}")
-        print(f"  unit={result['unit_id']} frozen_paths={result['frozen_path_count']}")
+        print(
+            f"  unit={result['unit_id']} frozen_paths={result['frozen_path_count']} "
+            f"provenance_overlay={result['provenance_overlay']}"
+        )
         for e in errors:
             print(f"  ERROR: {e}", file=sys.stderr)
     return 0 if not errors else 1

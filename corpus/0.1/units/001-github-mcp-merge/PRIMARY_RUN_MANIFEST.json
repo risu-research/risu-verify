@@ -61,14 +61,37 @@
       "failed_run_id": 33936266357,
       "primary_verdict_observed_before_correction": false,
       "reason": "The verifier returned exit 30 after valid freeze and compilation, but the workflow did not expose failure.log, so the invalidity could not be classified."
+    },
+    {
+      "affected_scientific_input": false,
+      "amendment": "corpus/0.1/AUTHORING_PROTOCOL_AMENDMENT_002.json",
+      "correction": "Apply a predeclared provenance-only overlay to generated adapter provenance edges, leaving all ten AUTHOR_ACCEPTED input bytes unchanged.",
+      "failed_run_id": 33936365055,
+      "failure_classification": "PROVENANCE_GRAPH_COMPLETENESS_DEFECT",
+      "primary_verdict_observed_before_correction": false,
+      "reason": "The frozen verifier rejected the generated adapter because GH_U001_EXPECTED_HEAD_INPUT was not upstream of the EXACT claim. Audit showed that this fact and GH_U001_LIBRARY_PIN were already frozen, ESTABLISHED, and required by the target program; only their EXACT provenance edges were absent."
     }
   ],
   "post_freeze_allowed_paths": [
     "corpus/0.1/units/001-github-mcp-merge/PRIMARY_RUN_MANIFEST.json",
     "corpus/0.1/AUTHORING_PROTOCOL_AMENDMENT_001.json",
+    "corpus/0.1/AUTHORING_PROTOCOL_AMENDMENT_002.json",
+    "corpus/0.1/units/001-github-mcp-merge/PROVENANCE_OVERLAY_002.json",
+    "tools/corpus01_compile.py",
+    "tools/corpus01_primary_gate.py",
+    "tools/corpus01_provenance_preflight.py",
     ".github/workflows/corpus-0.1-primary.yml"
   ],
   "primary_verdict_observed_before_manifest": false,
+  "provenance_overlay": {
+    "amendment_id": "RISU_CORPUS_0.1_AUTHORING_PROTOCOL_AMENDMENT_002",
+    "amendment_path": "corpus/0.1/AUTHORING_PROTOCOL_AMENDMENT_002.json",
+    "amendment_sha256": "5672daeb1b3d905d6a29110bc16e41b2e4a7a22bdddccb233eae1f96a2df3ac3",
+    "original_envelope_sha256": "6f091ef58d1bd36707aa88c9a50e2f35aace7dd5d9045440c0b20f9915657fbe",
+    "path": "corpus/0.1/units/001-github-mcp-merge/PROVENANCE_OVERLAY_002.json",
+    "primary_verdict_observed_before_overlay": false,
+    "sha256": "67358e9a49b13ae5e6ac865df6e9f11277566917d0a1b1ce7f61f8cb5eeead65"
+  },
   "schema": "risu.corpus-primary-run-manifest/v0.1alpha1",
   "status": "READY_FOR_FIRST_PRIMARY_EXECUTION",
   "tracked_primary_result_path": "corpus/0.1/units/001-github-mcp-merge/primary-result/PRIMARY_RESULT.json",
