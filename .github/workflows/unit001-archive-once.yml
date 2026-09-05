@@ -1,0 +1,116 @@
+name: Unit 001 exact-byte archival capture
+
+on:
+  push:
+    branches:
+      - corpus-0.1-execution
+    paths:
+      - .github/workflows/unit001-archive-once.yml
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  capture:
+    name: Capture canonical primary and replay bytes
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out exact branch head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download canonical Actions artifacts by immutable artifact ID
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/u001"
+          curl --fail --silent --show-error --location \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/9961142844/zip" \
+            -o "$RUNNER_TEMP/u001/corpus01-unit001-primary.zip"
+          curl --fail --silent --show-error --location \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/9961263871/zip" \
+            -o "$RUNNER_TEMP/u001/corpus01-unit001-replay.zip"
+
+      - name: Verify transport identities before extraction
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP/u001"
+          echo "b4bce32ad794e0e356a4bd886084021e49a245c9696c8eca42c32b45dcebe27e  corpus01-unit001-primary.zip" | sha256sum --check --strict
+          echo "5d18f5412b69f3aa4116613592e816b0bce8ff84119f1fded9a6c611c46837f1  corpus01-unit001-replay.zip" | sha256sum --check --strict
+
+      - name: Extract and verify every uploaded primary entry
+        run: |
+          set -euo pipefail
+          ROOT="corpus/0.1/units/001-github-mcp-merge/primary-result/archive"
+          rm -rf "$ROOT"
+          mkdir -p "$ROOT/raw" "$ROOT/primary-uploaded" "$ROOT/replay-uploaded"
+          cp "$RUNNER_TEMP/u001/corpus01-unit001-primary.zip" "$ROOT/raw/"
+          cp "$RUNNER_TEMP/u001/corpus01-unit001-replay.zip" "$ROOT/raw/"
+          unzip -q "$ROOT/raw/corpus01-unit001-primary.zip" -d "$ROOT/primary-uploaded"
+          unzip -q "$ROOT/raw/corpus01-unit001-replay.zip" -d "$ROOT/replay-uploaded"
+
+          test "$(find "$ROOT/primary-uploaded" -type f | wc -l | tr -d ' ')" = "12"
+          test "$(find "$ROOT/replay-uploaded" -type f | wc -l | tr -d ' ')" = "12"
+
+          cd "$ROOT/primary-uploaded"
+          cat > "$RUNNER_TEMP/u001/primary-uploaded.sha256" <<'EOF'
+          2fc12b490c7922c71a456d5c36dcdf32fa972709bea272e137388026447456ca  corpus01-unit001-artifact.sha256
+          da61cd492e2ba0d1cccfce6a451aebb69e2d1cbf58b3715dea250081617da92d  corpus01-unit001-case/PROVENANCE_OVERLAY_APPLICATION.json
+          5f82e63df66ef2a8fa03a869bf1a932287d74835934bc9ae1f55d64d90b1cd1f  corpus01-unit001-case/VBE_COMPILE_MANIFEST.json
+          65946b88c7a5da3b7a1289ed2dacbaf37636d7d206e6c19731448dbdcfc3fef4  corpus01-unit001-console.json
+          ac57a340d5300602bb7655a5bd16f559c35bd751011a09bb5e071d69cfeca138  corpus01-unit001-output/certificate.json
+          e9e761cbcedfda246c1d55b5f79887b91683aa10e44b6ec1946fc896eed977e0  corpus01-unit001-output/consumer.log
+          7b095de59d1daa2e508b8b1d17e7f49ef2a6b28287f70bacae076cb4c32cd346  corpus01-unit001-output/producer.log
+          65946b88c7a5da3b7a1289ed2dacbaf37636d7d206e6c19731448dbdcfc3fef4  corpus01-unit001-output/report.json
+          1991e7b4418b01929d4930ccf1e5489f75b480a4d1831cf1c488a32dd0fd97c4  corpus01-unit001-output/report.md
+          956ec0fd8cb61fe3d611d0df3724a47c6b3151636c3bc79328ee85c14e6d3ff7  corpus01-unit001-output/run-manifest.json
+          f53d34fc4689ffbbaccd9267ccaf50c433543b02096cd2ac79d86a610d1bb5a9  corpus01-unit001-primary-observation.json
+          9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa  corpus01-unit001-semantic-exit-code.txt
+          EOF
+          sed -i 's/^          //' "$RUNNER_TEMP/u001/primary-uploaded.sha256"
+          sha256sum --check --strict "$RUNNER_TEMP/u001/primary-uploaded.sha256"
+
+      - name: Verify deterministic replay relation
+        run: |
+          set -euo pipefail
+          ROOT="corpus/0.1/units/001-github-mcp-merge/primary-result/archive"
+          P="$ROOT/primary-uploaded"
+          R="$ROOT/replay-uploaded"
+          for rel in \
+            corpus01-unit001-case/PROVENANCE_OVERLAY_APPLICATION.json \
+            corpus01-unit001-case/VBE_COMPILE_MANIFEST.json \
+            corpus01-unit001-console.json \
+            corpus01-unit001-output/certificate.json \
+            corpus01-unit001-output/consumer.log \
+            corpus01-unit001-output/producer.log \
+            corpus01-unit001-output/report.json \
+            corpus01-unit001-output/report.md \
+            corpus01-unit001-output/run-manifest.json \
+            corpus01-unit001-semantic-exit-code.txt
+          do
+            cmp --silent "$P/$rel" "$R/$rel"
+          done
+          test "$(sha256sum "$R/corpus01-unit001-primary-observation.json" | cut -d' ' -f1)" = "b18beb049aa6cbd2f7d29e1a43e41effe8e7167b53ad332cccb4025a80d18c83"
+          test "$(sha256sum "$R/corpus01-unit001-artifact.sha256" | cut -d' ' -f1)" = "baec948c40b53a7e2be03a494681439714575bbffa7330eb767dd652dfd7edb0"
+
+      - name: Commit archival transport only
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add corpus/0.1/units/001-github-mcp-merge/primary-result/archive
+          if git diff --cached --quiet; then
+            echo "Archive already exact; no commit needed."
+            exit 0
+          fi
+          git commit -m "Archive exact Unit 001 primary and replay bytes"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
