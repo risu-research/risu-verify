@@ -1,0 +1,134 @@
+{
+  "audit_requirements": {
+    "record_tool_and_workflow_run_ids": true,
+    "retain_acquisition_path_ranking": true,
+    "retain_all_machine_refinement_requests": true,
+    "retain_commit_tree_identity": true,
+    "retain_every_input_packet": true,
+    "retain_every_output_seal": true,
+    "retain_exact_target_evidence_sha256": true,
+    "retain_infrastructure_failures": true
+  },
+  "authoritative_freeze": {
+    "engine_identity_digest": "7979ff811765cf1617602b2ef9ed89935f24da2c1f32eceb417dfd209e335c60",
+    "engine_is_immutable_for_this_exam": true,
+    "main_merge_commit": "2e423a86339daa031f4b98f79f288b82e5ce621b",
+    "protocol_freeze_commit": "d51700e5fc24ba777c830f11ca18b0299b6a6f4f",
+    "scoring_affecting_change_requires_new_engine_identity": true
+  },
+  "claim_boundary": "This protocol tests the frozen E0 machine-first layer on one prospectively enrolled held-out target. It does not establish canonical Unit003 semantics, population accuracy, prevalence, or general Kubernetes correctness.",
+  "exam_id": "UNIT003_BLIND_MACHINE_FIRST_E0_001",
+  "first_seal_rule": {
+    "first_machine_input_packet_is_immutable_once_e0_starts": true,
+    "first_prediction_must_be_archived_even_if_assurance_incomplete": true,
+    "first_semantic_output_seal_is_immutable_once_emitted": true,
+    "human_gold_may_not_be_read_before_first_seal": true,
+    "human_semantic_adjudication_may_not_rewrite_first_round_artifacts": true
+  },
+  "gold_firewall": {
+    "canonical_human_gold_authoring_starts_only_after_machine_first_phase_is_permanently_archived": true,
+    "gold_author_must_not_edit_machine_first_artifacts": true,
+    "machine_first_outputs_are_predictions_only_and_never_canonical_corpus_authority": true,
+    "post_machine_comparison_must_report_disagreements_without_retrofitting_either_side": true
+  },
+  "heldout_target": {
+    "candidate_id": "kubernetes/kubectl::kubernetes-write-update",
+    "mechanism_family": "REVISION_OR_RESOURCE_VERSION",
+    "repository": "kubernetes/kubectl",
+    "screened_operation": "kubectl annotate --resource-version",
+    "selection_source": "corpus/0.1/ENROLLMENT.json",
+    "stratum": "NON_AGENT_SPECIFIC",
+    "target_revision": "04f459470f58642063b0374361bee0011278f6d8",
+    "target_substitution_forbidden": true,
+    "target_tree_sha": "d1eb526feea2a1815554db775a343d751f4892b1",
+    "unit_id": "corpus01-unit-003"
+  },
+  "historical_protocol": {
+    "defects": [
+      "repository was materialized as kubernetes/kubernetes although the frozen candidate_id names kubernetes/kubectl",
+      "machine_driven_refinement contained one malformed JSON member without a value"
+    ],
+    "freeze_commit": "118ef9d0fcc87235b044e00e334db26c01f298cd",
+    "git_blob_sha": "7825386feb717047eae5c67e2aabac626243b989",
+    "path": "experiments/unit003-blind-machine-first/EXAM_PROTOCOL.json",
+    "retained_unchanged": true,
+    "scientific_or_scoring_change": false
+  },
+  "machine_driven_refinement": {
+    "acquisition_may_only_satisfy_machine_emitted_target_only_requests_using_exact_target_revision_bytes_or_reproducible_machine_observations": true,
+    "each_round_gets_a_new_input_packet_digest_and_output_seal_while_preserving_all_prior_rounds": true,
+    "engine_identity_must_remain_constant": true,
+    "human_may_not_choose_additional_evidence_for_semantic_help": true,
+    "permitted_only_after_first_seal": true,
+    "stop_conditions": [
+      "E0 emits a valid regression witness",
+      "E0 emits stable-in-declared-scope under all frozen obligations",
+      "E0 remains assurance-incomplete with no satisfiable machine-requested target-only refinement",
+      "infrastructure failure"
+    ],
+    "trigger": "Frozen E0 emits target-only PROBE_PLAN.json or REFINEMENT_REQUESTS.json."
+  },
+  "machine_first_acquisition": {
+    "acquisition_is_outside_semantic_core": true,
+    "first_round_algorithm": {
+      "step_1": "Resolve and record exact target commit and recursive Git tree identity.",
+      "step_2": "Enumerate target-revision repository paths without reading file contents.",
+      "step_3": "Score paths deterministically using only frozen lexical anchors derived before inspection from the screened operation: annotate, resource-version, resourceversion, resource_version, resourceVersion.",
+      "step_4": "Select the lexicographically tie-broken top bounded path set under the frozen path policy; fetch exact bytes for those paths only.",
+      "step_5": "Construct MACHINE_INPUT.json plus exact evidence-file SHA-256 closure; no semantic assertions, human gold, canonical verdict, witness, or ESTABLISHED relation may be inserted by acquisition.",
+      "step_6": "Run frozen E0 and seal the complete first-round semantic artifacts before human semantic adjudication of screened-operation evidence or prediction."
+    },
+    "first_round_human_semantic_selection_forbidden": true,
+    "network_policy": "Acquisition may use GitHub read-only retrieval of exact pinned target bytes; frozen semantic core remains network-free.",
+    "no_current_default_branch_substitution": true,
+    "path_policy": {
+      "exclude_path_fragments": [
+        "vendor/",
+        "third_party/",
+        "translations/"
+      ],
+      "include_extensions": [
+        ".go",
+        ".md",
+        ".yaml",
+        ".yml",
+        ".json",
+        ".txt"
+      ],
+      "maximum_first_round_files": 24,
+      "ranking": [
+        "exact basename/token match to annotate",
+        "path contains kubectl and annotate",
+        "path contains resource-version/resourceversion/resource_version/resourceVersion",
+        "path contains command or cmd near annotate",
+        "lexicographic path as final tie-break"
+      ]
+    },
+    "source_authority": "Exact committed bytes reachable from kubernetes/kubectl target_revision only."
+  },
+  "outcome_neutrality": {
+    "admissible_first_seal_predictions": [
+      "E0_PREDICTED_CONSEQUENCE_REGRESSION",
+      "E0_PREDICTED_CONSEQUENCE_STABLE_IN_DECLARED_SCOPE",
+      "E0_PREDICTED_ASSURANCE_INCOMPLETE"
+    ],
+    "infrastructure_failure_is_not_a_scientific_prediction": true,
+    "no_outcome_is_a_promotion_requirement": true,
+    "no_result_may_trigger_target_replacement": true
+  },
+  "preseal_incident_001": {
+    "actual_response": "GitHub commit endpoint also returned patches for go.mod and go.sum.",
+    "behavior_experiment_performed": false,
+    "bytes_used_for_evidence_selection": false,
+    "bytes_used_for_semantic_judgment": false,
+    "classification": "METADATA_ENDPOINT_OVERRETURN_BEFORE_FIRST_SEAL",
+    "effect_on_blindness": "Strict zero-byte preseal blindness is no longer claimable; machine-first outcome independence remains protected by deterministic predeclared acquisition and immutable E0.",
+    "frozen_path_ranking_changed": false,
+    "human_gold_returned": false,
+    "request_intent": "Resolve exact target commit existence and tree identity only.",
+    "required_reporting": true,
+    "screened_operation_implementation_or_documentation_returned": false
+  },
+  "schema": "risu.unit003-blind-machine-first-exam/v0.1",
+  "status": "PRESEAL_CORRECTION_001_EFFECTIVE_BEFORE_OPERATION_SEMANTIC_INSPECTION"
+}
