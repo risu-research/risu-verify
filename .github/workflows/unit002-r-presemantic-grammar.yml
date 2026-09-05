@@ -38,7 +38,8 @@ jobs:
           from tools.corpus01_primary_v08 import sanitize_report_metadata
           target=json.loads(Path('corpus/0.1/units/002-octokit-pulls-merge/TARGET_LANE.json').read_text())
           boundary=json.loads(Path('corpus/0.1/units/002-octokit-pulls-merge/BOUNDARY_MODEL.json').read_text())
-          sanitize_report_metadata(Path('/tmp/u002-grammar-case'),target,boundary)
+          sanitation=sanitize_report_metadata(Path('/tmp/u002-grammar-case'),target,boundary)
+          assert sanitation['semantic_assurance_inputs_unchanged'] is True
           PY
           python tools/corpus01_bound_evidence.py \
             /tmp/u002-grammar-case \
@@ -76,7 +77,7 @@ jobs:
           adapter=json.loads((case/'assurance/adapter.json').read_text())
           source=json.loads((case/'assurance/source-contract.json').read_text())
 
-          # Outer grammar validation only. This function does not evaluate worlds or compute a verdict.
+          # Frozen-core OUTER SHAPE only. No world evaluation and no verifier execution.
           pa.validate_adapter_shape(adapter)
           assert adapter['adapter_version']=='0.7'
           assert source['source_contract_version']=='0.7'
@@ -84,31 +85,52 @@ jobs:
           der=adapter['target']['derivation']
           program=der['program']
           assert program['program_version']=='0.5'
-          payload={
-            'protocol': rc.PROTOCOL,
-            'worlds': der['world_records'],
-            'profile_constants': der['profile_constants'],
-            'established_facts': sorted(f['id'] for f in der['facts'] if f['status']=='ESTABLISHED'),
-            'exact_enabled': adapter['target']['exact_enabled'],
-            'program': program,
-          }
-          # validate_payload checks grammar, stage keys, expressions, and established-fact references;
-          # unlike compile_payload it does not evaluate expressions or derive any semantic outcome.
-          rc.validate_payload(payload)
+          assert der['mode']=='CONSEQUENCE_BLIND'
+          facts={f['id']:f['status'] for f in der['facts']}
+          assert facts and all(isinstance(k,str) and k for k in facts)
 
-          forbidden=('compile_payload','compile_blind','verify','run_verifier')
+          # Validate the exact blind-program grammar stage-by-stage using the frozen
+          # reference compiler's syntax validator. Deliberately DO NOT call
+          # validate_payload/compile_payload because payload construction introduces
+          # normalized world_records and compile_payload evaluates expressions.
+          checked={}
+          for name in ('discriminator','operative_signature','mechanism','interpreter'):
+              spec=program.get(name)
+              assert isinstance(spec,dict), f'missing stage {name}'
+              assert set(spec)=={'required_fact_ids','expr'}, (name,set(spec))
+              reqs=spec['required_fact_ids']
+              assert isinstance(reqs,list) and len(reqs)==len(set(reqs)), name
+              assert reqs and all(facts.get(fid)=='ESTABLISHED' for fid in reqs), (name,reqs)
+              rc.validate_expr(spec['expr'],rc.STAGES[name],f'program.{name}.expr')
+              checked[name]={
+                  'required_fact_count':len(reqs),
+                  'required_facts':list(reqs),
+                  'expression_grammar':'PASS',
+              }
+
+          # Firewall: these semantic-evaluation/verdict functions are intentionally never called.
+          forbidden=(
+              'reference_compiler.validate_payload',
+              'reference_compiler.compile_payload',
+              'checker.compile_blind',
+              'risu-verify verify',
+          )
           record={
-            'schema':'risu.unit002-r-presemantic-core-grammar/v0.1alpha1',
+            'schema':'risu.unit002-r-presemantic-core-grammar/v0.2alpha1',
             'status':'PASS',
             'sealed_scientific_head':'1f9fba3a270f05d06763a5c81216d2edddffad8b',
+            'frozen_core_archive_sha256':'bc3c0be440b1b729d3131a630491cce62f1f885fb305aa46a4483fee0adad72f',
             'compiled_adapter_sha256':hashlib.sha256((case/'assurance/adapter.json').read_bytes()).hexdigest(),
             'compiled_source_contract_sha256':hashlib.sha256((case/'assurance/source-contract.json').read_bytes()).hexdigest(),
             'adapter_version':adapter['adapter_version'],
             'source_contract_version':source['source_contract_version'],
             'program_version':program['program_version'],
+            'derivation_mode':der['mode'],
             'outer_adapter_shape_validation':'PASS',
-            'blind_program_payload_grammar_validation':'PASS',
+            'stage_grammar_validation':'PASS',
+            'checked_stages':checked,
             'semantic_program_evaluated':False,
+            'world_records_normalized_or_evaluated':False,
             'semantic_verifier_executed':False,
             'semantic_outcome_observed':False,
             'explicitly_not_called':list(forbidden),
