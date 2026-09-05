@@ -67,6 +67,33 @@
       "e0_executed": false,
       "first_seal_created": false,
       "scientific_prediction": null
+    },
+    {
+      "sequence": 4,
+      "run_id": 33979003797,
+      "head_sha": "bf88569664fd0c78f737afa12453c2cd13b23ccb",
+      "classification": "IMPLEMENTATION_INVALID_SELECTION_IDENTITY_GUARD_PRE_CONTENT",
+      "failed_job": "select-tree-only",
+      "failed_job_id": 101340689672,
+      "failed_step": "Require exact replay of Attempt 3 machine-frozen selection",
+      "reason": "The selector reproduced the exact Attempt 003 canonical semantic selection digest, but the workflow incorrectly compared SHA-256 of the entire ROUND0_SELECTION.json file to that canonical-basis digest.",
+      "frozen_e0_identity_gate_passed": true,
+      "engine_identity_digest": "7979ff811765cf1617602b2ef9ed89935f24da2c1f32eceb417dfd209e335c60",
+      "syntax_tests_executed": true,
+      "target_tree_fetched_by_workflow": true,
+      "local_target_blob_objects_before_selection": 0,
+      "tree_blob_entries": 763,
+      "eligible_entries": 516,
+      "selection_created": true,
+      "selection_sha256": "912bc1241519e95fe2e3a3aa02267c2bf4a5e2e3377dd31a963fc0757e40d74b",
+      "selected_count": 24,
+      "canonical_semantic_selection_exact_match_to_attempt003": true,
+      "selected_target_content_fetched": false,
+      "machine_packet_created": false,
+      "e0_semantic_core_executed": false,
+      "e0_executed": false,
+      "first_seal_created": false,
+      "scientific_prediction": null
     }
   ]
 }
