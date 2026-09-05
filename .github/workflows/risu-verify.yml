@@ -19,7 +19,13 @@ jobs:
           chmod +x risu-verify
           chmod +x risu-workbench
           chmod +x tests/*.sh
-          
+
+      - name: Validate Prospective Corpus 0.1 procedural integrity
+        run: python tools/corpus01_validate.py --json
+
+      - name: Verify frozen Unit 001 archive
+        run: python tools/unit001_archive_verify.py
+
       - name: Materialize content-addressed case bundles
         run: python tools/materialize_case_bundles.py
       - name: Replay case provenance
