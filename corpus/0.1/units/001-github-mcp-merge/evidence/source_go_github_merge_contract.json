@@ -1,0 +1,30 @@
+{
+  "artifact_id": "CORPUS01-U001-SOURCE-MERGE-CONTRACT",
+  "artifact_schema": "risu.corpus-evidence/v0.1alpha1",
+  "boundary": "Pinned source-client contract and request construction. The GitHub service implementation is not audited, and live-runtime conformance is not claimed.",
+  "kind": "PINNED_UPSTREAM_FILE_OBSERVATION",
+  "lane": "SOURCE",
+  "observations": [
+    {
+      "exact_text": "SHA         string // SHA that pull request head must match to allow merge. (Optional.)",
+      "id": "U001-SOURCE-SHA-GUARD",
+      "interpretation": "Within the merge API contract, a supplied SHA is a head-match precondition for merge."
+    },
+    {
+      "exact_text": "//meta:operation PUT /repos/{owner}/{repo}/pulls/{pull_number}/merge",
+      "id": "U001-SOURCE-ENDPOINT",
+      "interpretation": "The client operation is bound to the GitHub pull-request merge endpoint."
+    },
+    {
+      "exact_text": "pullRequestBody.SHA = options.SHA",
+      "id": "U001-SOURCE-SHA-REQUEST-BINDING",
+      "interpretation": "PullRequestOptions.SHA is serialized into the merge request body."
+    }
+  ],
+  "upstream": {
+    "commit": "34349a88bac3",
+    "git_blob_sha1": "27e3784876f4cf0f8bc8b640296f4317546f8044",
+    "path": "github/pulls.go",
+    "repository": "google/go-github"
+  }
+}
