@@ -1,0 +1,43 @@
+name: RISU Corpus infrastructure
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  protocol-preserving-infra:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Restore executable entrypoints
+        run: |
+          chmod +x risu-verify
+          chmod +x tools/*.py
+
+      - name: Unit-test protocol-preserving harness
+        run: python tests/test_corpus01_unit_harness.py
+
+      - name: Materialize retained case infrastructure
+        run: python tools/materialize_case_bundles.py
+
+      - name: Re-detect Unit 001 historical provenance friction exactly
+        run: |
+          python tools/corpus01_unit_harness.py audit \
+            corpus/0.1/units/001-github-mcp-merge \
+            --expect-finding PROVENANCE_NOT_UPSTREAM_OF_EXACT:GH_U001_EXPECTED_HEAD_INPUT \
+            --expect-finding PROVENANCE_NOT_UPSTREAM_OF_EXACT:GH_U001_LIBRARY_PIN \
+            --json
+
+      - name: Preserve public semantic smoke
+        run: |
+          python tools/provenance_verify.py cases/github-guarded-merge
+          python tools/vbe_differential.py
+          bash tests/semantic_ci_demo.sh

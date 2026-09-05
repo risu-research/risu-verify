@@ -1,0 +1,45 @@
+name: RISU Corpus 0.1 generic primary
+
+on:
+  workflow_dispatch:
+    inputs:
+      manifest:
+        description: "Repository-relative PRIMARY_RUN_MANIFEST.json path"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  primary:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Restore executable entrypoints
+        run: |
+          chmod +x risu-verify
+          chmod +x tools/*.py
+
+      - name: Execute manifest-driven primary harness
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p .risu
+          python tools/corpus01_unit_harness.py run \
+            "${{ inputs.manifest }}" \
+            --json 2>&1 | tee .risu/corpus-primary-harness.log
+
+      - name: Upload complete harness evidence even on infrastructure failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: corpus-primary-harness-${{ github.sha }}-${{ github.run_id }}
+          path: |
+            .risu/corpus01-harness/**
+            .risu/corpus-primary-harness.log
+          if-no-files-found: warn
+          retention-days: 90
