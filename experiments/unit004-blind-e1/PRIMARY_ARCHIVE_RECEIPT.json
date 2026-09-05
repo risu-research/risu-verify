@@ -1,0 +1,33 @@
+{
+  "schema": "risu.unit004-gold-primary-archive-receipt/v0.1alpha1",
+  "receipt_id": "UNIT004_GOLD_PRIMARY_ARCHIVE_RECEIPT_001",
+  "status": "ARCHIVE_IDENTITY_LOCKED_BEFORE_RESULT_INSPECTION",
+  "primary_execution": {
+    "workflow": "Unit004 gold finite CTV primary",
+    "workflow_id": 351096730,
+    "run_id": 33984883532,
+    "run_attempt": 1,
+    "execution_commit": "d8396b501f4846dacb26a8260d929c8c3dd62525",
+    "execution_tree": "8688bd0553796eba7d03312f1c0b6876e1666cf4"
+  },
+  "artifact": {
+    "id": 9974841799,
+    "name": "unit004-gold-first-primary-d8396b501f4846dacb26a8260d929c8c3dd62525-33984883532",
+    "size_in_bytes": 23743,
+    "github_digest": "sha256:feca079453ea907749d6811690815f38e7b0425d3ee8c46bea07921d6f8119b1",
+    "expired": false
+  },
+  "preinspection_controls": {
+    "primary_result_value_observed_before_receipt": false,
+    "independent_witness_value_observed_before_receipt": false,
+    "artifact_downloaded_before_receipt": false,
+    "artifact_identity_selected_after_result": false,
+    "workflow_primary_step_completed": true,
+    "workflow_independent_recomputation_step_completed": true,
+    "workflow_archive_build_step_completed": true,
+    "workflow_upload_step_completed": true
+  },
+  "validator_freeze_commit": "d8396b501f4846dacb26a8260d929c8c3dd62525",
+  "author_acceptance_commit": "6665edda22abfb6233ebbba0792829fbc7467f35",
+  "claim_boundary": "This receipt fixes the identity of the first uploaded Unit004 gold-primary archive before the semantic primary result or independent witness value is inspected."
+}
