@@ -1,0 +1,36 @@
+{
+  "authoring_freeze_commit": "ce4c3a311bcf9f6b74b43af24e8732d1af8fd5ac",
+  "compile_probe": {
+    "adapter_and_source_unchanged_by_bound_compiler": true,
+    "bound_binding_count": 8,
+    "bound_evidence_manifest_sha256": "81827faea492aa6fe0789156f3df5fa1b784e10d5a9c5cfeb0763e1027c78ce3",
+    "compile_manifest_sha256": "dfcdd8f47d4b6ea6813d87cb0b80534afc1dd97b7e11f916ffa2a7e4aede328f",
+    "compiled_adapter_sha256": "0ad010b72164bd30024f2401db336be097dedcc7fc89a96aba1bb465e30d8bc7",
+    "compiled_source_contract_sha256": "1e330c9cae597798613538d16fada720fd7a607fc178dc7ffe906587e9e16c16",
+    "provenance_preflight_output_sha256": "db64f81b6476d58c9c6e8a199f3f3005ddcd33268a97a86d2344d48171c569ca",
+    "removed_unbound_path_count": 3,
+    "report_metadata_sanitization_sha256": "4be9436bb88fb8e66b4f28e97e729d800e7c101ce77dad034d3fe13929c5c303",
+    "semantic_assurance_unchanged_by_report_sanitation": true
+  },
+  "controls": {
+    "hashes_in_primary_manifest_generated_from_frozen_bytes": true,
+    "manual_primary_manifest_hash_entry_required": false,
+    "primary_verifier_executed_during_seal": false,
+    "scientific_input_bytes_modified": false,
+    "seal_is_mechanical_readiness_record_not_scientific_result": true,
+    "semantic_outcome_observed_during_seal": false
+  },
+  "gates": {
+    "bound_evidence_compile": "PASS",
+    "freeze_gate": "PASS",
+    "provenance_preflight": "PASS",
+    "read_only_audit": "PASS"
+  },
+  "instance_id": "corpus01-002-octokit-pulls-merge-current",
+  "manifest_path": "corpus/0.1/units/002-octokit-pulls-merge/PRIMARY_RUN_MANIFEST_AMENDMENT005.json",
+  "manifest_sha256": "6460d6391385db3f7d71fa93065c700480420d38bdef2677946bdb87d573256a",
+  "next_action": "Commit PRIMARY_RUN_MANIFEST.json and UNIT_SEAL.json, require CI, then explicitly dispatch the generic v0.8 primary workflow. Do not edit generated hashes by hand.",
+  "schema": "risu.corpus-unit-seal/v0.8alpha1",
+  "status": "READY_FOR_PRIMARY",
+  "unit_id": "corpus01-unit-002"
+}

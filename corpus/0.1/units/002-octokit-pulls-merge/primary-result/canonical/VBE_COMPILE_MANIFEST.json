@@ -1,0 +1,18 @@
+{
+  "carrier_envelope_sha256": "1c82258ec2c174354740a2377403442e05f731059f178490ba574bf778cc71d0",
+  "compilation_mode": "PROSPECTIVE_CORPUS_PRIMARY",
+  "compiled_adapter_sha256": "0ad010b72164bd30024f2401db336be097dedcc7fc89a96aba1bb465e30d8bc7",
+  "compiled_source_contract_sha256": "1e330c9cae597798613538d16fada720fd7a607fc178dc7ffe906587e9e16c16",
+  "compiler": "tools/vbe_compile.py",
+  "corpus": {
+    "authoring_status": "AUTHOR_ACCEPTED",
+    "enrollment_position": 2,
+    "id": "PROSPECTIVE_CORPUS_0.1",
+    "unit_id": "corpus01-unit-002"
+  },
+  "instance_sha256": "5e3552f5805039f17bece68a99a1830e634f185e2d1cbd9017ba178f364eda5c",
+  "legacy_case": "cases/github-guarded-merge",
+  "note": "Source-contract and target semantic program are produced by tools/vbe_compile.py unchanged. When a pinned post-freeze provenance overlay is supplied, the Corpus wrapper may add only predeclared provenance edges between already-frozen established facts and an existing claim derivation.",
+  "profile": "version-bound-effect",
+  "profile_version": "0.1-development"
+}

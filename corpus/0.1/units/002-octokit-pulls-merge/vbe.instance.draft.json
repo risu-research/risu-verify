@@ -1,0 +1,131 @@
+{
+  "authoring_inputs": {
+    "boundary_model": {
+      "freeze_commit": "2bf21fbb6faeed6e32136975de2e0089d8edac80",
+      "path": "BOUNDARY_MODEL.json",
+      "sha256": "8284797a0ccd3c7bbb23c75ecb617e284ac00f28589a42a0b21492f55ced6430"
+    },
+    "carrier_envelope": {
+      "authoring_commit": "1b62e4a36b4906a277f4611128b77340c3ed8e8d",
+      "path": "vbe.envelope.json",
+      "sha256": "1c82258ec2c174354740a2377403442e05f731059f178490ba574bf778cc71d0"
+    },
+    "source_lane": {
+      "freeze_commit": "2536a131fd969f9b57d5a1f64b6439690052397a",
+      "path": "SOURCE_LANE.json",
+      "sha256": "a141d38509796aaf871e812ad4007d14706b9625150641ffc8e190774c4fb79b"
+    },
+    "target_lane": {
+      "freeze_commit": "1406bc33afaf252d49f73a043234e66a76c2dfdf",
+      "path": "TARGET_LANE.json",
+      "sha256": "206650add24f2dbb5a0567f4cf034d5c3eb99098507a3f06c046392c552ad810"
+    }
+  },
+  "carrier_envelope": "vbe.envelope.json",
+  "compiled_case_id": "CORPUS01-U002-OCTOKIT-PULLS-MERGE-VBE-COMPILED",
+  "corpus": {
+    "enrollment_position": 2,
+    "id": "PROSPECTIVE_CORPUS_0.1",
+    "unit_id": "corpus01-unit-002"
+  },
+  "instance_id": "corpus01-002-octokit-pulls-merge-current",
+  "instance_schema": "risu.vbe.instance/v0.1alpha1",
+  "legacy_case": "cases/github-guarded-merge",
+  "preverdict_controls": {
+    "historical_risu_result_used_to_choose_target_pattern": false,
+    "issue_tracker_bug_discovery_performed": false,
+    "primary_risu_verdict_observed": false,
+    "selection_inherited_from_original_verdict_blind_enrollment": true,
+    "target_pattern_basis": "Pinned Octokit target exposes sha, serializes the supplied reviewed SHA into the merge request body, and surfaces an injected provider mismatch response as rejection; pinned source semantics define sha as the provider-side must-match head precondition.",
+    "unit002_m_result_used_to_choose_target_pattern": false
+  },
+  "profile": "version-bound-effect",
+  "profile_version": "0.1-development",
+  "source": {
+    "admissibility": {
+      "expr": {
+        "left": {
+          "op": "get",
+          "path": ["otherwise_mergeable"],
+          "source": "coord"
+        },
+        "op": "eq",
+        "right": {
+          "op": "literal",
+          "value": true
+        }
+      }
+    },
+    "boundary": {
+      "declaration": "The reviewed head is H0. The provider-side request-time head at the merge SHA precondition effect cut may be H0 or H1 after an intervening push.",
+      "post_check_material_transition_possible": true
+    },
+    "claim_boundary": {
+      "domain_adequacy": "DECLARED_TWO_WORLD_GUARDED_CALL_PROFILE",
+      "general_unguarded_calls": "OUT_OF_SCOPE",
+      "live_runtime_conformance": "NOT_CLAIMED",
+      "model_relative": true,
+      "source_semantic_adequacy": "PINNED_GENERATED_API_DOCS_PLUS_OFFICIAL_DOCUMENTATION_CORROBORATION"
+    },
+    "constants": {
+      "reviewed_head_sha": "H0"
+    },
+    "contract_id": "SRC-CORPUS01-U002-GITHUB-REVIEWED-HEAD-MERGE",
+    "current_coordinate": "request_head_sha",
+    "current_domain": ["H0", "H1"],
+    "extra_coordinates": {
+      "otherwise_mergeable": [true]
+    },
+    "lens": "L_REVIEWED_HEAD_EFFECT",
+    "metadata": {
+      "kind": "PROSPECTIVE_EXTERNAL_SOURCE_CONSEQUENCE_CONTRACT",
+      "title": "Octokit guarded GitHub merge by reviewed pull-request head SHA"
+    },
+    "reviewed": {
+      "anchor": "H0",
+      "mode": "literal"
+    },
+    "source_family": ["GUARDED_MERGE_REVIEWED_HEAD_SHA"],
+    "stale_consequence": "STALE_REQUEST_REJECTED",
+    "success_consequence": "MERGED_REVIEWED_HEAD"
+  },
+  "status": "DRAFT_UNVERIFIED",
+  "target": {
+    "discharge_mode": "PROVIDER_HEAD_SHA_PRECONDITION",
+    "discriminator_visibility": "OPERATIVE_PROVIDER_STATE_AT_EFFECT_CUT",
+    "facts": {
+      "discriminator": [
+        "OCT_U002_SOURCE_SHA_PRECONDITION",
+        "OCT_U002_SHA_INPUT_EXPOSED",
+        "OCT_U002_SHA_BODY_SERIALIZED"
+      ],
+      "interpreter": [
+        "OCT_U002_409_NOT_SUCCESS",
+        "OCT_U002_SOURCE_SHA_PRECONDITION",
+        "OCT_U002_EXACT_QUALIFIED"
+      ],
+      "mechanism": [
+        "OCT_U002_DEPENDENCY_CHAIN",
+        "OCT_U002_SHA_BODY_SERIALIZED",
+        "OCT_U002_SOURCE_SHA_PRECONDITION",
+        "OCT_U002_RUNTIME_CARRIER_QUALIFIED"
+      ],
+      "operative_signature": [
+        "OCT_U002_SHA_INPUT_EXPOSED",
+        "OCT_U002_SHA_BODY_SERIALIZED",
+        "OCT_U002_RUNTIME_CARRIER_QUALIFIED",
+        "OCT_U002_SIGNATURE_QUALIFIED"
+      ]
+    },
+    "mechanism_current_field": "request_head_sha",
+    "mechanism_reviewed_field": "reviewed_head_sha",
+    "native_accept_kind": "MERGE_ACCEPTED",
+    "native_stale_kind": "REJECTED_EXPECTED_HEAD_MISMATCH",
+    "pattern": "PRESERVED_COMPARE",
+    "program_version": "0.5",
+    "reviewed_anchor_constant": "reviewed_head_sha_anchor",
+    "scope_id": "GUARDED_OCTOKIT_PULLS_MERGE_REVIEWED_HEAD_SHA",
+    "signature_current_field": "request_head_sha",
+    "signature_reviewed_field": "reviewed_head_sha"
+  }
+}

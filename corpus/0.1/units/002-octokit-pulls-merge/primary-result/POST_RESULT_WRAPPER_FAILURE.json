@@ -1,0 +1,16 @@
+{
+  "duplicate_bytes_identical": true,
+  "interpretation": "The workflow-level failure is post-result assertion logic only. It neither invalidates nor reruns the already completed first valid semantic primary.",
+  "job_id": 101254891951,
+  "observed_duplicate_paths": [
+    "corpus01-v08/corpus01-unit-002/primary-observation.json",
+    "corpus01-v08/corpus01-unit-002/bundle/staging/primary-observation.json"
+  ],
+  "primary_product_status": "PRESERVED_IN_DECLARED_SCOPE",
+  "primary_runner_status": "VALID_SEMANTIC_OUTCOME",
+  "primary_semantic_exit_code": 0,
+  "run_id": 33947031284,
+  "schema": "risu.corpus-post-result-wrapper-failure/v0.1alpha1",
+  "unit_id": "corpus01-unit-002",
+  "wrapper_assertion_status": "FAILED_AFTER_PRIMARY"
+}

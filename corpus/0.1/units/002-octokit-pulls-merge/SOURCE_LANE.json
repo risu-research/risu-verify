@@ -1,0 +1,95 @@
+{
+  "admissibility": {
+    "expr": "otherwise_mergeable == true",
+    "held_fixed": [
+      "authorization permits the merge request",
+      "the pull request is open and otherwise mergeable",
+      "merge_method is supported",
+      "owner, repository, and pull-request identity are fixed",
+      "no unrelated provider, validation, abuse-rate, transport, or policy failure determines the outcome"
+    ],
+    "material_transition": "The pull-request head may move from reviewed H0 to H1 after review and before GitHub evaluates the supplied sha precondition.",
+    "post_review_material_transition_possible": true
+  },
+  "authoring_protocol_path": "corpus/0.1/AUTHORING_PROTOCOL.json",
+  "bounded_worlds": [
+    {
+      "otherwise_mergeable": true,
+      "request_head_sha": "H0",
+      "required_consequence": "MERGED_REVIEWED_HEAD",
+      "reviewed_head_sha": "H0",
+      "world": "W_MATCH"
+    },
+    {
+      "otherwise_mergeable": true,
+      "request_head_sha": "H1",
+      "required_consequence": "STALE_REQUEST_REJECTED",
+      "reviewed_head_sha": "H0",
+      "world": "W_STALE"
+    }
+  ],
+  "candidate_id": "octokit/rest.js::github-version-bound-write",
+  "consequence_contract": {
+    "contract_id": "SRC-CORPUS01-U002-GITHUB-REVIEWED-HEAD-MERGE",
+    "current_coordinate": {
+      "domain": [
+        "H0",
+        "H1"
+      ],
+      "name": "request_head_sha"
+    },
+    "effect_cut": "GitHub merge endpoint evaluation of the supplied sha precondition before merge effect",
+    "lens": "L_REVIEWED_HEAD_EFFECT",
+    "match_predicate": "request_head_sha == reviewed_head_sha",
+    "reviewed_coordinate": {
+      "anchor": "H0",
+      "mode": "literal",
+      "name": "reviewed_head_sha"
+    },
+    "stale_consequence": "STALE_REQUEST_REJECTED",
+    "success_consequence": "MERGED_REVIEWED_HEAD"
+  },
+  "evidence": [
+    {
+      "path": "corpus/0.1/units/002-octokit-pulls-merge/evidence/source-github-merge-sha.json",
+      "sha256": "5a74889a43eb45dc5b9cb24c1931ac82f75bf40d4305137c4a822d5295c8c050",
+      "strength": "PINNED_GENERATED_API_DOCS_PLUS_OFFICIAL_DOCUMENTATION_CORROBORATION"
+    }
+  ],
+  "evidence_strength_boundary": {
+    "general_source_equivalence": "NOT_CLAIMED",
+    "live_runtime_conformance": "NOT_CLAIMED",
+    "model_relative": true,
+    "source_semantic_adequacy": "PINNED_GENERATED_API_DOCS_PLUS_OFFICIAL_DOCUMENTATION_CORROBORATION"
+  },
+  "freeze_rule": "After this lane is committed, its source consequence, coordinates, admissibility, and evidence-strength labels may not be rewritten in response to Unit 002-R authoring discoveries or the primary RISU result.",
+  "independence_controls": {
+    "issue_tracker_consulted_for_target_bug_discovery": false,
+    "primary_risu_verdict_observed": false,
+    "target_fact_used_to_define_source_semantics": false,
+    "unit001_primary_result_used_to_define_source_semantics": false,
+    "unit002_m_result_used_to_define_source_semantics": false
+  },
+  "lane_schema": "risu.corpus-source-lane/v0.1alpha1",
+  "open_uncertainties": [
+    "The bounded source contract does not classify unrelated merge failures.",
+    "The latest official documentation URL is corroboration, not an immutable source object; the v17.0.0 generated endpoint documentation is the immutable anchor.",
+    "RISU has not independently re-tested the live GitHub service for this unit."
+  ],
+  "parent_protocol_sha256": "9fbf3fcdf48e5554840c4f2418803779ad82757e1a5df71411212421c225ad70",
+  "screening_sequence": 2,
+  "selection_freeze_commit": "063a3c5fda765d4cf94f77f0888349db7de16554",
+  "source_operation": {
+    "identity": "GitHub REST merge a pull request",
+    "method_path": "PUT /repos/{owner}/{repo}/pulls/{pull_number}/merge",
+    "pinned_semantic_anchor": {
+      "git_blob_sha1": "dbee269ad381fe9b056db0d4c99192cf49c48ffb",
+      "path": "docs/pulls/merge.md",
+      "repository": "octokit/plugin-rest-endpoint-methods.js",
+      "revision": "c82898ae7a9ad9e92e39fc62e570a1cd4783a45b",
+      "tag": "v17.0.0"
+    }
+  },
+  "status": "FROZEN_SOURCE_LANE",
+  "unit_id": "corpus01-unit-002"
+}

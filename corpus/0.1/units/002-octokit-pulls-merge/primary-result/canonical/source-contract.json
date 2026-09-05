@@ -1,0 +1,82 @@
+{
+  "admissibility": {
+    "expr": {
+      "left": {
+        "op": "get",
+        "path": [
+          "otherwise_mergeable"
+        ],
+        "source": "coord"
+      },
+      "op": "eq",
+      "right": {
+        "op": "literal",
+        "value": true
+      }
+    }
+  },
+  "boundary": {
+    "declaration": "The reviewed head is H0. The provider-side request-time head at the merge SHA precondition effect cut may be H0 or H1 after an intervening push.",
+    "post_check_material_transition_possible": true
+  },
+  "claim_boundary": {
+    "domain_adequacy": "DECLARED_TWO_WORLD_GUARDED_CALL_PROFILE",
+    "general_unguarded_calls": "OUT_OF_SCOPE",
+    "live_runtime_conformance": "NOT_CLAIMED",
+    "model_relative": true,
+    "source_semantic_adequacy": "PINNED_GENERATED_API_DOCS_PLUS_OFFICIAL_DOCUMENTATION_CORROBORATION"
+  },
+  "consequence": {
+    "codomain": [
+      "MERGED_REVIEWED_HEAD",
+      "STALE_REQUEST_REJECTED"
+    ],
+    "expr": {
+      "cond": {
+        "left": {
+          "op": "get",
+          "path": [
+            "request_head_sha"
+          ],
+          "source": "coord"
+        },
+        "op": "eq",
+        "right": {
+          "op": "literal",
+          "value": "H0"
+        }
+      },
+      "else": {
+        "op": "literal",
+        "value": "STALE_REQUEST_REJECTED"
+      },
+      "op": "if",
+      "then": {
+        "op": "literal",
+        "value": "MERGED_REVIEWED_HEAD"
+      }
+    },
+    "lens": "L_REVIEWED_HEAD_EFFECT"
+  },
+  "constants": {
+    "reviewed_head_sha": "H0"
+  },
+  "contract_id": "SRC-CORPUS01-U002-GITHUB-REVIEWED-HEAD-MERGE",
+  "coordinates": {
+    "otherwise_mergeable": [
+      true
+    ],
+    "request_head_sha": [
+      "H0",
+      "H1"
+    ]
+  },
+  "metadata": {
+    "kind": "PROSPECTIVE_EXTERNAL_SOURCE_CONSEQUENCE_CONTRACT",
+    "title": "Octokit guarded GitHub merge by reviewed pull-request head SHA"
+  },
+  "source_contract_version": "0.7",
+  "source_family": [
+    "GUARDED_MERGE_REVIEWED_HEAD_SHA"
+  ]
+}

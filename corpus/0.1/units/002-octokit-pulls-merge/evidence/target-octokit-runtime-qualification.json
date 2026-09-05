@@ -1,0 +1,69 @@
+{
+  "schema": "risu.unit002-r-target-qualification/v0.1alpha1",
+  "qualification_id": "UNIT002_R_OCTOKIT_MERGE_SHA_CARRIER_001",
+  "unit_id": "corpus01-unit-002",
+  "target": {
+    "repository": "octokit/rest.js",
+    "revision": "cd9cb8cd4965d99c7dac8c87d249308956250be3",
+    "operation": "octokit.rest.pulls.merge"
+  },
+  "mode": "TARGET_ONLY_BLACK_BOX_WITH_MOCK_PROVIDER_RESPONSE",
+  "provider_live_service_contacted": false,
+  "primary_risu_verifier_executed": false,
+  "reviewed_sha": "H0",
+  "observations": {
+    "success_path": {
+      "mocked_provider_status": 200,
+      "request": {
+        "url": "https://api.github.com/repos/owner/repo/pulls/7/merge",
+        "method": "PUT",
+        "body": {
+          "sha": "H0"
+        },
+        "content_type": "application/json; charset=utf-8"
+      },
+      "client_outcome": {
+        "kind": "RESOLVED",
+        "status": 200
+      }
+    },
+    "stale_path": {
+      "mocked_provider_status": 409,
+      "request": {
+        "url": "https://api.github.com/repos/owner/repo/pulls/7/merge",
+        "method": "PUT",
+        "body": {
+          "sha": "H0"
+        },
+        "content_type": "application/json; charset=utf-8"
+      },
+      "client_outcome": {
+        "kind": "REJECTED",
+        "status": 409,
+        "name": "HttpError"
+      }
+    }
+  },
+  "assertions": {
+    "single_request_per_invocation": true,
+    "merge_route_exact": true,
+    "method_put": true,
+    "reviewed_sha_preserved_in_json_body": true,
+    "success_200_resolves": true,
+    "mismatch_409_rejects": true,
+    "no_silent_retry_observed": true
+  },
+  "claim_boundary": {
+    "establishes": [
+      "pinned target runtime exposes the merge route through the built Octokit client",
+      "sha=H0 survives the selected client path into the JSON request body",
+      "a 409 provider response is surfaced as a rejected client operation rather than success"
+    ],
+    "does_not_establish": [
+      "live GitHub provider conformance",
+      "which response the live provider returns in any real pull request state",
+      "RISU semantic preservation verdict"
+    ]
+  },
+  "status": "PASS"
+}

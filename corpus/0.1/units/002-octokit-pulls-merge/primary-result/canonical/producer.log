@@ -1,0 +1,17 @@
+Overall verification: PASS
+Model recomputation: PASS
+Evidence verification: PASS
+Semantic assurance: BLIND_COMPILED_EVIDENCE_VERIFIED
+Consequence-blind compilation: PASS — per-world source consequence, target model, and predeclared d/z/effect tables were excluded from the compiler payload.
+Compiler differential: PASS (Python/Node).
+Structural: C1 / D1 / O1 — STRUCTURAL_ASSURANCE_ESTABLISHED
+Operative placement basis: gates_effect=true, evaluation_cut=EFFECT, post_check_material_transition_possible=true.
+Coverage is incomplete. Source-only capabilities: ["GUARDED_MERGE_REVIEWED_HEAD_SHA"].
+Exact Realization: REALIZATION_ESTABLISHED — NONE
+The compiled operative signature is sufficient and the compiled grounded mechanism interpretation agrees with the required consequence decoder on every declared world.
+C evidence path: B-U002-SOURCE, B-U002-TARGET-DEP, B-U002-TARGET-SURFACE — PASS.
+D evidence path: B-U002-SOURCE, B-U002-TARGET-REQUEST, B-U002-TARGET-RUNTIME, B-U002-TARGET-SURFACE — PASS.
+O evidence path: B-U002-SOURCE, B-U002-TARGET-DEP, B-U002-TARGET-ERROR, B-U002-TARGET-REQUEST, B-U002-TARGET-RUNTIME — PASS.
+EXACT evidence path: B-EXACT-QUAL, B-SIGNATURE-QUAL, B-U002-SOURCE, B-U002-TARGET-DEP, B-U002-TARGET-ERROR, B-U002-TARGET-REQUEST, B-U002-TARGET-RUNTIME, B-U002-TARGET-SURFACE — PASS.
+COVERAGE evidence path: B-U002-SOURCE, B-U002-TARGET-SURFACE — PASS.
+Verifier boundary: blind compilation establishes input separation from the per-world K table, not authorship independence, world-model adequacy, live-runtime conformance, general source equivalence, or independent reproduction.

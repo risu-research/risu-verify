@@ -1,0 +1,62 @@
+{
+  "adapter_sha256_unchanged": "0ad010b72164bd30024f2401db336be097dedcc7fc89a96aba1bb465e30d8bc7",
+  "after_case_sha256": "6ceeceb9f8167ec6f0e5cd5b0fd59112863eb78bc9ace9595438e2384cd4ade8",
+  "after_claim_boundary": {
+    "claim_scope": {
+      "all_merge_failures": "OUT_OF_SCOPE",
+      "general_unguarded_calls": "OUT_OF_SCOPE",
+      "live_remote_deployment": "NOT_CLAIMED",
+      "model_relative": true,
+      "operation": "octokit/rest.js octokit.rest.pulls.merge at revision cd9cb8cd4965d99c7dac8c87d249308956250be3",
+      "profile": "guarded merge call with sha equal to reviewed head H0"
+    },
+    "effect_cut": {
+      "definition": "The point at which GitHub evaluates the supplied merge sha against the current pull-request head before permitting merge effect.",
+      "name": "MERGE_SHA_PRECONDITION_EFFECT_CUT",
+      "post_review_transition": "request_head_sha may change from H0 to H1 after review and before this cut."
+    },
+    "source": "FROZEN_BOUNDARY_MODEL"
+  },
+  "after_external_system": {
+    "pinned_projection_ref": "cd9cb8cd4965d99c7dac8c87d249308956250be3",
+    "project": "octokit/rest.js",
+    "projection": "octokit.rest.pulls.merge"
+  },
+  "before": {
+    "claim_boundary": {
+      "current_live_runtime_conformance": "NOT_CLAIMED",
+      "independent_reproduction": "NOT_CLAIMED_BY_CASE_AUTHOR",
+      "note": "This commissioning case reproduces the v0.7 pinned external-evidence result. The product layer does not upgrade the core's model-relative claim.",
+      "source_model_adequacy": "DECLARED_PREMISE"
+    },
+    "display": {
+      "action": "GitHub MCP \u00b7 merge_pull_request",
+      "consequence_labels": {
+        "MERGED_REVIEWED_HEAD": "merge reviewed head",
+        "STALE_REQUEST_REJECTED": "reject stale request"
+      },
+      "coordinate_labels": {
+        "otherwise_mergeable": "Otherwise mergeable",
+        "request_head": "Head at merge request",
+        "reviewed_head": "Reviewed head"
+      },
+      "declared_consequence": "Merge the reviewed head; if the request-time head differs from the reviewed head, reject the stale request.",
+      "repair_epistemic_status": "SUGGESTED_NOT_CERTIFIED",
+      "suggested_repair": "Bind the merge effect to the reviewed head SHA, or perform an equivalent effect-time revalidation that rejects a changed head.",
+      "why_it_matters": "A pull request can change after review but before the merge effect. Preserving the visible head is not enough if the effect path is not bound to the reviewed head."
+    },
+    "external_system": {
+      "pinned_projection_ref": "822c87761f8587395b3e1a04b5386b2611252cd1",
+      "pinned_source_ref": "34349a88bac3",
+      "project": "github/github-mcp-server",
+      "projection": "MCP tool merge_pull_request",
+      "repository": "https://github.com/github/github-mcp-server",
+      "source_library": "google/go-github"
+    }
+  },
+  "before_case_sha256": "4c060b5a11cd18b9f2ca7bd4589d0a508150df839811ff8c6cf3e7eb64dbdcc1",
+  "mode": "FROZEN_TARGET_AND_BOUNDARY_ONLY",
+  "schema": "risu.corpus-report-metadata-sanitization/v0.8alpha1",
+  "semantic_assurance_inputs_unchanged": true,
+  "source_contract_sha256_unchanged": "1e330c9cae597798613538d16fada720fd7a607fc178dc7ffe906587e9e16c16"
+}

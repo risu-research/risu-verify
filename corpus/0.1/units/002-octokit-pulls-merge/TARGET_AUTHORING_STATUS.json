@@ -1,0 +1,19 @@
+{
+  "schema": "risu.unit002-r-authoring-status/v0.1alpha1",
+  "unit_id": "corpus01-unit-002",
+  "status": "TARGET_QUALIFICATION_PENDING",
+  "selection_freeze_commit": "063a3c5fda765d4cf94f77f0888349db7de16554",
+  "source_lane_freeze_commit": "2536a131fd969f9b57d5a1f64b6439690052397a",
+  "target_static_evidence_committed": true,
+  "target_runtime_qualification": {
+    "mode": "TARGET_ONLY_BLACK_BOX_WITH_MOCK_PROVIDER_RESPONSE",
+    "workflow": ".github/workflows/unit002-r-target-qualification.yml",
+    "primary_risu_verifier_executed": false,
+    "live_github_provider_contacted": false,
+    "status": "PENDING_FIRST_QUALIFICATION_RUN"
+  },
+  "primary_verdict_observed": false,
+  "issue_tracker_bug_discovery_performed": false,
+  "next_if_qualification_passes": "Freeze TARGET_LANE from already committed static evidence plus the exact qualification artifact identity.",
+  "next_if_qualification_fails": "Retain the failed qualification as authoring evidence and diagnose only the target qualification; do not replace or reorder the target."
+}

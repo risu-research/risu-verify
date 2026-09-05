@@ -1,0 +1,51 @@
+{
+  "claim_boundary": {
+    "all_merge_failures": "OUT_OF_SCOPE",
+    "guarded_profile_only": true,
+    "live_runtime_conformance": "NOT_CLAIMED",
+    "source_semantics_strength": "PINNED_GENERATED_API_DOCS_PLUS_OFFICIAL_DOCUMENTATION_CORROBORATION"
+  },
+  "evidence_id": "OCTOKIT_U002_GITHUB_MERGE_SHA_SOURCE",
+  "immutable_anchor": {
+    "git_blob_sha1": "dbee269ad381fe9b056db0d4c99192cf49c48ffb",
+    "path": "docs/pulls/merge.md",
+    "repository": "octokit/plugin-rest-endpoint-methods.js",
+    "revision": "c82898ae7a9ad9e92e39fc62e570a1cd4783a45b",
+    "tag": "v17.0.0"
+  },
+  "observations": [
+    {
+      "basis": "Pinned generated endpoint documentation at v17.0.0.",
+      "id": "SRC_U002_SHA_PRECONDITION",
+      "statement": "The merge operation exposes an optional sha value whose semantic role is that the pull-request head must match it to allow merge."
+    },
+    {
+      "basis": "Semantic interpretation of the pinned must-match precondition; unrelated merge blockers are held outside the bounded model.",
+      "id": "SRC_U002_MATCH_SUCCESS",
+      "statement": "Within an otherwise-mergeable bounded world, a supplied reviewed sha matching the current pull-request head permits the guarded merge operation to proceed."
+    },
+    {
+      "basis": "Pinned must-match precondition, corroborated by current official GitHub REST documentation specifying HTTP 409 Conflict for this mismatch.",
+      "id": "SRC_U002_MISMATCH_REJECT",
+      "statement": "When sha is supplied and the pull-request head does not match, the guarded merge must not be treated as a successful merge of the reviewed head."
+    }
+  ],
+  "official_documentation_corroboration": {
+    "immutability": "NOT_CLAIMED_FOR_LATEST_URL",
+    "parameter_semantics": "sha: SHA that pull request head must match to allow merge.",
+    "response_semantics": {
+      "200": "if merge was successful",
+      "409": "Conflict if sha was provided and pull request head did not match"
+    },
+    "retrieved_date": "2026-09-05",
+    "url": "https://docs.github.com/en/enterprise-cloud@latest/rest/pulls/pulls#merge-a-pull-request"
+  },
+  "role": "PINNED_SOURCE_CONTRACT_EVIDENCE",
+  "schema": "risu.corpus-evidence/v0.1alpha1",
+  "subject": {
+    "consequence_coordinate": "sha",
+    "method_path": "PUT /repos/{owner}/{repo}/pulls/{pull_number}/merge",
+    "operation": "GitHub REST merge a pull request"
+  },
+  "unit_id": "corpus01-unit-002"
+}

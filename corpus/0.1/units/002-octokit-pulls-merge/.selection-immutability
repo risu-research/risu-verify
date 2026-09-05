@@ -1,0 +1,4 @@
+unit=corpus01-unit-002
+selection_mode=next_previously_enrolled_unit
+selected_position=2
+replacement_after_later_result=prohibited

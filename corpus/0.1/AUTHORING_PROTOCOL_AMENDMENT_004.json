@@ -1,0 +1,75 @@
+{
+  "amendment_id": "RISU_CORPUS_0.1_AUTHORING_PROTOCOL_AMENDMENT_004",
+  "amendment_schema": "risu.corpus-authoring-protocol-amendment/v0.1alpha1",
+  "status": "RECORDED_AFTER_INVALID_TOOLCHAIN_EXIT_BEFORE_ANY_VALID_UNIT002_R_PRIMARY_SEMANTIC_VERDICT",
+  "unit_id": "corpus01-unit-002",
+  "parent_authoring_protocol": "corpus/0.1/AUTHORING_PROTOCOL.json",
+  "previous_amendment": "corpus/0.1/AUTHORING_PROTOCOL_AMENDMENT_003.json",
+  "primary_verdict_observed_before_amendment": false,
+  "valid_semantic_outcome_observed_before_amendment": false,
+  "issue_tracker_bug_discovery_performed_before_amendment": false,
+  "diagnosis": {
+    "classification": "FROZEN_CORE_ADAPTER_PROTOCOL_VERSION_COMPATIBILITY_DEFECT",
+    "triggering_invalid_run_id": 33946439332,
+    "triggering_exit_code": 30,
+    "triggering_failure": "unsupported verification input: compiled-case/assurance/adapter.json",
+    "valid_semantic_exit_code": false,
+    "semantic_verdict_produced": false,
+    "compiled_adapter_semantic_model_rejected": false,
+    "failure_boundary": "INPUT_KIND_AND_ADAPTER_SCHEMA_VERSION_DISPATCH_BEFORE_SEMANTIC_VERIFICATION",
+    "frozen_core_parser_inspection_run_id": 33946542995,
+    "frozen_core_parser_inspection_executed_semantic_verifier": false,
+    "frozen_core_archive_sha256": "bc3c0be440b1b729d3131a630491cce62f1f885fb305aa46a4483fee0adad72f",
+    "parser_facts": [
+      "cli/risu_projection.py classifies a file as a Projection Adapter only when adapter_version == 0.7",
+      "verifier/projection_adapter.py validate_adapter_shape requires adapter_version == 0.7",
+      "the Unit 002-R envelope authored adapter_version == 0.8",
+      "therefore the invalid exit occurs before semantic verification because the generated adapter is outside the frozen v0.7 adapter grammar"
+    ]
+  },
+  "correction": {
+    "mode": "SINGLE_PROTOCOL_LABEL_COMPATIBILITY_CORRECTION",
+    "path": "corpus/0.1/units/002-octokit-pulls-merge/vbe.envelope.json",
+    "json_pointer": "/adapter_base/adapter_version",
+    "old_value": "0.8",
+    "new_value": "0.7",
+    "rationale": "The frozen scientific core is v0.7 and accepts Projection Adapter grammar version 0.7. Infrastructure v0.8 is an execution-harness version and must not be written into the frozen core's adapter_version field."
+  },
+  "allowed_changes": [
+    "Change only adapter_base.adapter_version in Unit 002-R vbe.envelope.json from 0.8 to 0.7.",
+    "Mechanically update only dependent SHA-256/commit/blob pointers in vbe.instance.draft.json, vbe.instance.json, and AUTHOR_ACCEPTANCE.json so they bind the corrected envelope and corrected draft bytes.",
+    "Add this Amendment 004 to AUTHOR_ACCEPTANCE.json amendments_applied and evidence_audit.",
+    "Generate a new primary manifest and readiness seal from the corrected committed bytes; preserve the previous manifest/seal and invalid-run identities in supersession records rather than treating them as a valid semantic primary."
+  ],
+  "forbidden_changes": [
+    "Changing SOURCE_LANE.json or any source consequence, source coordinate, admissibility condition, or bounded world.",
+    "Changing TARGET_LANE.json or any target identity, target revision, callable surface fact, mechanism fact, runtime qualification fact, or evidence object.",
+    "Changing BOUNDARY_MODEL.json, effect cut, claim scope, or exclusions.",
+    "Changing the target pattern, target program expressions, fact statuses, provenance graph, evidence bindings, qualification bindings, structural template, Exact Realization settings, or desired semantic outcome.",
+    "Replacing, reordering, or reselecting the prospectively enrolled Unit 002 target.",
+    "Using the invalid run or parser inspection to infer, prefer, or repair toward PRESERVED, CONSEQUENCE_REGRESSION, or INCOMPLETE_ASSURANCE."
+  ],
+  "could_alter_execution_validity": true,
+  "could_alter_primary_semantic_outcome": false,
+  "scientific_interpretation": "This amendment changes a protocol-version label required for the already-authored adapter to enter the frozen v0.7 verifier grammar. It does not change the consequence model that will be evaluated once a valid semantic execution occurs.",
+  "superseded_preprimary_readiness": {
+    "authoring_freeze_commit": "47084c39de6dfbb50ecc16f01c60ec20291d7194",
+    "sealed_scientific_head": "743b30050753afdbcd416f48b8ac48b91d1bb9f2",
+    "canonical_seal_run_id": 33946303264,
+    "manifest_sha256": "49a0e923a406a385f85bf5efba22d3074d4a519021e759db33b19a7552002f3f",
+    "unit_seal_sha256": "4141dde39e32cd09ba8c030b811b1f0586a3f4e2e47bd5aee38a0df8894fcb60",
+    "supersession_reason": "The first execution attempt exposed a frozen-core adapter grammar compatibility defect before any semantic verdict. These bytes remain immutable historical readiness evidence but are not eligible for a valid semantic primary after Amendment 004."
+  },
+  "invalid_execution_record": {
+    "run_id": 33946439332,
+    "artifact_id": 9963469452,
+    "artifact_zip_sha256": "62cb87a327408aac4023e5eee365a81f56b590c6dc74c1bc3ab1ee5ecb752f48",
+    "semantic_verdict_observed": false
+  },
+  "parser_inspection_record": {
+    "run_id": 33946542995,
+    "artifact_id": 9963500009,
+    "artifact_zip_sha256": "90c044fbfe9a4af3e393a3cb690545a5bdc740f4c2d9c2b26d89a1aff3e1963c",
+    "semantic_verifier_executed": false
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "bounded_world_realization": {
+    "all_worlds_match": true,
+    "exact_realization": "REALIZATION_ESTABLISHED",
+    "failure_mode": "NONE",
+    "world_count": 2
+  },
+  "certificate_coverage_gap": {
+    "in_scope_only": [
+      "GUARDED_OCTOKIT_PULLS_MERGE_REVIEWED_HEAD_SHA"
+    ],
+    "source_only": [
+      "GUARDED_MERGE_REVIEWED_HEAD_SHA"
+    ]
+  },
+  "claim_limits": {
+    "all_merge_failures": "OUT_OF_SCOPE",
+    "general_unguarded_calls": "OUT_OF_SCOPE",
+    "live_remote_deployment": "NOT_CLAIMED",
+    "model_relative": true,
+    "operation": "octokit/rest.js octokit.rest.pulls.merge at revision cd9cb8cd4965d99c7dac8c87d249308956250be3",
+    "profile": "guarded merge call with sha equal to reviewed head H0"
+  },
+  "coverage_complete": false,
+  "forbidden_post_result_upgrade": [
+    "Do not declare the source-family and target-scope identifiers equivalent after observing the primary result.",
+    "Do not rewrite the primary report, certificate, adapter, source contract, manifest, seal, or result freeze.",
+    "Do not upgrade PRESERVED_IN_DECLARED_SCOPE to an unqualified PRESERVED claim."
+  ],
+  "general_unguarded_calls": "OUT_OF_SCOPE",
+  "interpretation": "The bounded two-world guarded-call realization is exact, but the frozen core reports coverage incomplete because the SOURCE family identifier and TARGET in-scope identifier are distinct and no pre-result equivalence mapping was frozen. Closure retains that non-equivalence rather than post-hoc aliasing them.",
+  "live_github_service_conformance": "NOT_CLAIMED",
+  "primary_bytes_modified": false,
+  "primary_product_status": "PRESERVED_IN_DECLARED_SCOPE",
+  "primary_result_freeze_commit": "b52bde0d0fdef0a2be7d5973e564daccd12296c9",
+  "primary_run_id": 33947031284,
+  "primary_semantic_exit_code": 0,
+  "schema": "risu.corpus-post-result-coverage-diagnostic/v0.1alpha1",
+  "source_family": [
+    "GUARDED_MERGE_REVIEWED_HEAD_SHA"
+  ],
+  "status": "RETAINED_UNRESOLVED_SCOPE_COVERAGE_IDENTIFIER_NON_EQUIVALENCE",
+  "target_in_scope": [
+    "GUARDED_OCTOKIT_PULLS_MERGE_REVIEWED_HEAD_SHA"
+  ],
+  "unit_id": "corpus01-unit-002"
+}

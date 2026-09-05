@@ -1,0 +1,83 @@
+{
+  "candidate_id": "octokit/rest.js::github-version-bound-write",
+  "canonical_primary": {
+    "actions_artifact_id": 9963646702,
+    "actions_artifact_sha256": "a622c27422d36a9d28302893e4ad9001114bd86e62815aa4f62f3e68918f8a9b",
+    "certificate_sha256": "75cbdba31eb7717ea3b30f084b3b5f77a05cecbd3eeba26a20cb7f55bf38d418",
+    "harness_status": "VALID_SEMANTIC_OUTCOME",
+    "job_id": 101254891951,
+    "primary_observation_sha256": "4b0d87ca6be5001ba3fcf552f475748b6ac7769573eb2f28b1325933d3479262",
+    "product_status": "PRESERVED_IN_DECLARED_SCOPE",
+    "report_json_sha256": "a09e52ac538f8a43646703eeb81e6d5dee36b1e4ad282e54885bb6090169ddb2",
+    "run_id": 33947031284,
+    "self_contained_bundle_sha256": "eb0dcf71ea5ae6b0f40c9899dc8fe3e0e6e54fab84bcc1ee927f44e627f8cf95",
+    "semantic_exit_code": 0
+  },
+  "canonicality_rule": "The first execution producing a valid semantic exit in {0,10,20} is canonical regardless of later wrapper status. No semantic-input rewrite or primary rerun may replace this result.",
+  "claim_limits": {
+    "all_merge_failures": "OUT_OF_SCOPE",
+    "coverage_gap_retained_exactly_as_reported": null,
+    "general_unguarded_calls": "OUT_OF_SCOPE",
+    "live_github_service_conformance": "NOT_CLAIMED",
+    "model_relative": true
+  },
+  "post_result_workflow_status": {
+    "primary_execution_step": "SUCCESS",
+    "reason": "post-result assertion glob matched both top-level primary-observation.json and its byte-identical self-contained bundle staging copy",
+    "rerun_permitted_for_scientific_result": false,
+    "semantic_result_affected": false,
+    "workflow_conclusion": "FAILURE_AFTER_VALID_PRIMARY"
+  },
+  "pre_valid_execution_history": [
+    {
+      "cause": "frozen-core adapter/program protocol label compatibility defects subsequently recorded by Amendments 004 and 005",
+      "classification": "INVALID_TOOLCHAIN_EXIT_BEFORE_SEMANTIC_VERDICT",
+      "exit_code": 30,
+      "run_id": 33946439332,
+      "valid_semantic_outcome_observed": false
+    },
+    {
+      "cause": "verifier executable bit absent in connector-created checkout; semantic primary step was skipped",
+      "classification": "EXECUTION_CAPSULE_FILESYSTEM_MODE_GATE_STOP",
+      "run_id": 33947000387,
+      "valid_semantic_outcome_observed": false
+    }
+  ],
+  "prospective_identity": {
+    "authoring_freeze_commit": "ce4c3a311bcf9f6b74b43af24e8732d1af8fd5ac",
+    "enrollment_position": 2,
+    "sealed_scientific_head": "1f9fba3a270f05d06763a5c81216d2edddffad8b",
+    "selection_inherited_from_original_verdict_blind_enrollment": true
+  },
+  "schema": "risu.corpus-primary-result-freeze/v0.1alpha1",
+  "scientific_result": {
+    "C": "C1",
+    "D": "D1",
+    "O": "O1",
+    "claim_scope": {
+      "all_merge_failures": "OUT_OF_SCOPE",
+      "general_unguarded_calls": "OUT_OF_SCOPE",
+      "live_remote_deployment": "NOT_CLAIMED",
+      "model_relative": true,
+      "operation": "octokit/rest.js octokit.rest.pulls.merge at revision cd9cb8cd4965d99c7dac8c87d249308956250be3",
+      "profile": "guarded merge call with sha equal to reviewed head H0"
+    },
+    "coverage_complete": false,
+    "effect_cut": {
+      "definition": "The point at which GitHub evaluates the supplied merge sha against the current pull-request head before permitting merge effect.",
+      "name": "MERGE_SHA_PRECONDITION_EFFECT_CUT",
+      "post_review_transition": "request_head_sha may change from H0 to H1 after review and before this cut."
+    },
+    "exact_failure_mode": "NONE",
+    "exact_realization": "REALIZATION_ESTABLISHED",
+    "minimal_counterexample": null,
+    "repair_obligations": []
+  },
+  "status": "FROZEN_FIRST_VALID_PRIMARY",
+  "target": {
+    "operation": "octokit.rest.pulls.merge",
+    "repository": "octokit/rest.js",
+    "revision": "cd9cb8cd4965d99c7dac8c87d249308956250be3"
+  },
+  "unit_id": "corpus01-unit-002"
+}

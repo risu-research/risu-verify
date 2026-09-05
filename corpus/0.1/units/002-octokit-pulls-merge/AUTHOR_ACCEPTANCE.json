@@ -1,0 +1,107 @@
+{
+  "acceptance_schema": "risu.corpus-author-acceptance/v0.1alpha1",
+  "acceptance_mode": "STANDING_RESEARCHER_AUTHORIZATION_PLUS_PREVERDICT_ASSISTANT_EVIDENCE_AUDIT",
+  "status": "AUTHOR_ACCEPTED",
+  "unit_id": "corpus01-unit-002",
+  "candidate_id": "octokit/rest.js::github-version-bound-write",
+  "draft": {
+    "path": "corpus/0.1/units/002-octokit-pulls-merge/vbe.instance.draft.json",
+    "commit": "cef0daaadfae1bf568848311f21006a3935aef2e",
+    "git_blob_sha1": "e0a868ea0242ddbf6f3e1fecace2b412a20e7ab8"
+  },
+  "accepted_instance_expected": {
+    "path": "corpus/0.1/units/002-octokit-pulls-merge/vbe.instance.json",
+    "transformation_from_draft": "After Amendments 003, 004, and 005, the corrected draft and accepted instance have identical source semantics, target expressions, boundary, evidence, facts, provenance, pattern, and protocol compatibility labels; only the top-level status changes from DRAFT_UNVERIFIED to AUTHOR_ACCEPTED.",
+    "sha256_hand_entry": "PROHIBITED_USE_V08_SEAL_FROM_COMMITTED_BYTES"
+  },
+  "amendments_applied": [
+    {
+      "id": "RISU_CORPUS_0.1_AUTHORING_PROTOCOL_AMENDMENT_003",
+      "path": "corpus/0.1/AUTHORING_PROTOCOL_AMENDMENT_003.json",
+      "classification": "CHECKSUM_POINTER_BOOKKEEPING_DEFECT",
+      "triggering_invalid_run": 33945675255,
+      "primary_verdict_observed_before_amendment": false,
+      "semantic_input_or_claim_changed": false
+    },
+    {
+      "id": "RISU_CORPUS_0.1_AUTHORING_PROTOCOL_AMENDMENT_004",
+      "path": "corpus/0.1/AUTHORING_PROTOCOL_AMENDMENT_004.json",
+      "classification": "FROZEN_CORE_ADAPTER_PROTOCOL_VERSION_COMPATIBILITY_DEFECT",
+      "triggering_invalid_run": 33946439332,
+      "primary_verdict_observed_before_amendment": false,
+      "semantic_input_or_claim_changed": false
+    },
+    {
+      "id": "RISU_CORPUS_0.1_AUTHORING_PROTOCOL_AMENDMENT_005",
+      "path": "corpus/0.1/AUTHORING_PROTOCOL_AMENDMENT_005.json",
+      "classification": "FROZEN_CORE_PROGRAM_PROTOCOL_VERSION_COMPATIBILITY_DEFECT",
+      "triggering_static_grammar_run": 33946715701,
+      "primary_verdict_observed_before_amendment": false,
+      "semantic_input_or_claim_changed": false
+    }
+  ],
+  "accepted_scope": {
+    "profile": "Guarded Octokit pulls.merge invocation in which sha is supplied as the reviewed head H0.",
+    "worlds": [
+      "W_MATCH",
+      "W_STALE"
+    ],
+    "general_unguarded_octokit_merge_calls": "OUT_OF_SCOPE",
+    "live_github_service_conformance": "NOT_CLAIMED"
+  },
+  "frozen_inputs": [
+    {
+      "path": "corpus/0.1/units/002-octokit-pulls-merge/SOURCE_LANE.json",
+      "commit": "2536a131fd969f9b57d5a1f64b6439690052397a",
+      "sha256": "a141d38509796aaf871e812ad4007d14706b9625150641ffc8e190774c4fb79b"
+    },
+    {
+      "path": "corpus/0.1/units/002-octokit-pulls-merge/TARGET_LANE.json",
+      "commit": "1406bc33afaf252d49f73a043234e66a76c2dfdf",
+      "sha256": "206650add24f2dbb5a0567f4cf034d5c3eb99098507a3f06c046392c552ad810"
+    },
+    {
+      "path": "corpus/0.1/units/002-octokit-pulls-merge/BOUNDARY_MODEL.json",
+      "commit": "2bf21fbb6faeed6e32136975de2e0089d8edac80",
+      "sha256": "8284797a0ccd3c7bbb23c75ecb617e284ac00f28589a42a0b21492f55ced6430"
+    },
+    {
+      "path": "corpus/0.1/units/002-octokit-pulls-merge/vbe.envelope.json",
+      "commit": "1b62e4a36b4906a277f4611128b77340c3ed8e8d",
+      "sha256": "1c82258ec2c174354740a2377403442e05f731059f178490ba574bf778cc71d0"
+    }
+  ],
+  "evidence_audit": {
+    "selection": "Unit 002 was inherited from enrollment position 2 of the original verdict-blind Corpus 0.1 enrollment; no later RISU result selected or reordered it.",
+    "source": "Pinned generated Octokit/GitHub API documentation establishes sha as the pull-request head that must match to allow merge; current official GitHub documentation is corroboration rather than the immutable anchor.",
+    "target": "Pinned @octokit/rest revision delegates to lockfile-pinned endpoint/request packages. Static implementation evidence establishes the merge route, sha body serialization, and >=400 rejection path.",
+    "target_runtime": "First target-only qualification Run 33945317155 built the exact selected target under its lockfile, observed sha=H0 in the one outbound PUT JSON body for both mock paths, observed mock 200 resolve and mock 409 reject, and did not contact the live provider or run RISU.",
+    "provenance": "Every ESTABLISHED derivation fact in the envelope is explicitly upstream of the EXACT claim before primary execution.",
+    "amendment_003": "Run 33945675255 blocked before seal because a manually entered envelope SHA pointer was wrong. Amendment 003 corrected only that pointer to the SHA-256 of the already-committed envelope; the envelope and all semantic propositions remained unchanged.",
+    "verdict_blindness": "No valid Unit 002-R semantic outcome was observed before this corrected acceptance. Run 33946439332 terminated with invalid exit 30 before semantic verification; Runs 33946542995 and 33946715701 were source-only grammar inspections and did not execute the semantic verifier.",
+    "amendment_004": "Invalid execution Run 33946439332 exited 30 before semantic verification because frozen core v0.7 recognizes Projection Adapter files only when adapter_version is 0.7. Static parser inspection Run 33946542995 executed no semantic verifier. Amendment 004 changes only that outer protocol label.",
+    "amendment_005": "Static frozen-core grammar inspection Run 33946715701 executed no semantic verifier and established that the consequence-blind compiler requires program_version 0.5. Amendment 005 changes only that inner protocol label; all target expressions and semantic facts remain identical."
+  },
+  "required_statements": {
+    "evidence_references_checked_against_pinned_identities": true,
+    "source_consequence_not_chosen_from_target_result": true,
+    "target_facts_not_inferred_only_from_desired_semantics": true,
+    "bounded_worlds_and_effect_cut_accepted": true,
+    "remaining_uncertainty_and_evidence_limits_listed": true,
+    "primary_verdict_not_observed": true
+  },
+  "researcher_direction": {
+    "delegated_execution_authorized": true,
+    "manual_line_by_line_review_of_generated_files_by_user": false,
+    "meaning": "The researcher explicitly directed the assistant to proceed through the Unit 002-R prospective falsification workflow at maximum rigor. This acceptance records delegated execution and does not represent that the researcher personally reviewed every generated byte before execution."
+  },
+  "uncertainties": [
+    "No live GitHub service experiment is claimed for the primary authoring evidence.",
+    "The general Octokit merge method permits omission of sha; such calls are outside this unit's guarded profile.",
+    "The target-only runtime qualification injects provider responses and therefore establishes carrier behavior rather than provider-state conformance.",
+    "Provider-side current pull-request head is modeled as operative state at the merge precondition effect cut rather than a separate Octokit input.",
+    "Authoring-phase timing was not instrumented from the first action and will not be backfilled with fictitious precision."
+  ],
+  "post_acceptance_rule": "No frozen Unit 002-R scientific input may change before the first primary run except through an explicit numbered pre-primary amendment that records timing, exact scope, whether a primary verdict was observed, and whether the change could alter a semantic outcome. Target replacement remains prohibited.",
+  "primary_verdict_observed_before_acceptance": false
+}

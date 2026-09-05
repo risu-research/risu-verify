@@ -1,0 +1,181 @@
+{
+  "candidate_id": "octokit/rest.js::github-version-bound-write",
+  "cross_phase": {
+    "candidate_automation_not_adopted_yet": [
+      "dependency-aware provenance traversal",
+      "generated target-only carrier probes",
+      "protocol namespace/type separation between harness and frozen scientific core",
+      "artifact-role-aware post-result assertions that distinguish canonical files from bundle staging copies"
+    ],
+    "evidence_objects_pinned": 6,
+    "files_authored": null,
+    "files_authored_measured": false,
+    "human_acceptance_events": 1,
+    "tool_calls": null,
+    "tool_calls_measured": false,
+    "uncertainties_left_open": [
+      "Live GitHub provider conformance is not claimed.",
+      "General unguarded Octokit merge calls remain out of scope.",
+      "Coverage remains incomplete because SOURCE-family and TARGET-scope identifiers are not predeclared equivalent."
+    ]
+  },
+  "ledger_schema": "risu.corpus-friction-ledger/v0.1alpha2",
+  "measurement_boundary": "Authoring timing was not instrumented from the first Unit 002-R action and is not reconstructed. Only the primary harness runtime is retained as measured telemetry.",
+  "observed_friction": [
+    {
+      "automation_candidate": "dependency-aware provenance traversal",
+      "class": "EVIDENCE_CHAIN",
+      "id": "U002R-F01",
+      "observation": "Octokit semantics traverse separately versioned dependency packages.",
+      "promote_to_infrastructure_now": false
+    },
+    {
+      "automation_candidate": "generated carrier qualification probes",
+      "class": "STATIC_TO_OPERATIVE",
+      "id": "U002R-F02",
+      "observation": "A target-only black-box qualification materially strengthened the carrier claim without live-provider contact or RISU execution.",
+      "promote_to_infrastructure_now": false
+    },
+    {
+      "automation_candidate": "zero-hand-entered scientific-pointer hashes",
+      "class": "CHECKSUM_BOOKKEEPING",
+      "id": "U002R-F03",
+      "observation": "A hand-entered envelope checksum pointer was wrong and the read-only audit stopped execution before primary. Unit 001 had a related bookkeeping-hash failure.",
+      "promote_to_infrastructure_now": true
+    },
+    {
+      "automation_candidate": "typed and separately named harness/core protocol version fields",
+      "class": "PROTOCOL_NAMESPACE_COLLISION",
+      "id": "U002R-F04",
+      "observation": "Harness v0.8 was mistakenly written into frozen-core adapter/program protocol labels, which actually require 0.7 and 0.5.",
+      "promote_to_infrastructure_now": true
+    },
+    {
+      "automation_candidate": "pristine seal runner as first process with temp-only logs",
+      "class": "SEAL_BOOTSTRAP_CONTAMINATION",
+      "id": "U002R-F05",
+      "observation": "Audit materialization, pycache, and repo-local tee output dirtied the seal tree until audit/seal runners were physically isolated.",
+      "promote_to_infrastructure_now": true
+    },
+    {
+      "automation_candidate": "content-hash-first executable-mode normalization helper",
+      "class": "FILESYSTEM_MODE_TRANSPORT",
+      "id": "U002R-F06",
+      "observation": "Connector-created Git contents did not preserve the executable bit for risu-verify; byte-identity was verified before mode normalization.",
+      "promote_to_infrastructure_now": false
+    },
+    {
+      "automation_candidate": "artifact-role-aware canonical path assertions",
+      "class": "ARTIFACT_ALIAS",
+      "id": "U002R-F07",
+      "observation": "Post-result glob matched the canonical primary observation and its byte-identical bundle staging copy, making the workflow red after a valid primary.",
+      "promote_to_infrastructure_now": true
+    },
+    {
+      "automation_candidate": "promote self-contained primary bundle as mandatory corpus primitive",
+      "class": "ARCHIVAL_COMPLEXITY",
+      "id": "U002R-F08",
+      "observation": "The self-contained v0.8 bundle enabled 24/24 internal-manifest verification and exact archive recovery after the wrapper failure.",
+      "promote_to_infrastructure_now": true
+    },
+    {
+      "automation_candidate": "phase-aware closure verifier over committed+working+untracked state",
+      "class": "CLOSURE_OBSERVABILITY",
+      "id": "U002R-F09",
+      "observation": "The first closure verifier inspected BASE..HEAD only and therefore could not see its own uncommitted candidate surface; v2 unions committed, working-tree, and untracked paths and requires an exact surface.",
+      "promote_to_infrastructure_now": true
+    }
+  ],
+  "phases": {
+    "adapter_or_envelope_authoring": {
+      "active_seconds": null,
+      "automation_opportunities_observed": [
+        "separate harness/core protocol namespaces",
+        "mechanically derive all protocol labels from frozen core contract"
+      ],
+      "correction_count": 3,
+      "notes": [
+        "Scientific work for this phase completed, but phase-level wall/active timing was not instrumented prospectively. Measurement completion is therefore marked BLOCKED rather than backfilled with fictitious precision.",
+        "Corrections retained: checksum-pointer bookkeeping, outer adapter protocol label, inner blind-program protocol label."
+      ],
+      "status": "BLOCKED",
+      "wall_clock_seconds": null
+    },
+    "boundary_definition": {
+      "active_seconds": null,
+      "automation_opportunities_observed": [],
+      "correction_count": 0,
+      "notes": [
+        "Scientific work for this phase completed, but phase-level wall/active timing was not instrumented prospectively. Measurement completion is therefore marked BLOCKED rather than backfilled with fictitious precision."
+      ],
+      "status": "BLOCKED",
+      "wall_clock_seconds": null
+    },
+    "evidence_acquisition": {
+      "active_seconds": null,
+      "automation_opportunities_observed": [
+        "dependency-aware provenance traversal"
+      ],
+      "correction_count": 0,
+      "notes": [
+        "Scientific work for this phase completed, but phase-level wall/active timing was not instrumented prospectively. Measurement completion is therefore marked BLOCKED rather than backfilled with fictitious precision."
+      ],
+      "status": "BLOCKED",
+      "wall_clock_seconds": null
+    },
+    "human_correction": {
+      "active_seconds": null,
+      "automation_opportunities_observed": [],
+      "correction_count": 0,
+      "notes": [
+        "Scientific work for this phase completed, but phase-level wall/active timing was not instrumented prospectively. Measurement completion is therefore marked BLOCKED rather than backfilled with fictitious precision."
+      ],
+      "status": "BLOCKED",
+      "wall_clock_seconds": null
+    },
+    "operation_identification": {
+      "active_seconds": null,
+      "automation_opportunities_observed": [],
+      "correction_count": 0,
+      "notes": [
+        "Scientific work for this phase completed, but phase-level wall/active timing was not instrumented prospectively. Measurement completion is therefore marked BLOCKED rather than backfilled with fictitious precision."
+      ],
+      "status": "BLOCKED",
+      "wall_clock_seconds": null
+    },
+    "source_semantic_reconstruction": {
+      "active_seconds": null,
+      "automation_opportunities_observed": [],
+      "correction_count": 0,
+      "notes": [
+        "Scientific work for this phase completed, but phase-level wall/active timing was not instrumented prospectively. Measurement completion is therefore marked BLOCKED rather than backfilled with fictitious precision."
+      ],
+      "status": "BLOCKED",
+      "wall_clock_seconds": null
+    },
+    "verification_runtime": {
+      "active_seconds": 0.647976,
+      "automation_opportunities_observed": [],
+      "correction_count": 0,
+      "notes": [
+        "Measured by the canonical v0.8 primary harness only; verifier_seconds=0.471554."
+      ],
+      "status": "COMPLETE",
+      "wall_clock_seconds": 0.647976
+    },
+    "version_binding_discovery": {
+      "active_seconds": null,
+      "automation_opportunities_observed": [],
+      "correction_count": 0,
+      "notes": [
+        "Scientific work for this phase completed, but phase-level wall/active timing was not instrumented prospectively. Measurement completion is therefore marked BLOCKED rather than backfilled with fictitious precision."
+      ],
+      "status": "BLOCKED",
+      "wall_clock_seconds": null
+    }
+  },
+  "primary_result_frozen": true,
+  "rule": "No missing authoring timing is reconstructed. Automation promotion should distinguish repeated friction from one-off carrier-specific friction.",
+  "status": "CLOSED_MEASUREMENT_PARTIAL_NO_FABRICATED_TIMING",
+  "unit_id": "corpus01-unit-002"
+}
