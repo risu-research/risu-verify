@@ -1,0 +1,63 @@
+{
+  "anchors": [
+    {
+      "git_blob_sha1": "f9b3335266b8b51fdf1e8a58a0a9e4eeea32d9ba",
+      "observes": [
+        "@octokit/rest imports @octokit/plugin-rest-endpoint-methods with semver ^17.0.0"
+      ],
+      "path": "package.json"
+    },
+    {
+      "git_blob_sha1": "1efd40aec3a38f25102554579e1fd31cf6c14aab",
+      "observes": [
+        "@octokit/plugin-rest-endpoint-methods exactly 17.0.0",
+        "@octokit/endpoint exactly 11.0.2",
+        "@octokit/request exactly 10.0.6"
+      ],
+      "path": "package-lock.json"
+    }
+  ],
+  "boundary": "Pins the dependency identities used by the selected target revision; it does not by itself establish live GitHub behavior.",
+  "claims": [
+    {
+      "id": "OCT_U002_PLUGIN_PIN",
+      "status": "ESTABLISHED"
+    },
+    {
+      "id": "OCT_U002_ENDPOINT_PIN",
+      "status": "ESTABLISHED"
+    },
+    {
+      "id": "OCT_U002_REQUEST_PIN",
+      "status": "ESTABLISHED"
+    }
+  ],
+  "evidence_id": "OCT_U002_DEPENDENCY_PIN",
+  "resolved_upstream_tags": [
+    {
+      "commit": "c82898ae7a9ad9e92e39fc62e570a1cd4783a45b",
+      "package": "@octokit/plugin-rest-endpoint-methods",
+      "repository": "octokit/plugin-rest-endpoint-methods.js",
+      "version": "17.0.0"
+    },
+    {
+      "commit": "6bf64182b249f9cd748b1a3003d86455eb2bf6f2",
+      "package": "@octokit/endpoint",
+      "repository": "octokit/endpoint.js",
+      "version": "11.0.2"
+    },
+    {
+      "commit": "1aeac5672c04bc508e46796660465b1b67cf397c",
+      "package": "@octokit/request",
+      "repository": "octokit/request.js",
+      "version": "10.0.6"
+    }
+  ],
+  "role": "PINNED_TARGET_DEPENDENCY_CHAIN",
+  "schema": "risu.corpus-evidence/v0.1alpha1",
+  "target": {
+    "repository": "octokit/rest.js",
+    "revision": "cd9cb8cd4965d99c7dac8c87d249308956250be3"
+  },
+  "unit_id": "corpus01-unit-002"
+}
