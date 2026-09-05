@@ -2,34 +2,45 @@
   "candidate_id": "github/github-mcp-server::github-version-bound-write",
   "cross_phase": {
     "candidate_automation_not_adopted_yet": [
-      "Do not automate source-contract extraction from a single unit; collect repeated friction first."
+      "Do not automate source-contract extraction from a single unit; collect repeated friction first.",
+      "Do not infer prospective evidence envelopes from a prior RISU verdict even when an operation family overlaps historically."
     ],
-    "evidence_objects_pinned": 1,
-    "files_authored": 1,
-    "human_acceptance_events": 0,
+    "evidence_objects_pinned": 4,
+    "files_authored": 11,
+    "human_acceptance_events": 1,
     "tool_calls": null,
     "uncertainties_left_open": [
-      "Target-side expectedHeadSha operative path remains to be frozen independently.",
+      "No independent live remote MCP deployment execution is claimed.",
+      "No independent live GitHub service experiment is claimed.",
+      "Early authoring phase timing was not instrumented and is intentionally not backfilled.",
       "No RISU primary verdict has been observed."
     ]
   },
   "ledger_schema": "risu.corpus-friction-ledger/v0.1alpha2",
-  "measurement_boundary": "Timing instrumentation was not active at the first post-enrollment evidence action. No retroactive durations are invented. Semantically completed but untimed early phases remain marked IN_PROGRESS with explicit notes under the frozen v0.1alpha2 status vocabulary.",
+  "measurement_boundary": "Timing instrumentation was not active at the first post-enrollment evidence action. No retroactive durations are invented. Semantically completed but untimed pre-verdict phases remain marked IN_PROGRESS with explicit notes under the frozen v0.1alpha2 status vocabulary.",
   "phases": {
     "adapter_or_envelope_authoring": {
       "active_seconds": null,
-      "automation_opportunities_observed": [],
+      "automation_opportunities_observed": [
+        "A later corpus-derived builder could populate evidence bindings and provenance graph skeletons from frozen lane records, but only after repeated units show stable structure."
+      ],
       "correction_count": 0,
-      "notes": [],
-      "status": "NOT_STARTED",
+      "notes": [
+        "Carrier envelope and VBE draft were authored and committed before the primary result, but phase timing was not instrumented."
+      ],
+      "status": "IN_PROGRESS",
       "wall_clock_seconds": null
     },
     "boundary_definition": {
       "active_seconds": null,
-      "automation_opportunities_observed": [],
+      "automation_opportunities_observed": [
+        "A later helper could compare SOURCE and TARGET lane coordinate names before boundary freeze."
+      ],
       "correction_count": 0,
-      "notes": [],
-      "status": "NOT_STARTED",
+      "notes": [
+        "Two-world guarded-call boundary and provider-side effect cut were frozen pre-verdict. Timing was not separately measured."
+      ],
+      "status": "IN_PROGRESS",
       "wall_clock_seconds": null
     },
     "evidence_acquisition": {
@@ -39,7 +50,7 @@
       ],
       "correction_count": 0,
       "notes": [
-        "Initial source evidence was acquired without reliable phase timing; durations intentionally remain null."
+        "Four source/target evidence objects were pinned before author acceptance. Reliable phase timing was unavailable."
       ],
       "status": "IN_PROGRESS",
       "wall_clock_seconds": null
@@ -48,8 +59,10 @@
       "active_seconds": null,
       "automation_opportunities_observed": [],
       "correction_count": 0,
-      "notes": [],
-      "status": "NOT_STARTED",
+      "notes": [
+        "Author acceptance was recorded as delegated execution authorization plus pre-verdict evidence audit, without claiming manual line-by-line user review. Timing was not instrumented."
+      ],
+      "status": "IN_PROGRESS",
       "wall_clock_seconds": null
     },
     "operation_identification": {
@@ -71,7 +84,7 @@
       ],
       "correction_count": 0,
       "notes": [
-        "Pinned go-github source semantics and official GitHub REST corroboration were reconstructed before timing instrumentation was available."
+        "Pinned go-github source semantics and official GitHub REST corroboration were reconstructed and frozen before target model merge. Timing was not instrumented."
       ],
       "status": "IN_PROGRESS",
       "wall_clock_seconds": null
@@ -80,16 +93,20 @@
       "active_seconds": null,
       "automation_opportunities_observed": [],
       "correction_count": 0,
-      "notes": [],
+      "notes": [
+        "Primary verifier has not been executed."
+      ],
       "status": "NOT_STARTED",
       "wall_clock_seconds": null
     },
     "version_binding_discovery": {
       "active_seconds": null,
-      "automation_opportunities_observed": [],
+      "automation_opportunities_observed": [
+        "Future extraction may identify version-binding carrier-to-source paths, but only if repeated corpus units show a stable pattern."
+      ],
       "correction_count": 0,
       "notes": [
-        "Source-side reviewed-head SHA binding was identified; target-side operative binding is not yet frozen."
+        "Source reviewed-head SHA precondition and target expectedHeadSha forwarding path were both frozen pre-verdict. Timing was not instrumented."
       ],
       "status": "IN_PROGRESS",
       "wall_clock_seconds": null
