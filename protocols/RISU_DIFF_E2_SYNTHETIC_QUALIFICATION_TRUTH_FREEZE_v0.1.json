@@ -1,0 +1,50 @@
+{
+  "schema": "risu.diff-e2-synthetic-qualification-truth-freeze/v0.1",
+  "freeze_id": "RISU_DIFF_E2_SYNTHETIC_QUALIFICATION_TRUTH_FREEZE_001",
+  "status": "FROZEN_BEFORE_E2_IMPLEMENTATION_AND_BEFORE_MUTANT_MATERIALIZATION",
+  "parent_commit": "d29d1099b7a7d783c60fafe6727b9d25db99e358",
+  "binding_mode": "SAME_COMMIT_ATOMIC_BINDING_WITH_POSTWRITE_AUDIT",
+  "self_commit_sha_embedded": false,
+  "authority": {
+    "development_foundation_audit_blob": "6db24ecafb600d20771e05870861338c723b13b8",
+    "development_universe_blob": "32f5e7bc53b343e1add941cb68f7d05a535b740d",
+    "specialization_baseline_blob": "16ed006effdc93981cc9a5799059d9b5e9ee4d7f",
+    "mutation_algebra_blob": "58db99aaa0378da170a59dc99f0a5d2c1f006194",
+    "evaluation_contract_blob": "3968cd7dcc95290ec7343aa748ca0bc46a3545e6"
+  },
+  "frozen_objects": [
+    {"path":"experiments/risu-diff-e2/qualification/seeds/python/SYN-PY-01.py","git_blob":"ac730a4896aa260d5cdb78b47e21c3baa2e66458"},
+    {"path":"experiments/risu-diff-e2/qualification/seeds/python/SYN-PY-02.py","git_blob":"3e7a1d1599806e5e46b99f7e953f6b1260d4f931"},
+    {"path":"experiments/risu-diff-e2/qualification/seeds/go/SYN-GO-01.go","git_blob":"3c236a3cc6472bc1895a7a7940d8dcb40a0bfe7e"},
+    {"path":"experiments/risu-diff-e2/qualification/seeds/go/SYN-GO-02.go","git_blob":"b4e2ab24a4bf5484684612ae8750fd9a7e3b40db"},
+    {"path":"experiments/risu-diff-e2/qualification/seeds/typescript-javascript/SYN-TS-01.mjs","git_blob":"2ed95f2c3c37a1d48a42f81dbc94703321600d0b"},
+    {"path":"experiments/risu-diff-e2/qualification/seeds/typescript-javascript/SYN-TS-02.mjs","git_blob":"acbaf1a9f2ef335f3b2f46b0eaa22d3b372525a4"},
+    {"path":"experiments/risu-diff-e2/qualification/CANONICAL_SYNTHETIC_SEEDS.json","git_blob":"2a0c01ad5850d3a701fb243d307ff441e9cae358"},
+    {"path":"experiments/risu-diff-e2/qualification/MUTATION_QUALIFICATION_MATRIX.json","git_blob":"b6d7d9c4d172a6e38ab59e93ae9748fafefc9fd0"},
+    {"path":"experiments/risu-diff-e2/qualification/MUTATION_QUALIFICATION_MATRIX_EXPANDED.jsonl","git_blob":"0ab0c31377d7e03bc279943af151c687f51ffc93"},
+    {"path":"tools/e2_mutation_truth_oracle.py","git_blob":"1e5fe69f302df6fdd367797649b17eb3c4ea5950"},
+    {"path":"experiments/risu-diff-e2/qualification/TRUTH_ORACLE_CONTRACT.json","git_blob":"98e53e13472c9d1287c3114734464994a6693778"}
+  ],
+  "scientific_invariants": {
+    "pure_synthetic_seed_count": 6,
+    "language_balance": {"python":2,"go":2,"typescript_javascript":2},
+    "expanded_qualification_cell_count": 58,
+    "positive_semantic_loss_cells": 24,
+    "semantic_preserving_cells": 24,
+    "epistemic_adversarial_cells": 10,
+    "repeat_runs_per_cell": 2,
+    "expanded_matrix_sha256": "afd681d308a6f4ec8c183edd9b139c6b914fe501936cf84e5845a6a1c0d6b7cb",
+    "truth_oracle_consumes_e2_prediction": false,
+    "fresh_target_bytes_consumed": false,
+    "fresh_gold_consumed": false,
+    "e2_engine_implementation_present_in_this_freeze": false
+  },
+  "immutability_rules": [
+    "Seed source bytes, admitted worlds, baseline truth, cell assignments, and expected truth may not be rewritten after observing E2 output.",
+    "A generator defect must be recorded; it may not be repaired by silently replacing or deleting the original cell.",
+    "Any amendment after this freeze is append-only, prospective, and cannot alter qualification scores for already-run cells.",
+    "The truth oracle is qualification authority only and may not import E2 predictions as input."
+  ],
+  "next_gate": "Materialize mutation generators/fixtures against these frozen cells, then implement E2 and run qualification without changing this truth universe.",
+  "claim_boundary": "This freeze establishes the preimplementation synthetic truth universe and oracle. It is not an E2 qualification result and not fresh real-target evidence."
+}

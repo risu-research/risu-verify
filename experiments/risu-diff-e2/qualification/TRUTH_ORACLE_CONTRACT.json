@@ -1,0 +1,75 @@
+{
+  "schema": "risu.diff-e2-mutation-truth-oracle-contract/v0.1",
+  "oracle_id": "RISU_DIFF_E2_MUTATION_TRUTH_ORACLE_001",
+  "status": "SEALED_BEFORE_E2_IMPLEMENTATION_AND_BEFORE_MUTANT_MATERIALIZATION",
+  "authority": {
+    "mutation_algebra_blob": "58db99aaa0378da170a59dc99f0a5d2c1f006194",
+    "evaluation_contract_blob": "3968cd7dcc95290ec7343aa748ca0bc46a3545e6",
+    "foundation_audit_commit": "d29d1099b7a7d783c60fafe6727b9d25db99e358"
+  },
+  "oracle": {
+    "path": "tools/e2_mutation_truth_oracle.py",
+    "git_blob": "1e5fe69f302df6fdd367797649b17eb3c4ea5950",
+    "sha256": "103a0310bf294d6b3034ebcd94b9e23d9f31de65ada32f3549db6f7623f83778",
+    "role": "QUALIFICATION_TRUTH_AUTHORITY_ONLY_NOT_E2_ENGINE"
+  },
+  "frozen_inputs": {
+    "seed_catalog": {
+      "path": "experiments/risu-diff-e2/qualification/CANONICAL_SYNTHETIC_SEEDS.json",
+      "git_blob": "2a0c01ad5850d3a701fb243d307ff441e9cae358"
+    },
+    "matrix_contract": {
+      "path": "experiments/risu-diff-e2/qualification/MUTATION_QUALIFICATION_MATRIX.json",
+      "git_blob": "b6d7d9c4d172a6e38ab59e93ae9748fafefc9fd0"
+    },
+    "expanded_matrix": {
+      "path": "experiments/risu-diff-e2/qualification/MUTATION_QUALIFICATION_MATRIX_EXPANDED.jsonl",
+      "git_blob": "0ab0c31377d7e03bc279943af151c687f51ffc93",
+      "sha256": "afd681d308a6f4ec8c183edd9b139c6b914fe501936cf84e5845a6a1c0d6b7cb",
+      "row_count": 58
+    }
+  },
+  "allowed_information": [
+    "frozen pure-synthetic seed bytes and their catalogued semantics",
+    "frozen mutation operator identity and class",
+    "frozen matrix assignment and truth rules"
+  ],
+  "forbidden_information": [
+    "any E2 prediction or certificate",
+    "any E2 implementation branch or runtime output",
+    "fresh E2 target bytes or gold",
+    "historical real-target outcome used to alter a cell truth",
+    "post-output cell deletion, reassignment, or truth rewriting"
+  ],
+  "derivation_rule": {
+    "M_PLUS_SEMANTIC_LOSS": "CONSEQUENCE_REGRESSION and E2_PREDICTED_REGRESSION_WITNESS",
+    "M_ZERO_SEMANTIC_PRESERVING": "CONSEQUENCE_STABLE_IN_DECLARED_SCOPE and E2_PREDICTED_PRESERVATION_EVIDENCE",
+    "M_QUESTION_EPISTEMIC_ADVERSARIAL": "ASSURANCE_INCOMPLETE/E2_PREDICTED_ASSURANCE_INCOMPLETE except A01 and A07, which are INFRASTRUCTURE_INVALID_BEFORE_PREDICTION"
+  },
+  "integrity_checks": [
+    "exact six-seed 2/2/2 language balance",
+    "seed program SHA-256 and byte count match catalog",
+    "seed baseline truth is stable in declared scope",
+    "seed purity attestations prohibit real-target ancestry",
+    "matrix expansion produces exactly 58 rows",
+    "canonical expanded JSONL SHA-256 equals afd681d308a6f4ec8c183edd9b139c6b914fe501936cf84e5845a6a1c0d6b7cb",
+    "expanded frozen bytes equal independently generated expansion",
+    "class counts equal 24 positive, 24 negative, 10 epistemic",
+    "each language has at least 8 positive and 8 negative cells"
+  ],
+  "preseal_self_test": {
+    "full_verification": {
+      "status": "PASS",
+      "seed_count": 6,
+      "cell_count": 58,
+      "errors": [],
+      "e2_prediction_consumed": false
+    },
+    "q049_query": {
+      "status": "PASS",
+      "expected_truth": "INFRASTRUCTURE_INVALID_BEFORE_PREDICTION",
+      "expected_e2_primary": "INFRASTRUCTURE_INVALID_BEFORE_PREDICTION"
+    }
+  },
+  "claim_boundary": "The oracle fixes synthetic qualification truth independently of E2. It does not adjudicate future fresh targets and does not itself establish E2 correctness or generalization."
+}

@@ -1,0 +1,194 @@
+{
+  "anti_contamination": {
+    "e2_output_used_to_assign_expected_truth": false,
+    "e2_output_used_to_choose_cells": false,
+    "historical_unit002m_counts_reused": false,
+    "post_output_cell_deletion_or_reassignment_forbidden": true,
+    "real_target_bytes_used": false
+  },
+  "assignments": {
+    "SYN-GO-01": {
+      "M_PLUS_SEMANTIC_LOSS": [
+        "P01_DROP_GUARD_CARRIER_AT_EFFECT",
+        "P02_RETRIEVE_THEN_DISCARD_IDENTITY",
+        "P06_EFFECT_BEFORE_GUARD",
+        "P09_COMPARE_CORRECTLY_EFFECT_UNGUARDED"
+      ],
+      "M_QUESTION_EPISTEMIC_ADVERSARIAL": [
+        "A04_ACQUISITION_BUDGET_CEILING",
+        "A06_PARTIAL_FLOW_WITH_MISSING_EFFECT_BINDING"
+      ],
+      "M_ZERO_SEMANTIC_PRESERVING": [
+        "N01_ALPHA_RENAME",
+        "N03_HELPER_EXTRACT_OR_INLINE",
+        "N08_ERROR_WRAPPER_PRESERVES_DISTINCTION",
+        "N09_PURE_REQUEST_BUILDER_REFACTOR"
+      ]
+    },
+    "SYN-GO-02": {
+      "M_PLUS_SEMANTIC_LOSS": [
+        "P03_OVERWRITE_CARRIER_BEFORE_EFFECT",
+        "P04_BIND_WRONG_COORDINATE_OR_RESOURCE",
+        "P05_REMOVE_OR_BYPASS_GUARD",
+        "P07_UNCONDITIONAL_FALLBACK"
+      ],
+      "M_QUESTION_EPISTEMIC_ADVERSARIAL": [
+        "A01_MATERIAL_PARSE_FAILURE"
+      ],
+      "M_ZERO_SEMANTIC_PRESERVING": [
+        "N02_EQUIVALENT_SERIALIZATION_RENAME",
+        "N04_WRAPPER_DEPTH_INSERTION",
+        "N05_OBJECT_PROPERTY_ALIAS_WITH_EXACT_FLOW",
+        "N06_IRRELEVANT_METADATA_LOG_COMMENT_CHANGE"
+      ]
+    },
+    "SYN-PY-01": {
+      "M_PLUS_SEMANTIC_LOSS": [
+        "P01_DROP_GUARD_CARRIER_AT_EFFECT",
+        "P04_BIND_WRONG_COORDINATE_OR_RESOURCE",
+        "P07_UNCONDITIONAL_FALLBACK",
+        "P10_SERIALIZATION_OMITS_GUARD_FIELD"
+      ],
+      "M_QUESTION_EPISTEMIC_ADVERSARIAL": [
+        "A01_MATERIAL_PARSE_FAILURE",
+        "A05_DECORATIVE_VERSION_TOKEN"
+      ],
+      "M_ZERO_SEMANTIC_PRESERVING": [
+        "N01_ALPHA_RENAME",
+        "N04_WRAPPER_DEPTH_INSERTION",
+        "N06_IRRELEVANT_METADATA_LOG_COMMENT_CHANGE",
+        "N09_PURE_REQUEST_BUILDER_REFACTOR"
+      ]
+    },
+    "SYN-PY-02": {
+      "M_PLUS_SEMANTIC_LOSS": [
+        "P02_RETRIEVE_THEN_DISCARD_IDENTITY",
+        "P05_REMOVE_OR_BYPASS_GUARD",
+        "P08_SWALLOW_STALE_FAILURE_AS_SUCCESS",
+        "P03_OVERWRITE_CARRIER_BEFORE_EFFECT"
+      ],
+      "M_QUESTION_EPISTEMIC_ADVERSARIAL": [
+        "A02_AMBIGUOUS_DUAL_COORDINATES",
+        "A03_EXTERNAL_CONSEQUENCE_UNRESOLVED"
+      ],
+      "M_ZERO_SEMANTIC_PRESERVING": [
+        "N02_EQUIVALENT_SERIALIZATION_RENAME",
+        "N05_OBJECT_PROPERTY_ALIAS_WITH_EXACT_FLOW",
+        "N07_EQUIVALENT_GUARD_NORMALIZATION",
+        "N10_FILE_OR_SYMBOL_RENAME_WITH_RESOLUTION_UPDATED"
+      ]
+    },
+    "SYN-TS-01": {
+      "M_PLUS_SEMANTIC_LOSS": [
+        "P02_RETRIEVE_THEN_DISCARD_IDENTITY",
+        "P06_EFFECT_BEFORE_GUARD",
+        "P08_SWALLOW_STALE_FAILURE_AS_SUCCESS",
+        "P10_SERIALIZATION_OMITS_GUARD_FIELD"
+      ],
+      "M_QUESTION_EPISTEMIC_ADVERSARIAL": [
+        "A02_AMBIGUOUS_DUAL_COORDINATES",
+        "A07_INDEPENDENT_CHECKER_DISAGREEMENT_INJECTION"
+      ],
+      "M_ZERO_SEMANTIC_PRESERVING": [
+        "N01_ALPHA_RENAME",
+        "N03_HELPER_EXTRACT_OR_INLINE",
+        "N07_EQUIVALENT_GUARD_NORMALIZATION",
+        "N10_FILE_OR_SYMBOL_RENAME_WITH_RESOLUTION_UPDATED"
+      ]
+    },
+    "SYN-TS-02": {
+      "M_PLUS_SEMANTIC_LOSS": [
+        "P01_DROP_GUARD_CARRIER_AT_EFFECT",
+        "P03_OVERWRITE_CARRIER_BEFORE_EFFECT",
+        "P05_REMOVE_OR_BYPASS_GUARD",
+        "P09_COMPARE_CORRECTLY_EFFECT_UNGUARDED"
+      ],
+      "M_QUESTION_EPISTEMIC_ADVERSARIAL": [
+        "A03_EXTERNAL_CONSEQUENCE_UNRESOLVED"
+      ],
+      "M_ZERO_SEMANTIC_PRESERVING": [
+        "N02_EQUIVALENT_SERIALIZATION_RENAME",
+        "N04_WRAPPER_DEPTH_INSERTION",
+        "N05_OBJECT_PROPERTY_ALIAS_WITH_EXACT_FLOW",
+        "N08_ERROR_WRAPPER_PRESERVES_DISTINCTION"
+      ]
+    }
+  },
+  "authority": {
+    "evaluation_contract_blob": "3968cd7dcc95290ec7343aa748ca0bc46a3545e6",
+    "foundation_audit_commit": "d29d1099b7a7d783c60fafe6727b9d25db99e358",
+    "mutation_algebra_blob": "58db99aaa0378da170a59dc99f0a5d2c1f006194",
+    "seed_catalog_blob": "2a0c01ad5850d3a701fb243d307ff441e9cae358"
+  },
+  "claim_boundary": "This exact 58-cell synthetic qualification universe is sealed before E2 implementation. It qualifies falsification behavior under the frozen algebra only and is not fresh real-target performance evidence.",
+  "expansion_contract": {
+    "cell_id_rule": "Assign Q001.. sequentially in seed_order, then class_order, then listed operator order.",
+    "class_order": [
+      "M_PLUS_SEMANTIC_LOSS",
+      "M_ZERO_SEMANTIC_PRESERVING",
+      "M_QUESTION_EPISTEMIC_ADVERSARIAL"
+    ],
+    "expanded_jsonl_sha256": "afd681d308a6f4ec8c183edd9b139c6b914fe501936cf84e5845a6a1c0d6b7cb",
+    "expanded_row_count": 58,
+    "row_canonicalization": "UTF-8 JSON object with sort_keys=true and separators=(',',':'), newline terminated.",
+    "seed_order": [
+      "SYN-PY-01",
+      "SYN-PY-02",
+      "SYN-GO-01",
+      "SYN-GO-02",
+      "SYN-TS-01",
+      "SYN-TS-02"
+    ]
+  },
+  "matrix_id": "RISU_DIFF_E2_MUTATION_QUALIFICATION_MATRIX_001",
+  "qualification_minima_proof": {
+    "N01_to_N05_each_at_least_two_language_ecosystems": true,
+    "N06_to_N10_each_exercised": true,
+    "P01_to_P06_each_at_least_two_language_ecosystems": true,
+    "P07_to_P10_each_exercised": true,
+    "canonical_seed_programs_total": 6,
+    "epistemic_adversarial_cells_total": 10,
+    "per_language_negative": {
+      "go": 8,
+      "python": 8,
+      "typescript_javascript": 8
+    },
+    "per_language_positive": {
+      "go": 8,
+      "python": 8,
+      "typescript_javascript": 8
+    },
+    "positive_semantic_loss_cells_total": 24,
+    "repeat_runs_per_cell": 2,
+    "semantic_preserving_cells_total": 24
+  },
+  "schema": "risu.diff-e2-mutation-qualification-matrix/v0.1",
+  "status": "FROZEN_EXPECTED_TRUTH_BEFORE_E2_IMPLEMENTATION_AND_BEFORE_MUTANT_MATERIALIZATION",
+  "truth_rules": {
+    "M_PLUS_SEMANTIC_LOSS": {
+      "expected_e2_primary": "E2_PREDICTED_REGRESSION_WITNESS",
+      "expected_truth": "CONSEQUENCE_REGRESSION",
+      "success": "Requires concrete regression witness plus independent validation; abstention is not positive success."
+    },
+    "M_QUESTION_EPISTEMIC_ADVERSARIAL": {
+      "default_expected_e2_primary": "E2_PREDICTED_ASSURANCE_INCOMPLETE",
+      "default_expected_truth": "ASSURANCE_INCOMPLETE",
+      "exceptions": {
+        "A01_MATERIAL_PARSE_FAILURE": {
+          "expected_e2_primary": "INFRASTRUCTURE_INVALID_BEFORE_PREDICTION",
+          "expected_truth": "INFRASTRUCTURE_INVALID_BEFORE_PREDICTION"
+        },
+        "A07_INDEPENDENT_CHECKER_DISAGREEMENT_INJECTION": {
+          "expected_e2_primary": "INFRASTRUCTURE_INVALID_BEFORE_PREDICTION",
+          "expected_truth": "INFRASTRUCTURE_INVALID_BEFORE_PREDICTION"
+        }
+      },
+      "success": "Must fail closed exactly as predeclared; unsupported definitive semantic promotion fails."
+    },
+    "M_ZERO_SEMANTIC_PRESERVING": {
+      "expected_e2_primary": "E2_PREDICTED_PRESERVATION_EVIDENCE",
+      "expected_truth": "CONSEQUENCE_STABLE_IN_DECLARED_SCOPE",
+      "success": "Requires preservation evidence; any regression caused solely by representation change fails."
+    }
+  }
+}

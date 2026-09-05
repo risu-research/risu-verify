@@ -1,0 +1,271 @@
+{
+  "authority": {
+    "development_universe_blob": "32f5e7bc53b343e1add941cb68f7d05a535b740d",
+    "foundation_audit_commit": "d29d1099b7a7d783c60fafe6727b9d25db99e358",
+    "mutation_algebra_blob": "58db99aaa0378da170a59dc99f0a5d2c1f006194",
+    "specialization_baseline_blob": "16ed006effdc93981cc9a5799059d9b5e9ee4d7f"
+  },
+  "catalog_id": "RISU_DIFF_E2_CANONICAL_SYNTHETIC_SEEDS_001",
+  "claim_boundary": "These six programs are pure-synthetic qualification seeds with predeclared semantics. They are not fresh real-target evidence and do not measure population performance.",
+  "global_contract": {
+    "baseline_gold_class": "CONSEQUENCE_STABLE_IN_DECLARED_SCOPE",
+    "external_repository_ancestry": false,
+    "mutation_scope": "Target implementation/projection or evidence availability only; source contract remains fixed except explicitly epistemic/infrastructure invalid cells.",
+    "network_access_required": false,
+    "source_consequence_relation": {
+      "W_MATCH": "WRITE_APPLIED",
+      "W_STALE": "STALE_REJECTED_NO_EFFECT"
+    },
+    "world_count": 2
+  },
+  "schema": "risu.diff-e2-canonical-synthetic-seed-catalog/v0.1",
+  "seeds": [
+    {
+      "admitted_worlds": {
+        "W_MATCH": {
+          "current": "t0",
+          "source_consequence": "WRITE_APPLIED",
+          "supplied": "t0"
+        },
+        "W_STALE": {
+          "current": "t1",
+          "source_consequence": "STALE_REJECTED_NO_EFFECT",
+          "supplied": "t0"
+        }
+      },
+      "baseline_expected_observation": {
+        "W_MATCH": {
+          "effect": true,
+          "outcome": "WRITE_APPLIED"
+        },
+        "W_STALE": {
+          "effect": false,
+          "outcome": "STALE_REJECTED_NO_EFFECT"
+        }
+      },
+      "baseline_truth": "CONSEQUENCE_STABLE_IN_DECLARED_SCOPE",
+      "carrier_locus": "dict.guard",
+      "design_diversity": "direct projection plus guarded effect",
+      "effect_cut": "target_apply",
+      "language": "python",
+      "program_bytes": 1156,
+      "program_git_blob": "ac730a4896aa260d5cdb78b47e21c3baa2e66458",
+      "program_path": "experiments/risu-diff-e2/qualification/seeds/python/SYN-PY-01.py",
+      "program_sha256": "f44afc11c76e0bf3b794d7286f14349e3026cfc6741e86459e3e734fb077090d",
+      "purity_attestation": {
+        "derived_from_real_target_bytes": false,
+        "expected_e2_prediction_present_in_program": false,
+        "pure_synthetic": true,
+        "repository_names_present": false
+      },
+      "seed_id": "SYN-PY-01",
+      "semantic_profile": "DIRECT_REQUEST_CARRIER"
+    },
+    {
+      "admitted_worlds": {
+        "W_MATCH": {
+          "current": 7,
+          "source_consequence": "WRITE_APPLIED",
+          "supplied": 7
+        },
+        "W_STALE": {
+          "current": 8,
+          "source_consequence": "STALE_REJECTED_NO_EFFECT",
+          "supplied": 7
+        }
+      },
+      "baseline_expected_observation": {
+        "W_MATCH": {
+          "effect": true,
+          "outcome": "WRITE_APPLIED"
+        },
+        "W_STALE": {
+          "effect": false,
+          "outcome": "STALE_REJECTED_NO_EFFECT"
+        }
+      },
+      "baseline_truth": "CONSEQUENCE_STABLE_IN_DECLARED_SCOPE",
+      "carrier_locus": "GuardedCommand.expected_epoch",
+      "design_diversity": "helper-mediated carrier plus explicit guard predicate",
+      "effect_cut": "commit_effect",
+      "language": "python",
+      "program_bytes": 1237,
+      "program_git_blob": "3e7a1d1599806e5e46b99f7e953f6b1260d4f931",
+      "program_path": "experiments/risu-diff-e2/qualification/seeds/python/SYN-PY-02.py",
+      "program_sha256": "94671d3e704b93b5b5b8331e01cc8cad9a8b23366911d9282770d960da080f59",
+      "purity_attestation": {
+        "derived_from_real_target_bytes": false,
+        "expected_e2_prediction_present_in_program": false,
+        "pure_synthetic": true,
+        "repository_names_present": false
+      },
+      "seed_id": "SYN-PY-02",
+      "semantic_profile": "HELPER_CONTROL_GUARD"
+    },
+    {
+      "admitted_worlds": {
+        "W_MATCH": {
+          "current": "m0",
+          "source_consequence": "WRITE_APPLIED",
+          "supplied": "m0"
+        },
+        "W_STALE": {
+          "current": "m1",
+          "source_consequence": "STALE_REJECTED_NO_EFFECT",
+          "supplied": "m0"
+        }
+      },
+      "baseline_expected_observation": {
+        "W_MATCH": {
+          "effect": true,
+          "outcome": "WRITE_APPLIED"
+        },
+        "W_STALE": {
+          "effect": false,
+          "outcome": "STALE_REJECTED_NO_EFFECT"
+        }
+      },
+      "baseline_truth": "CONSEQUENCE_STABLE_IN_DECLARED_SCOPE",
+      "carrier_locus": "Request.GuardMark",
+      "design_diversity": "typed struct projection plus guarded effect",
+      "effect_cut": "targetApply",
+      "language": "go",
+      "program_bytes": 1164,
+      "program_git_blob": "3c236a3cc6472bc1895a7a7940d8dcb40a0bfe7e",
+      "program_path": "experiments/risu-diff-e2/qualification/seeds/go/SYN-GO-01.go",
+      "program_sha256": "b8d3c2a4df06c81a9f6b5794075ec7e98536f53bc39fca136477f659c99a95a7",
+      "purity_attestation": {
+        "derived_from_real_target_bytes": false,
+        "expected_e2_prediction_present_in_program": false,
+        "pure_synthetic": true,
+        "repository_names_present": false
+      },
+      "seed_id": "SYN-GO-01",
+      "semantic_profile": "STRUCT_FIELD_CARRIER"
+    },
+    {
+      "admitted_worlds": {
+        "W_MATCH": {
+          "current": 21,
+          "source_consequence": "WRITE_APPLIED",
+          "supplied": 21
+        },
+        "W_STALE": {
+          "current": 22,
+          "source_consequence": "STALE_REJECTED_NO_EFFECT",
+          "supplied": 21
+        }
+      },
+      "baseline_expected_observation": {
+        "W_MATCH": {
+          "effect": true,
+          "outcome": "WRITE_APPLIED"
+        },
+        "W_STALE": {
+          "effect": false,
+          "outcome": "STALE_REJECTED_NO_EFFECT"
+        }
+      },
+      "baseline_truth": "CONSEQUENCE_STABLE_IN_DECLARED_SCOPE",
+      "carrier_locus": "Command.ExpectedEpoch",
+      "design_diversity": "current-state snapshot plus control-dependent effect",
+      "effect_cut": "guardedCommit",
+      "language": "go",
+      "program_bytes": 1279,
+      "program_git_blob": "b4e2ab24a4bf5484684612ae8750fd9a7e3b40db",
+      "program_path": "experiments/risu-diff-e2/qualification/seeds/go/SYN-GO-02.go",
+      "program_sha256": "06d946178334d528d1dd4da7b9eb236f9c3bb65e75cb2e051d9f6ec76e1f18d1",
+      "purity_attestation": {
+        "derived_from_real_target_bytes": false,
+        "expected_e2_prediction_present_in_program": false,
+        "pure_synthetic": true,
+        "repository_names_present": false
+      },
+      "seed_id": "SYN-GO-02",
+      "semantic_profile": "CURRENT_SNAPSHOT_CONTROL"
+    },
+    {
+      "admitted_worlds": {
+        "W_MATCH": {
+          "current": "s0",
+          "source_consequence": "WRITE_APPLIED",
+          "supplied": "s0"
+        },
+        "W_STALE": {
+          "current": "s1",
+          "source_consequence": "STALE_REJECTED_NO_EFFECT",
+          "supplied": "s0"
+        }
+      },
+      "baseline_expected_observation": {
+        "W_MATCH": {
+          "effect": true,
+          "outcome": "WRITE_APPLIED"
+        },
+        "W_STALE": {
+          "effect": false,
+          "outcome": "STALE_REJECTED_NO_EFFECT"
+        }
+      },
+      "baseline_truth": "CONSEQUENCE_STABLE_IN_DECLARED_SCOPE",
+      "carrier_locus": "wireRequest.wire_guard",
+      "design_diversity": "domain-to-wire carrier mapping plus guarded effect",
+      "effect_cut": "targetApply",
+      "language": "typescript_javascript",
+      "program_bytes": 859,
+      "program_git_blob": "2ed95f2c3c37a1d48a42f81dbc94703321600d0b",
+      "program_path": "experiments/risu-diff-e2/qualification/seeds/typescript-javascript/SYN-TS-01.mjs",
+      "program_sha256": "6cfef91eabc9342b42fbbe2ac8d7d5682b334efda0a058f4747e8b5579d25491",
+      "purity_attestation": {
+        "derived_from_real_target_bytes": false,
+        "expected_e2_prediction_present_in_program": false,
+        "pure_synthetic": true,
+        "repository_names_present": false
+      },
+      "seed_id": "SYN-TS-01",
+      "semantic_profile": "SERIALIZATION_RENAME"
+    },
+    {
+      "admitted_worlds": {
+        "W_MATCH": {
+          "current": 3,
+          "source_consequence": "WRITE_APPLIED",
+          "supplied": 3
+        },
+        "W_STALE": {
+          "current": 4,
+          "source_consequence": "STALE_REJECTED_NO_EFFECT",
+          "supplied": 3
+        }
+      },
+      "baseline_expected_observation": {
+        "W_MATCH": {
+          "effect": true,
+          "outcome": "WRITE_APPLIED"
+        },
+        "W_STALE": {
+          "effect": false,
+          "outcome": "STALE_REJECTED_NO_EFFECT"
+        }
+      },
+      "baseline_truth": "CONSEQUENCE_STABLE_IN_DECLARED_SCOPE",
+      "carrier_locus": "req.expectedGeneration",
+      "design_diversity": "guarded effect plus stale/success interpretation boundary",
+      "effect_cut": "clientGuardedWrite/service",
+      "language": "typescript_javascript",
+      "program_bytes": 1062,
+      "program_git_blob": "acbaf1a9f2ef335f3b2f46b0eaa22d3b372525a4",
+      "program_path": "experiments/risu-diff-e2/qualification/seeds/typescript-javascript/SYN-TS-02.mjs",
+      "program_sha256": "d738c2dbe3406d0afe65803cb743bd136316d81f58f2b86b406dd9f3bbc99b99",
+      "purity_attestation": {
+        "derived_from_real_target_bytes": false,
+        "expected_e2_prediction_present_in_program": false,
+        "pure_synthetic": true,
+        "repository_names_present": false
+      },
+      "seed_id": "SYN-TS-02",
+      "semantic_profile": "OUTCOME_INTERPRETATION"
+    }
+  ],
+  "status": "FROZEN_BEFORE_E2_IMPLEMENTATION_AND_BEFORE_MUTANT_MATERIALIZATION"
+}
