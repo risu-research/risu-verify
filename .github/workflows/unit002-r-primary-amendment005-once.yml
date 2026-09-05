@@ -51,9 +51,17 @@ jobs:
         run: |
           python tools/corpus01_primary_gate.py "$MANIFEST" --json
 
-      - name: Confirm executable frozen verifier entrypoint
+      - name: Normalize verifier executable mode without changing bytes
         run: |
+          set -euo pipefail
+          tracked_sha="$(git show HEAD:risu-verify | sha256sum | awk '{print $1}')"
+          before_sha="$(sha256sum risu-verify | awk '{print $1}')"
+          test "$before_sha" = "$tracked_sha"
+          chmod +x risu-verify
           test -x risu-verify
+          after_sha="$(sha256sum risu-verify | awk '{print $1}')"
+          test "$after_sha" = "$tracked_sha"
+          echo "VERIFIER MODE NORMALIZATION: byte-identical before/after sha256=$after_sha"
 
       - name: Execute exactly one corrected sealed Unit 002-R primary
         shell: bash
