@@ -1,0 +1,44 @@
+{
+  "schema": "risu.unit004-selection-protocol-correction/v0.1alpha1",
+  "correction_id": "UNIT004_SELECTION_PROTOCOL_CORRECTION_001",
+  "status": "PRECONTENT_NAMESPACE_ALIGNMENT",
+  "original_protocol_id": "UNIT004_SELECTION_PROTOCOL_001",
+  "original_protocol_commit": "dc98c07465a7ecb823d3a07a9f7b6f4047face2f",
+  "original_protocol_git_blob": "9192816948f9679b6570df117e571ce9b85accb6",
+  "discovered_after": {
+    "target_binding_commit": "033762ffedef0a4c523b6a17d3dbd476edc59490",
+    "target_tree_path_metadata_enumerated": true
+  },
+  "discovered_before": {
+    "target_file_blob_content_access": true,
+    "machine_adaptive_content_acquisition": true,
+    "e1_prediction_execution": true,
+    "e1_prediction_observation": true,
+    "human_gold": true
+  },
+  "defect": "The original protocol used two generic CTV-style prediction labels instead of the exact already-frozen E1 prediction namespace, and used an infrastructure label that did not match E1_FREEZE.json.",
+  "scope": "Outcome-label namespace alignment only. No selection, eligibility, target identity, acquisition, E1 engine, qualification expectation, or scoring semantics changes are permitted by this correction.",
+  "effective_first_prediction_outcomes": [
+    "E1_PREDICTED_PRESERVATION_EVIDENCE",
+    "E1_PREDICTED_REGRESSION_WITNESS",
+    "E1_PREDICTED_ASSURANCE_INCOMPLETE",
+    "INFRASTRUCTURE_INVALID_BEFORE_PREDICTION"
+  ],
+  "authority": {
+    "source": "experiments/risu-diff-e1/E1_FREEZE.json",
+    "freeze_id": "RISU_DIFF_E1_FREEZE_001",
+    "engine_identity_digest": "ed33d12881fa1395d1332ae165b5638518b2d472a7a520f0ae893d07e3b146b7"
+  },
+  "invariants": {
+    "frozen_enrollment_position_changed": false,
+    "target_changed": false,
+    "target_revision_changed": false,
+    "selection_or_substitution_rule_changed": false,
+    "acquisition_algorithm_changed": false,
+    "e1_engine_bytes_changed": false,
+    "qualification_expected_outcomes_changed": false,
+    "human_semantics_consumed": false,
+    "target_file_content_consumed": false
+  },
+  "anti_abuse": "This correction cannot be used to add, remove, merge, reinterpret, or prefer any outcome after target content or E1 output is observed."
+}

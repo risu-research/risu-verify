@@ -1,0 +1,89 @@
+{
+  "schema": "risu.unit004-e1-run-freeze/v0.1alpha1",
+  "freeze_id": "UNIT004_E1_FIRST_PREDICTION_RUN_FREEZE_001",
+  "status": "FROZEN_AFTER_TREE_METADATA_BEFORE_TARGET_CONTENT",
+  "base_main_commit": "28ea74b2180c7c408b8d306592cf8d6839ca2437",
+  "selection_protocol": {
+    "protocol_id": "UNIT004_SELECTION_PROTOCOL_001",
+    "commit": "dc98c07465a7ecb823d3a07a9f7b6f4047face2f",
+    "git_blob": "9192816948f9679b6570df117e571ce9b85accb6",
+    "correction_id": "UNIT004_SELECTION_PROTOCOL_CORRECTION_001",
+    "correction_git_blob": "2741ce70e995c807198065bc14913bda17bd8154"
+  },
+  "target_binding": {
+    "binding_id": "UNIT004_TARGET_BINDING_001",
+    "commit": "033762ffedef0a4c523b6a17d3dbd476edc59490",
+    "git_blob": "b1016fd192c331c3fd59766e84faba8757073900",
+    "enrollment_position": 4,
+    "substitution_used": false
+  },
+  "frozen_e1": {
+    "freeze_id": "RISU_DIFF_E1_FREEZE_001",
+    "freeze_git_blob": "37bf9b02d6fa4d3bd6f29d194635211481876998",
+    "engine_identity_digest": "ed33d12881fa1395d1332ae165b5638518b2d472a7a520f0ae893d07e3b146b7",
+    "engine_mutation_allowed": false,
+    "qualification_expectation_mutation_allowed": false
+  },
+  "harness_git_blobs": {
+    "tools/unit004_e1_exam.py": "5272b62db86571c8ec19fe3770a7514d1d246e92",
+    "tests/test_unit004_e1_exam.py": "b483dfa4f98605cb721766635d9ca027865b5559",
+    ".github/workflows/unit004-e1-blind.yml": "2267bf04cb3342b9676e1440bf53ac09dab76ba3",
+    "experiments/unit004-blind-e1/SELECTION_PROTOCOL.json": "9192816948f9679b6570df117e571ce9b85accb6",
+    "experiments/unit004-blind-e1/SELECTION_PROTOCOL_CORRECTION_001.json": "2741ce70e995c807198065bc14913bda17bd8154",
+    "experiments/unit004-blind-e1/TARGET_BINDING.json": "b1016fd192c331c3fd59766e84faba8757073900"
+  },
+  "precontent_attestation": {
+    "target_repository_metadata_resolved": true,
+    "target_exact_commit_and_tree_identity_resolved": true,
+    "target_recursive_tree_path_metadata_enumerated_before_run_freeze": true,
+    "target_file_blob_content_accessed_before_run_freeze": false,
+    "human_target_semantic_read_before_run_freeze": false,
+    "machine_adaptive_target_content_acquisition_before_run_freeze": false,
+    "e1_prediction_executed_before_run_freeze": false,
+    "e1_prediction_observed_before_run_freeze": false,
+    "human_gold_started_before_run_freeze": false
+  },
+  "harness_contamination_boundary": {
+    "harness_authored_after_target_tree_path_metadata_was_available": true,
+    "harness_contains_target_repository_identifier": false,
+    "harness_contains_target_operation_identifier": false,
+    "harness_contains_target_revision_identifier": false,
+    "harness_contains_target_language_or_extension_special_case": false,
+    "harness_changes_frozen_e1_selection_or_extraction_algorithms": false,
+    "harness_role": "Target-agnostic orchestration of already-frozen E1 acquisition and prediction APIs only."
+  },
+  "execution": {
+    "fixed_semantic_run_id": "unit004-e1-first-prediction",
+    "selection_job": "blobless exact-tree fetch -> zero-blob audit -> frozen E1 round0 selector -> immutable selection artifact",
+    "execution_job": "replay exact tree -> machine-only selected-blob lazy materialization -> at most two frozen E1 expansion rounds -> closed packet -> frozen E1 -> first seal -> immutable archive",
+    "round0_human_file_selection": false,
+    "adaptive_human_file_selection": false,
+    "adaptive_human_semantic_reranking": false,
+    "nonselected_target_blob_access": false,
+    "first_valid_seal_immutable": true,
+    "prediction_value_must_not_be_copied_into_prearchive_first_seal_record": true,
+    "prediction_inspection_before_archive": false
+  },
+  "effective_admissible_outcomes": [
+    "E1_PREDICTED_PRESERVATION_EVIDENCE",
+    "E1_PREDICTED_REGRESSION_WITNESS",
+    "E1_PREDICTED_ASSURANCE_INCOMPLETE",
+    "INFRASTRUCTURE_INVALID_BEFORE_PREDICTION"
+  ],
+  "post_seal_rule": {
+    "inspect_machine_prediction_only_after_first_seal_artifact_is_uploaded": true,
+    "begin_independent_scientific_adjudication_only_after_first_seal_archive": true,
+    "human_gold_may_not_modify_e1": true,
+    "unit004_may_not_be_rescored_as_e1_after_learning": true
+  },
+  "claim_boundary": {
+    "establishes": "The exact, target-agnostic orchestration and contamination boundary for Unit004's first frozen-E1 prediction execution.",
+    "does_not_establish": [
+      "that frozen E1 supports the target implementation language",
+      "that round0 will select any file",
+      "a preservation or regression result",
+      "E1 real-target accuracy",
+      "human-gold semantics"
+    ]
+  }
+}

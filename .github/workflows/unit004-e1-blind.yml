@@ -1,0 +1,187 @@
+name: Unit004 E1 blind first prediction
+
+on:
+  push:
+    branches: [unit004-blind-e1]
+    paths:
+      - 'experiments/unit004-blind-e1/**'
+      - 'tools/unit004_e1_exam.py'
+      - 'tests/test_unit004_e1_exam.py'
+      - '.github/workflows/unit004-e1-blind.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  select-tree-only:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify frozen E1 and Unit004 precontent boundary
+        run: |
+          python - <<'PY'
+          import json, subprocess
+          from pathlib import Path
+          freeze=json.loads(Path('experiments/risu-diff-e1/E1_FREEZE.json').read_text())
+          run=json.loads(Path('experiments/unit004-blind-e1/RUN_FREEZE.json').read_text())
+          binding=json.loads(Path('experiments/unit004-blind-e1/TARGET_BINDING.json').read_text())
+          protocol=json.loads(Path('experiments/unit004-blind-e1/SELECTION_PROTOCOL.json').read_text())
+          assert freeze['engine_identity_digest']==run['frozen_e1']['engine_identity_digest']==binding['frozen_e1']['engine_identity_digest']
+          assert protocol['protocol_id']=='UNIT004_SELECTION_PROTOCOL_001'
+          assert binding['binding_id']=='UNIT004_TARGET_BINDING_001'
+          assert binding['selection']['substitution_used'] is False
+          for path,row in freeze['engine_identity_components'].items():
+              actual=subprocess.check_output(['git','rev-parse',f'HEAD:{path}'],text=True).strip()
+              assert actual==row['git_blob_sha'],(path,actual,row['git_blob_sha'])
+          for path,expected in run['harness_git_blobs'].items():
+              actual=subprocess.check_output(['git','rev-parse',f'HEAD:{path}'],text=True).strip()
+              assert actual==expected,(path,actual,expected)
+          changed=subprocess.check_output(['git','diff','--name-only',run['base_main_commit']+'..HEAD'],text=True).splitlines()
+          forbidden=[p for p in changed if p.startswith('risu_e1/') or p.startswith('experiments/risu-diff-e1/') or p.startswith('experiments/unit003-blind-machine-first/')]
+          assert not forbidden,forbidden
+          assert run['precontent_attestation']['target_file_blob_content_accessed_before_run_freeze'] is False
+          assert run['precontent_attestation']['human_target_semantic_read_before_run_freeze'] is False
+          print(json.dumps({'status':'PASS','e1_identity':freeze['engine_identity_digest'],'forbidden_changes':0},sort_keys=True))
+          PY
+
+      - name: Qualify target-agnostic orchestration harness
+        run: |
+          python -m py_compile tools/unit004_e1_exam.py tests/test_unit004_e1_exam.py
+          python -m unittest -v tests.test_unit004_e1_exam
+          if grep -Eqi 'ofershap|mcp-server-s3|delete_object|f16b3715|s3\.ts' tools/unit004_e1_exam.py tests/test_unit004_e1_exam.py; then
+            echo 'Target-specific identifier found in generic harness' >&2
+            exit 1
+          fi
+
+      - name: Resolve frozen binding metadata
+        id: target
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          b=json.load(open('experiments/unit004-blind-e1/TARGET_BINDING.json'))
+          print('repo='+b['target']['repository'])
+          print('revision='+b['target']['revision'])
+          print('tree='+b['target']['tree_sha'])
+          PY
+
+      - name: Fetch exact target tree with zero blobs
+        run: |
+          git init -q target
+          git -C target remote add origin "https://github.com/${{ steps.target.outputs.repo }}.git"
+          git -C target -c protocol.version=2 fetch -q --depth=1 --filter=blob:none origin "${{ steps.target.outputs.revision }}"
+          ACTUAL_TREE=$(git -C target rev-parse 'FETCH_HEAD^{tree}')
+          test "$ACTUAL_TREE" = "${{ steps.target.outputs.tree }}"
+          git -C target ls-tree -r --name-only FETCH_HEAD | LC_ALL=C sort > target-paths.txt
+          BLOB_COUNT=0
+          for idx in target/.git/objects/pack/*.idx; do
+            [ -e "$idx" ] || continue
+            c=$(git verify-pack -v "$idx" | awk '$2=="blob"{n++} END{print n+0}')
+            BLOB_COUNT=$((BLOB_COUNT+c))
+          done
+          test "$BLOB_COUNT" -eq 0
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          b=json.load(open('experiments/unit004-blind-e1/TARGET_BINDING.json'))
+          rows=[x for x in Path('target-paths.txt').read_text().splitlines() if x]
+          Path('TREE_FETCH_AUDIT.json').write_text(json.dumps({
+            'schema':'risu.unit004-tree-fetch-audit/v0.1alpha1',
+            'target_revision':b['target']['revision'],
+            'target_tree_sha':b['target']['tree_sha'],
+            'tree_path_count':len(rows),
+            'local_blob_object_count_before_selection':0,
+            'target_content_bytes_consumed':0,
+            'status':'PASS'
+          },sort_keys=True,separators=(',',':'))+'\n')
+          PY
+
+      - name: Frozen E1 round-zero path selection
+        run: |
+          python tools/unit004_e1_exam.py select \
+            --binding experiments/unit004-blind-e1/TARGET_BINDING.json \
+            --tree-paths target-paths.txt \
+            --out ROUND0_SELECTION.json
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: unit004-e1-round0-${{ github.sha }}-${{ github.run_id }}
+          path: |
+            ROUND0_SELECTION.json
+            TREE_FETCH_AUDIT.json
+            target-paths.txt
+          if-no-files-found: error
+          retention-days: 90
+
+  execute-first-seal:
+    needs: select-tree-only
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: unit004-e1-round0-*
+          merge-multiple: true
+          path: selection
+
+      - name: Reverify frozen E1 identity and target binding
+        id: target
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json,subprocess
+          from pathlib import Path
+          freeze=json.loads(Path('experiments/risu-diff-e1/E1_FREEZE.json').read_text())
+          binding=json.loads(Path('experiments/unit004-blind-e1/TARGET_BINDING.json').read_text())
+          run=json.loads(Path('experiments/unit004-blind-e1/RUN_FREEZE.json').read_text())
+          assert freeze['engine_identity_digest']==run['frozen_e1']['engine_identity_digest']==binding['frozen_e1']['engine_identity_digest']
+          for path,row in freeze['engine_identity_components'].items():
+              assert subprocess.check_output(['git','rev-parse',f'HEAD:{path}'],text=True).strip()==row['git_blob_sha']
+          print('repo='+binding['target']['repository'])
+          print('revision='+binding['target']['revision'])
+          print('tree='+binding['target']['tree_sha'])
+          PY
+
+      - name: Recreate exact blobless target repository
+        run: |
+          git init -q target
+          git -C target remote add origin "https://github.com/${{ steps.target.outputs.repo }}.git"
+          git -C target -c protocol.version=2 fetch -q --depth=1 --filter=blob:none origin "${{ steps.target.outputs.revision }}"
+          test "$(git -C target rev-parse 'FETCH_HEAD^{tree}')" = "${{ steps.target.outputs.tree }}"
+          git -C target ls-tree -r --name-only FETCH_HEAD | LC_ALL=C sort > replay-target-paths.txt
+          cmp replay-target-paths.txt selection/target-paths.txt
+
+      - name: Machine-only adaptive acquisition and first E1 seal
+        run: |
+          mkdir -p unit004-artifact
+          python tools/unit004_e1_exam.py execute \
+            --binding experiments/unit004-blind-e1/TARGET_BINDING.json \
+            --round0 selection/ROUND0_SELECTION.json \
+            --tree-paths selection/target-paths.txt \
+            --target-git target \
+            --artifact-dir unit004-artifact \
+            > unit004-artifact/E1_RUN_STDOUT.json
+          cp experiments/unit004-blind-e1/SELECTION_PROTOCOL.json unit004-artifact/SELECTION_PROTOCOL.json
+          cp experiments/unit004-blind-e1/RUN_FREEZE.json unit004-artifact/RUN_FREEZE.json
+          cp selection/TREE_FETCH_AUDIT.json unit004-artifact/TREE_FETCH_AUDIT.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          record=json.loads(Path('unit004-artifact/FIRST_SEAL_RECORD.json').read_text())
+          assert record['status']=='FIRST_VALID_E1_SEAL_EMITTED'
+          assert record['engine_identity_digest']=='ed33d12881fa1395d1332ae165b5638518b2d472a7a520f0ae893d07e3b146b7'
+          assert record['prediction_value_intentionally_not_copied_into_record'] is True
+          print(json.dumps({'status':'FIRST_SEAL_ARCHIVE_READY','seal_digest':record['seal_digest'],'evidence_count':record['evidence_count'],'prediction_disclosed_in_log':False},sort_keys=True))
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: unit004-e1-first-seal-${{ github.sha }}-${{ github.run_id }}
+          path: unit004-artifact/
+          if-no-files-found: error
+          retention-days: 90
