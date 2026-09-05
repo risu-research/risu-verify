@@ -1,0 +1,239 @@
+name: RISU Unit 002-R Amendment 004+005 guarded apply
+
+on:
+  push:
+    branches:
+      - unit002-r-amendment004005-apply
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    env:
+      EXPECTED_SCIENTIFIC_HEAD: "90fdbe4347ae292d68cdae2ab12cf54b7e8f9132"
+      SCIENTIFIC_BRANCH: "unit002-r-real-prospective"
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - name: Checkout exact scientific branch
+        uses: actions/checkout@v4
+        with:
+          repository: risu-research/risu-verify
+          ref: unit002-r-real-prospective
+          fetch-depth: 0
+
+      - name: Assert immutable correction starting point
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SCIENTIFIC_HEAD"
+          test -z "$(git status --porcelain)"
+          test -f corpus/0.1/AUTHORING_PROTOCOL_AMENDMENT_004.json
+          test -f corpus/0.1/AUTHORING_PROTOCOL_AMENDMENT_005.json
+
+      - name: Mechanically apply only authorized compatibility corrections
+        run: |
+          set -euo pipefail
+          git config user.name "RISU Protocol Bot"
+          git config user.email "protocol-bot@users.noreply.github.com"
+          mkdir -p /tmp/unit002r-correction
+          python - <<'PY'
+          from __future__ import annotations
+          import copy, hashlib, json, subprocess
+          from pathlib import Path
+
+          ROOT=Path('.')
+          U=ROOT/'corpus/0.1/units/002-octokit-pulls-merge'
+          ENV=U/'vbe.envelope.json'
+          DRAFT=U/'vbe.instance.draft.json'
+          ACCEPTED=U/'vbe.instance.json'
+          ACCEPTANCE=U/'AUTHOR_ACCEPTANCE.json'
+          EXPECTED_HEAD='90fdbe4347ae292d68cdae2ab12cf54b7e8f9132'
+          OLD_ENV_SHA='0243c54dc7042a808b8e6ef0dce968f2b78f3148374d90b5e2a234dfe0499ce1'
+          OLD_ENV_COMMIT='6218b5d4a09a3a447a33bf2b7f90a21a417c5049'
+          OLD_DRAFT_COMMIT='42a59cfec17a17efdeb5ed214be1fdfb327500a0'
+          OLD_DRAFT_BLOB='61bc0191cbacf8e108d7c2ab4f548779c5c24793'
+
+          def sh(*a):
+              return subprocess.check_output(a, text=True).strip()
+          def run(*a):
+              subprocess.run(a, check=True)
+          def sha256(p):
+              return hashlib.sha256(p.read_bytes()).hexdigest()
+          def load(p):
+              return json.loads(p.read_text(encoding='utf-8'))
+          def commit(path,msg):
+              run('git','add',str(path)); run('git','commit','-m',msg); return sh('git','rev-parse','HEAD')
+          def diff_paths(a,b,path=''):
+              out=[]
+              if type(a) is not type(b): return [path or '/']
+              if isinstance(a,dict):
+                  for k in sorted(set(a)|set(b)):
+                      p=f'{path}/{k}'
+                      if k not in a or k not in b: out.append(p)
+                      else: out.extend(diff_paths(a[k],b[k],p))
+              elif isinstance(a,list):
+                  if len(a)!=len(b): out.append(path or '/')
+                  for i,(x,y) in enumerate(zip(a,b)): out.extend(diff_paths(x,y,f'{path}/{i}'))
+              elif a!=b: out.append(path or '/')
+              return out
+          def replace_once_bytes(p, old, new):
+              raw=p.read_bytes(); oldb=old.encode(); newb=new.encode()
+              assert raw.count(oldb)==1, (p,old,raw.count(oldb))
+              out=raw.replace(oldb,newb,1)
+              p.write_bytes(out)
+              return raw,out
+
+          assert sh('git','rev-parse','HEAD')==EXPECTED_HEAD
+
+          # 1) Outer adapter grammar label only: 0.8 -> 0.7.
+          env_before=load(ENV); assert sha256(ENV)==OLD_ENV_SHA
+          raw0,raw1=replace_once_bytes(ENV,'"adapter_version": "0.8"','"adapter_version": "0.7"')
+          env_after=load(ENV)
+          assert diff_paths(env_before,env_after)==['/adapter_base/adapter_version']
+          assert len(raw0)==len(raw1)
+          byte_diffs=[(i,a,b) for i,(a,b) in enumerate(zip(raw0,raw1)) if a!=b]
+          assert len(byte_diffs)==1 and byte_diffs[0][1:]==(ord('8'),ord('7'))
+          env_sha=sha256(ENV)
+          env_commit=commit(ENV,'Amend Unit 002-R adapter protocol label for frozen core')
+
+          # 2) Draft: only envelope pointers and inner program grammar label.
+          draft_before=load(DRAFT)
+          assert draft_before['authoring_inputs']['carrier_envelope']['sha256']==OLD_ENV_SHA
+          assert draft_before['authoring_inputs']['carrier_envelope']['authoring_commit']==OLD_ENV_COMMIT
+          assert draft_before['target']['program_version']=='0.8'
+          text=DRAFT.read_text(encoding='utf-8')
+          for old,new in ((OLD_ENV_SHA,env_sha),(OLD_ENV_COMMIT,env_commit),('"program_version": "0.8"','"program_version": "0.5"')):
+              assert text.count(old)==1, (old,text.count(old)); text=text.replace(old,new,1)
+          DRAFT.write_text(text,encoding='utf-8')
+          draft_after=load(DRAFT)
+          assert set(diff_paths(draft_before,draft_after))=={
+              '/authoring_inputs/carrier_envelope/authoring_commit',
+              '/authoring_inputs/carrier_envelope/sha256',
+              '/target/program_version',
+          }
+          draft_commit=commit(DRAFT,'Amend Unit 002-R program protocol label and envelope pins')
+          draft_blob=sh('git','rev-parse',f'{draft_commit}:{DRAFT.as_posix()}')
+
+          # 3) Accepted instance receives exactly the same compatibility/pointer changes.
+          accepted_before=load(ACCEPTED)
+          assert accepted_before['authoring_inputs']['carrier_envelope']['sha256']==OLD_ENV_SHA
+          assert accepted_before['authoring_inputs']['carrier_envelope']['authoring_commit']==OLD_ENV_COMMIT
+          assert accepted_before['target']['program_version']=='0.8'
+          text=ACCEPTED.read_text(encoding='utf-8')
+          for old,new in ((OLD_ENV_SHA,env_sha),(OLD_ENV_COMMIT,env_commit),('"program_version": "0.8"','"program_version": "0.5"')):
+              assert text.count(old)==1, (old,text.count(old)); text=text.replace(old,new,1)
+          ACCEPTED.write_text(text,encoding='utf-8')
+          accepted_after=load(ACCEPTED)
+          assert set(diff_paths(accepted_before,accepted_after))=={
+              '/authoring_inputs/carrier_envelope/authoring_commit',
+              '/authoring_inputs/carrier_envelope/sha256',
+              '/target/program_version',
+          }
+          normalized=copy.deepcopy(draft_after); normalized['status']='AUTHOR_ACCEPTED'
+          assert normalized==accepted_after
+          accepted_commit=commit(ACCEPTED,'Apply identical Unit 002-R compatibility correction to accepted instance')
+
+          # 4) Acceptance metadata: pointers + explicit amendment disclosures only.
+          acc_before=load(ACCEPTANCE); acc=copy.deepcopy(acc_before)
+          assert acc['draft']['commit']==OLD_DRAFT_COMMIT and acc['draft']['git_blob_sha1']==OLD_DRAFT_BLOB
+          acc['draft']['commit']=draft_commit
+          acc['draft']['git_blob_sha1']=draft_blob
+          acc['accepted_instance_expected']['transformation_from_draft']=(
+              'After Amendments 003, 004, and 005, the corrected draft and accepted instance have identical '
+              'source semantics, target expressions, boundary, evidence, facts, provenance, pattern, and protocol '
+              'compatibility labels; only the top-level status changes from DRAFT_UNVERIFIED to AUTHOR_ACCEPTED.'
+          )
+          env_item=next(x for x in acc['frozen_inputs'] if x['path'].endswith('/vbe.envelope.json'))
+          assert env_item['sha256']==OLD_ENV_SHA and env_item['commit']==OLD_ENV_COMMIT
+          env_item['sha256']=env_sha; env_item['commit']=env_commit
+          ids={x['id'] for x in acc.get('amendments_applied',[])}
+          assert 'RISU_CORPUS_0.1_AUTHORING_PROTOCOL_AMENDMENT_004' not in ids
+          assert 'RISU_CORPUS_0.1_AUTHORING_PROTOCOL_AMENDMENT_005' not in ids
+          acc.setdefault('amendments_applied',[]).extend([
+              {
+                'id':'RISU_CORPUS_0.1_AUTHORING_PROTOCOL_AMENDMENT_004',
+                'path':'corpus/0.1/AUTHORING_PROTOCOL_AMENDMENT_004.json',
+                'classification':'FROZEN_CORE_ADAPTER_PROTOCOL_VERSION_COMPATIBILITY_DEFECT',
+                'triggering_invalid_run':33946439332,
+                'primary_verdict_observed_before_amendment':False,
+                'semantic_input_or_claim_changed':False,
+              },
+              {
+                'id':'RISU_CORPUS_0.1_AUTHORING_PROTOCOL_AMENDMENT_005',
+                'path':'corpus/0.1/AUTHORING_PROTOCOL_AMENDMENT_005.json',
+                'classification':'FROZEN_CORE_PROGRAM_PROTOCOL_VERSION_COMPATIBILITY_DEFECT',
+                'triggering_static_grammar_run':33946715701,
+                'primary_verdict_observed_before_amendment':False,
+                'semantic_input_or_claim_changed':False,
+              },
+          ])
+          acc['evidence_audit']['amendment_004']=(
+              'Invalid execution Run 33946439332 exited 30 before semantic verification because frozen core v0.7 '
+              'recognizes Projection Adapter files only when adapter_version is 0.7. Static parser inspection Run '
+              '33946542995 executed no semantic verifier. Amendment 004 changes only that outer protocol label.'
+          )
+          acc['evidence_audit']['amendment_005']=(
+              'Static frozen-core grammar inspection Run 33946715701 executed no semantic verifier and established '
+              'that the consequence-blind compiler requires program_version 0.5. Amendment 005 changes only that '
+              'inner protocol label; all target expressions and semantic facts remain identical.'
+          )
+          acc['evidence_audit']['verdict_blindness']=(
+              'No valid Unit 002-R semantic outcome was observed before this corrected acceptance. Run 33946439332 '
+              'terminated with invalid exit 30 before semantic verification; Runs 33946542995 and 33946715701 were '
+              'source-only grammar inspections and did not execute the semantic verifier.'
+          )
+          # Guard all scientific acceptance blocks that are forbidden to change.
+          for key in ('acceptance_schema','acceptance_mode','status','unit_id','candidate_id','accepted_scope','required_statements','researcher_direction','uncertainties','post_acceptance_rule','primary_verdict_observed_before_acceptance'):
+              assert acc[key]==acc_before[key], key
+          old_frozen={x['path']:x for x in acc_before['frozen_inputs']}
+          new_frozen={x['path']:x for x in acc['frozen_inputs']}
+          for p in old_frozen:
+              if p.endswith('/vbe.envelope.json'): continue
+              assert old_frozen[p]==new_frozen[p], p
+          ACCEPTANCE.write_text(json.dumps(acc,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
+          acceptance_commit=commit(ACCEPTANCE,'Bind Unit 002-R acceptance to Amendments 004 and 005')
+
+          changed=sh('git','diff','--name-only',f'{EXPECTED_HEAD}..HEAD').splitlines()
+          expected=sorted([ENV.as_posix(),DRAFT.as_posix(),ACCEPTED.as_posix(),ACCEPTANCE.as_posix()])
+          assert sorted(changed)==expected,(changed,expected)
+          # Final status-only invariant after all corrections.
+          d=load(DRAFT); a=load(ACCEPTED); n=copy.deepcopy(d); n['status']='AUTHOR_ACCEPTED'; assert n==a
+          proof={
+            'schema':'risu.unit002-r-amendment004005-application/v0.1alpha1',
+            'status':'PASS',
+            'starting_scientific_head':EXPECTED_HEAD,
+            'ending_scientific_head':acceptance_commit,
+            'envelope_commit':env_commit,
+            'corrected_envelope_sha256':env_sha,
+            'draft_commit':draft_commit,
+            'draft_blob_sha1':draft_blob,
+            'accepted_instance_commit':accepted_commit,
+            'acceptance_commit':acceptance_commit,
+            'changed_paths':changed,
+            'authorized_json_changes':{
+              ENV.as_posix():['/adapter_base/adapter_version'],
+              DRAFT.as_posix():['/authoring_inputs/carrier_envelope/authoring_commit','/authoring_inputs/carrier_envelope/sha256','/target/program_version'],
+              ACCEPTED.as_posix():['/authoring_inputs/carrier_envelope/authoring_commit','/authoring_inputs/carrier_envelope/sha256','/target/program_version'],
+              ACCEPTANCE.as_posix():['dependent pointers and Amendment 004/005 disclosures only'],
+            },
+            'draft_to_accepted_status_only_after_correction':True,
+            'source_lane_changed':False,
+            'target_lane_changed':False,
+            'boundary_model_changed':False,
+            'semantic_verdict_observed':False,
+          }
+          Path('/tmp/unit002r-correction/APPLICATION.json').write_text(json.dumps(proof,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(proof,indent=2,sort_keys=True))
+          PY
+
+          test -z "$(git status --porcelain)"
+          git push origin HEAD:refs/heads/unit002-r-real-prospective
+
+      - name: Upload machine correction proof
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit002-r-amendment004005-application-${{ github.run_id }}
+          path: /tmp/unit002r-correction/APPLICATION.json
+          if-no-files-found: error
+          retention-days: 90
