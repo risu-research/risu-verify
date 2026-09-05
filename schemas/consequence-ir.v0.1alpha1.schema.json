@@ -1,0 +1,136 @@
+{
+  "$id": "https://risuinstitute.org/schemas/consequence-ir.v0.1alpha1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "cir_schema": {
+      "const": "risu.consequence-ir/v0.1alpha1"
+    },
+    "cir_version": {
+      "const": "0.1"
+    },
+    "edges": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "attributes": {
+            "type": "object"
+          },
+          "evidence_refs": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "from": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "id": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "CARRIES",
+              "DERIVES",
+              "BINDS_TO",
+              "COMPARES",
+              "GUARDS",
+              "PRECEDES",
+              "MUTATES",
+              "REJECTS_AS",
+              "INTERPRETS_AS",
+              "EVIDENCED_BY"
+            ]
+          },
+          "status": {
+            "enum": [
+              "ESTABLISHED",
+              "UNRESOLVED",
+              "DECLARED"
+            ]
+          },
+          "to": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "from",
+          "to",
+          "status"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "evidence_boundary": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "ir_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "nodes": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "attributes": {
+            "type": "object"
+          },
+          "id": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "OPERATION",
+              "RESOURCE",
+              "INPUT",
+              "SEMANTIC_COORDINATE",
+              "GUARD",
+              "EFFECT",
+              "OUTCOME",
+              "FAILURE",
+              "INTERPRETER",
+              "EVIDENCE"
+            ]
+          },
+          "label": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "ESTABLISHED",
+              "UNRESOLVED",
+              "DECLARED"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "status"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    }
+  },
+  "required": [
+    "cir_schema",
+    "cir_version",
+    "ir_id",
+    "nodes",
+    "edges",
+    "evidence_boundary"
+  ],
+  "title": "RISU Consequence IR v0.1alpha1",
+  "type": "object"
+}
