@@ -1,0 +1,33 @@
+{
+  "boundary": "This is implementation-test evidence, not independent live-service validation.",
+  "byte_observations": [
+    {
+      "id": "TEST_SHA_FORWARDING",
+      "observation": "Test_MergePullRequestSHAPinning expects request body sha to equal the supplied expectedHeadSha."
+    },
+    {
+      "id": "TEST_MISMATCH_FAILS_CLOSED",
+      "observation": "The mismatch test returns HTTP Conflict and asserts an error result."
+    },
+    {
+      "id": "TEST_NO_RETRY",
+      "observation": "The mismatch test asserts exactly one merge call, excluding a silent unguarded retry in the tested handler path."
+    }
+  ],
+  "evidence_id": "CORPUS01-U001-TARGET-GITHUB-MCP-SHA-PINNING-TEST",
+  "evidence_layers": [
+    "L0_IDENTITY_OR_UPSTREAM_REFERENCE",
+    "L1_PINNED_BYTES_OR_IMMUTABLE_ARTIFACT",
+    "L2_DETERMINISTIC_EXTRACTED_FACT"
+  ],
+  "evidence_schema": "risu.corpus-evidence/v0.1alpha1",
+  "lane": "TARGET",
+  "strength": "PINNED_TARGET_TEST_BYTES",
+  "unit_id": "corpus01-unit-001",
+  "upstream": {
+    "commit": "9205304fedf10540c33ae41fcf6352fa97dcc9be",
+    "git_blob_sha1": "77e2d5152af76bc619a1785e242b6a64bbff957d",
+    "path": "pkg/github/pullrequests_sha_pinning_test.go",
+    "repository": "github/github-mcp-server"
+  }
+}
