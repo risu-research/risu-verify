@@ -1,0 +1,154 @@
+{
+  "contract_id": "RISU_DIFF_E0_EVALUATION_001",
+  "contract_schema": "risu.diff-e0-evaluation/v0.1",
+  "status": "FROZEN_BEFORE_UNIT003_SEMANTIC_INSPECTION",
+  "base_main_sha": "bd9ed54e9c1703f505f1b08ff3cb4c8f22c48afc",
+  "effective_engine": "RISU_DIFF_E0",
+  "heldout_sequence": [
+    "corpus01-unit-003",
+    "corpus01-unit-004",
+    "corpus01-unit-005",
+    "corpus01-unit-006",
+    "corpus01-unit-007",
+    "corpus01-unit-008"
+  ],
+  "development_firewall": {
+    "semantic_training_allowlist": [
+      "corpus/0.1/units/001-github-mcp-merge/",
+      "corpus/0.1/units/002-octokit-pulls-merge/",
+      "profiles/version-bound-effect/calibration/",
+      "experiments/unit002-m/",
+      "cases/",
+      "case-bundles/",
+      "results/VBE_CALIBRATION_DIFFERENTIAL.json",
+      "docs/EXTERNAL_CASE_001.md",
+      "docs/EXTERNAL_CASE_002.md",
+      "docs/EXTERNAL_CASE_003_HISTORICAL_TRANSITION.md"
+    ],
+    "methodology_allowlist": [
+      "protocols/CTV_META_THEORY_v0.1.json",
+      "protocols/CTV_META_THEORY_v0.1_AMENDMENT_001.json",
+      "schemas/consequence-ir.v0.1alpha1.schema.json",
+      "schemas/refinement-map.v0.1alpha1.schema.json",
+      "profiles/version-bound-effect/PROFILE.json",
+      "docs/WORKBENCH_HANDOFF.md",
+      "tools/vbe_compile.py",
+      "tools/vbe_differential.py",
+      "tools/export_workbench_bundle.py",
+      "vendor/Consequence_Preserving_Projections_Software_v0.7.0_DOI_READY.zip"
+    ],
+    "guard_only_paths": [
+      "corpus/0.1/ENROLLMENT.json",
+      "PROSPECTIVE_CORPUS_0.1_PROTOCOL.json"
+    ],
+    "forbidden_semantic_sources": [
+      "corpus/0.1/CANDIDATE_POOL.json",
+      "corpus/0.1/SCREENING_LOG.jsonl",
+      "corpus/0.1/SCREENING_PROCEDURE.json",
+      "any Unit003-008 authored scientific directory or artifact",
+      "any external source-code, documentation, issue, test, or discussion specific to a held-out target before that unit's machine-first E0 output is sealed"
+    ],
+    "external_research_policy": "Methodological research is allowed. Target-specific semantic inspection of a held-out unit is forbidden before that unit's machine-first output seal.",
+    "guard_only_rule": "Guard-only files may be read solely to verify enrollment identity, ordering, and pristine authoring/verdict flags. Their target-specific semantic content may not be used to design E0."
+  },
+  "architecture": {
+    "untrusted_front_end": [
+      "Consequence Graph/CIR extraction",
+      "declarative VBE query evaluation",
+      "static coordinate-flow candidate extraction",
+      "generated target-only probes",
+      "CEGAR refinement requests",
+      "minimal-witness shrinking",
+      "baseline harness"
+    ],
+    "trusted_authority": "E0 never replaces the frozen scientific producer/consumer or issues a canonical Corpus verdict.",
+    "checks_as_data": true,
+    "carrier_neutral_ir": true,
+    "fail_closed_unknowns": true
+  },
+  "required_machine_first_artifacts": [
+    "CIR_CANDIDATE.json",
+    "REFINEMENT_MAP_CANDIDATE.json",
+    "VBE_OBLIGATIONS.json",
+    "E0_PREDICTION.json",
+    "PROBE_PLAN.json",
+    "REFINEMENT_REQUESTS.json",
+    "BASELINE_RESULTS.json",
+    "E0_RUN_MANIFEST.json"
+  ],
+  "optional_machine_first_artifacts": [
+    "WITNESS_CANDIDATE.json",
+    "SHRINK_TRACE.json",
+    "PROBE_RESULTS.json"
+  ],
+  "prediction_namespace": [
+    "E0_PREDICTED_CONSEQUENCE_REGRESSION",
+    "E0_PREDICTED_CONSEQUENCE_STABLE_IN_DECLARED_SCOPE",
+    "E0_PREDICTED_ASSURANCE_INCOMPLETE",
+    "E0_INFRASTRUCTURE_FAILURE"
+  ],
+  "gold_isolation": {
+    "machine_first_must_be_sealed_before_gold_authoring": true,
+    "gold_authoring_must_be_blind_to_machine_first_output_until_gold_freeze": true,
+    "gold_authority": "Existing prospective Corpus authoring and scientific execution protocol",
+    "contamination_policy": "If E0 output is revealed to gold authors before gold freeze, the unit may still be scientifically valid but may not be claimed as a held-out E0 model-acquisition evaluation."
+  },
+  "prequential_rule": "TEST_THEN_LEARN: freeze engine Ei, seal machine-first output on next held-out unit, independently freeze human gold, score Ei, only then may that unit enter development data for Ei+1.",
+  "evaluation_metrics": {
+    "material_role_set": [
+      "authoritative_version_coordinate",
+      "current_version_at_effect_coordinate",
+      "binding_or_compare_guard",
+      "declared_effect",
+      "stale_mismatch_outcome_or_interpreter"
+    ],
+    "report": [
+      "material_role_recall",
+      "material_edge_recall",
+      "established_fact_precision",
+      "explicit_unresolved_rate",
+      "refinement_mapping_relation_accuracy",
+      "prediction_agreement",
+      "witness_validity_if_any",
+      "witness_coordinate_minimality_if_any",
+      "generated_probe_success_rate",
+      "human_correction_count",
+      "active_human_authoring_minutes",
+      "machine_runtime_seconds"
+    ],
+    "one_unit_policy": "Unit003 metrics are descriptive plus hard-stop checks; no population-level accuracy claim is permitted from one held-out unit."
+  },
+  "hard_stops": [
+    "false stable: E0 predicts consequence stability where the canonical scientific result establishes a consequence regression",
+    "unsupported established fact: an E0 semantic node/edge or refinement relation marked ESTABLISHED lacks evidence or is contradicted by frozen human gold",
+    "silent unknown: missing material semantics are treated as established compatibility instead of UNRESOLVED/ASSURANCE_INCOMPLETE",
+    "held-out contamination before E0 output seal",
+    "gold contamination by E0 output before gold freeze",
+    "post-result change to evaluation metrics, hard-stop definitions, or baseline semantics without an explicit timed amendment",
+    "E0 output represented as a canonical scientific verdict"
+  ],
+  "baseline_contract": {
+    "B0_SURFACE": "Reports callable/schema/argument surface only and is prohibited from claiming consequence preservation.",
+    "B1_NAME_SHAPE": "Finds candidate semantic coordinates from names/shapes without operative flow semantics.",
+    "B2_FLOW_ONLY": "Tracks candidate coordinate flow to effect/request sinks while ignoring source consequence and failure interpretation.",
+    "ORACLE_HUMAN_GOLD": "Post-freeze evaluation reference only; never available to machine-first E0 execution.",
+    "extension_rule": "Carrier-specific external baselines may be added only by a pre-result amendment for the held-out unit on which they will be scored."
+  },
+  "cegar_policy": {
+    "initial_model": "minimal conservative CIR with explicit unknowns",
+    "refinement_trigger": "a candidate witness or required VBE obligation cannot be classified at current evidence strength",
+    "allowed_refinement": "request or acquire the minimum additional evidence needed to resolve the specific uncertainty",
+    "forbidden_refinement": "change the frozen source consequence, evaluation metric, or verdict semantics to eliminate an inconvenient counterexample",
+    "spurious_counterexample_rule": "A counterexample may be classified spurious only by new evidence or an identified modeling error recorded in the refinement trace."
+  },
+  "witness_policy": {
+    "objective_order": [
+      "minimize number of differing world coordinates",
+      "minimize action/realization trace length",
+      "minimize supporting context/evidence not required for the failure predicate"
+    ],
+    "validity_before_minimality": true,
+    "independent_replay_target": true
+  },
+  "amendment_rule": "Any change after this freeze requires a numbered amendment stating timing relative to held-out inspection/output/gold/result and whether the change could affect E0 scoring."
+}
