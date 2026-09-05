@@ -1,0 +1,22 @@
+name: E0 firewall hash staging
+
+on:
+  push:
+    branches: [risu-diff-e0-firewall]
+    paths:
+      - protocols/RISU_DIFF_E0_EVALUATION_CONTRACT_v0.1.json
+      - docs/RISU_DIFF_E0_EVALUATION_CONTRACT_v0.1.md
+      - .github/workflows/e0-firewall-hash-staging.yml
+
+permissions:
+  contents: read
+
+jobs:
+  hash:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Exact SHA-256
+        run: |
+          sha256sum protocols/RISU_DIFF_E0_EVALUATION_CONTRACT_v0.1.json
+          sha256sum docs/RISU_DIFF_E0_EVALUATION_CONTRACT_v0.1.md
