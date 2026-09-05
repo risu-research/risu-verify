@@ -1,0 +1,154 @@
+{
+  "artifact_semantics": {
+    "BASELINE_RESULTS.json": "B0/B1/B2 only; consequence_authority=false and no authoritative prediction.",
+    "CIR_CANDIDATE.json": "Carrier-neutral candidate graph. Static/name/flow discovery cannot self-establish consequence semantics.",
+    "E0_EXECUTION_OBSERVATION.json": "Optional run-specific timing/host observation; excluded from semantic seal and prediction scoring.",
+    "E0_OUTPUT_SEAL.json": "Hash closure over every semantic artifact and the exact machine input packet identity.",
+    "E0_PREDICTION.json": "Exactly one noncanonical E0 prediction, authority=false, with hard-stop/witness reference where applicable.",
+    "E0_RUN_MANIFEST.json": "Input identities, engine/freeze identities, semantic artifact hashes, semantic seal digest, no clock-derived fields.",
+    "PROBE_PLAN.json": "Deterministic minimum-evidence target-only probe requests derived from unresolved obligations; no source-science or metric rewrite.",
+    "REFINEMENT_MAP_CANDIDATE.json": "Explicit candidate relation mapping with ESTABLISHED forbidden unless independently evidence-backed under frozen rules; unresolved relations remain explicit.",
+    "REFINEMENT_REQUESTS.json": "Same frozen target-only CEGAR restrictions in machine-readable form.",
+    "VBE_OBLIGATIONS.json": "All frozen VBE material obligations with boolean satisfaction plus unresolved list."
+  },
+  "authoritative_base_main_sha": "4d9026e4b967f938afea9a6c2a6c039b41dbdd63",
+  "contamination_boundary": {
+    "allowed_pre_freeze_target_information": [
+      "unit identity and order from corpus/0.1/ENROLLMENT.json",
+      "authoring_started/authoring_frozen/verdict_observed enrollment flags only"
+    ],
+    "forbidden_before_final_engine_freeze": [
+      "held-out target source code",
+      "held-out target documentation",
+      "held-out target tests",
+      "held-out target issues or discussions",
+      "held-out target behavior experiments",
+      "human gold semantics"
+    ],
+    "rule": "No implementation or qualification choice may use held-out target-specific semantic information before the final machine-first engine freeze is merged and main-qualified.",
+    "unit003_008_target_specific_semantics_consumed_before_protocol_freeze": false
+  },
+  "determinism_and_seal": {
+    "post_seal_mutation_forbidden": true,
+    "run_specific_observation_excluded": true,
+    "seal_digest": "SHA-256 over canonical JSON map of semantic artifact path -> SHA-256 plus exact input packet digest and frozen engine identity.",
+    "semantic_artifact_hash": "SHA-256 over exact canonical artifact bytes.",
+    "semantic_replay_requirement": "Same engine bytes + same input packet bytes must produce byte-identical semantic artifacts and identical E0_OUTPUT_SEAL.json."
+  },
+  "evaluation_contract_id": "RISU_DIFF_E0_EVALUATION_001",
+  "execution_architecture": {
+    "canonical_json": "UTF-8, sort_keys=true, separators=(',',':'), ensure_ascii=false, terminal newline",
+    "core": "NETWORK_FREE_TARGET_AGNOSTIC_DETERMINISTIC_CORE",
+    "environment_dependent_paths_in_semantic_outputs": false,
+    "input_boundary": "A local immutable machine-evidence packet; acquisition is outside the sealed core and must later be separately provenance-bound.",
+    "network_access_in_core": false,
+    "randomness_used_in_semantic_outputs": false,
+    "semantic_exit_contract": {
+      "0": "valid complete machine-first artifact set emitted; prediction may be regression, stable-in-declared-scope, or assurance-incomplete",
+      "20": "infrastructure/input-contract failure; no scientific compatibility inference"
+    },
+    "wall_clock_used_in_semantic_outputs": false
+  },
+  "foundation_qualification_id": "RISU_DIFF_E0_FOUNDATION_001",
+  "freeze_protocol_id": "RISU_DIFF_E0_MACHINE_FIRST_FREEZE_001",
+  "freeze_protocol_schema": "risu.diff-e0-machine-first-freeze/v0.1",
+  "freeze_rule": {
+    "amendment_after_freeze": "Numbered amendment required. Must state timing relative to Unit003 inspection, machine-first output seal, human gold freeze, and result; scoring-affecting changes invalidate use as the same Ei.",
+    "final_engine_freeze_point": "Guarded merge of an exact PR head that passes every qualification gate, followed by successful main replay of the same gates.",
+    "unit003_machine_first_execution_may_begin_only_after_main_qualified": true
+  },
+  "heldout_sequence": [
+    "corpus01-unit-003",
+    "corpus01-unit-004",
+    "corpus01-unit-005",
+    "corpus01-unit-006",
+    "corpus01-unit-007",
+    "corpus01-unit-008"
+  ],
+  "machine_input_contract": {
+    "evidence_file_rule": "Every evidence file is addressed by repository-relative packet path and declared SHA-256; the runner recomputes and rejects mismatch, traversal, duplicates, or unlisted bytes.",
+    "human_gold_forbidden": true,
+    "required_fields": [
+      "run_id",
+      "unit_id",
+      "target_revision",
+      "screened_operation",
+      "surface",
+      "evidence_files"
+    ],
+    "required_root_file": "MACHINE_INPUT.json",
+    "schema": "risu.diff-e0-machine-input/v0.1",
+    "semantic_injection_rule": "Input evidence may contain source/document bytes and machine observations, but may not directly assert ESTABLISHED consequence semantics or canonical verdicts."
+  },
+  "prediction_policy": {
+    "canonical_scientific_authority": false,
+    "incomplete": "Mandatory for unresolved material semantics, incomplete refinement, empty interpretation, unsupported evidence, or unavailable required observation.",
+    "namespace": [
+      "E0_PREDICTED_CONSEQUENCE_REGRESSION",
+      "E0_PREDICTED_CONSEQUENCE_STABLE_IN_DECLARED_SCOPE",
+      "E0_PREDICTED_ASSURANCE_INCOMPLETE",
+      "E0_INFRASTRUCTURE_FAILURE"
+    ],
+    "regression": "May be emitted only from an independently recheckable concrete collapse/relational witness.",
+    "stable": "May be emitted only when every frozen material obligation is established, refinement is complete, and material interpretation is nonempty."
+  },
+  "purpose": "Freeze the target-agnostic machine-first execution and artifact contract before any held-out Unit003 target-specific semantic inspection.",
+  "qualification_before_main_freeze": {
+    "all_required": true,
+    "minimum_adversarial_tests": 20,
+    "required_gates": [
+      "foundation exact-byte authority still passes",
+      "held-out Unit003-008 remain pristine",
+      "input path traversal/duplicate/unlisted/mismatched-hash rejection",
+      "human-gold/canonical-verdict semantic injection rejection",
+      "required artifact completeness on assurance-incomplete",
+      "baseline non-authority",
+      "static extractor non-authority",
+      "silent-unknown fail closed",
+      "invalid witness cannot support regression",
+      "stable requires all frozen obligations",
+      "deterministic replay byte identity",
+      "semantic seal changes under semantic input change",
+      "nonsemantic observation excluded from semantic seal",
+      "output tamper detection",
+      "engine/freeze byte identity uses committed Git objects",
+      "existing Corpus enrollment validation remains PASS"
+    ]
+  },
+  "semantic_artifact_contract": {
+    "conditional": [
+      "WITNESS_CANDIDATE.json",
+      "SHRINK_TRACE.json",
+      "PROBE_RESULTS.json"
+    ],
+    "control_plane": [
+      "E0_OUTPUT_SEAL.json"
+    ],
+    "missing_or_unknown_material_semantics": "Represent explicitly as UNRESOLVED and E0_PREDICTED_ASSURANCE_INCOMPLETE; never infer compatibility from silence.",
+    "nonsemantic_sidecar": [
+      "E0_EXECUTION_OBSERVATION.json"
+    ],
+    "required": [
+      "CIR_CANDIDATE.json",
+      "REFINEMENT_MAP_CANDIDATE.json",
+      "VBE_OBLIGATIONS.json",
+      "E0_PREDICTION.json",
+      "PROBE_PLAN.json",
+      "REFINEMENT_REQUESTS.json",
+      "BASELINE_RESULTS.json",
+      "E0_RUN_MANIFEST.json"
+    ],
+    "required_artifacts_must_be_present_even_when_incomplete": true
+  },
+  "status": "PROSPECTIVE_PROTOCOL_FROZEN_BEFORE_IMPLEMENTATION_QUALIFICATION_AND_BEFORE_UNIT003_SEMANTIC_INSPECTION",
+  "witness_policy": {
+    "independent_checker_required": true,
+    "invalid_or_unrecheckable_witness": "Cannot support regression; prediction falls back to assurance-incomplete unless another valid witness exists.",
+    "objective_order": [
+      "fewest differing world coordinates",
+      "shortest action/realization trace",
+      "least supporting context/evidence required for failure predicate"
+    ],
+    "validity_before_minimality": true
+  }
+}
