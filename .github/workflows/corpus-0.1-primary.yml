@@ -59,6 +59,11 @@ jobs:
             *)
               echo "Invalid verifier/toolchain failure exit code: $rc" >&2
               cat .risu/corpus01-unit001-console.json >&2 || true
+              if [ -f .risu/corpus01-unit001-output/failure.log ]; then
+                echo "--- RISU failure.log ---" >&2
+                cat .risu/corpus01-unit001-output/failure.log >&2 || true
+                echo "--- end failure.log ---" >&2
+              fi
               exit "$rc"
               ;;
           esac
