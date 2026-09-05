@@ -45,6 +45,19 @@ jobs:
         run: python tools/risu_e0_machine_freeze_verify.py
       - name: Syntax check machine-first freeze layer
         run: python -m py_compile risu_e0/machine_first.py tools/risu_e0_machine_first.py tools/risu_e0_machine_freeze_verify.py tests/test_risu_diff_e0_machine_freeze.py
+      - name: Verify CLI internal infrastructure failures use exit 20
+        run: |
+          python - <<'PY'
+          import sys
+          from tools import risu_e0_machine_first as cli
+          cli.load_machine_packet = lambda _: {"input": {"run_id": "contract-smoke"}}
+          def fail(*args, **kwargs):
+              raise RuntimeError("injected internal invariant failure")
+          cli.write_semantic_outputs = fail
+          sys.argv = ["risu_e0_machine_first.py", "/tmp/unused-packet", "/tmp/unused-output", "--no-observation"]
+          rc = cli.main()
+          assert rc == 20, rc
+          PY
       - name: Run machine-first adversarial freeze qualification
         run: python -m unittest -v tests.test_risu_diff_e0_machine_freeze
       - name: Run full E0 qualification including frozen firewall regressions
