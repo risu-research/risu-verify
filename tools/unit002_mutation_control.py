@@ -543,9 +543,9 @@ def main() -> int:
             "cells": cells,
             "promotion_rule_satisfied": promoted,
             "boundary": {
-                "real_target_result": false,
-                "live_runtime_claim": false,
-                "prevalence_claim": false,
+                "real_target_result": False,
+                "live_runtime_claim": False,
+                "prevalence_claim": False,
                 "unit002_r_target_selection_from_result": "PROHIBITED",
             },
         }
