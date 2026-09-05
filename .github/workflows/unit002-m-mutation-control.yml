@@ -23,8 +23,10 @@ jobs:
           chmod +x risu-verify
           chmod +x tools/*.py
 
-      - name: Syntax-check frozen control executor
-        run: python -m py_compile tools/unit002_mutation_control.py
+      - name: Syntax-check frozen executor and recorded correction
+        run: |
+          python -m py_compile tools/unit002_mutation_control.py
+          python -m py_compile tools/unit002_mutation_control_correction001.py
 
       - name: Verify pre-execution PLAN freeze identity
         run: |
@@ -38,9 +40,9 @@ jobs:
           assert freeze['status'] == 'FROZEN_BEFORE_MUTATION_EXECUTION'
           PY
 
-      - name: Execute full paired sensitivity-specificity crucible
+      - name: Execute unchanged matrix through correction 001 locality semantics
         run: |
-          python tools/unit002_mutation_control.py \
+          python tools/unit002_mutation_control_correction001.py \
             --output .risu/unit002-m \
             --json
 
