@@ -1,0 +1,28 @@
+{
+  "schema": "risu.e1-unit003-learning-firewall/v0.1",
+  "firewall_id": "RISU_E1_UNIT003_FIREWALL_001",
+  "status": "FROZEN_BEFORE_E1_IMPLEMENTATION",
+  "unit003_main_merge_commit": "b3da8d9e5cec1f79d3bf462e629c2e0b8bbcd314",
+  "unit003_scientific_head": "35c3a1e021fd60b4f20b4bca96545f6a3ae88026",
+  "unit003_canonical_record_path": "experiments/unit003-blind-machine-first/FIRST_SEAL_CANONICAL.json",
+  "unit003_canonical_record_git_blob": "b4a95b5e2cb78cf09bc6742c9c5ffbde72e901dc",
+  "unit003_first_seal_digest": "e9b14a6f948436b837a5abd6054d4468e93c84922d5bc35a3866673c234b2c36",
+  "unit003_status": "READ_ONLY_POST_RESULT_LEARNING_SAMPLE_ONLY",
+  "permitted": {
+    "architectural_lessons_from_canonical_summary": true,
+    "reporting_unit003_as_e0_heldout_result": true,
+    "designing_general_e1_mechanisms_in_response_to_recorded_bottlenecks": true
+  },
+  "prohibited": {
+    "modify_unit003_scientific_files_for_e1": true,
+    "copy_unit003_target_bytes_into_e1_tests": true,
+    "special_case_kubernetes_or_kubectl": true,
+    "special_case_annotate": true,
+    "special_case_unit003_selected_paths": true,
+    "evaluate_e1_on_unit003_for_promotion": true,
+    "report_posthoc_e1_unit003_result_as_prospective": true,
+    "change_e0_and_rescore_unit003": true
+  },
+  "first_valid_e1_prospective_target": "corpus01-unit-004",
+  "violation_rule": "Any prohibited action invalidates E1 prospective qualification until the contaminated implementation lineage is discarded; it cannot be repaired by relabeling the same run."
+}

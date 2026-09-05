@@ -1,0 +1,41 @@
+{
+  "schema": "risu.e1-pre-freeze-correction/v0.1",
+  "correction_id": "RISU_E1_PRE_FREEZE_CORRECTION_001",
+  "status": "PRE_FREEZE_CI_DEFINITION_CORRECTION",
+  "protocol_commit": "93fed963a04fb33b3fe68ec47b2aec38a1f39f86",
+  "implementation_commit": "28bd21f8b53e215b359b98b1ec6532b939911b2a",
+  "invalid_qualification_attempt": {
+    "run_id": 33980941722,
+    "head_sha": "28bd21f8b53e215b359b98b1ec6532b939911b2a",
+    "classification": "WORKFLOW_DEFINITION_INVALID_BEFORE_ANY_JOB",
+    "jobs_created": 0,
+    "e1_code_executed": false,
+    "synthetic_cases_executed": false,
+    "scientific_prediction": null,
+    "unit004_target_content_accessed": false
+  },
+  "cause": "The workflow YAML block scalar contained an actual newline inside a shell single-quoted printf argument, causing the following quote line to start at YAML column 1 and making the workflow definition unparsable before job creation.",
+  "correction": "Replace only that shell serialization expression with printf '%s\\n' and the same empty JSON payload. No E1 implementation, protocol, synthetic fixture, expected outcome, metric, target, scoring rule, or firewall rule changes.",
+  "immutability": {
+    "e1_protocol_changed": false,
+    "unit003_firewall_changed": false,
+    "e1_acquisition_changed": false,
+    "e1_extractor_changed": false,
+    "e1_engine_changed": false,
+    "go_ast_helper_changed": false,
+    "synthetic_qualification_changed": false,
+    "adversarial_tests_changed": false,
+    "promotion_metrics_changed": false,
+    "e0_changed": false,
+    "unit003_changed": false,
+    "unit004_content_consumed": false
+  },
+  "timing": {
+    "after_protocol_freeze": true,
+    "after_implementation_commit": true,
+    "before_any_valid_github_qualification_execution": true,
+    "before_e1_byte_freeze": true,
+    "before_unit004_selection": true,
+    "before_unit004_target_content": true
+  }
+}

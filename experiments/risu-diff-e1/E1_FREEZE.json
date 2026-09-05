@@ -1,0 +1,109 @@
+{
+  "schema": "risu.diff-e1-freeze/v0.1",
+  "freeze_id": "RISU_DIFF_E1_FREEZE_001",
+  "status": "FROZEN_BEFORE_UNIT004_SELECTION_AND_TARGET_CONTENT",
+  "protocol_id": "RISU_DIFF_E1_PROSPECTIVE_001",
+  "protocol_commit": "93fed963a04fb33b3fe68ec47b2aec38a1f39f86",
+  "protocol_git_blob": "61c8d11cc16930e48b502438e39c760fecd1938b",
+  "unit003_firewall_git_blob": "5fcf3a3d38f89110d5f677d8568237da34439c3e",
+  "unit003_main_merge_commit": "b3da8d9e5cec1f79d3bf462e629c2e0b8bbcd314",
+  "unit003_canonical_record_git_blob": "b4a95b5e2cb78cf09bc6742c9c5ffbde72e901dc",
+  "e0_engine_identity_digest": "7979ff811765cf1617602b2ef9ed89935f24da2c1f32eceb417dfd209e335c60",
+  "implementation_qualification_head": "eda8a3a2955ec01874c3a1bb117ca74b5d25a087",
+  "pre_freeze_correction_001_git_blob": "da5470fe6442d86ceb265a01ea2f549c97908cfc",
+  "engine_identity_components": {
+    "risu_e1/__init__.py": {
+      "git_blob_sha": "92284d9b2ea86182cb60c3a594cbd4781d6e6d0c",
+      "sha256": "4f214e113ef1621027bd5f2603666d9d2945394c9507331e4a1b36d709c85847"
+    },
+    "risu_e1/acquisition.py": {
+      "git_blob_sha": "1010a500f964c5f84e9eea6479969c290fa0f86c",
+      "sha256": "e36dc3604dc4b551392dcd5730c51ae0e4fbbea823c524c4ab09da5c77f7a030"
+    },
+    "risu_e1/extractor.py": {
+      "git_blob_sha": "1ec88bcf546ecc62b7314ad6b29096184df56c8c",
+      "sha256": "694a4b7dbed84eb27ec62065233a3515554b6d0757f6bfa724e555241c088492"
+    },
+    "risu_e1/engine.py": {
+      "git_blob_sha": "5f7693ffe0ec94958782b3685757c86ae9f76ecc",
+      "sha256": "83617b0df9a368f20b460e2e23a2920efb3c713ce1962c13355b4743c51a1c89"
+    },
+    "tools/risu_e1_go_extract.go": {
+      "git_blob_sha": "fe875bf3313f450287f7c202939e795de091544c",
+      "sha256": "a3b7dd981e32431578cbde4fb6a6dde89c9d39592fb62ceb147f8a53be188a50"
+    },
+    "tools/risu_e1_machine_first.py": {
+      "git_blob_sha": "558619fc2250e70853aef5f98b1d8ec4cd31db43",
+      "sha256": "91cb32fea05604dd64083a196f0f209b9d5ac672bc1d751728613a834821b214"
+    }
+  },
+  "engine_identity_digest": "ed33d12881fa1395d1332ae165b5638518b2d472a7a520f0ae893d07e3b146b7",
+  "qualification_harness_components": {
+    ".github/workflows/risu-diff-e1.yml": {
+      "git_blob_sha": "15f8f4524d33167321a47b2f5b00ca7fa376c449",
+      "sha256": "f8ebe927d330ed9b0a703f3e0674dec8e3b99e49966d511e7b9bf4c9ae80a187"
+    },
+    "tests/test_risu_e1.py": {
+      "git_blob_sha": "2e78c6d85719279bdc34b478d531b149987b7cb5",
+      "sha256": "90f3b6cfd916c28e6d3e12b5bb224ff1b64f246b2734153ba1056d66c97b935a"
+    },
+    "tools/risu_e1_qualify.py": {
+      "git_blob_sha": "6ef6ab89d3a96fc5f6d66a16af02dc6af84c08f5",
+      "sha256": "214ea9e62533a715a36c611e17feac41471c3fc203c9eec970d7172f0ce6c4f0"
+    }
+  },
+  "qualification_harness_digest": "0cfda2b5fee9ed092d33e86178c40f3de8524bcb11eebb9ed0a53eb5d0b04eb5",
+  "qualification": {
+    "run_id": 33981013859,
+    "job_id": 101346118207,
+    "head_sha": "eda8a3a2955ec01874c3a1bb117ca74b5d25a087",
+    "conclusion": "success",
+    "artifact_id": 9973746775,
+    "artifact_zip_sha256": "835c2f4a14c35b3bff7ffc5198c848753e289cdc22fc52b1369d3ad17df30569",
+    "qualification_result_sha256": "be25a10b1ee01756c5c9b83a349ef6e2bd30b93364d72aa6daa35b3366cc5430",
+    "metrics": {
+      "cases": 11,
+      "case_passes": 11,
+      "false_regression_from_absence": 0,
+      "authority_upgrade_from_name_only": 0,
+      "cross_scope_false_support": 0,
+      "acquisition_filler_admitted": 0,
+      "round0_order_invariant": true,
+      "status": "PASS"
+    }
+  },
+  "immutability_and_contamination": {
+    "unit003_scientific_files_changed_since_main_seal": false,
+    "unit003_used_for_e1_scoring_or_promotion": false,
+    "unit003_target_bytes_copied_into_e1": false,
+    "e0_bytes_changed": false,
+    "unit004_selection_protocol_created_before_freeze": false,
+    "unit004_target_selected_before_freeze": false,
+    "unit004_target_content_consumed_before_freeze": false,
+    "human_gold_consumed_for_unit004_before_freeze": false
+  },
+  "post_freeze_rule": {
+    "e1_engine_bytes_mutable_for_unit004": false,
+    "qualification_expected_outcomes_mutable_for_unit004": false,
+    "unit003_may_be_rescored": false,
+    "first_prospective_e1_validation_unit": "corpus01-unit-004",
+    "allowed_unit004_machine_outcomes": [
+      "E1_PREDICTED_PRESERVATION_EVIDENCE",
+      "E1_PREDICTED_REGRESSION_WITNESS",
+      "E1_PREDICTED_ASSURANCE_INCOMPLETE",
+      "INFRASTRUCTURE_INVALID_BEFORE_PREDICTION"
+    ],
+    "all_allowed_outcomes_scientifically_admissible": true
+  },
+  "claim_boundary": {
+    "established": "E1 is prospectively frozen as a deterministic machine structural-prediction system qualified on synthetic-only Python/Go cases with fail-closed and contamination gates.",
+    "not_established": [
+      "real-target accuracy",
+      "population accuracy",
+      "a kubectl consequence verdict",
+      "Unit004 outcome",
+      "live deployment conformance",
+      "independent replication"
+    ]
+  }
+}
