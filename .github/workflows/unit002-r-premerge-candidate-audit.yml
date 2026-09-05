@@ -1,0 +1,98 @@
+name: RISU Unit 002-R premerge candidate independent audit
+
+on:
+  push:
+    branches:
+      - unit002-r-premerge-candidate-audit
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      BASE: "b52bde0d0fdef0a2be7d5973e564daccd12296c9"
+      CANDIDATE: "468f2d49f9ad34aaed053dc76d95f91a02ff3643"
+      UNIT: "corpus/0.1/units/002-octokit-pulls-merge"
+    steps:
+      - name: Checkout exact final candidate
+        uses: actions/checkout@v4
+        with:
+          repository: risu-research/risu-verify
+          ref: 468f2d49f9ad34aaed053dc76d95f91a02ff3643
+          fetch-depth: 0
+
+      - name: Assert exact descendant and exact eight-path closure surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$CANDIDATE"
+          test "$(git merge-base "$BASE" "$CANDIDATE")" = "$BASE"
+          test -z "$(git status --porcelain)"
+          actual="$(git diff --name-only "$BASE".."$CANDIDATE" | sort)"
+          expected="$(printf '%s\n' \
+            '.github/workflows/unit002-r-closure.yml' \
+            '.github/workflows/unit002-r-preprimary-seal.yml' \
+            '.github/workflows/unit002-r-target-qualification.yml' \
+            'corpus/0.1/ENROLLMENT.json' \
+            'corpus/0.1/units/002-octokit-pulls-merge/PREMERGE_CLOSURE.json' \
+            'corpus/0.1/units/002-octokit-pulls-merge/friction.json' \
+            'corpus/0.1/units/002-octokit-pulls-merge/post-result/COVERAGE_DIAGNOSTIC.json' \
+            'tools/unit002r_closure_verify.py' | sort)"
+          test "$actual" = "$expected"
+          test -z "$(git diff --name-only "$BASE".."$CANDIDATE" -- "$UNIT/primary-result")"
+
+      - name: Rebind exact primary artifact identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(sha256sum "$UNIT/primary-result/PRIMARY_RESULT.json" | awk '{print $1}')" = "0d7c940e5f5b1918a9b832644df779a1afb3355d8092cb151ee45d8abbe76351"
+          test "$(sha256sum "$UNIT/primary-result/PRIMARY_ARTIFACT_INDEX.json" | awk '{print $1}')" = "3586a6e6c1307376e0463c6c22a138fc45ab77db9f72d2c64c86d9152182b805"
+          test "$(sha256sum "$UNIT/primary-result/actions-artifact-33947031284.zip" | awk '{print $1}')" = "a622c27422d36a9d28302893e4ad9001114bd86e62815aa4f62f3e68918f8a9b"
+          test "$(sha256sum "$UNIT/primary-result/self-contained-primary.zip" | awk '{print $1}')" = "eb0dcf71ea5ae6b0f40c9899dc8fe3e0e6e54fab84bcc1ee927f44e627f8cf95"
+          test "$(sha256sum "$UNIT/primary-result/canonical/report.json" | awk '{print $1}')" = "a09e52ac538f8a43646703eeb81e6d5dee36b1e4ad282e54885bb6090169ddb2"
+          test "$(sha256sum "$UNIT/primary-result/canonical/certificate.json" | awk '{print $1}')" = "75cbdba31eb7717ea3b30f084b3b5f77a05cecbd3eeba26a20cb7f55bf38d418"
+          test "$(sha256sum "$UNIT/primary-result/canonical/primary-observation.json" | awk '{print $1}')" = "4b0d87ca6be5001ba3fcf552f475748b6ac7769573eb2f28b1325933d3479262"
+
+      - name: Independently verify self-contained 24-entry archive
+        run: |
+          python - <<'PY'
+          import hashlib, zipfile
+          from pathlib import Path
+          p=Path('corpus/0.1/units/002-octokit-pulls-merge/primary-result/self-contained-primary.zip')
+          with zipfile.ZipFile(p) as z:
+              lines=z.read('MANIFEST.sha256').decode().strip().splitlines()
+              assert len(lines)==24, len(lines)
+              for line in lines:
+                  h,rel=line.split('  ',1)
+                  assert hashlib.sha256(z.read(rel)).hexdigest()==h, rel
+          print('SELF-CONTAINED PRIMARY: 24/24 PASS')
+          PY
+
+      - name: Assert pre-result automatic workflows are retired
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          for name in ['unit002-r-preprimary-seal.yml','unit002-r-target-qualification.yml']:
+              t=(Path('.github/workflows')/name).read_text()
+              assert 'pull_request:' not in t, name
+              assert 'workflow_dispatch:' in t, name
+          t=Path('.github/workflows/unit002-r-closure.yml').read_text()
+          assert 'pull_request:' in t and 'push:' in t
+          print('WORKFLOW ROLE TRANSITION: PASS')
+          PY
+
+      - name: Validate Corpus protocol and closed friction semantics
+        run: python tools/corpus01_validate.py --json
+
+      - name: Run phase-aware Unit 002-R closure verifier
+        run: python tools/unit002r_closure_verify.py
+
+      - name: Run protocol-preserving Corpus regression tests
+        run: |
+          python -m unittest \
+            tests.test_corpus01_bound_evidence \
+            tests.test_corpus01_unit_harness \
+            tests.test_corpus01_primary_v08
