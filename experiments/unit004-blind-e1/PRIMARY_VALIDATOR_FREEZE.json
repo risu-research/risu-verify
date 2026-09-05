@@ -1,0 +1,67 @@
+{
+  "schema": "risu.ctv-finite-validator-freeze/v0.1alpha1",
+  "freeze_id": "CTV_FINITE_PRIMARY_VALIDATOR_FREEZE_001",
+  "unit_id": "corpus01-unit-004",
+  "status": "VALIDATOR_IMPLEMENTATION_FROZEN_BEFORE_PRIMARY_EXECUTION",
+  "parent_author_acceptance_commit": "6665edda22abfb6233ebbba0792829fbc7467f35",
+  "author_acceptance_id": "UNIT004_GOLD_AUTHOR_ACCEPTANCE_001",
+  "primary_result_observed_before_freeze": false,
+  "synthetic_tests_only_before_primary": true,
+  "expected_primary_outcome_encoded_in_validator": false,
+  "validator_policy": {
+    "deterministic_factorization_failure": "CONSEQUENCE_REGRESSION",
+    "factorization_without_established_target_consequence_interpretation": "ASSURANCE_INCOMPLETE",
+    "explicit_target_consequence_refinement_violation": "CONSEQUENCE_REGRESSION",
+    "factorization_and_explicit_refinement_established": "CONSEQUENCE_STABLE_IN_DECLARED_SCOPE",
+    "malformed_or_unpinned_input": "INFRASTRUCTURE_FAILURE"
+  },
+  "normative_theory": {
+    "contract": "protocols/CTV_META_THEORY_v0.1.json",
+    "deterministic_factorization": "There exists g such that kappa_S = g o rho_T.",
+    "kernel_condition": "ker(rho_T) subseteq ker(kappa_S).",
+    "constructive_regression_witness": "rho_T(w1)=rho_T(w2) and kappa_S(w1)!=kappa_S(w2).",
+    "coverage_model_adequacy_separated": true
+  },
+  "accepted_normative_git_blobs": {
+    "GOLD_EVIDENCE.json": "a9ce8bff8dc988c15be45d3773deb8d4dcf887d1",
+    "SOURCE_LANE.json": "fca762e7d519c66f4ee1acefd3d897b4a04b6035",
+    "TARGET_LANE.json": "a2286f98beca1ac0b61eb6d61d98eeed929039d0",
+    "BOUNDARY_MODEL.json": "204ab13829fc183268251afab7b00fcc1f2f9ed7"
+  },
+  "validator_git_blobs": {
+    "tools/ctv_finite_primary.py": "e66e3b38b33bb856e091231f032dd02bb6f820b9",
+    "tools/ctv_finite_independent.py": "ac1156e6cd6301ec0a0e28172e04b209ab1863f6",
+    "tests/test_ctv_finite_primary.py": "fa70076e23b36c67b7c1de31c810cd0333a73554",
+    ".github/workflows/unit004-gold-primary.yml": "5c19d6b7f52bb607ec705874ea719fb43a300d67"
+  },
+  "genericity_controls": {
+    "primary_checker_contains_target_specific_identifier": false,
+    "independent_checker_contains_target_specific_identifier": false,
+    "synthetic_tests_contain_target_specific_identifier": false,
+    "workflow_rejects_target_specific_identifiers_in_generic_checker_bytes": true,
+    "global_target_realization_supported": true,
+    "per_world_target_realizations_supported": true,
+    "explicit_target_consequence_interpretation_supported": true,
+    "future_units_may_reuse_same_checker_without_unit_specific_code": true
+  },
+  "independence_controls": {
+    "independent_checker_imports_primary_checker": false,
+    "independent_checker_uses_stdlib_only": true,
+    "independent_checker_recomputes_pair_witnesses": true,
+    "semantic_outcome_does_not_control_ci_success": true
+  },
+  "preprimary_synthetic_gate": {
+    "test_count": 7,
+    "cases": [
+      "collapse plus distinct source consequences -> regression",
+      "no collapse plus missing interpretation -> incomplete",
+      "explicit matching interpretation -> stable",
+      "explicit interpretation mismatch -> regression",
+      "world-order permutation invariance",
+      "independent collapse-witness enumeration",
+      "independent no-collapse negative control"
+    ]
+  },
+  "execution_rule": "Commit this record and every pinned validator component atomically as a child of the AUTHOR_ACCEPTED commit. Only that committed state may execute the first gold primary. Any semantic validator change after observing the first primary requires a numbered post-primary amendment and may not replace the first result.",
+  "claim_boundary": "This freeze fixes a generic finite CTV decision procedure and its independent checker before Unit004 primary execution. It does not record or imply the Unit004 semantic outcome."
+}
