@@ -1,0 +1,43 @@
+name: RISU Unit 002-R closure
+
+on:
+  pull_request:
+    paths:
+      - "corpus/0.1/ENROLLMENT.json"
+      - "corpus/0.1/units/002-octokit-pulls-merge/**"
+      - "tools/unit002r_closure_verify.py"
+      - ".github/workflows/unit002-r-closure.yml"
+      - ".github/workflows/unit002-r-preprimary-seal.yml"
+      - ".github/workflows/unit002-r-target-qualification.yml"
+  push:
+    branches: [main]
+    paths:
+      - "corpus/0.1/ENROLLMENT.json"
+      - "corpus/0.1/units/002-octokit-pulls-merge/**"
+      - "tools/unit002r_closure_verify.py"
+      - ".github/workflows/unit002-r-closure.yml"
+      - ".github/workflows/unit002-r-preprimary-seal.yml"
+      - ".github/workflows/unit002-r-target-qualification.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  closure:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Validate Corpus protocol and friction ledger
+        run: python tools/corpus01_validate.py --json
+      - name: Verify Unit 002-R closure invariants
+        run: python tools/unit002r_closure_verify.py
+      - name: Run protocol-preserving Corpus regression tests
+        run: |
+          python -m unittest \
+            tests.test_corpus01_bound_evidence \
+            tests.test_corpus01_unit_harness \
+            tests.test_corpus01_primary_v08
