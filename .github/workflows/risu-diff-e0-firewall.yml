@@ -1,0 +1,49 @@
+name: RISU Diff E0 evaluation firewall
+
+on:
+  pull_request:
+    paths:
+      - protocols/RISU_DIFF_E0_EVALUATION_CONTRACT_v0.1.json
+      - protocols/RISU_DIFF_E0_EVALUATION_CONTRACT_v0.1_SEAL.json
+      - docs/RISU_DIFF_E0_EVALUATION_CONTRACT_v0.1.md
+      - tools/risu_diff_e0_firewall_verify.py
+      - tests/test_risu_diff_e0_firewall.py
+      - .github/workflows/risu-diff-e0-firewall.yml
+  push:
+    branches: [main]
+    paths:
+      - protocols/RISU_DIFF_E0_EVALUATION_CONTRACT_v0.1.json
+      - protocols/RISU_DIFF_E0_EVALUATION_CONTRACT_v0.1_SEAL.json
+      - docs/RISU_DIFF_E0_EVALUATION_CONTRACT_v0.1.md
+      - tools/risu_diff_e0_firewall_verify.py
+      - tests/test_risu_diff_e0_firewall.py
+      - .github/workflows/risu-diff-e0-firewall.yml
+
+permissions:
+  contents: read
+
+jobs:
+  firewall:
+    runs-on: ubuntu-24.04
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify held-out development firewall and exact freeze
+        run: python tools/risu_diff_e0_firewall_verify.py
+      - name: Run E0 evaluation-contract tests
+        run: python -m unittest tests.test_risu_diff_e0_firewall
+      - name: Verify CTV parent theory and A001 semantics remain green
+        run: |
+          # The A001 exact-surface verifier is a historical PR-boundary audit:
+          # it intentionally expected only the six files introduced by A001.
+          # Future feature branches must not reinterpret that historical surface
+          # as a prohibition on all later repository evolution. This firewall's
+          # own exact six-file diff check proves the sealed CTV/A001 normative
+          # files are untouched, while these tests re-exercise their semantics.
+          python tools/ctv_meta_theory_verify.py
+          python -m unittest tests.test_ctv_meta_theory tests.test_ctv_meta_theory_amendment001
+      - name: Verify prospective Corpus enrollment remains valid
+        run: python tools/corpus01_validate.py --json
