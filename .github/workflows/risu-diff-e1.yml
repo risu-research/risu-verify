@@ -55,8 +55,7 @@ jobs:
           set -euo pipefail
           python -m py_compile risu_e1/*.py tools/risu_e1_machine_first.py tools/risu_e1_qualify.py tests/test_risu_e1.py
           test -z "$(gofmt -d tools/risu_e1_go_extract.go)"
-          printf '{"files":[]}
-' | go run tools/risu_e1_go_extract.go > /tmp/e1-go-empty.json
+          printf '%s\n' '{"files":[]}' | go run tools/risu_e1_go_extract.go > /tmp/e1-go-empty.json
           test "$(cat /tmp/e1-go-empty.json)" = '{"files":[]}'
 
       - name: Run E1 adversarial unit suite
