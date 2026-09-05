@@ -1,0 +1,259 @@
+name: E1 gold primary Units006-008
+
+on:
+  push:
+    branches: [e1-gold-close-006-008]
+    paths:
+      - '.github/workflows/e1-gold-006-008-primary.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  qualify-frozen-gold:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify atomic gold freeze and immutable authorities
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, subprocess
+          from pathlib import Path
+
+          def blob(path):
+              return subprocess.check_output(['git','rev-parse',f'HEAD:{path}'], text=True).strip()
+
+          expected_parent = 'c4a61623217de2bfa08f090359d952c7ee660fcc'
+          parent = subprocess.check_output(['git','rev-parse','HEAD^'], text=True).strip()
+          assert parent == expected_parent, (parent, expected_parent)
+          changed = subprocess.check_output(['git','diff','--name-only','HEAD^','HEAD'], text=True).splitlines()
+          assert changed == ['.github/workflows/e1-gold-006-008-primary.yml'], changed
+
+          authorities = {
+              'experiments/e1-heldout-matrix-005-008/GOLD_ADJUDICATION_PROTOCOL.json':'16bbbfc37ccf1e9587b3ba0094e8c24017a81621',
+              'protocols/CTV_META_THEORY_v0.1.json':'c53766c7bb1b322b4b706ddac5e90d957eb8e397',
+              'protocols/CTV_META_THEORY_v0.1_AMENDMENT_001.json':'7ca86d42fa56a4aecb67c7ca1c9fc4418ec4c716',
+              'tools/ctv_finite_primary.py':'e66e3b38b33bb856e091231f032dd02bb6f820b9',
+              'tools/ctv_finite_independent.py':'ac1156e6cd6301ec0a0e28172e04b209ab1863f6',
+              'experiments/e1-heldout-matrix-005-008/MACHINE_MATRIX_CLOSURE.json':'de5ef57557a8e8d374ad6a17767c91a883a78564',
+              'experiments/e1-heldout-matrix-005-008/FIRST_PREDICTION_MATRIX_CANONICAL.json':'1e6633bb0204251e5ef4f10fa390067defdf7fe2',
+              'experiments/risu-diff-e1/E1_FREEZE.json':'37bf9b02d6fa4d3bd6f29d194635211481876998',
+              'experiments/risu-diff-e1/E1_PROTOCOL.json':'61c8d11cc16930e48b502438e39c760fecd1938b',
+          }
+          for path, expected in authorities.items():
+              actual = blob(path)
+              assert actual == expected, (path, actual, expected)
+
+          units = {
+              'unit006': {
+                  'AUTHOR_ACCEPTANCE.json':'8f66e3936e9561512659f3fb1265dfac6bcae4f1',
+                  'BOUNDARY_MODEL.json':'7a3ed55f9170895d30378aef8d333fdde2ec67ef',
+                  'GOLD_EVIDENCE.json':'b3fbde79ddb234d6650ed32e172e073c98adf785',
+                  'SOURCE_LANE.json':'0820e23caa73e8c84596e8e7bda1dd3d9475378c',
+                  'TARGET_LANE.json':'755bd0a336eb181bc94d9a2ad63d95af5d2664e2',
+              },
+              'unit007': {
+                  'AUTHOR_ACCEPTANCE.json':'0271c39dfe80540cafd2f79b4a3786bda1628878',
+                  'BOUNDARY_MODEL.json':'9a58a23ef8a244132d0dd78804e78fcfc1371994',
+                  'GOLD_EVIDENCE.json':'16d33168edaa1c34d473010b72a47d118d887e17',
+                  'SOURCE_LANE.json':'d2ff8a1cfa1fc0087cc51c58c7c638a2e24441fc',
+                  'TARGET_LANE.json':'b7479901d030805f486305946de699a23a83b4b5',
+              },
+              'unit008': {
+                  'AUTHOR_ACCEPTANCE.json':'e160868dcf7f40d7e203d3bde009b0ca8df31d51',
+                  'BOUNDARY_MODEL.json':'af42f0fd39e63ae7619a8f1dbcea214090e97f4e',
+                  'GOLD_EVIDENCE.json':'ac2a8eee18a0fa6b523f3b433d5214a679d27a7a',
+                  'SOURCE_LANE.json':'d30cb4e70a7c5db7f38fe5b8c5dbb5933c449162',
+                  'TARGET_LANE.json':'8ae15243a1077b9d4f0781ed4542cb9702c8f9f6',
+              },
+          }
+          freeze_id = 'E1_UNITS006_008_ATOMIC_GOLD_FREEZE_001'
+          protocol_blob = authorities['experiments/e1-heldout-matrix-005-008/GOLD_ADJUDICATION_PROTOCOL.json']
+          for unit, rows in units.items():
+              root = f'experiments/{unit}-blind-e1'
+              for name, expected in rows.items():
+                  actual = blob(f'{root}/{name}')
+                  assert actual == expected, (unit, name, actual, expected)
+              author = json.loads(Path(f'{root}/AUTHOR_ACCEPTANCE.json').read_text())
+              assert author['status'] == 'AUTHOR_ACCEPTED_BEFORE_PRIMARY_GOLD_VALIDATION'
+              gf = author['gold_model_freeze']
+              assert gf['freeze_id'] == freeze_id
+              assert gf['parent_commit'] == 'e845f275e61b438c246c24a3cbf2edaf021468ea'
+              assert gf['protocol_git_blob'] == protocol_blob
+              assert gf['self_commit_sha_embedded'] is False
+              assert author['acceptance']['all_primary_outcomes_equally_admissible'] is True
+              assert author['acceptance']['expected_primary_outcome_recorded'] is False
+              accepted = author['accepted_normative_git_blobs']
+              for name in ('GOLD_EVIDENCE.json','SOURCE_LANE.json','TARGET_LANE.json','BOUNDARY_MODEL.json'):
+                  assert accepted[name] == rows[name], (unit, name)
+
+          forbidden = []
+          for unit in ('unit006','unit007','unit008'):
+              root = Path(f'experiments/{unit}-blind-e1')
+              for name in ('PRIMARY_GOLD_RESULT.json','INDEPENDENT_WITNESS_CHECK.json','PRIMARY_RUN_RECORD.json'):
+                  if (root/name).exists():
+                      forbidden.append(str(root/name))
+          assert not forbidden, forbidden
+          print(json.dumps({'status':'PASS','units':3,'normative_objects':15,'authorities':len(authorities)}, sort_keys=True))
+          PY
+
+      - name: Qualify frozen generic checker without target data
+        run: |
+          set -euo pipefail
+          python tools/ctv_meta_theory_verify.py
+          python -m py_compile tools/ctv_finite_primary.py tools/ctv_finite_independent.py tests/test_ctv_finite_primary.py
+          python -m unittest -v tests.test_ctv_finite_primary
+
+  execute-first-gold-primary:
+    needs: qualify-frozen-gold
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Execute three frozen primary and independent computations behind disclosure barrier
+        shell: bash
+        run: |
+          set -u
+          ROOT="$PWD"
+          OUT="$ROOT/e1-gold-006-008-first-primary"
+          mkdir -p "$OUT/units" "$OUT/authority" "$OUT/checkers"
+
+          cp experiments/e1-heldout-matrix-005-008/GOLD_ADJUDICATION_PROTOCOL.json "$OUT/authority/"
+          cp protocols/CTV_META_THEORY_v0.1.json "$OUT/authority/"
+          cp protocols/CTV_META_THEORY_v0.1_AMENDMENT_001.json "$OUT/authority/"
+          cp tools/ctv_finite_primary.py "$OUT/checkers/"
+          cp tools/ctv_finite_independent.py "$OUT/checkers/"
+
+          ANY_INFRA_FAILURE=0
+          for unit in unit006 unit007 unit008; do
+            SRC="experiments/${unit}-blind-e1"
+            UD="$OUT/units/$unit"
+            mkdir -p "$UD"
+            cp "$SRC/AUTHOR_ACCEPTANCE.json" "$UD/"
+            cp "$SRC/BOUNDARY_MODEL.json" "$UD/"
+            cp "$SRC/GOLD_EVIDENCE.json" "$UD/"
+            cp "$SRC/SOURCE_LANE.json" "$UD/"
+            cp "$SRC/TARGET_LANE.json" "$UD/"
+
+            python tools/ctv_finite_primary.py \
+              --author-acceptance "$SRC/AUTHOR_ACCEPTANCE.json" \
+              --boundary "$SRC/BOUNDARY_MODEL.json" \
+              --source-lane "$SRC/SOURCE_LANE.json" \
+              --target-lane "$SRC/TARGET_LANE.json" \
+              --output "$UD/PRIMARY_GOLD_RESULT.json" \
+              > "$UD/PRIMARY_STDOUT.json" 2> "$UD/PRIMARY_STDERR.txt"
+            prc=$?
+            printf '%s\n' "$prc" > "$UD/PRIMARY_EXIT_CODE.txt"
+
+            irc=99
+            if [ "$prc" -eq 0 ] && [ -f "$UD/PRIMARY_GOLD_RESULT.json" ]; then
+              python tools/ctv_finite_independent.py \
+                --author-acceptance "$SRC/AUTHOR_ACCEPTANCE.json" \
+                --boundary "$SRC/BOUNDARY_MODEL.json" \
+                --source-lane "$SRC/SOURCE_LANE.json" \
+                --target-lane "$SRC/TARGET_LANE.json" \
+                --primary-result "$UD/PRIMARY_GOLD_RESULT.json" \
+                --output "$UD/INDEPENDENT_WITNESS_CHECK.json" \
+                > "$UD/INDEPENDENT_STDOUT.json" 2> "$UD/INDEPENDENT_STDERR.txt"
+              irc=$?
+            else
+              : > "$UD/INDEPENDENT_STDOUT.json"
+              printf '%s\n' 'NOT_RUN_PRIMARY_FAILED' > "$UD/INDEPENDENT_STDERR.txt"
+            fi
+            printf '%s\n' "$irc" > "$UD/INDEPENDENT_EXIT_CODE.txt"
+            if [ "$prc" -ne 0 ] || [ "$irc" -ne 0 ]; then
+              ANY_INFRA_FAILURE=1
+            fi
+          done
+          printf '%s\n' "$ANY_INFRA_FAILURE" > "$OUT/ANY_INFRA_FAILURE.txt"
+
+      - name: Seal combined archive without disclosing semantic verdicts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib, json, os, subprocess
+          from pathlib import Path
+
+          root = Path('e1-gold-006-008-first-primary')
+          allowed = {
+              'CONSEQUENCE_STABLE_IN_DECLARED_SCOPE',
+              'CONSEQUENCE_REGRESSION',
+              'ASSURANCE_INCOMPLETE',
+          }
+          unit_records=[]
+          infrastructure_failure=False
+          for unit in ('unit006','unit007','unit008'):
+              ud=root/'units'/unit
+              prc=int((ud/'PRIMARY_EXIT_CODE.txt').read_text().strip())
+              irc=int((ud/'INDEPENDENT_EXIT_CODE.txt').read_text().strip())
+              row={'unit':unit,'primary_exit_code':prc,'independent_exit_code':irc}
+              if prc == 0 and irc == 0 and (ud/'PRIMARY_GOLD_RESULT.json').is_file() and (ud/'INDEPENDENT_WITNESS_CHECK.json').is_file():
+                  result=json.loads((ud/'PRIMARY_GOLD_RESULT.json').read_text())
+                  check=json.loads((ud/'INDEPENDENT_WITNESS_CHECK.json').read_text())
+                  assert result['status'] == 'VALID_SEMANTIC_OUTCOME'
+                  assert result['verdict'] in allowed
+                  assert check['status'] == 'PASS'
+                  assert check['agreement'] is True
+                  row['sealed_pair_status']='VALID_PRIMARY_INDEPENDENT_PAIR'
+                  row['primary_result_sha256']=hashlib.sha256((ud/'PRIMARY_GOLD_RESULT.json').read_bytes()).hexdigest()
+                  row['independent_check_sha256']=hashlib.sha256((ud/'INDEPENDENT_WITNESS_CHECK.json').read_bytes()).hexdigest()
+              else:
+                  infrastructure_failure=True
+                  row['sealed_pair_status']='INFRASTRUCTURE_FAILURE'
+              unit_records.append(row)
+
+          workflow_path='.github/workflows/e1-gold-006-008-primary.yml'
+          identity={
+              'schema':'risu.e1-gold-006-008-primary-run/v0.1alpha1',
+              'status':'FIRST_GOLD_PRIMARY_ARCHIVE_SEALED' if not infrastructure_failure else 'FIRST_GOLD_PRIMARY_ARCHIVE_SEALED_WITH_INFRASTRUCTURE_FAILURE',
+              'gold_freeze_commit':'c4a61623217de2bfa08f090359d952c7ee660fcc',
+              'execution_commit':os.environ['GITHUB_SHA'],
+              'github_run_id':os.environ['GITHUB_RUN_ID'],
+              'github_run_attempt':os.environ['GITHUB_RUN_ATTEMPT'],
+              'workflow_git_blob':subprocess.check_output(['git','rev-parse',f'HEAD:{workflow_path}'],text=True).strip(),
+              'semantic_verdicts_intentionally_omitted_from_run_record':True,
+              'human_result_inspection_before_upload':False,
+              'units':unit_records,
+          }
+          (root/'PRIMARY_RUN_RECORD.json').write_text(json.dumps(identity,indent=2,sort_keys=True)+'\n')
+
+          entries=[]
+          for p in sorted(x for x in root.rglob('*') if x.is_file() and x.name != 'ARCHIVE_MANIFEST.json'):
+              b=p.read_bytes()
+              entries.append({'path':p.relative_to(root).as_posix(),'size':len(b),'sha256':hashlib.sha256(b).hexdigest()})
+          manifest={
+              'schema':'risu.e1-gold-006-008-primary-archive/v0.1alpha1',
+              'status':'SEALED_FIRST_GOLD_PRIMARY_ARCHIVE',
+              'execution_commit':os.environ['GITHUB_SHA'],
+              'entry_count':len(entries),
+              'entries':entries,
+          }
+          (root/'ARCHIVE_MANIFEST.json').write_text(json.dumps(manifest,indent=2,sort_keys=True)+'\n')
+          print(json.dumps({'status':'COMBINED_GOLD_ARCHIVE_READY','units':3,'entry_count':len(entries),'infrastructure_failure':infrastructure_failure},sort_keys=True))
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: e1-gold-006-008-first-primary-${{ github.sha }}-${{ github.run_id }}
+          path: e1-gold-006-008-first-primary/
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Report only generic archive completion state
+        shell: bash
+        run: |
+          if [ "$(cat e1-gold-006-008-first-primary/ANY_INFRA_FAILURE.txt)" -eq 0 ]; then
+            echo 'ALL_THREE_PRIMARY_INDEPENDENT_PAIRS_SEALED'
+            exit 0
+          fi
+          echo 'COMBINED_GOLD_ARCHIVE_SEALED_WITH_INFRASTRUCTURE_FAILURE'
+          exit 1
