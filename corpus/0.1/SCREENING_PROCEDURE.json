@@ -1,0 +1,135 @@
+{
+  "procedure_id": "RISU_CORPUS_0.1_SCREENING_PROCEDURE_001",
+  "procedure_schema": "risu.corpus-screening-procedure/v0.1alpha1",
+  "status_at_commit": "PRECOMMITTED_BEFORE_CANDIDATE_DISCOVERY",
+  "protocol": {
+    "id": "PROSPECTIVE_CORPUS_0.1_PROTOCOL",
+    "sha256": "9fbf3fcdf48e5554840c4f2418803779ad82757e1a5df71411212421c225ad70",
+    "external_timestamp_record": "protocols/EXTERNAL_TIMESTAMP_RECORD_001.json",
+    "external_timestamp_requirement": "MUST_ALREADY_BE_SATISFIED"
+  },
+  "purpose": "Remove researcher discretion from candidate ordering and separate discovery, eligibility adjudication, enrollment, semantic authoring, and RISU verdict observation.",
+  "stage_separation": [
+    {
+      "stage": 0,
+      "name": "DISCOVERY_POOL_FREEZE",
+      "allowed_information": [
+        "repository or package identity",
+        "organization identity",
+        "public description or README-level purpose",
+        "whether the artifact plausibly exposes an API or tool projection",
+        "coarse carrier or mechanism family"
+      ],
+      "prohibited_information": [
+        "RISU verdict",
+        "known consequence-regression issue or bug status used as a selection rationale",
+        "detailed target implementation path chosen because it appears to omit a guard"
+      ],
+      "output": "CANDIDATE_POOL.json",
+      "freeze_rule": "The candidate pool is committed before detailed eligibility screening."
+    },
+    {
+      "stage": 1,
+      "name": "DETERMINISTIC_ORDER",
+      "order_key": "sha256(lowercase(protocol_sha256 + ':' + canonical_candidate_id))",
+      "canonical_candidate_id": "<target-owner>/<target-repo-or-package>::<operation-family-or-discovery-slot>",
+      "tie_break": "canonical_candidate_id lexical ascending",
+      "rule": "No manual reordering after the candidate pool is frozen."
+    },
+    {
+      "stage": 2,
+      "name": "ELIGIBILITY_SCREENING",
+      "allowed_information": [
+        "source operation semantics",
+        "target projection surface and implementation",
+        "public reproducible evidence needed to apply the protocol inclusion and exclusion rules",
+        "organization, stratum, and carrier family needed for diversity constraints"
+      ],
+      "prohibited_information": [
+        "running RISU Verify on the candidate",
+        "observing a RISU C/D/O or Exact result",
+        "searching issue trackers for a known target bug before the enrollment decision"
+      ],
+      "decision": "ELIGIBLE or REJECTED with one or more protocol-grounded reasons",
+      "log_rule": "Every screened candidate is appended to SCREENING_LOG.jsonl in deterministic order."
+    },
+    {
+      "stage": 3,
+      "name": "CONSTRAINT_AWARE_ENROLLMENT",
+      "target": 8,
+      "max_per_organization": 2,
+      "minimum_organizations_at_completion": 4,
+      "minimum_carrier_or_mechanism_families_at_completion": 3,
+      "required_strata_at_completion": [
+        "AGENT_FACING",
+        "NON_AGENT_SPECIFIC"
+      ],
+      "rule": "Take eligible candidates in deterministic order unless enrollment would violate the hard per-organization cap. Diversity gates are completion constraints, not result quotas. If the frozen pool cannot satisfy them without outcome-driven substitution, report INSUFFICIENT_DIVERSITY and freeze the failure rather than changing the procedure."
+    },
+    {
+      "stage": 4,
+      "name": "POST_ENROLLMENT_AUTHORING",
+      "rule": "Only after enrollment may the detailed semantic instance, evidence envelope, adapter, and friction ledger be completed. AI or heuristics may propose authoring material but may not establish evidence facts or issue a verdict. Human acceptance is required before verifier execution."
+    },
+    {
+      "stage": 5,
+      "name": "VERDICT_OBSERVATION",
+      "rule": "RISU Verify runs only after the unit is enrolled and its authoring freeze is committed. PRESERVED, PRESERVED_IN_DECLARED_SCOPE, CONSEQUENCE_REGRESSION, INCOMPLETE_ASSURANCE, integrity failures, and null findings are all retained."
+    }
+  ],
+  "discovery_design": {
+    "pool_target": 24,
+    "minimum_pool_target_before_screening": 16,
+    "strata": [
+      "AGENT_FACING",
+      "NON_AGENT_SPECIFIC"
+    ],
+    "preferred_organization_diversity": "At least 8 organizations in the frozen discovery pool when feasible.",
+    "preferred_mechanism_diversity": [
+      "HTTP_PRECONDITION_OR_ETAG",
+      "REVISION_OR_RESOURCE_VERSION",
+      "COMMIT_OR_OBJECT_IDENTITY",
+      "OTHER_VERSION_BOUND_EFFECT"
+    ],
+    "metadata_only_discovery_rule": "Discovery may use broad repository/package search and README-level metadata. Detailed operation implementation inspection belongs to eligibility screening after the pool freeze."
+  },
+  "rejection_reason_codes": [
+    "NOT_INDEPENDENT_EXTERNAL_SYSTEM",
+    "NO_CONSEQUENTIAL_WRITE_OR_STATE_TRANSITION",
+    "NO_PLAUSIBLE_VERSION_BOUND_EFFECT",
+    "SOURCE_OR_TARGET_NOT_REPRODUCIBLY_PINNABLE",
+    "BOUNDED_VBE_WORLDS_NOT_DECLARABLE_WITHOUT_VERDICT",
+    "CARRIER_EVIDENCE_NOT_SEPARABLE_FROM_SEMANTIC_INTERPRETATION",
+    "KNOWN_RISU_DETECTABLE_BUG_USED_FOR_SELECTION",
+    "RISU_AUTHORED_TARGET_OR_TOY",
+    "REQUIRES_FROZEN_CORE_EXPANSION",
+    "ORGANIZATION_CAP_REACHED",
+    "DUPLICATE_OPERATIONAL_UNIT"
+  ],
+  "friction_ledger": {
+    "required_fields": [
+      "operation_identification",
+      "source_semantic_reconstruction",
+      "boundary_definition",
+      "evidence_acquisition",
+      "version_binding_discovery",
+      "adapter_or_envelope_authoring",
+      "human_correction",
+      "verification_runtime"
+    ],
+    "time_unit": "seconds",
+    "record_wall_clock_and_active_estimate": true,
+    "record_corrections": true,
+    "record_automation_opportunities_only_after_observation": true
+  },
+  "anti_bias_controls": {
+    "verdict_blind_enrollment": true,
+    "issue_tracker_bug_search_before_enrollment": false,
+    "known_bug_hunt": false,
+    "manual_candidate_reordering": false,
+    "result_quota": null,
+    "replacement_based_on_verdict": false,
+    "post_hoc_exclusion_based_on_unfavorable_result": false
+  },
+  "change_control": "Do not edit this procedure in place after candidate discovery begins. Any change requires a numbered procedure amendment stating whether pool freeze, screening, enrollment, authoring, or verdict observation had begun."
+}

@@ -1,0 +1,33 @@
+{
+  "rule_id": "RISU_CORPUS_0.1_OPERATION_SELECTION_RULE_001",
+  "rule_schema": "risu.corpus-operation-selection/v0.1alpha1",
+  "status_at_commit": "PRECOMMITTED_BEFORE_DETAILED_ELIGIBILITY_SCREENING",
+  "applies_to_pool": "RISU_CORPUS_0.1_CANDIDATE_POOL_001",
+  "purpose": "Prevent researcher choice of a favorable operation inside an already-frozen candidate repository.",
+  "procedure": [
+    "Identify the target artifact's publicly exposed mutating operations within the candidate discovery slot without consulting issue or bug trackers.",
+    "Canonicalize operation names to lowercase ASCII and sort lexicographically.",
+    "For each operation in that order, identify the corresponding source-system operation using public documentation or source evidence.",
+    "The first operation whose source semantics contain a material version, revision, ETag, commit/object identity, resourceVersion, state lineage/serial, or equivalent precondition relevant to the effect becomes the candidate operation.",
+    "If the target operation cannot be reproducibly pinned, cannot be mapped to a source operation, or the source version distinction is not consequence-defining under a bounded declaration, continue to the next operation in lexical order.",
+    "If no operation qualifies, reject the candidate with a protocol-grounded reason and continue to the next candidate in hash order.",
+    "Do not run RISU Verify, inspect RISU C/D/O or Exact output, or consult target issue/bug trackers until the enrollment decision is committed."
+  ],
+  "operation_identity": {
+    "required_before_enrollment": [
+      "target repository and immutable revision",
+      "target operation name",
+      "target implementation or generated-definition path",
+      "source operation identity",
+      "source semantic evidence locator",
+      "coarse carrier/mechanism family"
+    ],
+    "not_required_before_enrollment": [
+      "RISU verdict",
+      "counterexample",
+      "repair suggestion",
+      "known issue status"
+    ]
+  },
+  "change_control": "Do not edit in place after detailed eligibility screening begins. Any change requires a numbered amendment with the screening state recorded."
+}

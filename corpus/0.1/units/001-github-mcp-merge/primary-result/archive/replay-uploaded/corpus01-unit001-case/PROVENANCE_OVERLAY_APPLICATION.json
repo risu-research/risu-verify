@@ -1,0 +1,23 @@
+{
+  "added_edges": [
+    {
+      "from": "FACT-U001-EXPECTED-INPUT",
+      "relation": "USES",
+      "to": "DERIVE-EXACT"
+    },
+    {
+      "from": "FACT-U001-LIBRARY-PIN",
+      "relation": "USES",
+      "to": "DERIVE-EXACT"
+    }
+  ],
+  "amended_adapter_sha256": "424199a68454abe55096a21c0d2d443fee70823c397c126238d4c66fcbc03f95",
+  "frozen_vbe_compiler_unchanged": true,
+  "non_edge_adapter_content_identical": true,
+  "original_adapter_sha256": "4f69955a4523e169c5d7b3971f76d7c449ee86fe6414e238f9976171283301ef",
+  "overlay_path": "/home/runner/work/risu-verify/risu-verify/corpus/0.1/units/001-github-mcp-merge/PROVENANCE_OVERLAY_002.json",
+  "overlay_sha256": "67358e9a49b13ae5e6ac865df6e9f11277566917d0a1b1ce7f61f8cb5eeead65",
+  "schema": "risu.corpus-provenance-overlay-application/v0.1alpha1",
+  "source_contract_unchanged": true,
+  "unit_id": "corpus01-unit-001"
+}

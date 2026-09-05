@@ -1,0 +1,38 @@
+{
+  "add_exact_provenance_for_fact_ids": [
+    "GH_U001_EXPECTED_HEAD_INPUT",
+    "GH_U001_LIBRARY_PIN"
+  ],
+  "amendment_id": "RISU_CORPUS_0.1_AUTHORING_PROTOCOL_AMENDMENT_002",
+  "exact_claim_root": "CLAIM-EXACT",
+  "exact_derivation_node": "DERIVE-EXACT",
+  "expected_added_edges": [
+    {
+      "from": "FACT-U001-EXPECTED-INPUT",
+      "relation": "USES",
+      "to": "DERIVE-EXACT"
+    },
+    {
+      "from": "FACT-U001-LIBRARY-PIN",
+      "relation": "USES",
+      "to": "DERIVE-EXACT"
+    }
+  ],
+  "invariants": [
+    "No evidence binding, derivation fact, fact status, provenance node, claim root, source contract, target program, structural template, bounded world, target pattern, or semantic consequence may be added, removed, or changed.",
+    "Each added edge must originate at the already-frozen provenance node of an already-ESTABLISHED derivation fact.",
+    "Each corrected fact must already be required by the frozen compiled target program.",
+    "The only permitted adapter mutation is addition of the two expected provenance edges.",
+    "The frozen core and tools/vbe_compile.py are unchanged."
+  ],
+  "mode": "ADD_EXISTING_FACT_PROVENANCE_EDGES_ONLY",
+  "original_authoring_freeze_commit": "355a4b77187d5b2118ac71eae9dec1cadc036847",
+  "original_envelope": {
+    "path": "corpus/0.1/units/001-github-mcp-merge/vbe.envelope.json",
+    "sha256": "6f091ef58d1bd36707aa88c9a50e2f35aace7dd5d9045440c0b20f9915657fbe"
+  },
+  "overlay_id": "RISU_CORPUS_0.1_U001_PROVENANCE_OVERLAY_002",
+  "primary_verdict_observed_before_overlay": false,
+  "schema": "risu.corpus-provenance-overlay/v0.1alpha1",
+  "unit_id": "corpus01-unit-001"
+}

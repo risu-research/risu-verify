@@ -1,0 +1,55 @@
+{
+  "byte_observations": [
+    {
+      "id": "SRC_PULL_REQUEST_OPTIONS_SHA_FIELD",
+      "observation": "PullRequestOptions contains a SHA string field used by the merge request body."
+    },
+    {
+      "exact_excerpt": "SHA that pull request head must match to allow merge.",
+      "id": "SRC_HEAD_MATCH_CONDITION",
+      "observation": "The pinned library documents SHA as a merge precondition on pull-request head identity."
+    }
+  ],
+  "evidence_id": "CORPUS01-U001-SOURCE-GITHUB-MERGE-SHA",
+  "evidence_layers": [
+    "L0_IDENTITY_OR_UPSTREAM_REFERENCE",
+    "L1_PINNED_BYTES_OR_IMMUTABLE_ARTIFACT",
+    "L3_SEMANTIC_INTERPRETATION"
+  ],
+  "evidence_schema": "risu.corpus-evidence/v0.1alpha1",
+  "lane": "SOURCE",
+  "not_claimed": [
+    "live GitHub service conformance independently re-tested by RISU",
+    "general equivalence of all merge modes or merge failure causes",
+    "provider attestation beyond the cited public source and documentation"
+  ],
+  "official_documentation_corroboration": {
+    "api_version_context": "2022-11-28 endpoint semantics",
+    "immutability_boundary": "This documentation observation is corroborative and was not used as an immutable replacement for the pinned go-github source file.",
+    "observations": [
+      "The sha request field is documented as the pull-request head SHA that must match to allow merge.",
+      "GitHub documents HTTP 409 Conflict when sha is supplied and the pull-request head does not match."
+    ],
+    "observed_at_utc": "2026-09-05T01:05:00Z",
+    "page": "REST API endpoints for pull requests - Merge a pull request",
+    "publisher": "GitHub"
+  },
+  "semantic_interpretation": {
+    "interpretation_boundary": "This is a bounded consequence contract for a merge request that supplies the reviewed head SHA. It does not claim all GitHub merge failures reduce to head mismatch.",
+    "match_condition": "request_head_sha == reviewed_head_sha",
+    "match_consequence": "MERGED_REVIEWED_HEAD",
+    "mismatch_consequence": "STALE_REQUEST_REJECTED",
+    "request_time_version_coordinate": "request_head_sha",
+    "reviewed_version_coordinate": "reviewed_head_sha",
+    "source_operation": "PUT /repos/{owner}/{repo}/pulls/{pull_number}/merge"
+  },
+  "strength": "PINNED_UPSTREAM_GIT_OBJECT_PLUS_OFFICIAL_DOCUMENTATION_CORROBORATION",
+  "unit_id": "corpus01-unit-001",
+  "upstream": {
+    "binding_note": "Commit and Git blob identity pin the upstream file. This RISU evidence record is not a full byte-for-byte copy of that Git blob.",
+    "commit": "34349a88bac3",
+    "git_blob_sha1": "27e3784876f4cf0f8bc8b640296f4317546f8044",
+    "path": "github/pulls.go",
+    "repository": "google/go-github"
+  }
+}

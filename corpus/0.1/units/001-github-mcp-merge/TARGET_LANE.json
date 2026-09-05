@@ -1,0 +1,94 @@
+{
+  "callable_surface": {
+    "corpus_world_precondition": "The bounded Unit 001 call supplies expectedHeadSha=H0.",
+    "input_type": "string",
+    "note": "Optionality in the general tool schema is not treated as preservation by itself. The corpus claim is the narrower guarded-call profile in which the reviewed SHA is supplied.",
+    "required_by_schema": false,
+    "reviewed_binding_input": "expectedHeadSha"
+  },
+  "candidate_id": "github/github-mcp-server::github-version-bound-write",
+  "evidence": [
+    {
+      "path": "corpus/0.1/units/001-github-mcp-merge/evidence/target-github-mcp-merge-implementation.json",
+      "sha256": "8e85393d39c1eac2c9739c821e5371225c0894699d03158e54590d68056a6fab"
+    },
+    {
+      "path": "corpus/0.1/units/001-github-mcp-merge/evidence/target-github-mcp-sha-pinning-test.json",
+      "sha256": "e2881bdbac2a254968ba0c1d883b05160245961bcaa7385efdb5be6146ec7af2"
+    },
+    {
+      "path": "corpus/0.1/units/001-github-mcp-merge/evidence/target-go-github-pin.json",
+      "sha256": "d6eb30136885453ee0be4dbe37648ec896edc4269897d3c02e483c739d3fffe3"
+    }
+  ],
+  "evidence_strength_boundary": {
+    "independent_live_github_execution": "NOT_CLAIMED",
+    "live_remote_mcp_deployment_conformance": "NOT_CLAIMED",
+    "model_relative": true,
+    "pinned_target_implementation": "ESTABLISHED",
+    "pinned_target_test": "ESTABLISHED",
+    "target_dependency_pin": "ESTABLISHED"
+  },
+  "freeze_rule": "After this lane is committed, target facts and mechanism interpretation may not be strengthened, weakened, or replaced in response to the Unit 001 primary RISU result.",
+  "independence_controls": {
+    "historical_risu_result_used_as_target_fact": false,
+    "issue_tracker_consulted_for_bug_discovery": false,
+    "primary_risu_verdict_observed": false,
+    "source_success_or_failure_label_used_to_invent_missing_target_mechanism": false
+  },
+  "lane_schema": "risu.corpus-target-lane/v0.1alpha1",
+  "mechanism_model": {
+    "binding_relation": "provider compares request sha with current pull-request head",
+    "current_version_location": "GitHub provider-side pull-request head at merge evaluation cut",
+    "local_preflight_read_required_for_claim": false,
+    "match_native_kind": "MERGE_ACCEPTED",
+    "mismatch_native_kind": "REJECTED_EXPECTED_HEAD_MISMATCH",
+    "reviewed_version_carrier": "expectedHeadSha",
+    "silent_unguarded_retry_in_pinned_handler_test": "NOT_OBSERVED"
+  },
+  "open_uncertainties": [
+    "The target's general merge tool permits expectedHeadSha to be omitted; Unit 001 evaluates only the predeclared guarded-call profile where H0 is supplied.",
+    "Pinned tests exercise the handler and a mocked GitHub response, not the live hosted GitHub service.",
+    "The provider-side current head is an operative state coordinate, not a separately exposed MCP input."
+  ],
+  "operative_path": [
+    "merge_pull_request reads expectedHeadSha from MCP arguments",
+    "the value is assigned to github.PullRequestOptions.SHA",
+    "that options object is passed to client.PullRequests.Merge",
+    "the pinned go-github merge request serializes the SHA precondition to GitHub",
+    "GitHub evaluates the supplied SHA against request-time pull-request head state before merge effect"
+  ],
+  "source_lane_freeze_commit": "499c34838c9ec10a4b7318d866d76af84a4687d5",
+  "status": "FROZEN_TARGET_LANE",
+  "target": {
+    "dependency_manifest": "go.mod",
+    "implementation_path": "pkg/github/pullrequests.go",
+    "operation": "merge_pull_request",
+    "repository": "github/github-mcp-server",
+    "revision": "9205304fedf10540c33ae41fcf6352fa97dcc9be",
+    "source_library_pin": "github.com/google/go-github/v89@34349a88bac3"
+  },
+  "target_facts": [
+    {
+      "basis": "target implementation evidence",
+      "id": "GH_U001_EXPECTED_HEAD_INPUT",
+      "status": "ESTABLISHED"
+    },
+    {
+      "basis": "target implementation evidence",
+      "id": "GH_U001_EXPECTED_HEAD_FORWARDED",
+      "status": "ESTABLISHED"
+    },
+    {
+      "basis": "target dependency evidence",
+      "id": "GH_U001_LIBRARY_PIN",
+      "status": "ESTABLISHED"
+    },
+    {
+      "basis": "pinned target unit-test evidence",
+      "id": "GH_U001_MISMATCH_FAILS_CLOSED_TEST",
+      "status": "ESTABLISHED"
+    }
+  ],
+  "unit_id": "corpus01-unit-001"
+}

@@ -1,0 +1,36 @@
+{
+  "archival_capture": {
+    "capture_commit_sha": "3fdec7e33d56f43aced09917af6af4299da9a560",
+    "status": "PASS",
+    "workflow_run_id": 33941343083
+  },
+  "authoring_freeze_commit": "355a4b77187d5b2118ac71eae9dec1cadc036847",
+  "closure_gates": {
+    "CLOSE_1_FIRST_PRIMARY_IDENTITY_IMMUTABLE": "PASS",
+    "CLOSE_2_FROZEN_SCIENTIFIC_INPUT_IDENTITY_IMMUTABLE": "PASS",
+    "CLOSE_3_CLAIMED_EXACT_ARCHIVAL_BYTES_VERIFIED": "PASS",
+    "CLOSE_4_PRIMARY_AND_REPLAY_ARCHIVES_CRYPTOGRAPHICALLY_ANCHORED": "PASS",
+    "CLOSE_5_FINAL_PR_HEAD_CORPUS_VALIDATOR_AND_PUBLIC_SEMANTIC_SMOKE": "PENDING_FINAL_PR_HEAD",
+    "CLOSE_6_PR1_MERGED_WITH_MERGE_SHA_RECORDED": "PENDING"
+  },
+  "controls": {
+    "archive_capture_did_not_execute_primary_semantic_verifier": true,
+    "known_audit_defects_retained_not_rewritten": true,
+    "post_result_replay_is_secondary": true,
+    "primary_workflow_retired": true
+  },
+  "first_primary": {
+    "artifact_id": 9961142844,
+    "artifact_zip_sha256": "b4bce32ad794e0e356a4bd886084021e49a245c9696c8eca42c32b45dcebe27e",
+    "certificate_sha256": "ac57a340d5300602bb7655a5bd16f559c35bd751011a09bb5e071d69cfeca138",
+    "github_actions_run_id": 33939000332,
+    "product_status": "PRESERVED",
+    "proof_digest": "23a6f2dc76c0bd7a99f76b973bf6cadacfa542852e18feac0e740798ab84ae8c",
+    "semantic_exit_code": 0
+  },
+  "next_state_rule": "Set status to CLOSED only after the exact final PR head passes the Corpus 0.1 validator, Unit 001 archive verifier, and public semantic smoke; PR #1 is then merged without head drift; and the merge SHA plus final CI identity are recorded on main.",
+  "schema": "risu.corpus-unit-closure/v0.1alpha1",
+  "scientific_state": "FROZEN_FIRST_PRIMARY_RESULT",
+  "status": "READY_FOR_FINAL_CI_AND_MERGE",
+  "unit_id": "corpus01-unit-001"
+}

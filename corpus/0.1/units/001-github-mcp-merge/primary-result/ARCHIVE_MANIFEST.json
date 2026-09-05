@@ -1,0 +1,182 @@
+{
+  "canonical_primary": {
+    "artifact_id": 9961142844,
+    "artifact_name": "corpus01-unit001-primary-3b114ba53476ac66ba18759725eebf0fa2b55c20",
+    "github_actions_run_id": 33939000332,
+    "uploaded_entries": [
+      {
+        "bytes": 2871,
+        "path": "corpus01-unit001-artifact.sha256",
+        "sha256": "2fc12b490c7922c71a456d5c36dcdf32fa972709bea272e137388026447456ca"
+      },
+      {
+        "bytes": 876,
+        "path": "corpus01-unit001-case/PROVENANCE_OVERLAY_APPLICATION.json",
+        "sha256": "da61cd492e2ba0d1cccfce6a451aebb69e2d1cbf58b3715dea250081617da92d"
+      },
+      {
+        "bytes": 2012,
+        "path": "corpus01-unit001-case/VBE_COMPILE_MANIFEST.json",
+        "sha256": "5f82e63df66ef2a8fa03a869bf1a932287d74835934bc9ae1f55d64d90b1cd1f"
+      },
+      {
+        "bytes": 4426,
+        "path": "corpus01-unit001-console.json",
+        "sha256": "65946b88c7a5da3b7a1289ed2dacbaf37636d7d206e6c19731448dbdcfc3fef4"
+      },
+      {
+        "bytes": 53877,
+        "path": "corpus01-unit001-output/certificate.json",
+        "sha256": "ac57a340d5300602bb7655a5bd16f559c35bd751011a09bb5e071d69cfeca138"
+      },
+      {
+        "bytes": 57,
+        "path": "corpus01-unit001-output/consumer.log",
+        "sha256": "e9e761cbcedfda246c1d55b5f79887b91683aa10e44b6ec1946fc896eed977e0"
+      },
+      {
+        "bytes": 1367,
+        "path": "corpus01-unit001-output/producer.log",
+        "sha256": "7b095de59d1daa2e508b8b1d17e7f49ef2a6b28287f70bacae076cb4c32cd346"
+      },
+      {
+        "bytes": 4426,
+        "path": "corpus01-unit001-output/report.json",
+        "sha256": "65946b88c7a5da3b7a1289ed2dacbaf37636d7d206e6c19731448dbdcfc3fef4"
+      },
+      {
+        "bytes": 2199,
+        "path": "corpus01-unit001-output/report.md",
+        "sha256": "1991e7b4418b01929d4930ccf1e5489f75b480a4d1831cf1c488a32dd0fd97c4"
+      },
+      {
+        "bytes": 1506,
+        "path": "corpus01-unit001-output/run-manifest.json",
+        "sha256": "956ec0fd8cb61fe3d611d0df3724a47c6b3151636c3bc79328ee85c14e6d3ff7"
+      },
+      {
+        "bytes": 1081,
+        "path": "corpus01-unit001-primary-observation.json",
+        "sha256": "f53d34fc4689ffbbaccd9267ccaf50c433543b02096cd2ac79d86a610d1bb5a9"
+      },
+      {
+        "bytes": 2,
+        "path": "corpus01-unit001-semantic-exit-code.txt",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    ],
+    "uploaded_file_count": 12,
+    "zip_bytes": 20203,
+    "zip_repository_path": "corpus/0.1/units/001-github-mcp-merge/primary-result/archive/raw/corpus01-unit001-primary.zip",
+    "zip_sha256": "b4bce32ad794e0e356a4bd886084021e49a245c9696c8eca42c32b45dcebe27e"
+  },
+  "deterministic_replay": {
+    "artifact_id": 9961263871,
+    "artifact_name": "corpus01-unit001-primary-519ea278188097b86c37ac69b38b000dde0ebe14",
+    "byte_identical_entry_count": 10,
+    "github_actions_run_id": 33939366714,
+    "run_specific_entry_count": 2,
+    "uploaded_entries": [
+      {
+        "bytes": 2871,
+        "path": "corpus01-unit001-artifact.sha256",
+        "relation_to_primary": "RUN_SPECIFIC",
+        "sha256": "baec948f2c6480d555e25271acda74004acd76a3f7c012fdaed155c10ee55b22"
+      },
+      {
+        "bytes": 876,
+        "path": "corpus01-unit001-case/PROVENANCE_OVERLAY_APPLICATION.json",
+        "relation_to_primary": "BYTE_IDENTICAL",
+        "sha256": "da61cd492e2ba0d1cccfce6a451aebb69e2d1cbf58b3715dea250081617da92d"
+      },
+      {
+        "bytes": 2012,
+        "path": "corpus01-unit001-case/VBE_COMPILE_MANIFEST.json",
+        "relation_to_primary": "BYTE_IDENTICAL",
+        "sha256": "5f82e63df66ef2a8fa03a869bf1a932287d74835934bc9ae1f55d64d90b1cd1f"
+      },
+      {
+        "bytes": 4426,
+        "path": "corpus01-unit001-console.json",
+        "relation_to_primary": "BYTE_IDENTICAL",
+        "sha256": "65946b88c7a5da3b7a1289ed2dacbaf37636d7d206e6c19731448dbdcfc3fef4"
+      },
+      {
+        "bytes": 53877,
+        "path": "corpus01-unit001-output/certificate.json",
+        "relation_to_primary": "BYTE_IDENTICAL",
+        "sha256": "ac57a340d5300602bb7655a5bd16f559c35bd751011a09bb5e071d69cfeca138"
+      },
+      {
+        "bytes": 57,
+        "path": "corpus01-unit001-output/consumer.log",
+        "relation_to_primary": "BYTE_IDENTICAL",
+        "sha256": "e9e761cbcedfda246c1d55b5f79887b91683aa10e44b6ec1946fc896eed977e0"
+      },
+      {
+        "bytes": 1367,
+        "path": "corpus01-unit001-output/producer.log",
+        "relation_to_primary": "BYTE_IDENTICAL",
+        "sha256": "7b095de59d1daa2e508b8b1d17e7f49ef2a6b28287f70bacae076cb4c32cd346"
+      },
+      {
+        "bytes": 4426,
+        "path": "corpus01-unit001-output/report.json",
+        "relation_to_primary": "BYTE_IDENTICAL",
+        "sha256": "65946b88c7a5da3b7a1289ed2dacbaf37636d7d206e6c19731448dbdcfc3fef4"
+      },
+      {
+        "bytes": 2199,
+        "path": "corpus01-unit001-output/report.md",
+        "relation_to_primary": "BYTE_IDENTICAL",
+        "sha256": "1991e7b4418b01929d4930ccf1e5489f75b480a4d1831cf1c488a32dd0fd97c4"
+      },
+      {
+        "bytes": 1506,
+        "path": "corpus01-unit001-output/run-manifest.json",
+        "relation_to_primary": "BYTE_IDENTICAL",
+        "sha256": "956ec0fd8cb61fe3d611d0df3724a47c6b3151636c3bc79328ee85c14e6d3ff7"
+      },
+      {
+        "bytes": 1081,
+        "path": "corpus01-unit001-primary-observation.json",
+        "relation_to_primary": "RUN_SPECIFIC",
+        "sha256": "b18beb049aa6cbd2f7d29e1a43e41effe8e7167b53ad332cccb4025a80d18c83"
+      },
+      {
+        "bytes": 2,
+        "path": "corpus01-unit001-semantic-exit-code.txt",
+        "relation_to_primary": "BYTE_IDENTICAL",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    ],
+    "uploaded_file_count": 12,
+    "zip_bytes": 20205,
+    "zip_repository_path": "corpus/0.1/units/001-github-mcp-merge/primary-result/archive/raw/corpus01-unit001-replay.zip",
+    "zip_sha256": "5d18f5412b69f3aa4116613592e816b0bce8ff84119f1fded9a6c611c46837f1"
+  },
+  "known_archival_limit": {
+    "audit_reference": "U001-AUDIT-002",
+    "full_compiled_case_tree_present_in_original_primary_artifact": false,
+    "meaning": "The primary Actions artifact did not upload the complete compiled-case tree that existed during execution. This archive preserves every byte that was actually uploaded; it does not fabricate or regenerate the omitted runtime tree."
+  },
+  "purpose": "Permanent exact-byte preservation of the bytes actually uploaded by the canonical first primary run and the post-result deterministic replay. This manifest does not reconstruct files that were never present in those Actions artifacts.",
+  "repository_capture": {
+    "capture_commit_sha": "3fdec7e33d56f43aced09917af6af4299da9a560",
+    "capture_input_head_sha": "2be55bd208c7b6c5ec3394cd55ee442cb130b8a8",
+    "capture_workflow_conclusion": "success",
+    "capture_workflow_run_id": 33941343083,
+    "method": "GitHub Actions same-repository artifact download by immutable artifact ID, SHA-256 precheck, per-entry SHA-256 validation, then git commit by github-actions[bot]",
+    "primary_uploaded_tree": "corpus/0.1/units/001-github-mcp-merge/primary-result/archive/primary-uploaded",
+    "replay_uploaded_tree": "corpus/0.1/units/001-github-mcp-merge/primary-result/archive/replay-uploaded"
+  },
+  "schema": "risu.corpus-unit-archive-manifest/v0.1alpha1",
+  "scientific_boundary": {
+    "archival_capture_is_transport_only": true,
+    "canonical_first_primary_identity_unchanged": true,
+    "primary_semantic_verifier_reexecuted_for_archival_capture": false,
+    "replay_reclassified_as_primary": false,
+    "scientific_inputs_rewritten": false
+  },
+  "unit_id": "corpus01-unit-001"
+}

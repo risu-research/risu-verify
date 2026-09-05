@@ -1,0 +1,50 @@
+{
+  "bounded_claim": {
+    "finding": "Within this declared guarded-call profile, the pinned projection preserved the reviewed-head consequence distinction in both admitted worlds.",
+    "in_scope": "github/github-mcp-server merge_pull_request at target revision 9205304fedf10540c33ae41fcf6352fa97dcc9be, only when expectedHeadSha is supplied as reviewed head H0, under the declared two-world otherwise-mergeable profile.",
+    "out_of_scope": ["merge_pull_request invocations that omit expectedHeadSha","general GitHub MCP merge correctness or safety","live remote MCP deployment conformance","live GitHub service re-execution","ecosystem prevalence or representative-frequency claims"]
+  },
+  "corpus_id": "PROSPECTIVE_CORPUS_0.1",
+  "cryptographic_commitments": {
+    "adapter_digest": "06479e052110de3d7d4f806827558b35d86e39346eb7a7d3bfbc1fb59da6d9cd",
+    "artifact_checksum_manifest_sha256": "2fc12b490c7922c71a456d5c36dcdf32fa972709bea272e137388026447456ca",
+    "certificate_sha256": "ac57a340d5300602bb7655a5bd16f559c35bd751011a09bb5e071d69cfeca138",
+    "compile_manifest_sha256": "5f82e63df66ef2a8fa03a869bf1a932287d74835934bc9ae1f55d64d90b1cd1f",
+    "core_archive_sha256": "bc3c0be440b1b729d3131a630491cce62f1f885fb305aa46a4483fee0adad72f",
+    "primary_observation_sha256": "f53d34fc4689ffbbaccd9267ccaf50c433543b02096cd2ac79d86a610d1bb5a9",
+    "proof_digest": "23a6f2dc76c0bd7a99f76b973bf6cadacfa542852e18feac0e740798ab84ae8c",
+    "provenance_overlay_application_sha256": "da61cd492e2ba0d1cccfce6a451aebb69e2d1cbf58b3715dea250081617da92d",
+    "provenance_overlay_sha256": "67358e9a49b13ae5e6ac865df6e9f11277566917d0a1b1ce7f61f8cb5eeead65",
+    "report_json_sha256": "65946b88c7a5da3b7a1289ed2dacbaf37636d7d206e6c19731448dbdcfc3fef4",
+    "report_md_sha256": "1991e7b4418b01929d4930ccf1e5489f75b480a4d1831cf1c488a32dd0fd97c4",
+    "run_manifest_sha256": "956ec0fd8cb61fe3d611d0df3724a47c6b3151636c3bc79328ee85c14e6d3ff7",
+    "source_semantic_digest": "04002cf8516ec9c0800777d56a151ce2ea17289533d212cd84796233754a1839"
+  },
+  "execution": {
+    "artifact": {"id":9961142844,"name":"corpus01-unit001-primary-3b114ba53476ac66ba18759725eebf0fa2b55c20","note":"The original Actions artifact is secondary transport. Exact primary metadata and reports are archived in this repository under primary-result/artifacts/.","retention_days":90,"zip_sha256":"b4bce32ad794e0e356a4bd886084021e49a245c9696c8eca42c32b45dcebe27e"},
+    "branch_head_sha": "dbf53f7b92658e6397d5ef91b86d2f94a9dce59f",
+    "github_actions_run_id": 33939000332,
+    "product_status": "PRESERVED",
+    "pull_request_merge_checkout_sha": "3b114ba53476ac66ba18759725eebf0fa2b55c20",
+    "run_attempt": 1,
+    "semantic_exit_code": 0,
+    "workflow_blob_sha": "974c9ecbcc7b3de4bdef44a5fa7be375f5573a85",
+    "workflow_path": ".github/workflows/corpus-0.1-primary.yml"
+  },
+  "instance_id": "corpus01-001-github-mcp-merge-current",
+  "integrity_notes": {"first_valid_semantic_run":true,"frozen_vbe_compiler_unchanged":true,"prior_failed_workflow_attempts_produced_no_valid_primary_semantic_outcome":true,"provenance_overlay_non_edge_adapter_content_identical":true,"provenance_overlay_source_contract_unchanged":true},
+  "result": {
+    "exact_realization": {"failure_mode":"NONE","minimal_counterexample":null,"repair_obligations":[],"status":"REALIZATION_ESTABLISHED"},
+    "product_status": "PRESERVED",
+    "structural": {"C":"C1","D":"D1","O":"O1","classification":"STRUCTURAL_ASSURANCE_ESTABLISHED","coverage_complete":true},
+    "worlds": [
+      {"coordinates":{"otherwise_mergeable":true,"request_head_sha":"H0"},"matches":true,"projected_effect":{"label":"MERGED_REVIEWED_HEAD","space":"C"},"required_consequence":"MERGED_REVIEWED_HEAD","world":"W-356628c135a9c5e2c765"},
+      {"coordinates":{"otherwise_mergeable":true,"request_head_sha":"H1"},"matches":true,"projected_effect":{"label":"STALE_REQUEST_REJECTED","space":"C"},"required_consequence":"STALE_REQUEST_REJECTED","world":"W-4fd4721b4931c7a44593"}
+    ]
+  },
+  "result_observed_at": "2026-09-05T02:25:01Z",
+  "schema": "risu.corpus-primary-result/v0.1alpha1",
+  "selection_and_authoring": {"author_accepted_instance_sha256":"80f1748fe1d0bf3e1185170fab38232323bb8def60bd0525126b7012b2dfc9ec","authoring_freeze_commit":"355a4b77187d5b2118ac71eae9dec1cadc036847","enrollment_position":1,"input_rewrite_after_result":"PROHIBITED","primary_verdict_observed_before_authoring_freeze":false,"sealed_protocol_sha256":"9fbf3fcdf48e5554840c4f2418803779ad82757e1a5df71411212421c225ad70"},
+  "status": "FROZEN_FIRST_PRIMARY_RESULT",
+  "unit_id": "corpus01-unit-001"
+}

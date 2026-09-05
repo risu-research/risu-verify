@@ -1,0 +1,27 @@
+{
+  "adapter_sha256": "424199a68454abe55096a21c0d2d443fee70823c397c126238d4c66fcbc03f95",
+  "case_id": "CORPUS01-U001-GITHUB-MCP-MERGE-VBE-COMPILED",
+  "case_metadata_sha256": "678ba40466058ba4940d56611deccd143c61baf43d25285abd42491d1b25aabe",
+  "certificate_sha256": "ac57a340d5300602bb7655a5bd16f559c35bd751011a09bb5e071d69cfeca138",
+  "consumer_log_sha256": "e9e761cbcedfda246c1d55b5f79887b91683aa10e44b6ec1946fc896eed977e0",
+  "core_archive_sha256": "bc3c0be440b1b729d3131a630491cce62f1f885fb305aa46a4483fee0adad72f",
+  "manifest_version": "0.2",
+  "package_manifest_sha256": null,
+  "predeclaration_sha256": null,
+  "producer_log_sha256": "7b095de59d1daa2e508b8b1d17e7f49ef2a6b28287f70bacae076cb4c32cd346",
+  "provenance_manifest_sha256": null,
+  "report_json_sha256": "65946b88c7a5da3b7a1289ed2dacbaf37636d7d206e6c19731448dbdcfc3fef4",
+  "report_md_sha256": "1991e7b4418b01929d4930ccf1e5489f75b480a4d1831cf1c488a32dd0fd97c4",
+  "risu_verify_version": "0.4.0-rc1",
+  "runtime": {
+    "implementation": "CPython",
+    "platform": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "source_contract_sha256": "4b80861fc7aa28891fc3d1590cc8ae7a6e95b249e5791ae61c654d398e524925",
+  "toolchain": {
+    "historical_transition": "3e78ad55f0adbd8f72d2066a54774685897e7ae7c5b19380a94c6248662cc9e2",
+    "provenance_verify": "9a3beb28bc9de7cc4e8a13f10bf6c7e22a5ca2537cb62053087ec19196886c18",
+    "risu_verify": "431f73a8df146470a97b57270b676447b0b5c3381d46708f80fed2b40f9e1210"
+  }
+}

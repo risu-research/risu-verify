@@ -1,0 +1,51 @@
+{
+  "claim_boundary": "This demonstrates deterministic replay of the frozen pipeline for the compared uploaded payloads. It is not independent reproduction and does not expand the bounded Unit 001 semantic claim.",
+  "classification": "POST_RESULT_DETERMINISTIC_REPLAY_WITNESS",
+  "comparison": {
+    "byte_identical_entries": [
+      "corpus01-unit001-case/PROVENANCE_OVERLAY_APPLICATION.json",
+      "corpus01-unit001-case/VBE_COMPILE_MANIFEST.json",
+      "corpus01-unit001-console.json",
+      "corpus01-unit001-output/certificate.json",
+      "corpus01-unit001-output/consumer.log",
+      "corpus01-unit001-output/producer.log",
+      "corpus01-unit001-output/report.json",
+      "corpus01-unit001-output/report.md",
+      "corpus01-unit001-output/run-manifest.json",
+      "corpus01-unit001-semantic-exit-code.txt"
+    ],
+    "run_specific_entries": [
+      {
+        "path": "corpus01-unit001-artifact.sha256",
+        "primary_sha256": "2fc12b490c7922c71a456d5c36dcdf32fa972709bea272e137388026447456ca",
+        "reason": "Checksum manifest differs because it commits the run-specific observation hash",
+        "replay_sha256": "baec948f2c6480d555e25271acda74004acd76a3f7c012fdaed155c10ee55b22"
+      },
+      {
+        "path": "corpus01-unit001-primary-observation.json",
+        "primary_sha256": "f53d34fc4689ffbbaccd9267ccaf50c433543b02096cd2ac79d86a610d1bb5a9",
+        "reason": "Run-specific observation identity",
+        "replay_sha256": "b18beb049aa6cbd2f7d29e1a43e41effe8e7167b53ad332cccb4025a80d18c83"
+      }
+    ],
+    "semantic_payload_byte_identical": true,
+    "uploaded_entry_count_each": 12
+  },
+  "not_an_independent_replication": true,
+  "primary": {
+    "artifact_checksum_manifest_sha256": "2fc12b490c7922c71a456d5c36dcdf32fa972709bea272e137388026447456ca",
+    "artifact_id": 9961142844,
+    "observation_sha256": "f53d34fc4689ffbbaccd9267ccaf50c433543b02096cd2ac79d86a610d1bb5a9",
+    "run_id": 33939000332,
+    "zip_sha256": "b4bce32ad794e0e356a4bd886084021e49a245c9696c8eca42c32b45dcebe27e"
+  },
+  "replay": {
+    "artifact_checksum_manifest_sha256": "baec948f2c6480d555e25271acda74004acd76a3f7c012fdaed155c10ee55b22",
+    "artifact_id": 9961263871,
+    "observation_sha256": "b18beb049aa6cbd2f7d29e1a43e41effe8e7167b53ad332cccb4025a80d18c83",
+    "run_id": 33939366714,
+    "zip_sha256": "5d18f5412b69f3aa4116613592e816b0bce8ff84119f1fded9a6c611c46837f1"
+  },
+  "schema": "risu.corpus-deterministic-replay-comparison/v0.1alpha1",
+  "unit_id": "corpus01-unit-001"
+}

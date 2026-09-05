@@ -1,0 +1,91 @@
+{
+  "admissibility": {
+    "expr": "otherwise_mergeable == true",
+    "held_fixed": [
+      "authorization permits the merge request",
+      "the pull request is open and otherwise mergeable",
+      "merge_method is supported",
+      "no unrelated provider, validation, abuse-rate, or transport failure determines the outcome"
+    ],
+    "material_transition": "The pull-request head may move from reviewed H0 to H1 after review and before the merge request is evaluated.",
+    "post_review_material_transition_possible": true
+  },
+  "authoring_protocol_path": "corpus/0.1/AUTHORING_PROTOCOL.json",
+  "bounded_worlds": [
+    {
+      "otherwise_mergeable": true,
+      "request_head_sha": "H0",
+      "required_consequence": "MERGED_REVIEWED_HEAD",
+      "reviewed_head_sha": "H0",
+      "world": "W_MATCH"
+    },
+    {
+      "otherwise_mergeable": true,
+      "request_head_sha": "H1",
+      "required_consequence": "STALE_REQUEST_REJECTED",
+      "reviewed_head_sha": "H0",
+      "world": "W_STALE"
+    }
+  ],
+  "candidate_id": "github/github-mcp-server::github-version-bound-write",
+  "consequence_contract": {
+    "contract_id": "SRC-CORPUS01-U001-GITHUB-REVIEWED-HEAD-MERGE",
+    "current_coordinate": {
+      "domain": [
+        "H0",
+        "H1"
+      ],
+      "name": "request_head_sha"
+    },
+    "effect_cut": "GitHub merge endpoint evaluation of the supplied head-SHA precondition before merge effect",
+    "lens": "L_REVIEWED_HEAD_EFFECT",
+    "match_predicate": "request_head_sha == reviewed_head_sha",
+    "reviewed_coordinate": {
+      "anchor": "H0",
+      "mode": "literal",
+      "name": "reviewed_head_sha"
+    },
+    "stale_consequence": "STALE_REQUEST_REJECTED",
+    "success_consequence": "MERGED_REVIEWED_HEAD"
+  },
+  "evidence": [
+    {
+      "path": "corpus/0.1/units/001-github-mcp-merge/evidence/source-github-merge-sha.json",
+      "sha256": "deb38a6e4a51bdaca231988fa142e269d9ebede59296bc97b212da9152f813ee",
+      "strength": "PINNED_UPSTREAM_GIT_OBJECT_PLUS_OFFICIAL_DOCUMENTATION_CORROBORATION"
+    }
+  ],
+  "evidence_strength_boundary": {
+    "general_source_equivalence": "NOT_CLAIMED",
+    "live_runtime_conformance": "NOT_CLAIMED",
+    "model_relative": true,
+    "source_semantic_adequacy": "PINNED_PUBLIC_SOURCE_PLUS_OFFICIAL_DOCUMENTATION"
+  },
+  "freeze_rule": "After this lane is committed, its source consequence, coordinates, admissibility, and evidence-strength labels may not be rewritten in response to the Unit 001 primary RISU result.",
+  "independence_controls": {
+    "historical_risu_result_used_to_define_source_semantics": false,
+    "issue_tracker_consulted_for_target_bug_discovery": false,
+    "note": "The older RISU GitHub merge result is disclosure context only and did not determine this source consequence contract.",
+    "primary_risu_verdict_observed": false,
+    "target_fact_used_to_define_source_semantics": false
+  },
+  "lane_schema": "risu.corpus-source-lane/v0.1alpha1",
+  "open_uncertainties": [
+    "This bounded source contract does not classify unrelated merge failures.",
+    "RISU has not independently re-tested the live GitHub service for this unit."
+  ],
+  "parent_protocol_sha256": "9fbf3fcdf48e5554840c4f2418803779ad82757e1a5df71411212421c225ad70",
+  "screening_sequence": 1,
+  "source_operation": {
+    "identity": "GitHub REST merge a pull request",
+    "method_path": "PUT /repos/{owner}/{repo}/pulls/{pull_number}/merge",
+    "pinned_client_library": {
+      "commit": "34349a88bac3",
+      "git_blob_sha1": "27e3784876f4cf0f8bc8b640296f4317546f8044",
+      "path": "github/pulls.go",
+      "repository": "google/go-github"
+    }
+  },
+  "status": "FROZEN_SOURCE_LANE",
+  "unit_id": "corpus01-unit-001"
+}

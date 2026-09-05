@@ -1,0 +1,135 @@
+{
+  "authoring_inputs": {
+    "boundary_model": {
+      "freeze_commit": "47d4da99b897dda60349b7bc6ae82eabef00a456",
+      "path": "BOUNDARY_MODEL.json",
+      "sha256": "4021ce16c26d734ea227eccbd8e46cde87e002eae6d3147877974f4cbc48861a"
+    },
+    "carrier_envelope": {
+      "authoring_commit": "d73960de104190eae3b4e64048dcac7b07f9ad04",
+      "path": "vbe.envelope.json",
+      "sha256": "6f091ef58d1bd36707aa88c9a50e2f35aace7dd5d9045440c0b20f9915657fbe"
+    },
+    "source_lane": {
+      "freeze_commit": "499c34838c9ec10a4b7318d866d76af84a4687d5",
+      "path": "SOURCE_LANE.json",
+      "sha256": "880d9d88269d3c702f96b4d50066d847fc7f660ff2fb55109f596f84445eae57"
+    },
+    "target_lane": {
+      "freeze_commit": "cf9bec4cec5ba6aaf7a4bc43fc76528f8754636f",
+      "path": "TARGET_LANE.json",
+      "sha256": "97eb4ed3987bb50b2ce169b8695f30ba590235c7422d733ccfcd6c86e15c51f8"
+    }
+  },
+  "carrier_envelope": "vbe.envelope.json",
+  "compiled_case_id": "CORPUS01-U001-GITHUB-MCP-MERGE-VBE-COMPILED",
+  "corpus": {
+    "enrollment_position": 1,
+    "id": "PROSPECTIVE_CORPUS_0.1",
+    "unit_id": "corpus01-unit-001"
+  },
+  "instance_id": "corpus01-001-github-mcp-merge-current",
+  "instance_schema": "risu.vbe.instance/v0.1alpha1",
+  "legacy_case": "cases/github-guarded-merge",
+  "preverdict_controls": {
+    "historical_risu_result_used_to_choose_target_pattern": false,
+    "issue_tracker_bug_discovery_performed": false,
+    "primary_risu_verdict_observed": false,
+    "target_pattern_basis": "Pinned current implementation forwards expectedHeadSha to the source operation's SHA precondition and the bounded profile supplies reviewed H0."
+  },
+  "profile": "version-bound-effect",
+  "profile_version": "0.1-development",
+  "source": {
+    "admissibility": {
+      "expr": {
+        "left": {
+          "op": "get",
+          "path": [
+            "otherwise_mergeable"
+          ],
+          "source": "coord"
+        },
+        "op": "eq",
+        "right": {
+          "op": "literal",
+          "value": true
+        }
+      }
+    },
+    "boundary": {
+      "declaration": "The reviewed head is H0. The request-time head at the merge SHA precondition effect cut may be H0 or H1 after an intervening push.",
+      "post_check_material_transition_possible": true
+    },
+    "claim_boundary": {
+      "domain_adequacy": "DECLARED_TWO_WORLD_GUARDED_CALL_PROFILE",
+      "general_unguarded_calls": "OUT_OF_SCOPE",
+      "live_runtime_conformance": "NOT_CLAIMED",
+      "model_relative": true,
+      "source_semantic_adequacy": "PINNED_PUBLIC_SOURCE_PLUS_OFFICIAL_DOCUMENTATION"
+    },
+    "constants": {
+      "reviewed_head_sha": "H0"
+    },
+    "contract_id": "SRC-CORPUS01-U001-GITHUB-REVIEWED-HEAD-MERGE",
+    "current_coordinate": "request_head_sha",
+    "current_domain": [
+      "H0",
+      "H1"
+    ],
+    "extra_coordinates": {
+      "otherwise_mergeable": [
+        true
+      ]
+    },
+    "lens": "L_REVIEWED_HEAD_EFFECT",
+    "metadata": {
+      "kind": "PROSPECTIVE_EXTERNAL_SOURCE_CONSEQUENCE_CONTRACT",
+      "title": "GitHub guarded merge by reviewed pull-request head SHA"
+    },
+    "reviewed": {
+      "anchor": "H0",
+      "mode": "literal"
+    },
+    "source_family": [
+      "GUARDED_MERGE_REVIEWED_HEAD_SHA"
+    ],
+    "stale_consequence": "STALE_REQUEST_REJECTED",
+    "success_consequence": "MERGED_REVIEWED_HEAD"
+  },
+  "status": "DRAFT_UNVERIFIED",
+  "target": {
+    "discharge_mode": "PROVIDER_HEAD_SHA_PRECONDITION",
+    "discriminator_visibility": "OPERATIVE_PROVIDER_STATE_AT_EFFECT_CUT",
+    "facts": {
+      "discriminator": [
+        "GH_U001_EXPECTED_HEAD_INPUT",
+        "GH_U001_SOURCE_SHA_PRECONDITION"
+      ],
+      "interpreter": [
+        "GH_U001_SOURCE_SHA_PRECONDITION",
+        "GH_U001_EXACT_QUALIFIED"
+      ],
+      "mechanism": [
+        "GH_U001_EXPECTED_HEAD_FORWARDED",
+        "GH_U001_LIBRARY_PIN",
+        "GH_U001_SOURCE_SHA_PRECONDITION",
+        "GH_U001_MISMATCH_FAILS_CLOSED_TEST"
+      ],
+      "operative_signature": [
+        "GH_U001_EXPECTED_HEAD_INPUT",
+        "GH_U001_EXPECTED_HEAD_FORWARDED",
+        "GH_U001_SIGNATURE_QUALIFIED"
+      ]
+    },
+    "mechanism_current_field": "request_head_sha",
+    "mechanism_reviewed_field": "reviewed_head_sha",
+    "native_accept_kind": "MERGE_ACCEPTED",
+    "native_stale_kind": "REJECTED_EXPECTED_HEAD_MISMATCH",
+    "pattern": "PRESERVED_COMPARE",
+    "program_version": "0.5",
+    "reviewed_anchor_constant": "reviewed_head_sha_anchor",
+    "scope_id": "GUARDED_MERGE_REVIEWED_HEAD_SHA",
+    "signature_current_field": "request_head_sha",
+    "signature_reviewed_field": "reviewed_head_sha"
+  }
+}
