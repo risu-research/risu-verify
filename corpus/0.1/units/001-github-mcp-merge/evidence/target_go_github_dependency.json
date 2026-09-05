@@ -1,0 +1,20 @@
+{
+  "artifact_id": "CORPUS01-U001-TARGET-DEPENDENCY-PIN",
+  "artifact_schema": "risu.corpus-evidence/v0.1alpha1",
+  "boundary": "Establishes dependency identity only. It does not establish the target merge semantics by itself.",
+  "kind": "PINNED_UPSTREAM_FILE_OBSERVATION",
+  "lane": "TARGET",
+  "observations": [
+    {
+      "exact_text": "github.com/google/go-github/v89 v89.0.1-0.20260728185857-34349a88bac3",
+      "id": "U001-TARGET-GO-GITHUB-PIN",
+      "interpretation": "The pinned target revision depends on go-github/v89 at source revision 34349a88bac3."
+    }
+  ],
+  "upstream": {
+    "commit": "9205304fedf10540c33ae41fcf6352fa97dcc9be",
+    "git_blob_sha1": "f0237a1625c1ce28b86475e26c59f1c9aded6ee5",
+    "path": "go.mod",
+    "repository": "github/github-mcp-server"
+  }
+}
