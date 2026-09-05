@@ -23,11 +23,12 @@ jobs:
           chmod +x risu-verify
           chmod +x tools/*.py
 
-      - name: Syntax-check frozen executor, correction, and canonical verifier
+      - name: Syntax-check frozen executor, correction, canonical verifier, and closure verifier
         run: |
           python -m py_compile tools/unit002_mutation_control.py
           python -m py_compile tools/unit002_mutation_control_correction001.py
           python -m py_compile tools/unit002m_canonical_verify.py
+          python -m py_compile tools/unit002m_closure_verify.py
 
       - name: Verify pre-execution PLAN freeze identity
         run: |
@@ -43,6 +44,9 @@ jobs:
 
       - name: Verify immutable canonical control record
         run: python tools/unit002m_canonical_verify.py --json
+
+      - name: Verify final closure lineage and boundary
+        run: python tools/unit002m_closure_verify.py --json
 
       - name: Execute unchanged matrix as deterministic replay
         run: |

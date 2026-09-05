@@ -1,0 +1,100 @@
+{
+  "schema": "risu.unit002-m-closure/v0.1alpha1",
+  "experiment_id": "UNIT002_M_PAIRED_MUTATION_CONTROL",
+  "status": "CLOSED_WHEN_PRESENT_ON_MAIN_AND_FINAL_MAIN_GATES_PASS",
+  "scientific_classification": "SYNTHETIC_DETECTOR_CONTROL",
+  "canonical_control": {
+    "github_actions_run_id": 33943444386,
+    "checkout_head_sha": "ba3613aef6531d07d559d20b79f16544a8db6871",
+    "artifact_id": 9962563353,
+    "artifact_zip_sha256": "46d31d919db3bd3d3da163053f1853b81243f4a974495cad804a72ec5c8da064",
+    "promotion_status": "PROMOTED",
+    "plan_freeze_commit": "cecaf792cb131f022a1c7bcdd3ab12c0968a409f",
+    "plan_git_blob_sha1": "958bf01dbf89d338aa0f59a5d892127d65704222",
+    "plan_sha256": "735e5ce1e4523f965798bcab94a29a834291254a3fbda8494ad40525a192e913"
+  },
+  "canonical_metrics": {
+    "baseline_validity": "2/2",
+    "positive_sensitivity": "6/6",
+    "negative_specificity": "6/6",
+    "false_semantic_alarms": 0,
+    "regression_witness_localization": "4/4",
+    "discriminator_detection": "2/2",
+    "deterministic_repeatability": "12/12",
+    "source_contract_invariance": "12/12",
+    "mutation_locality": "12/12"
+  },
+  "implementation_audit": {
+    "invalid_attempts_preserved": true,
+    "correction_id": "UNIT002_M_IMPLEMENTATION_CORRECTION_001",
+    "correction_scope": "MUTATION_LOCALITY_DIFF_REPRESENTATION_ONLY",
+    "frozen_plan_changed": false,
+    "mutation_bytes_changed": false,
+    "semantic_scoring_predicates_changed": false,
+    "correction_record_sha256": "dd4763a673184623e1b55e8115cf54484568dd981c2448ae495c6df5c104b4c6"
+  },
+  "pr_head_archival_replay": {
+    "head_sha": "aef262bf1fa62e0d9ed1aec9e11e8adbfb174c67",
+    "github_actions_run_id": 33943769432,
+    "artifact_id": 9962660475,
+    "artifact_zip_sha256": "3d15cbeaaf69427cafac6f93bc25d2b26bcc7b4c7fa0ffc30e5f0cd4964751ff",
+    "canonical_static_record": "PASS",
+    "matrix_replay": "PASS",
+    "canonical_proof_identity_equality": "PASS",
+    "supporting_pr_head_gates": {
+      "public_semantic_smoke_run": 33943769458,
+      "corpus_infrastructure_run": 33943769440,
+      "corpus_infrastructure_v08_run": 33943769439,
+      "all_success": true
+    }
+  },
+  "merge": {
+    "pull_request": 4,
+    "expected_head_sha": "aef262bf1fa62e0d9ed1aec9e11e8adbfb174c67",
+    "merge_commit_sha": "f3f1db0ad806e0abd051ecfe23ffbcbf039ad117",
+    "expected_head_protection_used": true
+  },
+  "merged_main_replay": {
+    "head_sha": "f3f1db0ad806e0abd051ecfe23ffbcbf039ad117",
+    "unit002_m_run": 33944438933,
+    "unit002_m_artifact_id": 9962868402,
+    "unit002_m_artifact_zip_sha256": "cb33169ae614285dd2f4bfc12b95b944dfac4465966d7cdeddc081e73e5c9234",
+    "canonical_static_record": "PASS",
+    "matrix_replay": "PASS",
+    "canonical_proof_identity_equality": "PASS",
+    "corpus_infrastructure_v08_run": 33944438918,
+    "corpus_infrastructure_run": 33944438952,
+    "public_semantic_smoke_run": 33944438961,
+    "all_four_workflows_success": true
+  },
+  "closure_criteria": {
+    "frozen_plan_identity_immutable": true,
+    "first_valid_promoted_run_canonicalized": true,
+    "prepromotion_invalid_attempts_retained": true,
+    "postoutput_correction_explicit_and_bounded": true,
+    "canonical_metrics_all_promoted": true,
+    "canonical_certificate_and_proof_identity_ledger_durable": true,
+    "pr_head_replay_equal_to_canonical": true,
+    "expected_head_merge_completed": true,
+    "merged_main_replay_equal_to_canonical": true,
+    "unit001_and_v08_regression_gates_green_after_merge": true,
+    "public_semantic_smoke_green_after_merge": true
+  },
+  "claim_boundary": {
+    "supported": "On two frozen preserved calibration seeds and six predeclared mutation families, the detector caught all six semantic-loss mutants, ignored all six nonsemantic mutants, localized all four predeclared regression witnesses, and reproduced the same semantic/proof identities across replay.",
+    "not_established": [
+      "universal detector accuracy",
+      "real-world prevalence of semantic projection loss",
+      "live-runtime conformance of arbitrary systems",
+      "safety of any external system",
+      "carrier neutrality beyond separately tested carriers",
+      "independent replication"
+    ]
+  },
+  "immutability_rule": "Canonical Run 33943444386 and its durable proof-identity ledger are never replaced by later replays. Later runs are qualification/replay witnesses only.",
+  "next_gate": {
+    "id": "UNIT002_R_REAL_PROSPECTIVE_FALSIFICATION",
+    "selection_independence": "Target selection must be frozen independently of Unit 002-M outcomes and must not cherry-pick for a likely negative or positive verdict.",
+    "allowed_outcomes": ["PRESERVED", "CONSEQUENCE_REGRESSION", "INCOMPLETE_ASSURANCE"]
+  }
+}
