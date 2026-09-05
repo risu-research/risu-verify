@@ -1,0 +1,105 @@
+{
+  "coverage": {
+    "admitted_world_count": 2,
+    "all_frozen_admitted_worlds_evaluated": true,
+    "live_deployment_claimed": false,
+    "population_prevalence_claimed": false
+  },
+  "evaluation": {
+    "all_collapse_witnesses": [
+      {
+        "shared_target_realization": "UNCONDITIONAL_DELETEOBJECT_BUCKET_KEY",
+        "source_consequence_1": "CONDITIONAL_DELETE_APPLIED",
+        "source_consequence_2": "PRECONDITION_REJECTED_NO_DELETE",
+        "world_1": "W_MATCH",
+        "world_2": "W_STALE"
+      }
+    ],
+    "deterministic_factorization_exists": false,
+    "kernel_inclusion_holds": false,
+    "partitions": [
+      {
+        "factorization_consistent": false,
+        "source_consequences": [
+          "CONDITIONAL_DELETE_APPLIED",
+          "PRECONDITION_REJECTED_NO_DELETE"
+        ],
+        "target_realization": "UNCONDITIONAL_DELETEOBJECT_BUCKET_KEY",
+        "world_ids": [
+          "W_MATCH",
+          "W_STALE"
+        ]
+      }
+    ],
+    "reason": "DETERMINISTIC_FACTORIZATION_VIOLATION",
+    "refinement_checked": false,
+    "unresolved": [],
+    "verdict": "CONSEQUENCE_REGRESSION",
+    "witness": {
+      "shared_target_realization": "UNCONDITIONAL_DELETEOBJECT_BUCKET_KEY",
+      "source_consequence_1": "CONDITIONAL_DELETE_APPLIED",
+      "source_consequence_2": "PRECONDITION_REJECTED_NO_DELETE",
+      "world_1": "W_MATCH",
+      "world_2": "W_STALE"
+    }
+  },
+  "finite_model": {
+    "claim_scope": {
+      "all_s3_deleteobject_features": "OUT_OF_SCOPE",
+      "general_unconditional_delete_correctness": "OUT_OF_SCOPE",
+      "live_remote_deployment": "NOT_CLAIMED",
+      "model_relative": true,
+      "operation": "ofershap/mcp-server-s3 delete_object at revision f16b3715de4bd61dc8262b03d8e04f10e2142141",
+      "population_prevalence": "NOT_CLAIMED",
+      "profile": "Amazon S3 DeleteObject conditional-delete slice with supplied If-Match ETag E0"
+    },
+    "effect_cut": {
+      "definition": "The service-side point at which S3 evaluates an If-Match ETag condition before applying the DeleteObject effect to the current object.",
+      "name": "S3_IF_MATCH_DELETE_EFFECT_CUT",
+      "target_effect": "The pinned target reaches S3 with Bucket and Key but without IfMatch, so there is no target realization of the declared ETag precondition before this cut."
+    },
+    "schema": "risu.ctv-finite-model/v0.1alpha1",
+    "target_to_source_consequence_map": null,
+    "unit_id": "corpus01-unit-004",
+    "worlds": [
+      {
+        "id": "W_MATCH",
+        "source_consequence": "CONDITIONAL_DELETE_APPLIED",
+        "target_consequence": null,
+        "target_realization": "UNCONDITIONAL_DELETEOBJECT_BUCKET_KEY"
+      },
+      {
+        "id": "W_STALE",
+        "source_consequence": "PRECONDITION_REJECTED_NO_DELETE",
+        "target_consequence": null,
+        "target_realization": "UNCONDITIONAL_DELETEOBJECT_BUCKET_KEY"
+      }
+    ]
+  },
+  "meta_theory": {
+    "deterministic_factorization": "exists g such that kappa_S = g o rho_T",
+    "kernel_rule": "ker(rho_T) subseteq ker(kappa_S)",
+    "regression_witness_rule": "same target realization and different source consequences"
+  },
+  "provenance": {
+    "acceptance_id": "UNIT004_GOLD_AUTHOR_ACCEPTANCE_001",
+    "author_acceptance_sha256": "3899e52cf6733449fc0415c1cb23412b93aefde2e9b00a88c92389ea24248bde",
+    "input_sha256": {
+      "AUTHOR_ACCEPTANCE.json": "3899e52cf6733449fc0415c1cb23412b93aefde2e9b00a88c92389ea24248bde",
+      "BOUNDARY_MODEL.json": "68e5a6de33bad592e88d40e546d6966fd96f2ced84ea380f03522823bf4c718c",
+      "SOURCE_LANE.json": "fcaf3ef34bd62474eb2a59a26f60861c6fa585b7e7c44d773f06593590dee3a0",
+      "TARGET_LANE.json": "5a8c48f07d5358e8f7e7ab6750fc1faeb188b8961bc7f3d14ce30f2fab6d1d35"
+    },
+    "verified_normative_git_blobs": {
+      "BOUNDARY_MODEL.json": "204ab13829fc183268251afab7b00fcc1f2f9ed7",
+      "SOURCE_LANE.json": "fca762e7d519c66f4ee1acefd3d897b4a04b6035",
+      "TARGET_LANE.json": "a2286f98beca1ac0b61eb6d61d98eeed929039d0"
+    }
+  },
+  "reason": "DETERMINISTIC_FACTORIZATION_VIOLATION",
+  "schema": "risu.ctv-finite-primary/v0.1alpha1",
+  "scientific_outcome_is_not_infrastructure_failure": true,
+  "status": "VALID_SEMANTIC_OUTCOME",
+  "unit_id": "corpus01-unit-004",
+  "verdict": "CONSEQUENCE_REGRESSION"
+}

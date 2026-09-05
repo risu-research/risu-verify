@@ -1,0 +1,22 @@
+{
+  "agreement": true,
+  "computed_reason": "DETERMINISTIC_FACTORIZATION_VIOLATION",
+  "computed_verdict": "CONSEQUENCE_REGRESSION",
+  "implementation_independence": {
+    "algorithm": "independent pair enumeration followed by independent refinement check",
+    "imports_primary_checker": false,
+    "stdlib_only": true
+  },
+  "pair_witness_count": 1,
+  "primary_verdict": "CONSEQUENCE_REGRESSION",
+  "schema": "risu.ctv-finite-independent-check/v0.1alpha1",
+  "status": "PASS",
+  "unit_id": "corpus01-unit-004",
+  "witness": {
+    "shared_target_realization": "UNCONDITIONAL_DELETEOBJECT_BUCKET_KEY",
+    "source_consequence_1": "CONDITIONAL_DELETE_APPLIED",
+    "source_consequence_2": "PRECONDITION_REJECTED_NO_DELETE",
+    "world_1": "W_MATCH",
+    "world_2": "W_STALE"
+  }
+}

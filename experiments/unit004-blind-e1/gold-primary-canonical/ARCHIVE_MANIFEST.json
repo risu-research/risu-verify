@@ -1,0 +1,83 @@
+{
+  "entries": [
+    {
+      "path": "AUTHOR_ACCEPTANCE.json",
+      "sha256": "3899e52cf6733449fc0415c1cb23412b93aefde2e9b00a88c92389ea24248bde",
+      "size": 1705
+    },
+    {
+      "path": "BOUNDARY_MODEL.json",
+      "sha256": "68e5a6de33bad592e88d40e546d6966fd96f2ced84ea380f03522823bf4c718c",
+      "size": 4485
+    },
+    {
+      "path": "CTV_META_THEORY_v0.1.json",
+      "sha256": "a62e327d075b9e459ef4ac6be226fbefa264b358c1a387395f8dd08f3d1da7cd",
+      "size": 3551
+    },
+    {
+      "path": "CTV_META_THEORY_v0.1_SEAL.json",
+      "sha256": "f3906cbac48380bdca2ae4aca6dc8c272b8b27fe460a28e65bfb7f9cb4936e7e",
+      "size": 1376
+    },
+    {
+      "path": "GOLD_EVIDENCE.json",
+      "sha256": "ef0c55fd96bd1b2a2216dc650bc43de68ef062c361d8d380bf4b571a5d4a2d25",
+      "size": 4888
+    },
+    {
+      "path": "GOLD_MODEL_FREEZE.json",
+      "sha256": "73cd175b1fe0b325c2e499ff82b36b8b6ac04908b1ca7eaee5f138080c9812c8",
+      "size": 2758
+    },
+    {
+      "path": "INDEPENDENT_STDOUT.json",
+      "sha256": "d8b60ec727b1d469d1fefdad42a2f6d76c2edab2aedfdbdbef0da029dd01c761",
+      "size": 780
+    },
+    {
+      "path": "INDEPENDENT_WITNESS_CHECK.json",
+      "sha256": "d8b60ec727b1d469d1fefdad42a2f6d76c2edab2aedfdbdbef0da029dd01c761",
+      "size": 780
+    },
+    {
+      "path": "PRIMARY_GOLD_RESULT.json",
+      "sha256": "aac88bb35766aab9aeed4a317932681f9b2d13b56de795c9a91b57fa35945087",
+      "size": 4269
+    },
+    {
+      "path": "PRIMARY_RUN_RECORD.json",
+      "sha256": "6d2941d1b5cd244f2d5c8fd4ceb256e4681c31097f62173a3c556f93c46b0b4c",
+      "size": 546
+    },
+    {
+      "path": "PRIMARY_STDOUT.json",
+      "sha256": "aac88bb35766aab9aeed4a317932681f9b2d13b56de795c9a91b57fa35945087",
+      "size": 4269
+    },
+    {
+      "path": "PRIMARY_VALIDATOR_FREEZE.json",
+      "sha256": "deb245ff4139fa1b634fa47602547e2bb255b06ff16c5338643176eb5c264ebd",
+      "size": 3834
+    },
+    {
+      "path": "SCIENTIFIC_ADJUDICATION_PROTOCOL.json",
+      "sha256": "dd981e240958e2b2ac28e1f83675a30d4698cdfd28af5f8f582f24cd5f398294",
+      "size": 5361
+    },
+    {
+      "path": "SOURCE_LANE.json",
+      "sha256": "fcaf3ef34bd62474eb2a59a26f60861c6fa585b7e7c44d773f06593590dee3a0",
+      "size": 3605
+    },
+    {
+      "path": "TARGET_LANE.json",
+      "sha256": "5a8c48f07d5358e8f7e7ab6750fc1faeb188b8961bc7f3d14ce30f2fab6d1d35",
+      "size": 4555
+    }
+  ],
+  "entry_count": 15,
+  "execution_commit": "d8396b501f4846dacb26a8260d929c8c3dd62525",
+  "schema": "risu.unit004-gold-primary-archive/v0.1alpha1",
+  "status": "SEALED_FIRST_PRIMARY_ARCHIVE"
+}

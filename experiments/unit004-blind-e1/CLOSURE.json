@@ -1,0 +1,87 @@
+{
+  "canonical_result": "CONSEQUENCE_REGRESSION",
+  "claim_boundary": {
+    "established": [
+      "gold consequence regression in the frozen declared conditional-delete scope",
+      "constructive W_MATCH/W_STALE deterministic non-factorization witness",
+      "independent checker agreement on verdict and witness",
+      "prospective frozen-E1 zero-evidence fail-closed abstention on the same enrolled unit"
+    ],
+    "not_established": [
+      "general target unsafety",
+      "general S3 wrapper incompleteness",
+      "live deployment behavior",
+      "population prevalence",
+      "E1 error rate over a population",
+      "TypeScript alone as the causal reason for E1 acquisition failure"
+    ]
+  },
+  "closure_id": "CORPUS01_UNIT004_CLOSURE_001",
+  "future_use_rule": {
+    "engine_improvements_must_be_frozen_before_scoring_any_remaining_untouched_enrollment_unit": true,
+    "remaining_enrollment_order_may_not_be_changed_because_of_unit004": true,
+    "unit004_first_machine_prediction_may_be_replaced": false,
+    "unit004_gold_verdict_may_be_replaced": false,
+    "unit004_may_be_used_as_posthoc_development_case": true,
+    "unit004_may_not_be_counted_as_fresh_heldout_validation_after_engine_changes": true
+  },
+  "independent_gold": {
+    "canonical_record": "experiments/unit004-blind-e1/PRIMARY_GOLD_CANONICAL.json",
+    "independent_recomputation": "PASS_SAME_VERDICT_SAME_WITNESS",
+    "reason": "DETERMINISTIC_FACTORIZATION_VIOLATION",
+    "verdict": "CONSEQUENCE_REGRESSION",
+    "witness": {
+      "shared_target_realization": "UNCONDITIONAL_DELETEOBJECT_BUCKET_KEY",
+      "source_consequence_1": "CONDITIONAL_DELETE_APPLIED",
+      "source_consequence_2": "PRECONDITION_REJECTED_NO_DELETE",
+      "world_1": "W_MATCH",
+      "world_2": "W_STALE"
+    }
+  },
+  "integrity_chain": {
+    "author_acceptance_commit": "6665edda22abfb6233ebbba0792829fbc7467f35",
+    "enrollment": "COMPLETE_VERDICT_BLIND_ENROLLMENT_FROZEN",
+    "first_machine_run": 33983013393,
+    "gold_archive_zip_sha256": "feca079453ea907749d6811690815f38e7b0425d3ee8c46bea07921d6f8119b1",
+    "gold_model_freeze_commit": "641c9d29f380247fddb934b0c9e2f86e0634865c",
+    "gold_primary_run": 33984883532,
+    "preinspection_archive_receipt_commit": "68c68652c8e2d088f499f643100b61376b8b6540",
+    "selection_protocol_commit": "dc98c07465a7ecb823d3a07a9f7b6f4047face2f",
+    "target_binding_commit": "033762ffedef0a4c523b6a17d3dbd476edc59490",
+    "validator_freeze_commit": "d8396b501f4846dacb26a8260d929c8c3dd62525"
+  },
+  "promotion": {
+    "e1_regression_detector_success": "NOT_PROMOTED_ON_UNIT004",
+    "gold_scientific_object": "PROMOTED",
+    "prospective_e1_exam": "PROMOTED_AS_HELD_OUT_COVERAGE_RESULT",
+    "unit004_status": "CLOSED_NO_RESCORING"
+  },
+  "prospective_machine_exam": {
+    "canonical_scientific_authority": false,
+    "classification_against_gold": "VALID_FAIL_CLOSED_ABSTENTION_ON_A_GOLD_REGRESSION",
+    "evidence_count": 0,
+    "false_regression_asserted": false,
+    "false_stability_asserted": false,
+    "gold_regression_detected": false,
+    "prediction": "E1_PREDICTED_ASSURANCE_INCOMPLETE",
+    "record": "experiments/unit004-blind-e1/FIRST_PREDICTION_CANONICAL.json",
+    "target_content_bytes": 0
+  },
+  "schema": "risu.corpus-unit-closure/v0.9alpha1",
+  "scientific_interpretation": {
+    "generalization_boundary": "Unit004 establishes a prospective E1 acquisition-coverage limitation on this target. It does not by itself establish a causal attribution to one programming language or extension rule.",
+    "gold_statement": "In the frozen conditional DeleteObject slice, the pinned target collapses two admitted worlds that require different source consequences, so source consequence cannot factor through the target realization.",
+    "machine_statement": "Frozen E1 selected no target evidence and therefore abstained with ASSURANCE_INCOMPLETE rather than asserting preservation or regression.",
+    "why_this_is_strong": "The gold regression and the machine abstention are both informative: the former is a constructive semantic counterexample, while the latter shows fail-closed behavior without filler or human rescue."
+  },
+  "status": "CLOSED",
+  "target": {
+    "enrollment_position": 4,
+    "mechanism_family": "HTTP_PRECONDITION_OR_ETAG",
+    "operation": "delete_object",
+    "repository": "ofershap/mcp-server-s3",
+    "revision": "f16b3715de4bd61dc8262b03d8e04f10e2142141",
+    "substitution_used": false
+  },
+  "unit_id": "corpus01-unit-004"
+}

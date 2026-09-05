@@ -1,0 +1,92 @@
+{
+  "archive": {
+    "all_manifest_entries_rehashed_equal": true,
+    "archive_manifest_entry_count": 15,
+    "archive_manifest_sha256": "bb6d604b434045f2654acd2d82173769ea7af8abffa3659b2aa9f786d5a8e2af",
+    "artifact_id": 9974841799,
+    "artifact_name": "unit004-gold-first-primary-d8396b501f4846dacb26a8260d929c8c3dd62525-33984883532",
+    "downloaded_zip_sha256": "feca079453ea907749d6811690815f38e7b0425d3ee8c46bea07921d6f8119b1",
+    "github_zip_sha256": "feca079453ea907749d6811690815f38e7b0425d3ee8c46bea07921d6f8119b1",
+    "size_in_bytes": 23743,
+    "zip_digest_independently_recomputed_equal": true
+  },
+  "canonical_git_copies": {
+    "gold-primary-canonical/ARCHIVE_MANIFEST.json": "bc5c06e610c832491ecd55383f24dbf373eeeae4",
+    "gold-primary-canonical/INDEPENDENT_WITNESS_CHECK.json": "82d2f4414602240780df04e09c23ee050a7b6b4e",
+    "gold-primary-canonical/PRIMARY_GOLD_RESULT.json": "eb9505d751014d1c8485432df17aac016851cb6b"
+  },
+  "claim_boundary": {
+    "does_not_establish": [
+      "that every S3 DeleteObject feature must be exposed by every wrapper",
+      "general correctness or incorrectness of unconditional delete_object",
+      "live deployment behavior of modified or later target revisions",
+      "population prevalence across MCP servers",
+      "a causal attribution of E1's zero-evidence acquisition to TypeScript alone"
+    ],
+    "establishes": [
+      "Within the predeclared S3 If-Match/ETag conditional-delete slice, the pinned target realization collapses W_MATCH and W_STALE although the source consequence contract separates them.",
+      "The collapse is a constructive deterministic factorization failure and therefore a consequence regression under the frozen CTV meta-theory.",
+      "An independent implementation recomputed the same verdict and witness from the same preaccepted frozen scientific inputs."
+    ]
+  },
+  "first_valid_gold_primary": {
+    "conclusion": "success",
+    "execution_commit": "d8396b501f4846dacb26a8260d929c8c3dd62525",
+    "run_attempt": 1,
+    "run_id": 33984883532,
+    "workflow": "Unit004 gold finite CTV primary"
+  },
+  "immutability": {
+    "first_gold_primary_may_be_replaced": false,
+    "future_e1_changes_may_rescore_unit004_as_first_prediction": false,
+    "future_runs_are": "REPLICATION_CORROBORATION_OR_AMENDMENT_ONLY",
+    "future_validator_changes_may_rescore_unit004_as_canonical": false
+  },
+  "independent_recomputation": {
+    "computed_reason": "DETERMINISTIC_FACTORIZATION_VIOLATION",
+    "computed_verdict": "CONSEQUENCE_REGRESSION",
+    "imports_primary_checker": false,
+    "pair_witness_count": 1,
+    "result_sha256": "d8b60ec727b1d469d1fefdad42a2f6d76c2edab2aedfdbdbef0da029dd01c761",
+    "same_constructive_witness": true,
+    "status": "PASS",
+    "stdlib_only": true
+  },
+  "machine_to_gold": {
+    "classification": "VALID_FAIL_CLOSED_ABSTENTION_ON_A_GOLD_REGRESSION",
+    "e1_asserted_false_regression": false,
+    "e1_asserted_false_stability": false,
+    "first_machine_prediction": "E1_PREDICTED_ASSURANCE_INCOMPLETE",
+    "first_machine_record_git_blob": "61e2f722c9ceeeda9cdd63a8f6c5bd965183802a",
+    "gold_regression_detected_by_e1": false,
+    "gold_verdict": "CONSEQUENCE_REGRESSION",
+    "interpretation": "The frozen E1 did not establish the gold regression because its prospectively frozen acquisition selected no target evidence. It failed closed rather than inventing semantic support.",
+    "machine_evidence_count": 0,
+    "machine_target_content_bytes": 0
+  },
+  "pre_result_freezes": {
+    "archive_receipt_commit": "68c68652c8e2d088f499f643100b61376b8b6540",
+    "author_acceptance_commit": "6665edda22abfb6233ebbba0792829fbc7467f35",
+    "gold_model_freeze_commit": "641c9d29f380247fddb934b0c9e2f86e0634865c",
+    "validator_freeze_commit": "d8396b501f4846dacb26a8260d929c8c3dd62525"
+  },
+  "record_id": "UNIT004_GOLD_PRIMARY_CANONICAL_001",
+  "schema": "risu.unit004-gold-primary-canonical/v0.1alpha1",
+  "semantic_result": {
+    "admitted_world_count": 2,
+    "deterministic_factorization_exists": false,
+    "kernel_inclusion_holds": false,
+    "primary_result_sha256": "aac88bb35766aab9aeed4a317932681f9b2d13b56de795c9a91b57fa35945087",
+    "reason": "DETERMINISTIC_FACTORIZATION_VIOLATION",
+    "verdict": "CONSEQUENCE_REGRESSION",
+    "witness": {
+      "shared_target_realization": "UNCONDITIONAL_DELETEOBJECT_BUCKET_KEY",
+      "source_consequence_1": "CONDITIONAL_DELETE_APPLIED",
+      "source_consequence_2": "PRECONDITION_REJECTED_NO_DELETE",
+      "world_1": "W_MATCH",
+      "world_2": "W_STALE"
+    }
+  },
+  "status": "CANONICAL_FIRST_GOLD_PRIMARY_ARCHIVED",
+  "unit_id": "corpus01-unit-004"
+}
