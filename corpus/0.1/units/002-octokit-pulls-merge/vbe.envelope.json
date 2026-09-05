@@ -1,0 +1,192 @@
+{
+  "adapter_base": {
+    "adapter_id": "CORPUS01-U002-OCTOKIT-PULLS-MERGE",
+    "adapter_version": "0.8",
+    "bindings": [
+      {
+        "id": "B-U002-SOURCE",
+        "kind": "EVIDENCE",
+        "path": "evidence/corpus01-unit002/source-github-merge-sha.json",
+        "required": true,
+        "role": "PINNED_SOURCE_CONTRACT_EVIDENCE",
+        "sha256": "5a74889a43eb45dc5b9cb24c1931ac82f75bf40d4305137c4a822d5295c8c050"
+      },
+      {
+        "id": "B-U002-TARGET-DEP",
+        "kind": "EVIDENCE",
+        "path": "evidence/corpus01-unit002/target-octokit-dependency-pin.json",
+        "required": true,
+        "role": "PINNED_TARGET_DEPENDENCY_CHAIN",
+        "sha256": "6b71de7990d2c5e617f0e47f6c7022b1c98f0e2b49ae7eddcf09ecb2754a82cd"
+      },
+      {
+        "id": "B-U002-TARGET-SURFACE",
+        "kind": "EVIDENCE",
+        "path": "evidence/corpus01-unit002/target-octokit-merge-surface.json",
+        "required": true,
+        "role": "PINNED_TARGET_CALLABLE_SURFACE",
+        "sha256": "ff2e8f757aee42642fed087e49ef504ea0107c09763cce95fb49f68cafb2a2d5"
+      },
+      {
+        "id": "B-U002-TARGET-REQUEST",
+        "kind": "EVIDENCE",
+        "path": "evidence/corpus01-unit002/target-octokit-request-path.json",
+        "required": true,
+        "role": "PINNED_TARGET_SERIALIZATION_PATH",
+        "sha256": "dd8b12ad2a84ceb69bb0a36d97b26415ed7e866c31cf0e93f6cd55a1605e43cf"
+      },
+      {
+        "id": "B-U002-TARGET-ERROR",
+        "kind": "EVIDENCE",
+        "path": "evidence/corpus01-unit002/target-octokit-error-path.json",
+        "required": true,
+        "role": "PINNED_TARGET_RESULT_INTERPRETER",
+        "sha256": "b706268dc8ea68fb265646efec021bf4d7ff5ad5996d7a827b227dce65749cca"
+      },
+      {
+        "id": "B-U002-TARGET-RUNTIME",
+        "kind": "EVIDENCE",
+        "path": "evidence/corpus01-unit002/target-octokit-runtime-qualification.json",
+        "required": true,
+        "role": "TARGET_ONLY_PREPRIMARY_CARRIER_QUALIFICATION",
+        "sha256": "c1ad608332405e21b24c6744371156fa09d4e7bb7b37193b42e7b3244c63df77"
+      },
+      {
+        "id": "B-SIGNATURE-QUAL",
+        "kind": "QUALIFICATION",
+        "path": "qualification/Projection_Assurance_Signature_Grounding_Gate_001.zip",
+        "required": true,
+        "role": "SEALED_SIGNATURE_QUALIFICATION",
+        "sha256": "bb0edc6da7961175c1ec4236cb969c9f509b78ed2f8828634fdfcd84bd940b5c"
+      },
+      {
+        "id": "B-EXACT-QUAL",
+        "kind": "QUALIFICATION",
+        "path": "qualification/Projection_Assurance_Exact_Realization_Gate_001.zip",
+        "required": true,
+        "role": "SEALED_EXACT_QUALIFICATION",
+        "sha256": "bc5f7a4758b1a0723c75935cc57c714c1d05dd6793b928c7648f74fa0ab9bee3"
+      }
+    ],
+    "claim_boundary": {
+      "general_source_equivalence": "NOT_CLAIMED",
+      "general_unguarded_calls": "OUT_OF_SCOPE",
+      "independent_live_reproduction": "NOT_CLAIMED",
+      "live_runtime_conformance": "NOT_CLAIMED",
+      "model_relative": true,
+      "scope": "GUARDED_OCTOKIT_PULLS_MERGE_WITH_SUPPLIED_REVIEWED_HEAD_SHA"
+    },
+    "metadata": {
+      "architecture": "SOURCE_CONTRACT_SEPARATED",
+      "kind": "PROSPECTIVE_CORPUS_PREVERDICT_AUTHORING",
+      "title": "Corpus 0.1 Unit 002 real Octokit guarded merge"
+    },
+    "provenance": {
+      "claim_roots": {
+        "C": ["CLAIM-C"],
+        "COVERAGE": ["CLAIM-COVERAGE"],
+        "D": ["CLAIM-D"],
+        "EXACT": ["CLAIM-EXACT"],
+        "O": ["CLAIM-O"]
+      },
+      "edges": [
+        {"from":"N-U002-SOURCE","relation":"ESTABLISHES","to":"FACT-U002-SOURCE-PRECONDITION"},
+        {"from":"N-U002-TARGET-SURFACE","relation":"ESTABLISHES","to":"FACT-U002-SHA-INPUT"},
+        {"from":"N-U002-TARGET-REQUEST","relation":"ESTABLISHES","to":"FACT-U002-SHA-FORWARDED"},
+        {"from":"N-U002-TARGET-DEP","relation":"ESTABLISHES","to":"FACT-U002-DEPENDENCY-CHAIN"},
+        {"from":"N-U002-TARGET-ERROR","relation":"ESTABLISHES","to":"FACT-U002-409-REJECTS"},
+        {"from":"N-U002-TARGET-RUNTIME","relation":"ESTABLISHES","to":"FACT-U002-RUNTIME-CARRIER"},
+        {"from":"N-SIGNATURE-QUAL","relation":"ESTABLISHES","to":"FACT-U002-SIGNATURE-QUAL"},
+        {"from":"N-EXACT-QUAL","relation":"ESTABLISHES","to":"FACT-U002-EXACT-QUAL"},
+        {"from":"FACT-U002-SOURCE-PRECONDITION","relation":"USES","to":"DERIVE-C"},
+        {"from":"FACT-U002-SHA-INPUT","relation":"USES","to":"DERIVE-C"},
+        {"from":"FACT-U002-DEPENDENCY-CHAIN","relation":"USES","to":"DERIVE-C"},
+        {"from":"FACT-U002-SOURCE-PRECONDITION","relation":"USES","to":"DERIVE-D"},
+        {"from":"FACT-U002-SHA-INPUT","relation":"USES","to":"DERIVE-D"},
+        {"from":"FACT-U002-SHA-FORWARDED","relation":"USES","to":"DERIVE-D"},
+        {"from":"FACT-U002-RUNTIME-CARRIER","relation":"USES","to":"DERIVE-D"},
+        {"from":"FACT-U002-SOURCE-PRECONDITION","relation":"USES","to":"DERIVE-O"},
+        {"from":"FACT-U002-SHA-FORWARDED","relation":"USES","to":"DERIVE-O"},
+        {"from":"FACT-U002-DEPENDENCY-CHAIN","relation":"USES","to":"DERIVE-O"},
+        {"from":"FACT-U002-409-REJECTS","relation":"USES","to":"DERIVE-O"},
+        {"from":"FACT-U002-RUNTIME-CARRIER","relation":"USES","to":"DERIVE-O"},
+        {"from":"FACT-U002-SOURCE-PRECONDITION","relation":"USES","to":"DERIVE-EXACT"},
+        {"from":"FACT-U002-SHA-INPUT","relation":"USES","to":"DERIVE-EXACT"},
+        {"from":"FACT-U002-SHA-FORWARDED","relation":"USES","to":"DERIVE-EXACT"},
+        {"from":"FACT-U002-DEPENDENCY-CHAIN","relation":"USES","to":"DERIVE-EXACT"},
+        {"from":"FACT-U002-409-REJECTS","relation":"USES","to":"DERIVE-EXACT"},
+        {"from":"FACT-U002-RUNTIME-CARRIER","relation":"USES","to":"DERIVE-EXACT"},
+        {"from":"FACT-U002-SIGNATURE-QUAL","relation":"USES","to":"DERIVE-EXACT"},
+        {"from":"FACT-U002-EXACT-QUAL","relation":"USES","to":"DERIVE-EXACT"},
+        {"from":"FACT-U002-SOURCE-PRECONDITION","relation":"USES","to":"DERIVE-COVERAGE"},
+        {"from":"FACT-U002-SHA-INPUT","relation":"USES","to":"DERIVE-COVERAGE"},
+        {"from":"DERIVE-C","relation":"DERIVES","to":"CLAIM-C"},
+        {"from":"DERIVE-D","relation":"DERIVES","to":"CLAIM-D"},
+        {"from":"DERIVE-O","relation":"DERIVES","to":"CLAIM-O"},
+        {"from":"DERIVE-EXACT","relation":"DERIVES","to":"CLAIM-EXACT"},
+        {"from":"DERIVE-COVERAGE","relation":"DERIVES","to":"CLAIM-COVERAGE"}
+      ],
+      "mode": "EVIDENCE_LINKED",
+      "nodes": [
+        {"binding_ids":["B-U002-SOURCE"],"id":"N-U002-SOURCE","kind":"EVIDENCE","label":"pinned source merge sha semantics"},
+        {"binding_ids":["B-U002-TARGET-DEP"],"id":"N-U002-TARGET-DEP","kind":"EVIDENCE","label":"pinned Octokit dependency chain"},
+        {"binding_ids":["B-U002-TARGET-SURFACE"],"id":"N-U002-TARGET-SURFACE","kind":"EVIDENCE","label":"pinned Octokit merge callable surface"},
+        {"binding_ids":["B-U002-TARGET-REQUEST"],"id":"N-U002-TARGET-REQUEST","kind":"EVIDENCE","label":"pinned Octokit sha serialization path"},
+        {"binding_ids":["B-U002-TARGET-ERROR"],"id":"N-U002-TARGET-ERROR","kind":"EVIDENCE","label":"pinned Octokit rejection interpreter"},
+        {"binding_ids":["B-U002-TARGET-RUNTIME"],"id":"N-U002-TARGET-RUNTIME","kind":"EVIDENCE","label":"first target-only Octokit carrier qualification"},
+        {"binding_ids":["B-SIGNATURE-QUAL"],"id":"N-SIGNATURE-QUAL","kind":"EVIDENCE","label":"sealed signature qualification"},
+        {"binding_ids":["B-EXACT-QUAL"],"id":"N-EXACT-QUAL","kind":"EVIDENCE","label":"sealed exact qualification"},
+        {"id":"FACT-U002-SOURCE-PRECONDITION","kind":"FACT","label":"source merge sha is a must-match precondition"},
+        {"id":"FACT-U002-SHA-INPUT","kind":"FACT","label":"target exposes sha on pulls.merge"},
+        {"id":"FACT-U002-SHA-FORWARDED","kind":"FACT","label":"target serializes sha into PUT JSON body"},
+        {"id":"FACT-U002-DEPENDENCY-CHAIN","kind":"FACT","label":"selected target pins the endpoint and request implementation chain"},
+        {"id":"FACT-U002-409-REJECTS","kind":"FACT","label":"pinned request interpreter does not treat HTTP 409 as success"},
+        {"id":"FACT-U002-RUNTIME-CARRIER","kind":"FACT","label":"first target-only execution observed sha body preservation and 409 rejection without retry"},
+        {"id":"FACT-U002-SIGNATURE-QUAL","kind":"FACT","label":"operative signature interpretation qualification"},
+        {"id":"FACT-U002-EXACT-QUAL","kind":"FACT","label":"exact realization interpretation qualification"},
+        {"id":"DERIVE-C","kind":"DERIVATION","label":"source-target operation correspondence"},
+        {"id":"DERIVE-D","kind":"DERIVATION","label":"reviewed-vs-current discrimination"},
+        {"id":"DERIVE-O","kind":"DERIVATION","label":"operative placement at merge sha effect cut"},
+        {"id":"DERIVE-EXACT","kind":"DERIVATION","label":"exact consequence realization"},
+        {"id":"DERIVE-COVERAGE","kind":"DERIVATION","label":"declared guarded-call scope coverage"},
+        {"id":"CLAIM-C","kind":"CLAIM","label":"Correspondence"},
+        {"id":"CLAIM-D","kind":"CLAIM","label":"Discrimination"},
+        {"id":"CLAIM-O","kind":"CLAIM","label":"Operative Placement"},
+        {"id":"CLAIM-EXACT","kind":"CLAIM","label":"Exact Realization"},
+        {"id":"CLAIM-COVERAGE","kind":"CLAIM","label":"Coverage"}
+      ]
+    }
+  },
+  "derivation_facts": [
+    {"id":"OCT_U002_SOURCE_SHA_PRECONDITION","provenance_node":"FACT-U002-SOURCE-PRECONDITION","status":"ESTABLISHED"},
+    {"id":"OCT_U002_SHA_INPUT_EXPOSED","provenance_node":"FACT-U002-SHA-INPUT","status":"ESTABLISHED"},
+    {"id":"OCT_U002_SHA_BODY_SERIALIZED","provenance_node":"FACT-U002-SHA-FORWARDED","status":"ESTABLISHED"},
+    {"id":"OCT_U002_DEPENDENCY_CHAIN","provenance_node":"FACT-U002-DEPENDENCY-CHAIN","status":"ESTABLISHED"},
+    {"id":"OCT_U002_409_NOT_SUCCESS","provenance_node":"FACT-U002-409-REJECTS","status":"ESTABLISHED"},
+    {"id":"OCT_U002_RUNTIME_CARRIER_QUALIFIED","provenance_node":"FACT-U002-RUNTIME-CARRIER","status":"ESTABLISHED"},
+    {"id":"OCT_U002_SIGNATURE_QUALIFIED","provenance_node":"FACT-U002-SIGNATURE-QUAL","status":"ESTABLISHED"},
+    {"id":"OCT_U002_EXACT_QUALIFIED","provenance_node":"FACT-U002-EXACT-QUAL","status":"ESTABLISHED"}
+  ],
+  "envelope_version": "0.1-development",
+  "role": "CARRIER_SPECIFIC_EVIDENCE_ENVELOPE",
+  "structural_base": {
+    "case_id": "CORPUS01_U002_OCTOKIT_PULLS_MERGE",
+    "evidence": {
+      "items": [
+        {"digest":"sha256:5a74889a43eb45dc5b9cb24c1931ac82f75bf40d4305137c4a822d5295c8c050","id":"B-U002-SOURCE"},
+        {"digest":"sha256:6b71de7990d2c5e617f0e47f6c7022b1c98f0e2b49ae7eddcf09ecb2754a82cd","id":"B-U002-TARGET-DEP"},
+        {"digest":"sha256:ff2e8f757aee42642fed087e49ef504ea0107c09763cce95fb49f68cafb2a2d5","id":"B-U002-TARGET-SURFACE"},
+        {"digest":"sha256:dd8b12ad2a84ceb69bb0a36d97b26415ed7e866c31cf0e93f6cd55a1605e43cf","id":"B-U002-TARGET-REQUEST"},
+        {"digest":"sha256:b706268dc8ea68fb265646efec021bf4d7ff5ad5996d7a827b227dce65749cca","id":"B-U002-TARGET-ERROR"},
+        {"digest":"sha256:c1ad608332405e21b24c6744371156fa09d4e7bb7b37193b42e7b3244c63df77","id":"B-U002-TARGET-RUNTIME"}
+      ],
+      "strength": "PINNED_SOURCE_SEMANTICS_PLUS_PINNED_OCTOKIT_IMPLEMENTATION_AND_DEPENDENCIES_PLUS_TARGET_ONLY_RUNTIME_CARRIER_QUALIFICATION"
+    },
+    "ir_version": "0.2",
+    "target_model_status": {
+      "empirical_runtime_validation": "TARGET_ONLY_CARRIER_QUALIFIED_NOT_LIVE_PROVIDER",
+      "kind": "DECLARED_ANALYTICAL_MODEL",
+      "purpose": "Prospective bounded cross-check. The target-only qualification establishes carrier behavior but does not establish provider-side live conformance or the RISU verdict."
+    }
+  }
+}
