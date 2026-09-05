@@ -1,0 +1,21 @@
+name: RISU CTV meta-theory hash staging
+
+on:
+  push:
+    branches: [ctv-meta-theory-hash-staging]
+
+permissions:
+  contents: read
+
+jobs:
+  hashes:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Emit exact normative SHA256
+        run: |
+          sha256sum \
+            docs/CONSEQUENCE_TRANSLATION_VALIDATION_v0.1.md \
+            schemas/consequence-ir.v0.1alpha1.schema.json \
+            schemas/refinement-map.v0.1alpha1.schema.json \
+            protocols/CTV_META_THEORY_v0.1.json
