@@ -1,0 +1,254 @@
+{
+  "algebra_id": "RISU_DIFF_E2_MUTATION_ALGEBRA_001",
+  "anti_gaming_rules": [
+    "Do not discard difficult operators/cells after observing E2 output.",
+    "Do not create a mutation solely because it matches a known U004/U006/U008 literal path; encode the carrier-neutral semantic transformation.",
+    "Do not count real development targets or Unit002-M historical results as fresh E2 qualification cells unless materialized under this frozen algebra with predeclared expected truth.",
+    "Do not use mutation success to claim real-world prevalence or fresh generalization.",
+    "If a mutation generator defect changes the declared source contract or an unrelated material locus, preserve the failed cell, repair prospectively, and classify it as generator/infrastructure invalid rather than silently replacing it."
+  ],
+  "authority": {
+    "ctv_amendment_001_blob": "7ca86d42fa56a4aecb67c7ca1c9fc4418ec4c716",
+    "ctv_meta_theory_blob": "c53766c7bb1b322b4b706ddac5e90d957eb8e397",
+    "historical_unit002m_plan_blob": "958bf01dbf89d338aa0f59a5d892127d65704222",
+    "historical_unit002m_result_blob": "0c0786acd5ca00698589689db12285c3961b62e1",
+    "parent_commit": "10e7b2da9c6dec4e9cbc83f522a2b8aa824f7ba7",
+    "parent_tree": "875e1922123293e64dc380e8f57dc50f0de7eb0a"
+  },
+  "claim_boundary": "Passing this mutation algebra qualifies E2 against a predeclared falsification suite and representation invariances. It does not substitute for the separate fresh 8-slot E2 held-out block.",
+  "classes": {
+    "M_PLUS_SEMANTIC_LOSS": {
+      "expected_e2": "E2_PREDICTED_REGRESSION_WITNESS when all evidence required by E2 scope is available; otherwise E2_PREDICTED_ASSURANCE_INCOMPLETE is diagnostic but does not satisfy positive-detection qualification for that cell.",
+      "operators": [
+        {
+          "effect": "remove consequence-defining coordinate from effectful request/call",
+          "id": "P01_DROP_GUARD_CARRIER_AT_EFFECT"
+        },
+        {
+          "effect": "read current identity but do not bind/use it in the consequential write",
+          "id": "P02_RETRIEVE_THEN_DISCARD_IDENTITY"
+        },
+        {
+          "effect": "replace reviewed/current coordinate with constant, default, or unrelated value",
+          "id": "P03_OVERWRITE_CARRIER_BEFORE_EFFECT"
+        },
+        {
+          "effect": "bind a valid-looking identity from the wrong coordinate/resource",
+          "id": "P04_BIND_WRONG_COORDINATE_OR_RESOURCE"
+        },
+        {
+          "effect": "effect path no longer control-dependent on required compare/precondition",
+          "id": "P05_REMOVE_OR_BYPASS_GUARD"
+        },
+        {
+          "effect": "perform consequential mutation before the guard/mismatch decision",
+          "id": "P06_EFFECT_BEFORE_GUARD"
+        },
+        {
+          "effect": "retain guarded path but add effectful fallback that bypasses the guard",
+          "id": "P07_UNCONDITIONAL_FALLBACK"
+        },
+        {
+          "effect": "erase the required stale/mismatch consequence at the interpretation boundary",
+          "id": "P08_SWALLOW_STALE_FAILURE_AS_SUCCESS"
+        },
+        {
+          "effect": "keep a correct comparison whose result does not condition the actual effect",
+          "id": "P09_COMPARE_CORRECTLY_EFFECT_UNGUARDED"
+        },
+        {
+          "effect": "propagate coordinate internally but drop it during request serialization",
+          "id": "P10_SERIALIZATION_OMITS_GUARD_FIELD"
+        }
+      ],
+      "truth": "Operator creates or exposes a target projection that collapses or misrealizes a source-consequence distinction within the seed's declared scope."
+    },
+    "M_QUESTION_EPISTEMIC_ADVERSARIAL": {
+      "expected_e2": "E2_PREDICTED_ASSURANCE_INCOMPLETE or INFRASTRUCTURE_INVALID_BEFORE_PREDICTION as predeclared; definitive preservation/regression promotion is a hard failure.",
+      "operators": [
+        {
+          "effect": "make material file unsupported/unparseable under declared implementation scope",
+          "id": "A01_MATERIAL_PARSE_FAILURE"
+        },
+        {
+          "effect": "provide two plausible material identities without evidence selecting the consequential one",
+          "id": "A02_AMBIGUOUS_DUAL_COORDINATES"
+        },
+        {
+          "effect": "target structural flow is visible but authoritative external consequence/refinement is intentionally unavailable",
+          "id": "A03_EXTERNAL_CONSEQUENCE_UNRESOLVED"
+        },
+        {
+          "effect": "required material edge lies beyond frozen bounded acquisition budget",
+          "id": "A04_ACQUISITION_BUDGET_CEILING"
+        },
+        {
+          "effect": "insert version-like names/comparisons disconnected from effect",
+          "id": "A05_DECORATIVE_VERSION_TOKEN"
+        },
+        {
+          "effect": "show carrier propagation but remove evidence tying it to the actual effect",
+          "id": "A06_PARTIAL_FLOW_WITH_MISSING_EFFECT_BINDING"
+        },
+        {
+          "effect": "synthetic malformed/contradictory certificate causes promotion block",
+          "id": "A07_INDEPENDENT_CHECKER_DISAGREEMENT_INJECTION"
+        }
+      ],
+      "truth": "Operator withholds, corrupts, or makes ambiguous material evidence without itself licensing a semantic regression/stability claim."
+    },
+    "M_ZERO_SEMANTIC_PRESERVING": {
+      "expected_e2": "Must not create E2_PREDICTED_REGRESSION_WITNESS solely from the transformation; if baseline is definitively resolved and required evidence remains available, semantic prediction should be invariant.",
+      "operators": [
+        {
+          "effect": "rename local variables/parameters without semantic change",
+          "id": "N01_ALPHA_RENAME"
+        },
+        {
+          "effect": "snake/camel/wire spelling change with explicit equivalent mapping",
+          "id": "N02_EQUIVALENT_SERIALIZATION_RENAME"
+        },
+        {
+          "effect": "add/remove helper boundary while preserving data/control flow",
+          "id": "N03_HELPER_EXTRACT_OR_INLINE"
+        },
+        {
+          "effect": "add transparent wrapper call(s)",
+          "id": "N04_WRAPPER_DEPTH_INSERTION"
+        },
+        {
+          "effect": "move coordinate through equivalent object/property alias",
+          "id": "N05_OBJECT_PROPERTY_ALIAS_WITH_EXACT_FLOW"
+        },
+        {
+          "effect": "change only nonmaterial metadata/logging/comments",
+          "id": "N06_IRRELEVANT_METADATA_LOG_COMMENT_CHANGE"
+        },
+        {
+          "effect": "rewrite boolean guard to logically equivalent form",
+          "id": "N07_EQUIVALENT_GUARD_NORMALIZATION"
+        },
+        {
+          "effect": "wrap/rethrow/map error while retaining stale-versus-other distinction",
+          "id": "N08_ERROR_WRAPPER_PRESERVES_DISTINCTION"
+        },
+        {
+          "effect": "refactor request construction with identical effect-boundary payload/guard",
+          "id": "N09_PURE_REQUEST_BUILDER_REFACTOR"
+        },
+        {
+          "effect": "rename path/symbol and update references without semantic change",
+          "id": "N10_FILE_OR_SYMBOL_RENAME_WITH_RESOLUTION_UPDATED"
+        }
+      ],
+      "truth": "Operator changes representation/structure while preserving the declared consequence relation."
+    }
+  },
+  "composition_algebra": {
+    "commutativity_not_assumed": true,
+    "minimality": "primary mutation cells should change the smallest feasible semantic locus; nonlocal changes require explicit rationale",
+    "no_result_driven_operator_selection": true,
+    "order_must_be_recorded": true,
+    "pairwise_composition_allowed": "only predeclared pairs whose expected semantics can be independently derived",
+    "single_operator_primary_cells": true
+  },
+  "hard_promotion_gates": {
+    "deterministic_semantic_output_replay": "100% byte/canonical-equivalent under defined nondeterminism normalization",
+    "epistemic_case_unsupported_definitive_count": 0,
+    "independent_checker_disagreement_promoted_count": 0,
+    "mutation_locality_pass": "100% of primary qualification cells",
+    "negative_control_false_regression_count": 0,
+    "positive_detection_gate": "Every M_PLUS cell counted as a positive-detection success must carry an independently validated concrete witness; abstention may be safe but is not a positive success.",
+    "preservation_from_name_only_count": 0,
+    "regression_from_absence_count": 0,
+    "source_contract_invariance_pass": "100% except operators explicitly designated evidence/source-boundary adversarial; such exceptions cannot count as semantic-loss positives"
+  },
+  "historical_precedent_rule": {
+    "continuity": [
+      "source contract invariance",
+      "mutation locality",
+      "predeclared operators",
+      "positive semantic-loss controls",
+      "negative nonsemantic controls",
+      "deterministic replay"
+    ],
+    "extension": "E2 adds code-level coordinate/dataflow/control/effect mutations and an explicit epistemic/adversarial class.",
+    "unit002m": "Design precedent only. Its 6/6 positive and 6/6 negative historical control results are not E2 qualification counts."
+  },
+  "measurement": {
+    "aggregate": [
+      "positive detection by operator and language",
+      "negative-control false-regression count",
+      "epistemic fail-closed rate",
+      "deterministic replay",
+      "witness localization",
+      "coverage and abstention by operator family"
+    ],
+    "per_cell": [
+      "seed id",
+      "language",
+      "operator id and ordered composition",
+      "mutation diff hash",
+      "locality check",
+      "baseline expected class",
+      "mutant expected class",
+      "E2 prediction",
+      "certificate/witness identity",
+      "independent checker result",
+      "runtime",
+      "acquisition files/bytes/rounds",
+      "unresolved obligations"
+    ]
+  },
+  "operator_axes": [
+    "CARRIER_PRESENCE_AND_BINDING",
+    "DATAFLOW_SURVIVAL",
+    "CURRENT_STATE_IDENTITY_FLOW",
+    "GUARD_CONTROL_DEPENDENCE",
+    "EFFECT_BINDING_AND_ORDER",
+    "OUTCOME_INTERPRETATION",
+    "REPRESENTATION_ONLY",
+    "EVIDENCE_OR_EPISTEMIC_AVAILABILITY"
+  ],
+  "purpose": "Create a carrier-neutral, language-crossing falsification algebra for E2 that tests consequence-coordinate survival, guard/effect linkage, epistemic abstention, and representation invariance without learning expected outcomes from E2.",
+  "qualification_matrix_minima": {
+    "canonical_seed_programs_total": 6,
+    "epistemic_adversarial_cells_total_min": 10,
+    "negative_operator_cross_language_coverage": "N01-N05 each exercised in at least two language ecosystems; N06-N10 each at least once",
+    "note": "These are minimum qualification cells, not claims of population performance.",
+    "positive_operator_cross_language_coverage": "P01-P06 each exercised in at least two language ecosystems; P07-P10 each at least once",
+    "positive_semantic_loss_cells_per_language_min": 8,
+    "repeat_runs_per_cell": 2,
+    "semantic_preserving_cells_per_language_min": 8
+  },
+  "schema": "risu.diff-e2-mutation-algebra/v0.1",
+  "seed_requirements": {
+    "each_seed_requires": [
+      "two or more admitted worlds",
+      "a declared consequence distinction or preserved refinement",
+      "effect boundary",
+      "predeclared baseline truth",
+      "independent executable/finite oracle where feasible"
+    ],
+    "languages": [
+      "python",
+      "go",
+      "typescript_javascript"
+    ],
+    "minimum_canonical_seed_programs_per_language": 2,
+    "pure_synthetic_preferred_for_primary_qualification": true,
+    "real_target_derived_seed_rule": "must reference development-universe id and remains development-only"
+  },
+  "semantic_model": {
+    "e2_output_never_defines_expected_class": true,
+    "fixed_for_each_seed": [
+      "declared source consequence contract",
+      "admitted worlds",
+      "effect cut",
+      "nonmaterial assumptions"
+    ],
+    "mutation_target": "target implementation/projection or declared evidence availability only, as specified by operator class",
+    "truth_authority": "predeclared seed semantics plus operator semantics, independently checkable without E2 output"
+  },
+  "status": "FROZEN_CONTRACT_BEFORE_E2_IMPLEMENTATION"
+}

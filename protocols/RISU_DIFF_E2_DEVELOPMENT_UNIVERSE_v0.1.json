@@ -1,0 +1,259 @@
+{
+  "append_only_amendment_protocol": {
+    "amendment_naming": "RISU_DIFF_E2_DEVELOPMENT_UNIVERSE_AMENDMENT_NNN.json",
+    "before_new_real_target_bytes": true,
+    "failure_response": "Record contamination/development-universe violation; affected repository is excluded from fresh E2 selection and the violation must be carried into the E2 freeze audit.",
+    "required_fields": [
+      "repository",
+      "exact revision if known",
+      "intended development use",
+      "fresh exclusion effect",
+      "provenance source",
+      "timing attestation"
+    ],
+    "retroactive_registration_forbidden": true
+  },
+  "authority": {
+    "charter_blob": "06a9ad06367cae83281fffd10474cd7d4348111d",
+    "e1_closed_base_commit": "078d73c1f0bf1975edf3063e40c20de066c94676",
+    "e2_branch": "e2-development",
+    "e2_predevelopment_freeze_commit": "903fe7f0c48cf8ccd80c02ecc7d96b98c946b560",
+    "evaluation_contract_blob": "3968cd7dcc95290ec7343aa748ca0bc46a3545e6",
+    "firewall_blob": "1a0651514d7c77b82296d3617332b8024947cdcf",
+    "parent_commit": "10e7b2da9c6dec4e9cbc83f522a2b8aa824f7ba7",
+    "parent_tree": "875e1922123293e64dc380e8f57dc50f0de7eb0a"
+  },
+  "claim_boundary": "This manifest defines the initial E2 development universe and conservative fresh-repository exclusions. It does not state that every listed target byte has already been consumed by E2, does not qualify E2, and does not provide fresh performance evidence.",
+  "derived_real_target_ancestry": [
+    {
+      "allowed_use": "Use only already-frozen in-repository derived artifacts/bundles; any new external target-byte fetch requires a prior append-only universe amendment.",
+      "artifact": "external commissioning guarded-merge calibration",
+      "class": "DU_DERIVED_CALIBRATION",
+      "external_target_byte_access_for_e2": "NOT_GRANTED_BY_INITIAL_UNIVERSE",
+      "fresh_repo_excluded": true,
+      "id": "DU-DA-001",
+      "paths": [
+        "docs/EXTERNAL_CASE_001.md",
+        "profiles/version-bound-effect/calibration/001-github-guarded-merge.instance.json",
+        "case-bundles/github-guarded-merge.zip"
+      ],
+      "repository": "github/github-mcp-server",
+      "revision_or_ref": "822c87761f8587395b3e1a04b5386b2611252cd1"
+    },
+    {
+      "allowed_use": "Use only already-frozen in-repository derived artifacts/bundles; any new external target-byte fetch requires a prior append-only universe amendment.",
+      "artifact": "Azure DevOps Wiki ETag calibration and mutation seed",
+      "class": "DU_DERIVED_CALIBRATION",
+      "external_target_byte_access_for_e2": "NOT_GRANTED_BY_INITIAL_UNIVERSE",
+      "fresh_repo_excluded": true,
+      "id": "DU-DA-002",
+      "paths": [
+        "docs/EXTERNAL_CASE_002.md",
+        "profiles/version-bound-effect/calibration/002-azure-wiki-etag.instance.json",
+        "case-bundles/azure-devops-wiki-etag.zip"
+      ],
+      "repository": "microsoft/azure-devops-mcp",
+      "revision_or_ref": "7675bb70e3ab2cd84e2991f453a8fdc9d0c8ce89"
+    },
+    {
+      "allowed_use": "Use only already-frozen in-repository derived artifacts/bundles; any new external target-byte fetch requires a prior append-only universe amendment.",
+      "artifact": "historical transition BEFORE",
+      "class": "DU_DERIVED_CALIBRATION",
+      "external_target_byte_access_for_e2": "NOT_GRANTED_BY_INITIAL_UNIVERSE",
+      "fresh_repo_excluded": true,
+      "id": "DU-DA-003A",
+      "paths": [
+        "docs/EXTERNAL_CASE_003_HISTORICAL_TRANSITION.md",
+        "profiles/version-bound-effect/calibration/003-before-github-blob-sha.instance.json",
+        "case-bundles/github-create-update-sha-transition.zip"
+      ],
+      "repository": "github/github-mcp-server",
+      "revision_or_ref": "b50a343da5d03fb9454062377792a6b54631a84d"
+    },
+    {
+      "allowed_use": "Use only already-frozen in-repository derived artifacts/bundles; any new external target-byte fetch requires a prior append-only universe amendment.",
+      "artifact": "historical transition AFTER and Unit002-M seed ancestry",
+      "class": "DU_DERIVED_CALIBRATION",
+      "external_target_byte_access_for_e2": "NOT_GRANTED_BY_INITIAL_UNIVERSE",
+      "fresh_repo_excluded": true,
+      "id": "DU-DA-003B",
+      "paths": [
+        "docs/EXTERNAL_CASE_003_HISTORICAL_TRANSITION.md",
+        "profiles/version-bound-effect/calibration/003-after-github-blob-sha.instance.json",
+        "case-bundles/github-create-update-sha-transition.zip"
+      ],
+      "repository": "github/github-mcp-server",
+      "revision_or_ref": "ccb9b5308d705465d4619164083667b720df7279"
+    }
+  ],
+  "fresh_selection_rule": {
+    "organization_level_exclusion": false,
+    "organization_overlap_must_be_reported": true,
+    "primary_block_must_exclude_all_repositories_in_effective_exclusion_set": true,
+    "revision_only_reuse_of_an_excluded_repository": false
+  },
+  "historical_mutation_control_ancestry": {
+    "canonical_result_blob": "0c0786acd5ca00698589689db12285c3961b62e1",
+    "canonical_result_path": "experiments/unit002-m/CANONICAL_RESULT.json",
+    "executor_blob": "8aa423c56faa86d43652a3f0f70f869821e3d62c",
+    "executor_path": "tools/unit002_mutation_control.py",
+    "plan_blob": "958bf01dbf89d338aa0f59a5d892127d65704222",
+    "plan_path": "experiments/unit002-m/PLAN.json",
+    "role": "DESIGN_PRECEDENT_ONLY_NOT_E2_QUALIFICATION",
+    "rule": "Historical Unit002-M informs algebra design, but none of its pass counts may be counted toward E2 qualification."
+  },
+  "information_classes": {
+    "DU_CONTAMINATED_EXCLUSION_ONLY": "Recorded exposure forces fresh-repository exclusion; semantic benchmarking is forbidden.",
+    "DU_DERIVED_CALIBRATION": "Historical case/envelope/mutation artifacts derived from real targets; may support development controls but not fresh validation.",
+    "DU_FROZEN_HISTORY": "Immutable historical protocols/predictions/gold/closures may be read for diagnosis but never rewritten.",
+    "DU_REAL_TARGET_DEVELOPMENT": "Exact target/revision or post-result target bytes and gold may be inspected for E2 development; never fresh E2 validation.",
+    "DU_SYNTHETIC": "New purely synthetic fixtures with predeclared truth; no external repository ancestry."
+  },
+  "initial_real_target_members": [
+    {
+      "allowed_use": "Use only already-frozen in-repository historical/corpus artifacts unless an append-only universe amendment is frozen before fetching additional target bytes.",
+      "class": "DU_DERIVED_CALIBRATION",
+      "evidence_blob": "04a493f25fbc6618b2ba7caff6fd3abc307e3a18",
+      "evidence_path": "corpus/0.1/units/001-github-mcp-merge/TARGET_LANE.json",
+      "external_target_byte_access_for_e2": "NOT_GRANTED_BY_INITIAL_UNIVERSE",
+      "fresh_repo_excluded": true,
+      "historical_role": "corpus01-unit-001",
+      "id": "DU-RT-001",
+      "operation": "merge_pull_request",
+      "repository": "github/github-mcp-server",
+      "revision": "9205304fedf10540c33ae41fcf6352fa97dcc9be"
+    },
+    {
+      "allowed_use": "Use only already-frozen in-repository historical/corpus artifacts unless an append-only universe amendment is frozen before fetching additional target bytes.",
+      "class": "DU_DERIVED_CALIBRATION",
+      "evidence_blob": "ef8e89178070b3c267661620f46d83238f45ecdf",
+      "evidence_path": "corpus/0.1/units/002-octokit-pulls-merge/SELECTION_FREEZE.json",
+      "external_target_byte_access_for_e2": "NOT_GRANTED_BY_INITIAL_UNIVERSE",
+      "fresh_repo_excluded": true,
+      "historical_role": "corpus01-unit-002",
+      "id": "DU-RT-002",
+      "operation": "octokit.rest.pulls.merge",
+      "repository": "octokit/rest.js",
+      "revision": "cd9cb8cd4965d99c7dac8c87d249308956250be3"
+    },
+    {
+      "class": "DU_REAL_TARGET_DEVELOPMENT",
+      "evidence_blob": "b4a95b5e2cb78cf09bc6742c9c5ffbde72e901dc",
+      "evidence_path": "experiments/unit003-blind-machine-first/FIRST_SEAL_CANONICAL.json",
+      "external_target_byte_access_for_e2": "ALLOWED_POST_RESULT_DEVELOPMENT_ONLY_AT_EXACT_RECORDED_REVISION",
+      "fresh_repo_excluded": true,
+      "historical_role": "corpus01-unit-003",
+      "id": "DU-RT-003",
+      "operation": "kubectl annotate --resource-version",
+      "reason_for_access": "Explicitly classified POST_RESULT_DEVELOPMENT_ONLY by the frozen E2 charter/firewall.",
+      "repository": "kubernetes/kubectl",
+      "revision": "04f459470f58642063b0374361bee0011278f6d8",
+      "tree_sha": "d1eb526feea2a1815554db775a343d751f4892b1"
+    },
+    {
+      "class": "DU_REAL_TARGET_DEVELOPMENT",
+      "evidence_blob": "b1016fd192c331c3fd59766e84faba8757073900",
+      "evidence_path": "experiments/unit004-blind-e1/TARGET_BINDING.json",
+      "external_target_byte_access_for_e2": "ALLOWED_POST_RESULT_DEVELOPMENT_ONLY_AT_EXACT_RECORDED_REVISION",
+      "fresh_repo_excluded": true,
+      "historical_role": "corpus01-unit-004",
+      "id": "DU-RT-004",
+      "operation": "delete_object",
+      "reason_for_access": "Explicitly classified POST_RESULT_DEVELOPMENT_ONLY by the frozen E2 charter/firewall.",
+      "repository": "ofershap/mcp-server-s3",
+      "revision": "f16b3715de4bd61dc8262b03d8e04f10e2142141",
+      "tree_sha": "4a9670aaebd49dd8a04030cba21b1d358325a6e2"
+    },
+    {
+      "allowed_use": "Contamination/infrastructure forensics and fresh-repository exclusion only.",
+      "class": "DU_CONTAMINATED_EXCLUSION_ONLY",
+      "evidence_blob": "5d00c1ba537b1d428ddd39c43b998590c94aced9",
+      "evidence_path": "experiments/e1-heldout-matrix-005-008/bindings/unit005.json",
+      "external_target_byte_access_for_e2": "FORBIDDEN_FOR_SEMANTIC_DEVELOPMENT_UNDER_INITIAL_UNIVERSE",
+      "fresh_repo_excluded": true,
+      "historical_role": "corpus01-unit-005",
+      "id": "DU-RT-005",
+      "operation": "confluence_update_page",
+      "reason": "recorded prebinding content exposure; cannot be rehabilitated as pristine",
+      "repository": "sooperset/mcp-atlassian",
+      "revision": "22369b76d6c1775a9730ba7d7cb37d49f7da671a",
+      "semantic_development_benchmark_allowed": false,
+      "tree_sha": "7ca9e239b605f22198e079c0cff5c0f6c5360d77"
+    },
+    {
+      "class": "DU_REAL_TARGET_DEVELOPMENT",
+      "evidence_blob": "d753cca16d06b51d6291da66c1ea99046a81f4a5",
+      "evidence_path": "experiments/e1-heldout-matrix-005-008/bindings/unit006.json",
+      "external_target_byte_access_for_e2": "ALLOWED_POST_RESULT_DEVELOPMENT_ONLY_AT_EXACT_RECORDED_REVISION",
+      "fresh_repo_excluded": true,
+      "historical_role": "corpus01-unit-006",
+      "id": "DU-RT-006",
+      "operation": "patch_namespaced_config_map with metadata.resource_version precondition",
+      "reason_for_access": "Explicitly classified POST_RESULT_DEVELOPMENT_ONLY by the frozen E2 charter/firewall.",
+      "repository": "kubernetes-client/python",
+      "revision": "9b65f41e065aa5158b09868cf043a8636752ce4f",
+      "tree_sha": "ce3c9e5626fb62a081fc075a8886da6ad803a286"
+    },
+    {
+      "class": "DU_REAL_TARGET_DEVELOPMENT",
+      "evidence_blob": "1a32a7cc879fe4b60181872d7ff3329d648d1849",
+      "evidence_path": "experiments/e1-heldout-matrix-005-008/bindings/unit007.json",
+      "external_target_byte_access_for_e2": "ALLOWED_POST_RESULT_DEVELOPMENT_ONLY_AT_EXACT_RECORDED_REVISION",
+      "fresh_repo_excluded": true,
+      "historical_role": "corpus01-unit-007",
+      "id": "DU-RT-007",
+      "operation": "Confluence PUT API tool on /wiki/api/v2/pages/{id}",
+      "reason_for_access": "Explicitly classified POST_RESULT_DEVELOPMENT_ONLY by the frozen E2 charter/firewall.",
+      "repository": "aashari/mcp-server-atlassian-confluence",
+      "revision": "13f3b4fdf75da6948d9ce4e8a0b47799e9059537",
+      "tree_sha": "9c8a0d5bed33b65b982a743a4d9423e43e2c9dfb"
+    },
+    {
+      "class": "DU_REAL_TARGET_DEVELOPMENT",
+      "evidence_blob": "16a167840bd3d08bd14b817234b1ba03d10dc1e7",
+      "evidence_path": "experiments/e1-heldout-matrix-005-008/bindings/unit008.json",
+      "external_target_byte_access_for_e2": "ALLOWED_POST_RESULT_DEVELOPMENT_ONLY_AT_EXACT_RECORDED_REVISION",
+      "fresh_repo_excluded": true,
+      "historical_role": "corpus01-unit-008",
+      "id": "DU-RT-008",
+      "operation": "create_or_update_file",
+      "reason_for_access": "Explicitly classified POST_RESULT_DEVELOPMENT_ONLY by the frozen E2 charter/firewall.",
+      "repository": "yoda-digital/mcp-gitlab-server",
+      "revision": "177adc871ef94c39902bcdb8c89200d000e02e64",
+      "tree_sha": "b8803a5a553ada80a6dc421faa8e2b181443cb48"
+    }
+  ],
+  "principles": [
+    "Membership records permission and contamination ancestry; it does not upgrade any historical result or make any member fresh E2 evidence.",
+    "A repository is excluded from the primary fresh E2 block if its target bytes, target-derived fixtures, or target-specific expected outcomes are available for E2 implementation, debugging, or qualification.",
+    "When historical provenance is coarser than an exact target-byte revision, exclusion is conservative rather than under-declared.",
+    "Unit005 is exclusion-only contaminated forensics: its recorded exposure disqualifies the repository from fresh use, but its semantics may not serve as an E2 benchmark.",
+    "New real-target-derived inputs may be added only through an append-only numbered universe amendment committed before the new target bytes or target-specific expected outcome are consumed.",
+    "The final E2 engine freeze must bind the complete effective universe and its derived repository exclusion set.",
+    "Registration in the fresh-repository exclusion set is not permission to fetch or use arbitrary external target bytes; byte-access permission is explicitly recorded per member."
+  ],
+  "purpose": "Make every real-target-derived input and target-specific expected outcome available to E2 development explicit before use, and derive a conservative repository exclusion set for the future primary fresh held-out block.",
+  "repository_exclusion_set_initial": [
+    "aashari/mcp-server-atlassian-confluence",
+    "github/github-mcp-server",
+    "kubernetes-client/python",
+    "kubernetes/kubectl",
+    "microsoft/azure-devops-mcp",
+    "octokit/rest.js",
+    "ofershap/mcp-server-s3",
+    "sooperset/mcp-atlassian",
+    "yoda-digital/mcp-gitlab-server"
+  ],
+  "schema": "risu.diff-e2-development-universe/v0.1",
+  "source_library_and_provider_evidence_rule": {
+    "reason": "The firewall excludes target-side specialization without unnecessarily banning authoritative semantic specifications from future source-lane construction.",
+    "rule": "Authoritative source/provider repositories consulted only to understand public source semantics are not automatically excluded unless their implementation bytes become E2 target-side development/qualification inputs."
+  },
+  "status": "FROZEN_INITIAL_UNIVERSE_BEFORE_E2_IMPLEMENTATION",
+  "synthetic_fixture_rule": {
+    "copying_or_lightly_renaming_real_target_code_does_not_make_it_synthetic": true,
+    "pure_synthetic_truth_predeclared_before_e2_execution": true,
+    "real_target_ancestry_if_any_must_be_declared": true
+  },
+  "universe_id": "RISU_DIFF_E2_DEVELOPMENT_UNIVERSE_001"
+}

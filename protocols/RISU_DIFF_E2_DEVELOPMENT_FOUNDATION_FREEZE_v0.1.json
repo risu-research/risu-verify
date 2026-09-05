@@ -1,0 +1,98 @@
+{
+  "authority": {
+    "branch": "e2-development",
+    "ctv_amendment_001_blob": "7ca86d42fa56a4aecb67c7ca1c9fc4418ec4c716",
+    "ctv_meta_theory_blob": "c53766c7bb1b322b4b706ddac5e90d957eb8e397",
+    "e1_closed_base_commit": "078d73c1f0bf1975edf3063e40c20de066c94676",
+    "parent_commit": "10e7b2da9c6dec4e9cbc83f522a2b8aa824f7ba7",
+    "parent_tree": "875e1922123293e64dc380e8f57dc50f0de7eb0a",
+    "predevelopment_freeze_commit": "903fe7f0c48cf8ccd80c02ecc7d96b98c946b560"
+  },
+  "claim_boundary": {
+    "established": [
+      "initial development information universe and repository exclusions are prospectively fixed",
+      "specialization audit zero-point and required final audits are prospectively fixed",
+      "mutation operator taxonomy, truth authority, minimum matrix, and hard safety gates are prospectively fixed"
+    ],
+    "not_established": [
+      "E2 implementation",
+      "E2 qualification success",
+      "fresh E2 target selection",
+      "fresh E2 performance",
+      "repair synthesis",
+      "external validation"
+    ]
+  },
+  "freeze_id": "RISU_DIFF_E2_DEVELOPMENT_FOUNDATION_FREEZE_001",
+  "freeze_semantics": {
+    "development_universe_fixed_before_e2_implementation": true,
+    "e2_implementation_authorized_only_after_postwrite_audit": true,
+    "existing_e1_or_ctv_files_modified": false,
+    "fresh_e2_gold_consumed": false,
+    "fresh_e2_target_bytes_consumed": false,
+    "fresh_e2_target_selected": false,
+    "mutation_truth_and_operator_families_fixed_before_e2_implementation": true,
+    "specialization_zero_point_fixed_before_e2_implementation": true,
+    "unit002m_historical_results_counted_as_e2_qualification": false
+  },
+  "future_change_rule": {
+    "development_universe_extension": "append-only numbered amendment frozen before new real-target bytes/outcomes are consumed",
+    "fresh_evaluation_rule": "final E2 freeze must bind the effective universe plus all amendments and must pass specialization/mutation qualification before fresh selection",
+    "mutation_algebra_change": "new numbered version/amendment; existing E2 qualification results cannot be retroactively rescored under changed operators",
+    "normative_mutation_in_place": false,
+    "specialization_policy_change": "new numbered version/amendment with timing and impact classification"
+  },
+  "normative_package": {
+    "development_universe": {
+      "bytes": 15076,
+      "git_blob": "32f5e7bc53b343e1add941cb68f7d05a535b740d",
+      "path": "protocols/RISU_DIFF_E2_DEVELOPMENT_UNIVERSE_v0.1.json",
+      "schema": "risu.diff-e2-development-universe/v0.1",
+      "sha256": "bd1140828c1cbdf2c5ca10dbd617f329fe6b2e4ac0f6fd5cece4a9b1032d4ee2"
+    },
+    "mutation_algebra": {
+      "bytes": 12173,
+      "git_blob": "58db99aaa0378da170a59dc99f0a5d2c1f006194",
+      "path": "protocols/RISU_DIFF_E2_MUTATION_ALGEBRA_v0.1.json",
+      "schema": "risu.diff-e2-mutation-algebra/v0.1",
+      "sha256": "d60f247dc8e35c8854a41957518db9c197599c7120e4822054274ebd2fddc171"
+    },
+    "specialization_audit_baseline": {
+      "bytes": 6852,
+      "git_blob": "16ed006effdc93981cc9a5799059d9b5e9ee4d7f",
+      "path": "protocols/RISU_DIFF_E2_SPECIALIZATION_AUDIT_BASELINE_v0.1.json",
+      "schema": "risu.diff-e2-specialization-audit-baseline/v0.1",
+      "sha256": "d17fe68b336b37610f2b7312a4aa184ac6ddd0f23669b6f010a4fdb2259eb87a"
+    }
+  },
+  "preimplementation_facts": {
+    "e2_runtime_or_extractor_files_present_at_parent": 0,
+    "e2_runtime_package_present_at_parent": false,
+    "e2_specific_test_or_qualification_files_present_at_parent": 0,
+    "initial_fresh_repository_exclusion_count": 9,
+    "minimum_canonical_seed_programs": 6,
+    "minimum_epistemic_adversarial_cells": 10,
+    "minimum_positive_cells": 24,
+    "minimum_semantic_preserving_cells": 24,
+    "mutation_operator_counts": {
+      "epistemic_adversarial": 7,
+      "semantic_loss": 10,
+      "semantic_preserving": 10
+    },
+    "repeat_runs_per_cell": 2
+  },
+  "repository": "risu-research/risu-verify",
+  "schema": "risu.diff-e2-development-foundation-freeze/v0.1",
+  "status": "FROZEN_BEFORE_E2_IMPLEMENTATION",
+  "tree_contract": {
+    "allowed_changes_in_containing_commit": [
+      "add exact development-universe blob",
+      "add exact specialization-audit-baseline blob",
+      "add exact mutation-algebra blob",
+      "add this exact package-freeze manifest"
+    ],
+    "expected_parent_commit": "10e7b2da9c6dec4e9cbc83f522a2b8aa824f7ba7",
+    "expected_parent_tree": "875e1922123293e64dc380e8f57dc50f0de7eb0a",
+    "forbidden_changes": "all pre-existing paths and blobs; no E2 implementation, fixture, test, workflow, prompt, threshold, or fresh-target selection in this commit"
+  }
+}

@@ -1,0 +1,129 @@
+{
+  "audit_id": "RISU_DIFF_E2_SPECIALIZATION_AUDIT_BASELINE_001",
+  "audit_scopes": {
+    "S0_PRODUCTION_AUTHORITY_SURFACE": {
+      "forbidden_target_specificity": "STRICT",
+      "paths": "all E2 runtime source, acquisition/extraction logic, rule/configuration files, prompts/templates that can influence prediction, qualification logic, and fresh-selection weights"
+    },
+    "S1_DEVELOPMENT_FIXTURES": {
+      "paths": "explicit development-only fixtures/integration harnesses",
+      "requirements": [
+        "must reference development-universe member id or be declared pure synthetic",
+        "must never be imported as hidden production lookup data",
+        "must be excluded from fresh held-out inputs"
+      ],
+      "target_literals_allowed": true
+    },
+    "S2_IMMUTABLE_HISTORY": {
+      "paths": "pre-existing E0/E1/corpus/calibration/history",
+      "rule": "May contain target-specific names by historical necessity; immutable history is not evidence of E2 specialization and must not be rewritten to pass the audit."
+    }
+  },
+  "authority": {
+    "charter_blob": "06a9ad06367cae83281fffd10474cd7d4348111d",
+    "development_universe_path": "protocols/RISU_DIFF_E2_DEVELOPMENT_UNIVERSE_v0.1.json",
+    "firewall_blob": "1a0651514d7c77b82296d3617332b8024947cdcf",
+    "parent_commit": "10e7b2da9c6dec4e9cbc83f522a2b8aa824f7ba7",
+    "parent_tree": "875e1922123293e64dc380e8f57dc50f0de7eb0a"
+  },
+  "baseline_tree_observation": {
+    "e2_existing_paths": [
+      "protocols/RISU_DIFF_E2_DEVELOPMENT_CHARTER_v0.1.json",
+      "protocols/RISU_DIFF_E2_CONTAMINATION_FIREWALL_v0.1.json",
+      "protocols/RISU_DIFF_E2_EVALUATION_CONTRACT_v0.1.json",
+      "protocols/RISU_DIFF_E2_PREDEVELOPMENT_FREEZE_v0.1.json",
+      "experiments/risu-diff-e2/PREDEVELOPMENT_FREEZE_AUDIT.json"
+    ],
+    "e2_runtime_or_extractor_files_present": 0,
+    "e2_runtime_package_present": false,
+    "e2_specific_test_or_qualification_files_present": 0,
+    "interpretation": "There is no E2 implementation to exonerate yet; this is the baseline against which all later E2-introduced executable/configuration/prompt bytes are audited."
+  },
+  "carrier_vocabulary_policy": {
+    "development_case_spellings_policy": {
+      "allowed_only_if": "represented as a versioned carrier/profile lexicon independent of repository identity, justified as a general cross-target rule, and qualified on synthetic or multiple independent non-origin examples",
+      "examples": [
+        "resourceVersion",
+        "resource_version",
+        "last_commit_id",
+        "expectedHeadSha",
+        "If-Match"
+      ],
+      "forbidden": "using one known development spelling as a direct shortcut to a definitive verdict",
+      "production_hardcode_default": "AUDIT_FLAG"
+    },
+    "generic_semantic_families_allowed": [
+      "version",
+      "revision",
+      "etag",
+      "entity tag",
+      "generation",
+      "sequence",
+      "commit id",
+      "object id",
+      "sha",
+      "digest",
+      "resource version",
+      "optimistic concurrency",
+      "precondition"
+    ],
+    "names_never_consequence_authority": true,
+    "normalization_preferred": "token decomposition plus casing/separator normalization should discover spellings rather than a list written to fit known targets"
+  },
+  "claim_boundary": "Passing this audit can support absence of detected target-specific specialization under the declared static and metamorphic checks; it cannot prove absence of all overfitting or establish fresh generalization.",
+  "final_freeze_evidence_required": [
+    "exact list and hashes of E2 S0 files",
+    "effective development universe digest",
+    "static fingerprint scan report",
+    "behavioral metamorphic audit report",
+    "carrier lexicon/profile diff and justification if any",
+    "zero unresolved specialization findings"
+  ],
+  "forbidden_in_S0": {
+    "development_target_path_allowlists_or_ranking_bonuses": true,
+    "development_target_symbol_function_class_special_cases": true,
+    "exact_development_revision_or_blob_hash_control_flow": true,
+    "hardcoded_expected_outcome_per_development_case": true,
+    "hidden_lookup_tables_keyed_by_development_target_identity": true,
+    "prompt_examples_that disclose development-target outcome and can influence fresh prediction": true,
+    "repository_or_organization_switches": true
+  },
+  "literal_fingerprint_classes": [
+    "repository owner/name strings from effective development universe",
+    "organization names when used to branch behavior",
+    "exact target revisions/tree/blob identities",
+    "screened operation names when used as special-case selectors",
+    "target-specific file paths",
+    "target-specific function/class/symbol names",
+    "gold verdict/witness labels keyed to a development target"
+  ],
+  "purpose": "Define a pre-implementation zero-point and a two-layer audit that detects both literal target specialization and behavioral specialization hidden behind generic-looking code.",
+  "required_behavioral_audit_at_e2_freeze": {
+    "failure": "Any semantic outcome change attributable only to target identity or nonmaterial renaming blocks E2 freeze.",
+    "metamorphic_tests": [
+      "repository-owner/name anonymization with program bytes and semantics fixed must not change semantic prediction/certificate",
+      "path renaming preserving imports/resolution must not change semantic prediction except evidence locations",
+      "function/class/local identifier alpha-renaming must not change semantic prediction",
+      "nonmaterial metadata/comment/logging changes must not change semantic prediction",
+      "equivalent casing/serialization spelling mediated by explicit mapping must preserve semantic interpretation",
+      "permutation of irrelevant file enumeration order must not change selected semantic evidence after canonical tie-breaking"
+    ]
+  },
+  "required_static_audit_at_e2_freeze": {
+    "flag_resolution": [
+      "remove specialization",
+      "move true development material to S1",
+      "or document a general carrier rule plus cross-target qualification"
+    ],
+    "hash_obfuscation_rule": "encoded, hashed, abbreviated, or transformed target identifiers count as the same forbidden specialization",
+    "result_rule": "zero unexplained forbidden fingerprints",
+    "scan_scope": "S0 plus generated runtime configuration/prompts"
+  },
+  "schema": "risu.diff-e2-specialization-audit-baseline/v0.1",
+  "status": "FROZEN_BASELINE_BEFORE_E2_IMPLEMENTATION",
+  "test_authority_firewall": {
+    "development_real_target_tests": "may assert reproduction/diagnostic objectives but cannot be the sole qualification evidence for a general rule",
+    "fresh_targets": "must not enter any E2 test fixture before fresh first-prediction block seal",
+    "pure_synthetic_and_mutation_truth": "must be predeclared independently of E2 output"
+  }
+}
