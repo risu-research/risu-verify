@@ -1,0 +1,32 @@
+{
+  "schema": "risu.unit002-r-claim-boundary/v0.1alpha1",
+  "unit_id": "corpus01-unit-002",
+  "status": "PREDECLARED_BEFORE_TARGET_QUALIFICATION_RESULT_AND_PRIMARY",
+  "in_scope": {
+    "target_revision": "octokit/rest.js@cd9cb8cd4965d99c7dac8c87d249308956250be3",
+    "operation": "octokit.rest.pulls.merge",
+    "profile": "guarded invocation supplying sha=reviewed head H0",
+    "worlds": [
+      "current pull-request head H0",
+      "current pull-request head H1 after a post-review change"
+    ],
+    "effect_cut": "provider evaluation of the supplied merge sha precondition before merge effect"
+  },
+  "out_of_scope": [
+    "unguarded Octokit merge calls that omit sha",
+    "all GitHub merge failure modes",
+    "authorization and branch-protection policy failures",
+    "rate limits and transport failures",
+    "live hosted GitHub service conformance",
+    "safety of Octokit or GitHub generally",
+    "prevalence of this guarded invocation pattern",
+    "agent-specific behavior"
+  ],
+  "allowed_scientific_outcomes": [
+    "PRESERVED",
+    "CONSEQUENCE_REGRESSION",
+    "INCOMPLETE_ASSURANCE"
+  ],
+  "selection_or_retention_may_not_depend_on_outcome": true,
+  "primary_risu_verdict_observed": false
+}
