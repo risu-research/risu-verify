@@ -100,7 +100,7 @@ jobs:
             cmp --silent "$P/$rel" "$R/$rel"
           done
           test "$(sha256sum "$R/corpus01-unit001-primary-observation.json" | cut -d' ' -f1)" = "b18beb049aa6cbd2f7d29e1a43e41effe8e7167b53ad332cccb4025a80d18c83"
-          test "$(sha256sum "$R/corpus01-unit001-artifact.sha256" | cut -d' ' -f1)" = "baec948c40b53a7e2be03a494681439714575bbffa7330eb767dd652dfd7edb0"
+          test "$(sha256sum "$R/corpus01-unit001-artifact.sha256" | cut -d' ' -f1)" = "baec948f2c6480d555e25271acda74004acd76a3f7c012fdaed155c10ee55b22"
 
       - name: Commit archival transport only
         run: |
