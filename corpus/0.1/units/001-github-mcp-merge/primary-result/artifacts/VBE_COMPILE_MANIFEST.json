@@ -4,14 +4,30 @@
   "compiled_adapter_sha256": "4f69955a4523e169c5d7b3971f76d7c449ee86fe6414e238f9976171283301ef",
   "compiled_source_contract_sha256": "4b80861fc7aa28891fc3d1590cc8ae7a6e95b249e5791ae61c654d398e524925",
   "compiler": "tools/vbe_compile.py",
-  "corpus": {"authoring_status":"AUTHOR_ACCEPTED","enrollment_position":1,"id":"PROSPECTIVE_CORPUS_0.1","unit_id":"corpus01-unit-001"},
+  "corpus": {
+    "authoring_status": "AUTHOR_ACCEPTED",
+    "enrollment_position": 1,
+    "id": "PROSPECTIVE_CORPUS_0.1",
+    "unit_id": "corpus01-unit-001"
+  },
   "instance_sha256": "80f1748fe1d0bf3e1185170fab38232323bb8def60bd0525126b7012b2dfc9ec",
   "legacy_case": "cases/github-guarded-merge",
   "note": "Source-contract and target semantic program are produced by tools/vbe_compile.py unchanged. When a pinned post-freeze provenance overlay is supplied, the Corpus wrapper may add only predeclared provenance edges between already-frozen established facts and an existing claim derivation.",
   "profile": "version-bound-effect",
   "profile_version": "0.1-development",
   "provenance_overlay": {
-    "added_edges": [{"from":"FACT-U001-EXPECTED-INPUT","relation":"USES","to":"DERIVE-EXACT"},{"from":"FACT-U001-LIBRARY-PIN","relation":"USES","to":"DERIVE-EXACT"}],
+    "added_edges": [
+      {
+        "from": "FACT-U001-EXPECTED-INPUT",
+        "relation": "USES",
+        "to": "DERIVE-EXACT"
+      },
+      {
+        "from": "FACT-U001-LIBRARY-PIN",
+        "relation": "USES",
+        "to": "DERIVE-EXACT"
+      }
+    ],
     "amended_adapter_sha256": "424199a68454abe55096a21c0d2d443fee70823c397c126238d4c66fcbc03f95",
     "frozen_vbe_compiler_unchanged": true,
     "non_edge_adapter_content_identical": true,
