@@ -1,0 +1,64 @@
+{
+  "schema": "risu.e1-heldout-matrix-machine-closure/v0.1alpha1",
+  "closure_id": "E1_REMAINING_HELDOUT_MATRIX_005_008_MACHINE_CLOSURE_001",
+  "status": "MACHINE_MATRIX_CLOSED_AWAITING_INDEPENDENT_GOLD",
+  "canonical_matrix_path": "experiments/e1-heldout-matrix-005-008/FIRST_PREDICTION_MATRIX_CANONICAL.json",
+  "canonical_matrix_git_blob": "1e6633bb0204251e5ef4f10fa390067defdf7fe2",
+  "frozen_e1_engine_identity_digest": "ed33d12881fa1395d1332ae165b5638518b2d472a7a520f0ae893d07e3b146b7",
+  "first_matrix_run": {
+    "run_id": 33986339337,
+    "execution_commit": "7e30a1246eb8d77d7d96d81a30183e2d2b3b8fa1",
+    "artifact_id": 9975264545,
+    "artifact_zip_sha256": "8f024af36dded40ade219dec09e010ab8395c4642edea8988e5a08372e3a9b72",
+    "workflow_conclusion": "success"
+  },
+  "slot_outcomes": {
+    "unit005": "PROTOCOL_CONTAMINATED_NO_PRISTINE_E1_ATTEMPT",
+    "unit006": "E1_PREDICTED_ASSURANCE_INCOMPLETE",
+    "unit007": "E1_PREDICTED_ASSURANCE_INCOMPLETE",
+    "unit008": "E1_PREDICTED_ASSURANCE_INCOMPLETE"
+  },
+  "acquisition_outcome_classes": {
+    "unit006": "NONZERO_MACHINE_ACQUISITION_BUT_MATERIAL_ROLES_UNRESOLVED",
+    "unit007": "ZERO_SEED_ZERO_EVIDENCE_FAIL_CLOSED",
+    "unit008": "ZERO_SEED_ZERO_EVIDENCE_FAIL_CLOSED"
+  },
+  "matrix_counts": {
+    "enrolled_slots": 4,
+    "pristine_first_predictions": 3,
+    "protocol_contaminated_slots": 1,
+    "pristine_incomplete_predictions": 3,
+    "pristine_preservation_predictions": 0,
+    "pristine_regression_predictions": 0,
+    "gold_adjudicated_slots": 0
+  },
+  "integrity_findings": {
+    "unit005_prebinding_content_exposure": "RECORDED_AND_PERMANENTLY_EXCLUDED_FROM_PRISTINE_SCORING",
+    "archive_zip_digest": "VERIFIED",
+    "original_manifest_listed_entry_hashes": "128_OF_128_VERIFIED",
+    "original_manifest_completeness": "PACKAGING_DEFECT_TWO_GENERIC_STATUS_FILES_UNLISTED",
+    "scientific_result_bytes_invalidated": false
+  },
+  "what_is_established": [
+    "The exact frozen E1 produced valid first seals on all three still-pristine enrolled slots without human file selection or semantic reranking.",
+    "All three pristine machine predictions were ASSURANCE_INCOMPLETE under the same frozen E1 identity.",
+    "Unit006 reached substantial nonzero acquisition before abstaining, while Unit007 and Unit008 had zero-seed zero-evidence acquisition trajectories.",
+    "Unit005 cannot be counted as pristine because a prebinding target-content exposure was detected and immutably recorded before any E1 prediction."
+  ],
+  "what_is_not_established": [
+    "Whether any Unit006-008 target is consequence-stable or consequence-regressing.",
+    "Whether any E1 prediction is correct relative to gold.",
+    "Any E1 population accuracy, recall, precision, or prevalence estimate.",
+    "That TypeScript support alone causally explains Unit007 or Unit008 zero acquisition.",
+    "Any revised E1 performance after learning from these units."
+  ],
+  "immutability": {
+    "unit005_pristine_status_may_change": false,
+    "unit006_008_first_predictions_may_change": false,
+    "unit006_008_may_be_rescored_as_fresh_by_modified_e1": false,
+    "remaining_machine_matrix_may_be_replaced_by_rerun": false,
+    "gold_may_rewrite_machine_predictions": false
+  },
+  "next_gate": "Freeze independent gold-adjudication protocols for Unit006-008 before using their target semantics to modify E1. Do not begin E2 development from Unit006-008 until that gold layer is closed.",
+  "closure_boundary": "This closes only the prospective frozen-E1 machine-first matrix. It intentionally stops before independent gold adjudication."
+}
