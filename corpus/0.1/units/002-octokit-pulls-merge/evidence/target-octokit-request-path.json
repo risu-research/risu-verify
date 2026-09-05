@@ -1,0 +1,40 @@
+{
+  "anchors": [
+    {
+      "git_blob_sha1": "e52e1216f02e0812ce921a3227ac3c827d7afa6f",
+      "observation": "Generated endpoint defaults are attached to octokit.request; user method arguments flow through requestWithDefaults.",
+      "path": "src/endpoints-to-methods.ts",
+      "repository": "octokit/plugin-rest-endpoint-methods.js",
+      "revision": "c82898ae7a9ad9e92e39fc62e570a1cd4783a45b"
+    },
+    {
+      "git_blob_sha1": "2f74e7c999c64944947df9c3cdcfa8ac500a8589",
+      "observation": "For PUT requests, non-URL remaining parameters become the request body; sha is not a URL variable for pulls.merge.",
+      "path": "src/parse.ts",
+      "repository": "octokit/endpoint.js",
+      "revision": "6bf64182b249f9cd748b1a3003d86455eb2bf6f2"
+    },
+    {
+      "git_blob_sha1": "f96632b1b5dc6bc93cbcca832ad1963d7b3a88b8",
+      "observation": "The pinned target documents endpoint options -> @octokit/endpoint request options -> @octokit/request -> GitHub REST API.",
+      "path": "HOW_IT_WORKS.md",
+      "repository": "octokit/rest.js",
+      "revision": "cd9cb8cd4965d99c7dac8c87d249308956250be3"
+    }
+  ],
+  "boundary": "Static pinned implementation path. A separate target-only execution qualification is used to corroborate the operative serialization.",
+  "claims": [
+    {
+      "id": "OCT_U002_SHA_BODY_SERIALIZED",
+      "status": "ESTABLISHED"
+    },
+    {
+      "id": "OCT_U002_REQUEST_PATH_TO_PROVIDER",
+      "status": "ESTABLISHED"
+    }
+  ],
+  "evidence_id": "OCT_U002_REQUEST_PATH",
+  "role": "PINNED_TARGET_SERIALIZATION_PATH",
+  "schema": "risu.corpus-evidence/v0.1alpha1",
+  "unit_id": "corpus01-unit-002"
+}
