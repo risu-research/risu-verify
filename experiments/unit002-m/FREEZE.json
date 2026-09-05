@@ -1,0 +1,25 @@
+{
+  "schema": "risu.unit002-m-freeze/v0.1alpha1",
+  "experiment_id": "UNIT002_M_PAIRED_MUTATION_CONTROL",
+  "status": "FROZEN_BEFORE_MUTATION_EXECUTION",
+  "plan": {
+    "path": "experiments/unit002-m/PLAN.json",
+    "freeze_commit": "cecaf792cb131f022a1c7bcdd3ab12c0968a409f",
+    "git_blob_sha1": "958bf01dbf89d338aa0f59a5d892127d65704222"
+  },
+  "infrastructure_baseline": {
+    "version": "0.8",
+    "main_merge_commit": "2711eedb7a2ff397af071377b5b8dc87c6840390",
+    "v08_main_qualification_run": 33942956243,
+    "public_semantic_smoke_run": 33942956252
+  },
+  "preexecution_attestations": {
+    "unit002_m_mutation_runner_executed_before_freeze": false,
+    "unit002_m_detector_outputs_observed_before_freeze": false,
+    "mutation_matrix_selected_from_unit002_m_outputs": false,
+    "unit002_r_target_selected_from_unit002_m_outputs": false
+  },
+  "immutability_rule": "PLAN.json bytes at the frozen commit are the only admissible Unit 002-M scoring specification. Any change to mutation operators, seeds, expected outcomes, metrics, or promotion rule after this freeze requires a new versioned experiment and may not replace this frozen matrix.",
+  "implementation_rule": "Post-freeze code may implement and validate the frozen plan, expose diagnostics, and fix implementation defects that do not change the plan. It may not delete a failing mutation, weaken a predicate, or add an outcome-dependent exception.",
+  "result_rule": "The first valid execution whose runner verifies this freeze and completes all predeclared matrix cells is the canonical Unit 002-M control result. Failed infrastructure attempts before a complete valid matrix are retained as diagnostics and never silently relabeled as the canonical result."
+}
