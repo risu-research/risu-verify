@@ -1,0 +1,127 @@
+name: RISU Unit 002-R presemantic frozen-core grammar gate
+
+on:
+  push:
+    branches:
+      - unit002-r-presemantic-grammar
+
+permissions:
+  contents: read
+
+jobs:
+  grammar-only:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      SEALED_HEAD: "1f9fba3a270f05d06763a5c81216d2edddffad8b"
+      MANIFEST: "corpus/0.1/units/002-octokit-pulls-merge/PRIMARY_RUN_MANIFEST_AMENDMENT005.json"
+    steps:
+      - name: Checkout exact corrected sealed scientific head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: 1f9fba3a270f05d06763a5c81216d2edddffad8b
+
+      - name: Build exact compiled input surface without semantic verifier
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SEALED_HEAD"
+          chmod +x tools/*.py
+          python tools/materialize_case_bundles.py
+          rm -rf /tmp/u002-grammar-case
+          python tools/corpus01_compile.py \
+            corpus/0.1/units/002-octokit-pulls-merge/vbe.instance.json \
+            --output /tmp/u002-grammar-case
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from tools.corpus01_primary_v08 import sanitize_report_metadata
+          target=json.loads(Path('corpus/0.1/units/002-octokit-pulls-merge/TARGET_LANE.json').read_text())
+          boundary=json.loads(Path('corpus/0.1/units/002-octokit-pulls-merge/BOUNDARY_MODEL.json').read_text())
+          sanitize_report_metadata(Path('/tmp/u002-grammar-case'),target,boundary)
+          PY
+          python tools/corpus01_bound_evidence.py \
+            /tmp/u002-grammar-case \
+            corpus/0.1/units/002-octokit-pulls-merge \
+            "$MANIFEST" --json
+          python tools/corpus01_provenance_preflight.py \
+            /tmp/u002-grammar-case/assurance/adapter.json --json
+
+      - name: Validate frozen-core grammar only, never evaluate program
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/u002-core /tmp/u002-grammar-evidence
+          mkdir -p /tmp/u002-core /tmp/u002-grammar-evidence
+          python - <<'PY'
+          import hashlib, json, zipfile
+          from pathlib import Path
+          pin=json.loads(Path('CORE_PIN.json').read_text())
+          p=Path(pin['archive'])
+          assert hashlib.sha256(p.read_bytes()).hexdigest()==pin['archive_sha256']
+          with zipfile.ZipFile(p) as z: z.extractall('/tmp/u002-core')
+          PY
+          python - <<'PY'
+          from __future__ import annotations
+          import hashlib, importlib, json, sys
+          from pathlib import Path
+
+          roots=[p for p in Path('/tmp/u002-core').iterdir() if p.is_dir()]
+          assert len(roots)==1, roots
+          core=roots[0]
+          sys.path.insert(0,str(core))
+          pa=importlib.import_module('verifier.projection_adapter')
+          rc=importlib.import_module('compiler.implementations.reference_compiler')
+
+          case=Path('/tmp/u002-grammar-case')
+          adapter=json.loads((case/'assurance/adapter.json').read_text())
+          source=json.loads((case/'assurance/source-contract.json').read_text())
+
+          # Outer grammar validation only. This function does not evaluate worlds or compute a verdict.
+          pa.validate_adapter_shape(adapter)
+          assert adapter['adapter_version']=='0.7'
+          assert source['source_contract_version']=='0.7'
+
+          der=adapter['target']['derivation']
+          program=der['program']
+          assert program['program_version']=='0.5'
+          payload={
+            'protocol': rc.PROTOCOL,
+            'worlds': der['world_records'],
+            'profile_constants': der['profile_constants'],
+            'established_facts': sorted(f['id'] for f in der['facts'] if f['status']=='ESTABLISHED'),
+            'exact_enabled': adapter['target']['exact_enabled'],
+            'program': program,
+          }
+          # validate_payload checks grammar, stage keys, expressions, and established-fact references;
+          # unlike compile_payload it does not evaluate expressions or derive any semantic outcome.
+          rc.validate_payload(payload)
+
+          forbidden=('compile_payload','compile_blind','verify','run_verifier')
+          record={
+            'schema':'risu.unit002-r-presemantic-core-grammar/v0.1alpha1',
+            'status':'PASS',
+            'sealed_scientific_head':'1f9fba3a270f05d06763a5c81216d2edddffad8b',
+            'compiled_adapter_sha256':hashlib.sha256((case/'assurance/adapter.json').read_bytes()).hexdigest(),
+            'compiled_source_contract_sha256':hashlib.sha256((case/'assurance/source-contract.json').read_bytes()).hexdigest(),
+            'adapter_version':adapter['adapter_version'],
+            'source_contract_version':source['source_contract_version'],
+            'program_version':program['program_version'],
+            'outer_adapter_shape_validation':'PASS',
+            'blind_program_payload_grammar_validation':'PASS',
+            'semantic_program_evaluated':False,
+            'semantic_verifier_executed':False,
+            'semantic_outcome_observed':False,
+            'explicitly_not_called':list(forbidden),
+          }
+          out=Path('/tmp/u002-grammar-evidence/GRAMMAR_GATE.json')
+          out.write_text(json.dumps(record,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(record,indent=2,sort_keys=True))
+          PY
+
+      - name: Upload presemantic grammar evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit002-r-presemantic-grammar-${{ github.run_id }}
+          path: /tmp/u002-grammar-evidence/GRAMMAR_GATE.json
+          if-no-files-found: error
+          retention-days: 90
