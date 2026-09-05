@@ -1,0 +1,311 @@
+name: RISU Unit 002-R adversarial post-result closure apply
+
+on:
+  push:
+    branches:
+      - unit002-r-post-result-closure
+
+permissions:
+  contents: write
+
+jobs:
+  close:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      EXPECTED_SCIENTIFIC_HEAD: "b52bde0d0fdef0a2be7d5973e564daccd12296c9"
+      SCIENTIFIC_BRANCH: "unit002-r-real-prospective"
+      UNIT: "corpus/0.1/units/002-octokit-pulls-merge"
+    steps:
+      - name: Checkout exact scientific branch
+        uses: actions/checkout@v4
+        with:
+          ref: unit002-r-real-prospective
+          fetch-depth: 0
+
+      - name: Assert immutable post-primary starting point
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SCIENTIFIC_HEAD"
+          test -z "$(git status --porcelain)"
+          test "$(sha256sum "$UNIT/primary-result/PRIMARY_RESULT.json" | awk '{print $1}')" = "0d7c940e5f5b1918a9b832644df779a1afb3355d8092cb151ee45d8abbe76351"
+          test "$(sha256sum "$UNIT/primary-result/PRIMARY_ARTIFACT_INDEX.json" | awk '{print $1}')" = "3586a6e6c1307376e0463c6c22a138fc45ab77db9f72d2c64c86d9152182b805"
+          test "$(sha256sum "$UNIT/primary-result/actions-artifact-33947031284.zip" | awk '{print $1}')" = "a622c27422d36a9d28302893e4ad9001114bd86e62815aa4f62f3e68918f8a9b"
+          test "$(sha256sum "$UNIT/primary-result/self-contained-primary.zip" | awk '{print $1}')" = "eb0dcf71ea5ae6b0f40c9899dc8fe3e0e6e54fab84bcc1ee927f44e627f8cf95"
+
+      - name: Generate closure records and bookkeeping corrections only
+        run: |
+          python - <<'PY'
+          from __future__ import annotations
+          import copy, hashlib, json, os, subprocess
+          from pathlib import Path
+
+          ROOT=Path('.')
+          U=ROOT/os.environ['UNIT']
+          ENR=ROOT/'corpus/0.1/ENROLLMENT.json'
+          FRICTION=U/'friction.json'
+          COVERAGE=U/'post-result/COVERAGE_DIAGNOSTIC.json'
+          PREMERGE=U/'PREMERGE_CLOSURE.json'
+          PREPRIMARY=ROOT/'.github/workflows/unit002-r-preprimary-seal.yml'
+          CLOSURE_TOOL=ROOT/'tools/unit002r_closure_verify.py'
+          CLOSURE_WF=ROOT/'.github/workflows/unit002-r-closure.yml'
+          BASE=os.environ['EXPECTED_SCIENTIFIC_HEAD']
+
+          def load(p): return json.loads(Path(p).read_text(encoding='utf-8'))
+          def write(p,o):
+              p=Path(p); p.parent.mkdir(parents=True,exist_ok=True)
+              p.write_text(json.dumps(o,indent=2,sort_keys=True)+'\n',encoding='utf-8')
+          def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          def git(*a): return subprocess.check_output(['git',*a],text=True).strip()
+
+          # Primary bytes are read-only inputs to closure.
+          primary=load(U/'primary-result/PRIMARY_RESULT.json')
+          report=load(U/'primary-result/canonical/report.json')
+          cert=load(U/'primary-result/canonical/certificate.json')
+          index=load(U/'primary-result/PRIMARY_ARTIFACT_INDEX.json')
+          assert primary['status']=='FROZEN_FIRST_VALID_PRIMARY'
+          assert primary['canonical_primary']['run_id']==33947031284
+          assert primary['canonical_primary']['product_status']=='PRESERVED_IN_DECLARED_SCOPE'
+          assert primary['canonical_primary']['semantic_exit_code']==0
+          assert report['product_status']=='PRESERVED_IN_DECLARED_SCOPE'
+          assert report['structural']['coverage_complete'] is False
+          assert [w['matches'] for w in report['worlds']]==[True,True]
+          assert report['exact_realization']['status']=='REALIZATION_ESTABLISHED'
+          gap=cert['results']['structural']['coverage_gap']
+          assert cert['results']['structural']['coverage_complete'] is False
+          assert gap=={
+            'in_scope_only':['GUARDED_OCTOKIT_PULLS_MERGE_REVIEWED_HEAD_SHA'],
+            'source_only':['GUARDED_MERGE_REVIEWED_HEAD_SHA'],
+          },gap
+
+          coverage={
+            'schema':'risu.corpus-post-result-coverage-diagnostic/v0.1alpha1',
+            'status':'RETAINED_UNRESOLVED_SCOPE_COVERAGE_IDENTIFIER_NON_EQUIVALENCE',
+            'unit_id':'corpus01-unit-002',
+            'primary_result_freeze_commit':BASE,
+            'primary_run_id':33947031284,
+            'primary_product_status':'PRESERVED_IN_DECLARED_SCOPE',
+            'primary_semantic_exit_code':0,
+            'coverage_complete':False,
+            'certificate_coverage_gap':gap,
+            'source_family':['GUARDED_MERGE_REVIEWED_HEAD_SHA'],
+            'target_in_scope':['GUARDED_OCTOKIT_PULLS_MERGE_REVIEWED_HEAD_SHA'],
+            'bounded_world_realization':{
+              'world_count':2,
+              'all_worlds_match':True,
+              'exact_realization':'REALIZATION_ESTABLISHED',
+              'failure_mode':'NONE',
+            },
+            'interpretation':(
+              'The bounded two-world guarded-call realization is exact, but the frozen core reports coverage incomplete '
+              'because the SOURCE family identifier and TARGET in-scope identifier are distinct and no pre-result '
+              'equivalence mapping was frozen. Closure retains that non-equivalence rather than post-hoc aliasing them.'
+            ),
+            'forbidden_post_result_upgrade':[
+              'Do not declare the source-family and target-scope identifiers equivalent after observing the primary result.',
+              'Do not rewrite the primary report, certificate, adapter, source contract, manifest, seal, or result freeze.',
+              'Do not upgrade PRESERVED_IN_DECLARED_SCOPE to an unqualified PRESERVED claim.',
+            ],
+            'claim_limits':primary['scientific_result']['claim_scope'],
+            'live_github_service_conformance':'NOT_CLAIMED',
+            'general_unguarded_calls':'OUT_OF_SCOPE',
+            'primary_bytes_modified':False,
+          }
+          write(COVERAGE,coverage)
+
+          # Close friction measurement without inventing missing authoring timing.
+          blocked_note=(
+            'Scientific work for this phase completed, but phase-level wall/active timing was not instrumented '
+            'prospectively. Measurement completion is therefore marked BLOCKED rather than backfilled with fictitious precision.'
+          )
+          def phase(status, corrections=0, notes=None, wall=None, active=None, automation=None):
+              return {
+                'status':status,'wall_clock_seconds':wall,'active_seconds':active,
+                'correction_count':corrections,'notes':notes or [],
+                'automation_opportunities_observed':automation or [],
+              }
+          friction={
+            'ledger_schema':'risu.corpus-friction-ledger/v0.1alpha2',
+            'candidate_id':'octokit/rest.js::github-version-bound-write',
+            'unit_id':'corpus01-unit-002',
+            'status':'CLOSED_MEASUREMENT_PARTIAL_NO_FABRICATED_TIMING',
+            'primary_result_frozen':True,
+            'measurement_boundary':(
+              'Authoring timing was not instrumented from the first Unit 002-R action and is not reconstructed. '
+              'Only the primary harness runtime is retained as measured telemetry.'
+            ),
+            'phases':{
+              'operation_identification':phase('BLOCKED',notes=[blocked_note]),
+              'source_semantic_reconstruction':phase('BLOCKED',notes=[blocked_note]),
+              'boundary_definition':phase('BLOCKED',notes=[blocked_note]),
+              'evidence_acquisition':phase('BLOCKED',notes=[blocked_note],automation=['dependency-aware provenance traversal']),
+              'version_binding_discovery':phase('BLOCKED',notes=[blocked_note]),
+              'adapter_or_envelope_authoring':phase('BLOCKED',corrections=3,notes=[blocked_note,'Corrections retained: checksum-pointer bookkeeping, outer adapter protocol label, inner blind-program protocol label.'],automation=['separate harness/core protocol namespaces','mechanically derive all protocol labels from frozen core contract']),
+              'human_correction':phase('BLOCKED',notes=[blocked_note]),
+              'verification_runtime':phase('COMPLETE',wall=0.647976,active=0.647976,notes=['Measured by the canonical v0.8 primary harness only; verifier_seconds=0.471554.'],automation=[]),
+            },
+            'cross_phase':{
+              'tool_calls':None,
+              'tool_calls_measured':False,
+              'files_authored':None,
+              'files_authored_measured':False,
+              'evidence_objects_pinned':6,
+              'human_acceptance_events':1,
+              'uncertainties_left_open':[
+                'Live GitHub provider conformance is not claimed.',
+                'General unguarded Octokit merge calls remain out of scope.',
+                'Coverage remains incomplete because SOURCE-family and TARGET-scope identifiers are not predeclared equivalent.',
+              ],
+              'candidate_automation_not_adopted_yet':[
+                'dependency-aware provenance traversal',
+                'generated target-only carrier probes',
+                'protocol namespace/type separation between harness and frozen scientific core',
+                'artifact-role-aware post-result assertions that distinguish canonical files from bundle staging copies',
+              ],
+            },
+            'observed_friction':[
+              {'id':'U002R-F01','class':'EVIDENCE_CHAIN','observation':'Octokit semantics traverse separately versioned dependency packages.','automation_candidate':'dependency-aware provenance traversal','promote_to_infrastructure_now':False},
+              {'id':'U002R-F02','class':'STATIC_TO_OPERATIVE','observation':'A target-only black-box qualification materially strengthened the carrier claim without live-provider contact or RISU execution.','automation_candidate':'generated carrier qualification probes','promote_to_infrastructure_now':False},
+              {'id':'U002R-F03','class':'CHECKSUM_BOOKKEEPING','observation':'A hand-entered envelope checksum pointer was wrong and the read-only audit stopped execution before primary. Unit 001 had a related bookkeeping-hash failure.','automation_candidate':'zero-hand-entered scientific-pointer hashes','promote_to_infrastructure_now':True},
+              {'id':'U002R-F04','class':'PROTOCOL_NAMESPACE_COLLISION','observation':'Harness v0.8 was mistakenly written into frozen-core adapter/program protocol labels, which actually require 0.7 and 0.5.','automation_candidate':'typed and separately named harness/core protocol version fields','promote_to_infrastructure_now':True},
+              {'id':'U002R-F05','class':'SEAL_BOOTSTRAP_CONTAMINATION','observation':'Audit materialization, pycache, and repo-local tee output dirtied the seal tree until audit/seal runners were physically isolated.','automation_candidate':'pristine seal runner as first process with temp-only logs','promote_to_infrastructure_now':True},
+              {'id':'U002R-F06','class':'FILESYSTEM_MODE_TRANSPORT','observation':'Connector-created Git contents did not preserve the executable bit for risu-verify; byte-identity was verified before mode normalization.','automation_candidate':'content-hash-first executable-mode normalization helper','promote_to_infrastructure_now':False},
+              {'id':'U002R-F07','class':'ARTIFACT_ALIAS','observation':'Post-result glob matched the canonical primary observation and its byte-identical bundle staging copy, making the workflow red after a valid primary.','automation_candidate':'artifact-role-aware canonical path assertions','promote_to_infrastructure_now':True},
+              {'id':'U002R-F08','class':'ARCHIVAL_COMPLEXITY','observation':'The self-contained v0.8 bundle enabled 24/24 internal-manifest verification and exact archive recovery after the wrapper failure.','automation_candidate':'promote self-contained primary bundle as mandatory corpus primitive','promote_to_infrastructure_now':True},
+            ],
+            'rule':'No missing authoring timing is reconstructed. Automation promotion should distinguish repeated friction from one-off carrier-specific friction.',
+          }
+          write(FRICTION,friction)
+
+          # Update only operational progress fields in frozen enrollment; selection identity/order remains byte-semantically unchanged.
+          enrollment_before=load(ENR)
+          enrollment=copy.deepcopy(enrollment_before)
+          u2=next(x for x in enrollment['units'] if x['unit_id']=='corpus01-unit-002')
+          frozen_selection={k:u2[k] for k in ['enrollment_position','unit_id','candidate_id','organization','stratum','mechanism_family','target_revision','screened_operation','verdict_observed_at_enrollment']}
+          assert frozen_selection=={
+            'enrollment_position':2,'unit_id':'corpus01-unit-002','candidate_id':'octokit/rest.js::github-version-bound-write',
+            'organization':'octokit','stratum':'NON_AGENT_SPECIFIC','mechanism_family':'COMMIT_OR_OBJECT_IDENTITY',
+            'target_revision':'cd9cb8cd4965d99c7dac8c87d249308956250be3','screened_operation':'octokit.rest.pulls.merge',
+            'verdict_observed_at_enrollment':False,
+          }
+          u2['authoring_started']=True
+          u2['authoring_frozen']=True
+          u2['friction_ledger']='corpus/0.1/units/002-octokit-pulls-merge/friction.json'
+          u2['authoring_acceptance_path']='corpus/0.1/units/002-octokit-pulls-merge/AUTHOR_ACCEPTANCE.json'
+          for k,v in frozen_selection.items(): assert u2[k]==v
+          # Preserve readable historical formatting while changing only the Unit002 operational block.
+          old=ENR.read_text(encoding='utf-8')
+          needle='''      "authoring_started": false,\n      "authoring_frozen": false,\n      "friction_ledger": null\n'''
+          repl='''      "authoring_started": true,\n      "authoring_frozen": true,\n      "friction_ledger": "corpus/0.1/units/002-octokit-pulls-merge/friction.json",\n      "authoring_acceptance_path": "corpus/0.1/units/002-octokit-pulls-merge/AUTHOR_ACCEPTANCE.json"\n'''
+          assert old.count(needle)==7, old.count(needle)
+          # The first occurrence after Unit001 is Unit002; replace only once after the Unit002 candidate marker.
+          marker='"candidate_id": "octokit/rest.js::github-version-bound-write"'
+          pos=old.index(marker); tail=old[pos:]; assert needle in tail
+          tail=tail.replace(needle,repl,1); ENR.write_text(old[:pos]+tail,encoding='utf-8')
+          enrollment_after=load(ENR)
+          u2a=next(x for x in enrollment_after['units'] if x['unit_id']=='corpus01-unit-002')
+          for k,v in frozen_selection.items(): assert u2a[k]==v
+          for unit_before in enrollment_before['units']:
+              if unit_before['unit_id']=='corpus01-unit-002': continue
+              unit_after=next(x for x in enrollment_after['units'] if x['unit_id']==unit_before['unit_id'])
+              assert unit_after==unit_before
+
+          # Retire the pre-primary PR trigger; retained for explicit historical/manual replay only.
+          pre=PREPRIMARY.read_text(encoding='utf-8')
+          old_on='''on:\n  pull_request:\n    paths:\n      - "corpus/0.1/units/002-octokit-pulls-merge/**"\n      - "tools/unit002r_acceptance_verify.py"\n      - ".github/workflows/unit002-r-preprimary-seal.yml"\n  workflow_dispatch:\n'''
+          assert old_on in pre
+          PREPRIMARY.write_text(pre.replace(old_on,'on:\n  workflow_dispatch:\n',1),encoding='utf-8')
+
+          premerge={
+            'schema':'risu.corpus-premerge-closure/v0.1alpha1',
+            'status':'READY_FOR_GUARDED_MERGE',
+            'unit_id':'corpus01-unit-002',
+            'canonical_phrase':'Corpus 0.1 — Unit 002-R: READY FOR GUARDED MERGE',
+            'primary_result_freeze_commit':BASE,
+            'authoring_freeze_commit':'ce4c3a311bcf9f6b74b43af24e8732d1af8fd5ac',
+            'sealed_scientific_head':'1f9fba3a270f05d06763a5c81216d2edddffad8b',
+            'primary':{
+              'run_id':33947031284,'job_id':101254891951,'artifact_id':9963646702,
+              'semantic_exit_code':0,'product_status':'PRESERVED_IN_DECLARED_SCOPE',
+              'C':'C1','D':'D1','O':'O1','exact_realization':'REALIZATION_ESTABLISHED',
+              'actions_artifact_sha256':'a622c27422d36a9d28302893e4ad9001114bd86e62815aa4f62f3e68918f8a9b',
+              'self_contained_bundle_sha256':'eb0dcf71ea5ae6b0f40c9899dc8fe3e0e6e54fab84bcc1ee927f44e627f8cf95',
+              'primary_result_sha256':'0d7c940e5f5b1918a9b832644df779a1afb3355d8092cb151ee45d8abbe76351',
+              'artifact_index_sha256':'3586a6e6c1307376e0463c6c22a138fc45ab77db9f72d2c64c86d9152182b805',
+            },
+            'retained_limitations':{
+              'coverage_complete':False,
+              'coverage_diagnostic':'post-result/COVERAGE_DIAGNOSTIC.json',
+              'general_unguarded_calls':'OUT_OF_SCOPE','all_merge_failures':'OUT_OF_SCOPE',
+              'live_github_service_conformance':'NOT_CLAIMED','model_relative':True,
+              'unqualified_preserved_claim_prohibited':True,
+            },
+            'history_retained':{
+              'invalid_prevalid_toolchain_run':33946439332,
+              'presemantic_mode_gate_stop':33947000387,
+              'post_result_wrapper_failure_on_canonical_run':True,
+              'canonical_primary_rerun_prohibited':True,
+            },
+            'closure_conditions':{
+              'primary_bytes_immutable_since_result_freeze':True,
+              'coverage_gap_retained_without_posthoc_alias':True,
+              'friction_closed_without_fabricated_timing':True,
+              'enrollment_selection_identity_unchanged':True,
+              'preprimary_automatic_workflow_retired':True,
+              'guarded_pr_merge_still_required':True,
+              'authoritative_main_closure_pending_merge_identity':True,
+            },
+          }
+          write(PREMERGE,premerge)
+
+          verifier='''#!/usr/bin/env python3\nfrom __future__ import annotations\nimport hashlib,json,subprocess,sys,zipfile\nfrom pathlib import Path\nROOT=Path(__file__).resolve().parents[1]\nU=ROOT/"corpus/0.1/units/002-octokit-pulls-merge"\nBASE="b52bde0d0fdef0a2be7d5973e564daccd12296c9"\nALLOWED={\n".github/workflows/unit002-r-preprimary-seal.yml",\n".github/workflows/unit002-r-closure.yml",\n"corpus/0.1/ENROLLMENT.json",\n"corpus/0.1/units/002-octokit-pulls-merge/friction.json",\n"corpus/0.1/units/002-octokit-pulls-merge/post-result/COVERAGE_DIAGNOSTIC.json",\n"corpus/0.1/units/002-octokit-pulls-merge/PREMERGE_CLOSURE.json",\n"tools/unit002r_closure_verify.py",\n}\ndef load(p): return json.loads(Path(p).read_text(encoding="utf-8"))\ndef sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()\ndef git(*a): return subprocess.run(["git",*a],cwd=ROOT,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)\ndef die(m): print("UNIT002-R CLOSURE VERIFY: FAIL:",m,file=sys.stderr); raise SystemExit(1)\ntry:\n  changed=set(git("diff","--name-only",f"{BASE}..HEAD").stdout.splitlines())\n  if not changed.issubset(ALLOWED): die(f"unexpected post-result paths: {sorted(changed-ALLOWED)}")\n  if git("diff","--quiet",f"{BASE}..HEAD","--",str(U.relative_to(ROOT)/"primary-result")).returncode!=0: die("primary-result bytes changed after freeze")\n  expected={\n    U/"primary-result/PRIMARY_RESULT.json":"0d7c940e5f5b1918a9b832644df779a1afb3355d8092cb151ee45d8abbe76351",\n    U/"primary-result/PRIMARY_ARTIFACT_INDEX.json":"3586a6e6c1307376e0463c6c22a138fc45ab77db9f72d2c64c86d9152182b805",\n    U/"primary-result/actions-artifact-33947031284.zip":"a622c27422d36a9d28302893e4ad9001114bd86e62815aa4f62f3e68918f8a9b",\n    U/"primary-result/self-contained-primary.zip":"eb0dcf71ea5ae6b0f40c9899dc8fe3e0e6e54fab84bcc1ee927f44e627f8cf95",\n    U/"primary-result/canonical/report.json":"a09e52ac538f8a43646703eeb81e6d5dee36b1e4ad282e54885bb6090169ddb2",\n    U/"primary-result/canonical/certificate.json":"75cbdba31eb7717ea3b30f084b3b5f77a05cecbd3eeba26a20cb7f55bf38d418",\n  }\n  for p,h in expected.items():\n    if sha(p)!=h: die(f"hash mismatch {p}")\n  primary=load(U/"primary-result/PRIMARY_RESULT.json"); report=load(U/"primary-result/canonical/report.json"); cert=load(U/"primary-result/canonical/certificate.json")\n  if primary["canonical_primary"]["run_id"]!=33947031284 or primary["canonical_primary"]["product_status"]!="PRESERVED_IN_DECLARED_SCOPE" or primary["canonical_primary"]["semantic_exit_code"]!=0: die("canonical primary identity/outcome mismatch")\n  if report["structural"]["coverage_complete"] is not False: die("coverage was upgraded")\n  gap=cert["results"]["structural"]["coverage_gap"]\n  want={"in_scope_only":["GUARDED_OCTOKIT_PULLS_MERGE_REVIEWED_HEAD_SHA"],"source_only":["GUARDED_MERGE_REVIEWED_HEAD_SHA"]}\n  if gap!=want: die(f"coverage gap changed: {gap}")\n  cov=load(U/"post-result/COVERAGE_DIAGNOSTIC.json")\n  if cov["status"]!="RETAINED_UNRESOLVED_SCOPE_COVERAGE_IDENTIFIER_NON_EQUIVALENCE" or cov["certificate_coverage_gap"]!=want or cov["coverage_complete"] is not False or cov["primary_bytes_modified"] is not False: die("coverage diagnostic weakens or rewrites primary")\n  if not all(w["matches"] for w in report["worlds"]): die("world realization mismatch")\n  if report["exact_realization"]["status"]!="REALIZATION_ESTABLISHED": die("exact realization changed")\n  fr=load(U/"friction.json")\n  if fr["candidate_id"]!="octokit/rest.js::github-version-bound-write" or fr["unit_id"]!="corpus01-unit-002" or fr["primary_result_frozen"] is not True: die("friction closure identity mismatch")\n  rt=fr["phases"]["verification_runtime"]\n  if rt["status"]!="COMPLETE" or rt["wall_clock_seconds"]!=0.647976 or rt["active_seconds"]!=0.647976: die("measured runtime not retained exactly")\n  for n,p in fr["phases"].items():\n    if n!="verification_runtime" and p["status"]!="BLOCKED": die(f"unmeasured timing was promoted for {n}")\n    if n!="verification_runtime" and (p["wall_clock_seconds"] is not None or p["active_seconds"] is not None): die(f"fabricated timing present for {n}")\n  enr=load(ROOT/"corpus/0.1/ENROLLMENT.json"); u2=next(x for x in enr["units"] if x["unit_id"]=="corpus01-unit-002")\n  frozen={"enrollment_position":2,"candidate_id":"octokit/rest.js::github-version-bound-write","organization":"octokit","stratum":"NON_AGENT_SPECIFIC","mechanism_family":"COMMIT_OR_OBJECT_IDENTITY","target_revision":"cd9cb8cd4965d99c7dac8c87d249308956250be3","screened_operation":"octokit.rest.pulls.merge","verdict_observed_at_enrollment":False}\n  for k,v in frozen.items():\n    if u2.get(k)!=v: die(f"enrollment selection identity changed: {k}")\n  if not u2["authoring_started"] or not u2["authoring_frozen"] or u2["friction_ledger"]!="corpus/0.1/units/002-octokit-pulls-merge/friction.json" or u2.get("authoring_acceptance_path")!="corpus/0.1/units/002-octokit-pulls-merge/AUTHOR_ACCEPTANCE.json": die("Unit002 operational enrollment state not closed")\n  pre=(ROOT/".github/workflows/unit002-r-preprimary-seal.yml").read_text()\n  if "pull_request:" in pre or "workflow_dispatch:" not in pre: die("preprimary workflow not retired from automatic PR execution")\n  cl=load(U/"PREMERGE_CLOSURE.json")\n  if cl["status"]!="READY_FOR_GUARDED_MERGE" or cl["retained_limitations"]["coverage_complete"] is not False or cl["closure_conditions"]["guarded_pr_merge_still_required"] is not True: die("premerge closure state invalid")\n  with zipfile.ZipFile(U/"primary-result/self-contained-primary.zip") as z:\n    lines=z.read("MANIFEST.sha256").decode().strip().splitlines()\n    if len(lines)!=24: die("self-contained manifest entry count changed")\n    for line in lines:\n      h,rel=line.split("  ",1)\n      if hashlib.sha256(z.read(rel)).hexdigest()!=h: die(f"self-contained mismatch: {rel}")\n  print(json.dumps({"status":"PASS","unit_id":"corpus01-unit-002","primary_result":"PRESERVED_IN_DECLARED_SCOPE","coverage_complete":False,"primary_bytes_immutable":True,"changed_paths":sorted(changed)},indent=2,sort_keys=True))\nexcept SystemExit: raise\nexcept Exception as e: die(f"{type(e).__name__}: {e}")\n'''
+          CLOSURE_TOOL.write_text(verifier,encoding='utf-8')
+
+          closure_wf='''name: RISU Unit 002-R closure\n\non:\n  pull_request:\n    paths:\n      - "corpus/0.1/ENROLLMENT.json"\n      - "corpus/0.1/units/002-octokit-pulls-merge/**"\n      - "tools/unit002r_closure_verify.py"\n      - ".github/workflows/unit002-r-closure.yml"\n      - ".github/workflows/unit002-r-preprimary-seal.yml"\n  push:\n    branches: [main]\n    paths:\n      - "corpus/0.1/ENROLLMENT.json"\n      - "corpus/0.1/units/002-octokit-pulls-merge/**"\n      - "tools/unit002r_closure_verify.py"\n      - ".github/workflows/unit002-r-closure.yml"\npermissions:\n  contents: read\njobs:\n  closure:\n    runs-on: ubuntu-latest\n    env:\n      PYTHONDONTWRITEBYTECODE: "1"\n    steps:\n      - uses: actions/checkout@v4\n        with:\n          fetch-depth: 0\n      - name: Validate Corpus protocol and friction ledger\n        run: python tools/corpus01_validate.py --json\n      - name: Verify Unit 002-R adversarial closure invariants\n        run: python tools/unit002r_closure_verify.py\n      - name: Run Corpus infrastructure unit tests\n        run: python -m unittest tests.test_corpus01_unit_harness tests.test_corpus01_v08\n'''
+          CLOSURE_WF.write_text(closure_wf,encoding='utf-8')
+
+          print(json.dumps({'status':'GENERATED_CLOSURE_CANDIDATE','coverage_gap':gap,'primary_result_sha256':sha(U/'primary-result/PRIMARY_RESULT.json')},indent=2,sort_keys=True))
+          PY
+
+      - name: Verify generated closure candidate before commit
+        run: |
+          set -euo pipefail
+          python tools/corpus01_validate.py --json
+          python tools/unit002r_closure_verify.py
+          python -m unittest tests.test_corpus01_unit_harness tests.test_corpus01_v08
+          git diff --quiet "$EXPECTED_SCIENTIFIC_HEAD" -- "$UNIT/primary-result"
+
+      - name: Commit closure-only state atomically and fast-forward scientific branch
+        run: |
+          set -euo pipefail
+          git config user.name "RISU Protocol Bot"
+          git config user.email "protocol-bot@users.noreply.github.com"
+          git add \
+            corpus/0.1/ENROLLMENT.json \
+            "$UNIT/friction.json" \
+            "$UNIT/post-result/COVERAGE_DIAGNOSTIC.json" \
+            "$UNIT/PREMERGE_CLOSURE.json" \
+            tools/unit002r_closure_verify.py \
+            .github/workflows/unit002-r-preprimary-seal.yml \
+            .github/workflows/unit002-r-closure.yml
+          git commit -m "Prepare adversarial Unit 002-R guarded-merge closure"
+          python tools/corpus01_validate.py --json
+          python tools/unit002r_closure_verify.py
+          git diff --quiet "$EXPECTED_SCIENTIFIC_HEAD" -- "$UNIT/primary-result"
+          git push origin HEAD:refs/heads/unit002-r-real-prospective
+
+      - name: Emit closure candidate identity
+        run: |
+          python - <<'PY'
+          import hashlib,json,subprocess
+          from pathlib import Path
+          u=Path('corpus/0.1/units/002-octokit-pulls-merge')
+          print(json.dumps({
+            'status':'READY_FOR_GUARDED_MERGE',
+            'commit':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
+            'premerge_closure_sha256':hashlib.sha256((u/'PREMERGE_CLOSURE.json').read_bytes()).hexdigest(),
+            'coverage_diagnostic_sha256':hashlib.sha256((u/'post-result/COVERAGE_DIAGNOSTIC.json').read_bytes()).hexdigest(),
+            'friction_sha256':hashlib.sha256((u/'friction.json').read_bytes()).hexdigest(),
+            'primary_result_sha256':hashlib.sha256((u/'primary-result/PRIMARY_RESULT.json').read_bytes()).hexdigest(),
+          },indent=2,sort_keys=True))
+          PY
