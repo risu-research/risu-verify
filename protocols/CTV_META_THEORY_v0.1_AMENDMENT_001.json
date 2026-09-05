@@ -1,0 +1,41 @@
+{
+  "amendment_id": "RISU_CTV_META_THEORY_AMENDMENT_001",
+  "parent_contract_id": "RISU_CTV_META_THEORY_001",
+  "parent_merge_sha": "1f8fffd9705751fbe568d646eb4703a250a566c0",
+  "status": "FROZEN_PRE_UNIT003_PRE_VERDICT",
+  "timing": {
+    "effective_from_unit": "corpus01-unit-003",
+    "unit003_authoring_started_at_amendment": false,
+    "unit003_authoring_frozen_at_amendment": false,
+    "unit003_verdict_observed_at_amendment": false
+  },
+  "result_impact_classification": "PROSPECTIVE_SEMANTIC_HARDENING_NO_HISTORICAL_REINTERPRETATION",
+  "defects_closed": [
+    "EMPTY_INTERPRETATION_VACUITY",
+    "IMPLICIT_COMPATIBILITY_TOTAL_ORDER"
+  ],
+  "normative_overrides": {
+    "interpretation_nonemptiness": {
+      "rule": "For every admitted world w and every target realization r in T(w) used to establish L4_CONSEQUENCE_REFINEMENT or CONSEQUENCE_STABLE_IN_DECLARED_SCOPE, M(r) MUST be nonempty. A target realization lacking an evidence-backed consequence interpretation is unresolved; it MUST narrow the claim or force ASSURANCE_INCOMPLETE and MUST NOT be represented as M(r)=empty for the purpose of proving refinement.",
+      "effective_relational_refinement": "For every admitted world w: T(w) is nonempty; for every r in T(w) material to the declared L4/stability obligation, M(r) is nonempty; and union_{r in T(w)} M(r) is a subset of S(w).",
+      "deterministic_bridge": "In the deterministic singleton-consequence fragment, nonempty interpretation plus relational refinement is consistent with the factorization/kernel rule: if rho_T(w1)=rho_T(w2), the shared realization cannot refine two distinct singleton source consequences."
+    },
+    "compatibility_structure": {
+      "kind": "NAMED_OBLIGATION_VECTOR_NOT_TOTAL_ORDER",
+      "rule": "L0 through L5 are named compatibility obligations. Numeric labels do not create implicit implication edges. A profile MAY declare explicit implication edges only when separately justified and machine-recorded. L5_DECLARED_SCOPE_COVERAGE is an orthogonal completeness obligation and MUST NOT silently upgrade L0-L4.",
+      "implicit_level_implications": []
+    },
+    "verdict_hardening": {
+      "consequence_stable": "CONSEQUENCE_STABLE_IN_DECLARED_SCOPE additionally requires nonempty consequence interpretation for every target realization material to the declared stability obligation.",
+      "assurance_incomplete": "An uninterpreted or evidence-unsupported material target realization is ASSURANCE_INCOMPLETE unless the declared scope is prospectively narrowed before primary execution.",
+      "regression": "A valid concrete regression witness remains sufficient for CONSEQUENCE_REGRESSION on its declared witnessed slice; unrelated unresolved mappings remain separately reported."
+    }
+  },
+  "anti_retroactivity": {
+    "rule": "NO_REINTERPRETATION_NO_UPGRADE",
+    "corpus01-unit-001": "UNCHANGED_CANONICAL_HISTORY",
+    "corpus01-unit-002": "UNCHANGED_CANONICAL_HISTORY",
+    "historical_recompute_forbidden": true
+  },
+  "amendment_rule": "This amendment itself is prospective and frozen before Unit003 authoring. Any later normative change requires a new numbered amendment or version with timing and result-impact classification."
+}
