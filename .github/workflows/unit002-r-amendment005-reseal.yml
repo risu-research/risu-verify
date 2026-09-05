@@ -1,0 +1,172 @@
+name: RISU Unit 002-R Amendment 005-era reseal
+
+on:
+  push:
+    branches:
+      - unit002-r-amendment005-reseal
+
+permissions:
+  contents: write
+
+jobs:
+  independent-corrected-audit:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      CORRECTED_HEAD: "ce4c3a311bcf9f6b74b43af24e8732d1af8fd5ac"
+    steps:
+      - name: Checkout exact corrected authoring head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ce4c3a311bcf9f6b74b43af24e8732d1af8fd5ac
+
+      - name: Prove Amendment 004+005 correction scope and status-only acceptance
+        run: |
+          python - <<'PY'
+          import copy, hashlib, json
+          from pathlib import Path
+          U=Path('corpus/0.1/units/002-octokit-pulls-merge')
+          def load(p): return json.loads(p.read_text())
+          def sha(p): return hashlib.sha256(p.read_bytes()).hexdigest()
+          source=U/'SOURCE_LANE.json'; target=U/'TARGET_LANE.json'; boundary=U/'BOUNDARY_MODEL.json'
+          assert sha(source)=='a141d38509796aaf871e812ad4007d14706b9625150641ffc8e190774c4fb79b'
+          assert sha(target)=='206650add24f2dbb5a0567f4cf034d5c3eb99098507a3f06c046392c552ad810'
+          assert sha(boundary)=='8284797a0ccd3c7bbb23c75ecb617e284ac00f28589a42a0b21492f55ced6430'
+          env=load(U/'vbe.envelope.json')
+          assert env['adapter_base']['adapter_version']=='0.7'
+          assert sha(U/'vbe.envelope.json')=='1c82258ec2c174354740a2377403442e05f731059f178490ba574bf778cc71d0'
+          draft=load(U/'vbe.instance.draft.json'); accepted=load(U/'vbe.instance.json')
+          assert draft['target']['program_version']=='0.5'
+          assert accepted['target']['program_version']=='0.5'
+          assert draft['status']=='DRAFT_UNVERIFIED' and accepted['status']=='AUTHOR_ACCEPTED'
+          n=copy.deepcopy(draft); n['status']='AUTHOR_ACCEPTED'; assert n==accepted
+          acc=load(U/'AUTHOR_ACCEPTANCE.json')
+          ids=[x['id'] for x in acc['amendments_applied']]
+          assert ids==[
+            'RISU_CORPUS_0.1_AUTHORING_PROTOCOL_AMENDMENT_003',
+            'RISU_CORPUS_0.1_AUTHORING_PROTOCOL_AMENDMENT_004',
+            'RISU_CORPUS_0.1_AUTHORING_PROTOCOL_AMENDMENT_005',
+          ]
+          assert acc['primary_verdict_observed_before_acceptance'] is False
+          a4=load(Path('corpus/0.1/AUTHORING_PROTOCOL_AMENDMENT_004.json'))
+          a5=load(Path('corpus/0.1/AUTHORING_PROTOCOL_AMENDMENT_005.json'))
+          assert a4['valid_semantic_outcome_observed_before_amendment'] is False
+          assert a5['valid_semantic_outcome_observed_before_amendment'] is False
+          assert a4['correction']['old_value']=='0.8' and a4['correction']['new_value']=='0.7'
+          assert a5['correction']['old_value']=='0.8' and a5['correction']['new_value']=='0.5'
+          print('CORRECTED AUTHORING INVARIANTS: PASS')
+          PY
+
+      - name: Read-only protocol-preserving corrected audit
+        run: |
+          python tools/corpus01_unit_harness.py audit \
+            corpus/0.1/units/002-octokit-pulls-merge \
+            --json
+
+  clean-reseal-and-push:
+    needs: independent-corrected-audit
+    runs-on: ubuntu-latest
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      EXPECTED_SCIENTIFIC_HEAD: "ce4c3a311bcf9f6b74b43af24e8732d1af8fd5ac"
+      MANIFEST_PATH: "corpus/0.1/units/002-octokit-pulls-merge/PRIMARY_RUN_MANIFEST_AMENDMENT005.json"
+      SEAL_PATH: "corpus/0.1/units/002-octokit-pulls-merge/UNIT_SEAL_AMENDMENT005.json"
+    steps:
+      - name: Fresh checkout exact corrected scientific branch
+        uses: actions/checkout@v4
+        with:
+          ref: unit002-r-real-prospective
+          fetch-depth: 0
+
+      - name: Assert pristine corrected freeze boundary
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SCIENTIFIC_HEAD"
+          test -z "$(git status --porcelain)"
+          test ! -e "$MANIFEST_PATH"
+          test ! -e "$SEAL_PATH"
+
+      - name: Generate corrected v0.8 manifest and seal as first Python action
+        run: |
+          python tools/corpus01_seal.py \
+            corpus/0.1/units/002-octokit-pulls-merge \
+            --freeze-ref HEAD \
+            --manifest PRIMARY_RUN_MANIFEST_AMENDMENT005.json \
+            --seal UNIT_SEAL_AMENDMENT005.json \
+            --json > /tmp/unit002-r-amendment005-seal.json
+          cat /tmp/unit002-r-amendment005-seal.json
+
+      - name: Assert corrected readiness semantics before commit
+        run: |
+          python - <<'PY'
+          import json, os, subprocess
+          from pathlib import Path
+          m=Path(os.environ['MANIFEST_PATH']); s=Path(os.environ['SEAL_PATH'])
+          manifest=json.loads(m.read_text()); seal=json.loads(s.read_text())
+          head=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          assert head==os.environ['EXPECTED_SCIENTIFIC_HEAD']
+          assert seal['status']=='READY_FOR_PRIMARY'
+          assert seal['authoring_freeze_commit']==head
+          assert seal['controls']['primary_verifier_executed_during_seal'] is False
+          assert seal['controls']['semantic_outcome_observed_during_seal'] is False
+          assert seal['controls']['scientific_input_bytes_modified'] is False
+          assert seal['gates']=={
+            'bound_evidence_compile':'PASS',
+            'freeze_gate':'PASS',
+            'provenance_preflight':'PASS',
+            'read_only_audit':'PASS',
+          }
+          assert manifest['authoring_freeze_commit']==head
+          assert manifest['primary_verdict_observed_before_manifest'] is False
+          assert manifest['post_freeze_allowed_paths']==sorted([os.environ['MANIFEST_PATH'],os.environ['SEAL_PATH']])
+          assert manifest['protocol_preserving_generation']['semantic_fields_inferred'] is False
+          assert manifest['protocol_preserving_generation']['scientific_input_bytes_modified'] is False
+          print(json.dumps({'manifest':manifest,'seal':seal},indent=2,sort_keys=True))
+          PY
+
+      - name: Commit exactly the new manifest and seal and fast-forward push
+        run: |
+          set -euo pipefail
+          git config user.name "RISU Protocol Bot"
+          git config user.email "protocol-bot@users.noreply.github.com"
+          git add "$MANIFEST_PATH" "$SEAL_PATH"
+          git commit -m "Seal corrected Unit 002-R after Amendments 004 and 005"
+          changed="$(git diff --name-only "$EXPECTED_SCIENTIFIC_HEAD"..HEAD | sort)"
+          expected="$(printf '%s\n%s\n' "$MANIFEST_PATH" "$SEAL_PATH" | sort)"
+          test "$changed" = "$expected"
+          git push origin HEAD:refs/heads/unit002-r-real-prospective
+
+      - name: Record exact generated readiness bytes
+        run: |
+          python - <<'PY'
+          import hashlib,json,os,subprocess
+          from pathlib import Path
+          def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          out={
+            'schema':'risu.unit002-r-amendment005-reseal/v0.1alpha1',
+            'status':'PASS',
+            'authoring_freeze_commit':os.environ['EXPECTED_SCIENTIFIC_HEAD'],
+            'sealed_scientific_head':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
+            'manifest_path':os.environ['MANIFEST_PATH'],
+            'manifest_sha256':sha(os.environ['MANIFEST_PATH']),
+            'seal_path':os.environ['SEAL_PATH'],
+            'seal_sha256':sha(os.environ['SEAL_PATH']),
+            'primary_verifier_executed':False,
+            'semantic_outcome_observed':False,
+          }
+          Path('/tmp/unit002-r-amendment005-reseal-record.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(out,indent=2,sort_keys=True))
+          PY
+
+      - name: Upload corrected readiness evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit002-r-amendment005-reseal-${{ github.run_id }}
+          path: |
+            corpus/0.1/units/002-octokit-pulls-merge/PRIMARY_RUN_MANIFEST_AMENDMENT005.json
+            corpus/0.1/units/002-octokit-pulls-merge/UNIT_SEAL_AMENDMENT005.json
+            /tmp/unit002-r-amendment005-seal.json
+            /tmp/unit002-r-amendment005-reseal-record.json
+          if-no-files-found: error
+          retention-days: 90
