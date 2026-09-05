@@ -1,0 +1,61 @@
+{
+  "amendment_id": "RISU_CORPUS_0.1_AUTHORING_PROTOCOL_AMENDMENT_003",
+  "amendment_schema": "risu.corpus-authoring-protocol-amendment/v0.1alpha1",
+  "status": "RECORDED_AFTER_INVALID_READ_ONLY_AUDIT_BEFORE_ANY_UNIT002_R_PRIMARY_SEMANTIC_VERDICT",
+  "unit_id": "corpus01-unit-002",
+  "parent_authoring_protocol": "corpus/0.1/AUTHORING_PROTOCOL.json",
+  "previous_amendment": "corpus/0.1/AUTHORING_PROTOCOL_AMENDMENT_002.json",
+  "primary_verdict_observed_before_amendment": false,
+  "issue_tracker_bug_discovery_performed_before_amendment": false,
+  "original_author_acceptance_commit": "359060b572e9abe6d3b5750a7daa6d839f0151d1",
+  "original_author_accepted_instance_commit": "0f91372942145331cde26b6d2f8141649adf2a63",
+  "triggering_invalid_run": {
+    "run_id": 33945675255,
+    "workflow_head_sha": "80dc3c324919bf879b7ff75df66c0802538eac3c",
+    "status_only_acceptance_verifier": "PASS",
+    "read_only_unit_audit": "BLOCKED",
+    "blocker_key": "INSTANCE_AUTHORING_SHA_MISMATCH:carrier_envelope",
+    "primary_verifier_reached": false,
+    "primary_verdict_observed": false,
+    "seal_generated": false
+  },
+  "diagnosis": {
+    "classification": "CHECKSUM_POINTER_BOOKKEEPING_DEFECT",
+    "path": "corpus/0.1/units/002-octokit-pulls-merge/vbe.envelope.json",
+    "incorrect_declared_sha256": "38be6f5e4d199c579e34566de8286cacd42eb7956f012bd64890660ab939ce32",
+    "actual_committed_sha256": "0243c54dc7042a808b8e6ef0dce968f2b78f3148374d90b5e2a234dfe0499ce1",
+    "envelope_bytes_changed_to_fix_defect": false,
+    "source_target_boundary_pattern_world_or_evidence_change_required": false,
+    "provenance_graph_change_required": false,
+    "reason": "The envelope itself was already committed and compiled successfully. A manually precomputed SHA-256 pointer copied into the draft/accepted authoring metadata was wrong. The v0.8 read-only audit detected the mismatch before seal or primary execution."
+  },
+  "correction": {
+    "mode": "PREPRIMARY_METADATA_POINTER_CORRECTION_ONLY",
+    "allowed_value_change": {
+      "from": "38be6f5e4d199c579e34566de8286cacd42eb7956f012bd64890660ab939ce32",
+      "to": "0243c54dc7042a808b8e6ef0dce968f2b78f3148374d90b5e2a234dfe0499ce1"
+    },
+    "allowed_locations": [
+      "corpus/0.1/units/002-octokit-pulls-merge/vbe.instance.draft.json:authoring_inputs.carrier_envelope.sha256",
+      "corpus/0.1/units/002-octokit-pulls-merge/vbe.instance.json:authoring_inputs.carrier_envelope.sha256",
+      "corpus/0.1/units/002-octokit-pulls-merge/AUTHOR_ACCEPTANCE.json:frozen_inputs[vbe.envelope.json].sha256"
+    ],
+    "acceptance_metadata_refresh_allowed": "AUTHOR_ACCEPTANCE.json may refresh its draft commit/blob identity to the corrected draft and record this amendment, without changing accepted scope, evidence audit, required statements, uncertainties, or scientific interpretation."
+  },
+  "allowed_changes": [
+    "Replace only the incorrect envelope SHA-256 pointer with the actual SHA-256 of the already-committed envelope in the draft instance, accepted instance, and acceptance frozen-input metadata.",
+    "Refresh AUTHOR_ACCEPTANCE.json draft commit/blob identity after the corrected draft commit.",
+    "Add an explicit amendment reference to AUTHOR_ACCEPTANCE.json.",
+    "Update the Unit 002-R acceptance verifier so it checks the corrected draft/accepted status-only relationship and this amendment identity."
+  ],
+  "forbidden_changes": [
+    "Changing SOURCE_LANE.json, TARGET_LANE.json, BOUNDARY_MODEL.json, vbe.envelope.json, or any evidence bytes.",
+    "Changing any bounded world, effect cut, consequence label, target pattern, target fact, fact status, provenance edge, claim root, mechanism, interpreter, discriminator, or operative-signature fact.",
+    "Changing the enrolled target, target revision, operation, or selection order.",
+    "Changing the target-only qualification result or its interpretation.",
+    "Running or observing the Unit 002-R primary RISU verifier before the correction is committed and the read-only audit plus v0.8 seal pass."
+  ],
+  "could_alter_execution_validity": true,
+  "could_alter_primary_semantic_outcome": false,
+  "interpretation": "This amendment repairs a stale/wrong checksum pointer so the protocol-preserving preflight can bind the authoring metadata to bytes that were already frozen. It does not change those envelope bytes or any scientific proposition and therefore cannot predetermine PRESERVED, CONSEQUENCE_REGRESSION, or INCOMPLETE_ASSURANCE."
+}
