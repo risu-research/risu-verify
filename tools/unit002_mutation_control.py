@@ -65,6 +65,16 @@ def git_bytes(ref: str, path: str) -> bytes:
     return p.stdout
 
 
+def git_head() -> str:
+    p = subprocess.run(
+        ["git", "rev-parse", "HEAD"], cwd=str(ROOT), text=True,
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+    )
+    if p.returncode != 0:
+        raise RuntimeError("cannot resolve execution HEAD")
+    return p.stdout.strip()
+
+
 def verify_freeze() -> tuple[dict, dict, dict]:
     plan = read_json(PLAN_PATH)
     freeze = read_json(FREEZE_PATH)
@@ -96,7 +106,9 @@ def verify_freeze() -> tuple[dict, dict, dict]:
     if current_blob != pmeta.get("git_blob_sha1"):
         raise RuntimeError("PLAN git blob identity differs from frozen identity")
     ancestor = subprocess.run(
-        ["git", "merge-base", "--is-ancestor", freeze_commit, "HEAD"], cwd=str(ROOT)
+        ["git", "merge-base", "--is-ancestor", freeze_commit, "HEAD"],
+        cwd=str(ROOT),
+    )
     if ancestor.returncode != 0:
         raise RuntimeError("PLAN freeze commit is not an ancestor of current execution")
 
@@ -390,7 +402,6 @@ def main() -> int:
 
         cells = []
         baselines = []
-        baseline_by_seed: dict[str, dict] = {}
         baseline_pass_count = 0
         runtime_seconds = 0.0
 
@@ -423,7 +434,6 @@ def main() -> int:
             baseline_pass = all(x["pass"] for x in baseline_runs) and repeat_equal
             baseline_pass_count += int(baseline_pass)
             baseline_view = baseline_runs[0]["semantic_view"]
-            baseline_by_seed[seed_id] = baseline_view
             baselines.append({
                 "seed_id": seed_id,
                 "pass": baseline_pass,
@@ -488,9 +498,6 @@ def main() -> int:
             if x["operator_id"] in {"P_MECHANISM_ALWAYS_ACCEPTS", "P_INTERPRETER_ALWAYS_SUCCESS"}
         ]
         discrim_cells = [x for x in positive_cells if x["operator_id"] == "P_DISCRIMINATOR_COLLAPSE"]
-        repeat_cells = list(cells)
-        locality_cells = list(cells)
-        source_cells = list(cells)
 
         metrics = {
             "baseline_validity": {"passed": baseline_pass_count, "total": 2},
@@ -499,9 +506,9 @@ def main() -> int:
             "false_semantic_alarm_count": {"value": sum(not x["pass"] for x in negative_cells), "required": 0},
             "regression_witness_localization": {"passed": sum(x["pass"] for x in localization_cells), "total": 4},
             "discriminator_detection": {"passed": sum(x["pass"] for x in discrim_cells), "total": 2},
-            "deterministic_repeatability": {"passed": sum(x["repeatable"] for x in repeat_cells), "total": 12},
-            "mutation_locality": {"passed": sum(x["mutation_locality_pass"] for x in locality_cells), "total": 12},
-            "source_contract_invariance": {"passed": sum(x["source_contract_invariant"] for x in source_cells), "total": 12},
+            "deterministic_repeatability": {"passed": sum(x["repeatable"] for x in cells), "total": 12},
+            "mutation_locality": {"passed": sum(x["mutation_locality_pass"] for x in cells), "total": 12},
+            "source_contract_invariance": {"passed": sum(x["source_contract_invariant"] for x in cells), "total": 12},
         }
         promoted = (
             metrics["baseline_validity"]["passed"] == 2
@@ -522,6 +529,7 @@ def main() -> int:
             "freeze_check": freeze_check,
             "infrastructure_baseline": freeze["infrastructure_baseline"],
             "execution": {
+                "checkout_head_sha": git_head(),
                 "github_run_id": os.environ.get("GITHUB_RUN_ID"),
                 "github_run_attempt": os.environ.get("GITHUB_RUN_ATTEMPT"),
                 "github_sha": os.environ.get("GITHUB_SHA"),
