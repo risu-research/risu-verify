@@ -1,0 +1,92 @@
+{
+  "audit_conclusion": {
+    "collateral_drift": "ZERO_DETECTED",
+    "containing_commit_binding_established": true,
+    "e1_scientific_lineage_unchanged": true,
+    "e2_implementation_authorized_to_begin_after_this_audit_commit": true,
+    "freeze_package_integrity": "PASS"
+  },
+  "audit_id": "RISU_DIFF_E2_PREDEVELOPMENT_POSTWRITE_AUDIT_001",
+  "authority_preservation": {
+    "ctv_amendment_001_blob_still": "7ca86d42fa56a4aecb67c7ca1c9fc4418ec4c716",
+    "ctv_meta_theory_blob_still": "c53766c7bb1b322b4b706ddac5e90d957eb8e397",
+    "ctv_mutation_in_freeze_commit": false,
+    "e1_engine_or_checker_mutation_in_freeze_commit": false,
+    "e1_gold_closure_blob_still": "d41a80dd850db56cb22ce2e46e68693d4eb6e488",
+    "machine_vs_gold_blob_still": "3ab26d124e404ee09ef7243b9c7e9d688ac071f0"
+  },
+  "blob_audit": {
+    "contamination_firewall": {
+      "bytes": 8226,
+      "git_blob_expected": "1a0651514d7c77b82296d3617332b8024947cdcf",
+      "git_blob_match": true,
+      "git_blob_recomputed_from_authored_bytes": "1a0651514d7c77b82296d3617332b8024947cdcf",
+      "sha256": "fcf6519fbcfb27a2190384914604465c58acc13414682c7a1ce6f7fb930b2079"
+    },
+    "development_charter": {
+      "bytes": 10983,
+      "git_blob_expected": "06a9ad06367cae83281fffd10474cd7d4348111d",
+      "git_blob_match": true,
+      "git_blob_recomputed_from_authored_bytes": "06a9ad06367cae83281fffd10474cd7d4348111d",
+      "sha256": "9992311340491c5859785a3d8cc305f69e72ce1cc402cc9854c48ed29ee1639f"
+    },
+    "evaluation_contract": {
+      "bytes": 11616,
+      "git_blob_expected": "3968cd7dcc95290ec7343aa748ca0bc46a3545e6",
+      "git_blob_match": true,
+      "git_blob_recomputed_from_authored_bytes": "3968cd7dcc95290ec7343aa748ca0bc46a3545e6",
+      "sha256": "5f49611afdbfcb2cd9f25d100bbb3d6938a0f6c1b74d25660fe619a777eb6f3c"
+    },
+    "predevelopment_freeze": {
+      "bytes": 4457,
+      "git_blob_expected": "fcab599df24ac2668e3762866ba89b4e3bdb0e33",
+      "git_blob_match": true,
+      "git_blob_recomputed_from_authored_bytes": "fcab599df24ac2668e3762866ba89b4e3bdb0e33",
+      "sha256": "65d2afeb0bd1975c56ac3ac891bee8dbeea89d7b45cf130adc8919fb79fe94a7"
+    }
+  },
+  "claim_boundary": "This audit establishes the integrity and timing of the E2 predevelopment freeze package. It does not establish an E2 implementation, qualification result, fresh performance result, repair capability, or external validation.",
+  "freeze_commit": {
+    "commit_message": "Freeze E2 predevelopment charter, firewall, and evaluation contract",
+    "parent_count": 1,
+    "sha": "903fe7f0c48cf8ccd80c02ecc7d96b98c946b560",
+    "sole_parent": "078d73c1f0bf1975edf3063e40c20de066c94676",
+    "tree": "6fc32e0054fa6794910eabfe29c67638d238814c"
+  },
+  "ref_audit": {
+    "e2_branch_sha_after_creation": "903fe7f0c48cf8ccd80c02ecc7d96b98c946b560",
+    "e2_development_branch": "e2-development",
+    "main_touched_by_freeze": false,
+    "source_e1_branch": "e1-gold-close-006-008",
+    "source_e1_branch_sha_after_e2_branch_creation": "078d73c1f0bf1975edf3063e40c20de066c94676",
+    "source_e1_branch_unchanged": true
+  },
+  "schema": "risu.diff-e2-predevelopment-postwrite-audit/v0.1",
+  "status": "PASS",
+  "timing_and_contamination": {
+    "freeze_after_e1_gold_closure": true,
+    "freeze_before_any_e2_implementation_commit": true,
+    "freeze_before_fresh_e2_gold_adjudication": true,
+    "freeze_before_fresh_e2_target_byte_consumption": true,
+    "freeze_before_fresh_e2_target_selection": true,
+    "unit003_004_006_008_classified_development_only": true,
+    "unit005_classified_contaminated_forensics_only": true
+  },
+  "tree_diff_audit": {
+    "added_files": [
+      "protocols/RISU_DIFF_E2_CONTAMINATION_FIREWALL_v0.1.json",
+      "protocols/RISU_DIFF_E2_DEVELOPMENT_CHARTER_v0.1.json",
+      "protocols/RISU_DIFF_E2_EVALUATION_CONTRACT_v0.1.json",
+      "protocols/RISU_DIFF_E2_PREDEVELOPMENT_FREEZE_v0.1.json"
+    ],
+    "ahead_by": 1,
+    "base": "078d73c1f0bf1975edf3063e40c20de066c94676",
+    "behind_by": 0,
+    "deleted_preexisting_files": 0,
+    "head": "903fe7f0c48cf8ccd80c02ecc7d96b98c946b560",
+    "modified_preexisting_files": 0,
+    "status": "ahead",
+    "total_commits": 1,
+    "unexpected_files": 0
+  }
+}
