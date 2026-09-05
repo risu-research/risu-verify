@@ -47,7 +47,7 @@ jobs:
           print(json.dumps({'status':'PASS','engine_components_verified':len(actual),'engine_identity_digest':digest}, sort_keys=True))
           PY
 
-      - name: Verify Unit003 prospective lineage and repository-canonical harness bytes
+      - name: Verify Unit003 prospective lineage and Correction 003
         run: |
           python - <<'PY'
           import hashlib, json, pathlib, subprocess
@@ -55,28 +55,41 @@ jobs:
           freeze = json.loads((root/'experiments/unit003-blind-machine-first/RUN_FREEZE.json').read_text())
           c1 = json.loads((root/'experiments/unit003-blind-machine-first/RUN_FREEZE_CORRECTION_001.json').read_text())
           c2 = json.loads((root/'experiments/unit003-blind-machine-first/RUN_FREEZE_CORRECTION_002.json').read_text())
+          c3 = json.loads((root/'experiments/unit003-blind-machine-first/RUN_FREEZE_CORRECTION_003.json').read_text())
           attempts = json.loads((root/'experiments/unit003-blind-machine-first/EXECUTION_ATTEMPTS.json').read_text())
           assert freeze['status'] == 'FROZEN_BEFORE_SELECTED_SCREENED_OPERATION_CONTENT_ACQUISITION'
           assert c1['status'] == 'PRE_CONTENT_HARNESS_CORRECTION_001'
           assert c2['status'] == 'PRE_CONTENT_BYTE_IDENTITY_CORRECTION_002'
+          assert c3['status'] == 'POST_ACQUISITION_PRE_E0_INVOCATION_CORRECTION_003'
           assert c1['scientific_or_scoring_change'] is False
           assert c2['scientific_or_scoring_change'] is False
-          assert c2['target_content_access_before_correction'] is False
-          assert len(attempts['attempts']) == 2
+          assert c3['scientific_or_scoring_change'] is False
+          assert len(attempts['attempts']) == 3
           assert all(a['first_seal_created'] is False for a in attempts['attempts'])
           assert all(a['scientific_prediction'] is None for a in attempts['attempts'])
+          assert attempts['attempts'][2]['selection_sha256'] == c3['attempt_003']['selection_sha256']
+          assert attempts['attempts'][2]['machine_input_sha256'] == c3['attempt_003']['machine_input_sha256']
+          assert c3['immutability']['engine_identity_changed'] is False
+          assert c3['immutability']['selection_policy_changed'] is False
+          assert c3['immutability']['acquisition_runner_changed'] is False
+          assert c3['immutability']['prediction_logic_changed'] is False
+          assert c3['immutability']['target_revision_changed'] is False
 
-          identities = c2['authoritative_harness_identities']
-          for rel, row in sorted(identities.items()):
+          for rel, row in sorted(c2['authoritative_harness_identities'].items()):
+              if rel == '.github/workflows/unit003-blind-machine-first.yml':
+                  assert row['git_blob_sha'] == c3['superseded_workflow_git_blob_sha']
+                  continue
               blob = subprocess.check_output(['git','rev-parse',f'HEAD:{rel}'], text=True).strip()
               git_bytes = subprocess.check_output(['git','show',f'HEAD:{rel}'])
               work_bytes = (root/rel).read_bytes()
               gs = hashlib.sha256(git_bytes).hexdigest()
               ws = hashlib.sha256(work_bytes).hexdigest()
               assert blob == row['git_blob_sha'], (rel, row['git_blob_sha'], blob)
-              if row.get('sha256') is not None:
-                  assert gs == row['sha256'], (rel, row['sha256'], gs)
-              assert gs == ws, (rel, gs, ws)
+              assert gs == row['sha256'] == ws, (rel, row['sha256'], gs, ws)
+
+          wf = '.github/workflows/unit003-blind-machine-first.yml'
+          wf_blob = subprocess.check_output(['git','rev-parse',f'HEAD:{wf}'], text=True).strip()
+          assert wf_blob == c3['corrected_workflow_git_blob_sha'], (wf_blob, c3['corrected_workflow_git_blob_sha'])
 
           protocol_blobs = {
               'experiments/unit003-blind-machine-first/EXAM_PROTOCOL.json':'7825386feb717047eae5c67e2aabac626243b989',
@@ -93,7 +106,7 @@ jobs:
           allow_exact = {'tools/unit003_blind_acquire.py','tests/test_unit003_blind_acquire.py','.github/workflows/unit003-blind-machine-first.yml'}
           unexpected = [p for p in changed if not p.startswith(allow_prefix) and p not in allow_exact]
           assert not unexpected, unexpected
-          print(json.dumps({'status':'PASS','correction_002':c2['correction_id'],'attempts_retained':len(attempts['attempts']),'unexpected_changed_paths':unexpected}, sort_keys=True))
+          print(json.dumps({'status':'PASS','correction_003':c3['correction_id'],'attempts_retained':len(attempts['attempts']),'unexpected_changed_paths':unexpected}, sort_keys=True))
           PY
 
       - name: Syntax and synthetic acquisition qualification
@@ -119,6 +132,13 @@ jobs:
           python tools/unit003_blind_acquire.py select \
             --repo-dir "$RUNNER_TEMP/unit003-target" \
             --out "$RUNNER_TEMP/unit003-selection/ROUND0_SELECTION.json"
+
+      - name: Require exact replay of Attempt 3 machine-frozen selection
+        run: |
+          set -euo pipefail
+          test "$(sha256sum "$RUNNER_TEMP/unit003-selection/ROUND0_SELECTION.json" | awk '{print $1}')" = "912bc1241519e95fe2e3a3aa02267c2bf4a5e2e3377dd31a963fc0757e40d74b"
+          python tools/unit003_blind_acquire.py verify-selection \
+            --selection "$RUNNER_TEMP/unit003-selection/ROUND0_SELECTION.json"
 
       - name: Upload immutable tree-only selection
         uses: actions/upload-artifact@v4
@@ -162,6 +182,8 @@ jobs:
 
       - name: Verify immutable selection before selected content fetch
         run: |
+          set -euo pipefail
+          test "$(sha256sum "$RUNNER_TEMP/unit003-first-seal/ROUND0_SELECTION.json" | awk '{print $1}')" = "912bc1241519e95fe2e3a3aa02267c2bf4a5e2e3377dd31a963fc0757e40d74b"
           python tools/unit003_blind_acquire.py verify-selection \
             --selection "$RUNNER_TEMP/unit003-first-seal/ROUND0_SELECTION.json"
 
@@ -174,7 +196,7 @@ jobs:
 
       - name: Run frozen E0 and emit first semantic seal
         run: |
-          python tools/risu_e0_machine_first.py \
+          python -m tools.risu_e0_machine_first \
             "$RUNNER_TEMP/unit003-first-seal/PACKET" \
             "$RUNNER_TEMP/unit003-first-seal/E0" \
             --no-observation
@@ -191,6 +213,7 @@ jobs:
           cp experiments/unit003-blind-machine-first/RUN_FREEZE.json "$RUNNER_TEMP/unit003-first-seal/"
           cp experiments/unit003-blind-machine-first/RUN_FREEZE_CORRECTION_001.json "$RUNNER_TEMP/unit003-first-seal/"
           cp experiments/unit003-blind-machine-first/RUN_FREEZE_CORRECTION_002.json "$RUNNER_TEMP/unit003-first-seal/"
+          cp experiments/unit003-blind-machine-first/RUN_FREEZE_CORRECTION_003.json "$RUNNER_TEMP/unit003-first-seal/"
           cp experiments/unit003-blind-machine-first/EXECUTION_ATTEMPTS.json "$RUNNER_TEMP/unit003-first-seal/"
 
       - name: Enforce predeclared E0 structural refinement ceiling

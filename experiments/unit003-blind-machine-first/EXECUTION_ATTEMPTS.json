@@ -39,6 +39,34 @@
       "e0_executed": false,
       "first_seal_created": false,
       "scientific_prediction": null
+    },
+    {
+      "sequence": 3,
+      "run_id": 33978746002,
+      "head_sha": "b4950547ad0c15f36c8a35939964ab088ab52c74",
+      "classification": "IMPLEMENTATION_INVALID_POST_ACQUISITION_PRE_E0_CORE",
+      "failed_job": "execute-first-seal",
+      "failed_job_id": 101340032323,
+      "failed_step": "Run frozen E0 and emit first semantic seal",
+      "reason": "The frozen CLI was invoked as a file path, causing Python to place tools/ rather than the repository root on sys.path; import of risu_e0 failed before E0 semantic code executed.",
+      "frozen_e0_identity_gate_passed": true,
+      "engine_identity_digest": "7979ff811765cf1617602b2ef9ed89935f24da2c1f32eceb417dfd209e335c60",
+      "syntax_tests_executed": true,
+      "target_tree_fetched_by_workflow": true,
+      "selection_created": true,
+      "selection_artifact_id": 9973103226,
+      "selection_artifact_zip_sha256": "948a2fe16867b5eca4f5e8aa57016afae6325ffb5cd42c8353499d22672f0d3e",
+      "selection_sha256": "912bc1241519e95fe2e3a3aa02267c2bf4a5e2e3377dd31a963fc0757e40d74b",
+      "selected_count": 24,
+      "selected_target_content_fetched": true,
+      "machine_packet_created": true,
+      "evidence_count": 24,
+      "machine_input_sha256": "b704c2ebcc00cb749251d902a3c76e23bb5d29ea27d110545b2f4b221eb10006",
+      "e0_process_invoked": true,
+      "e0_semantic_core_executed": false,
+      "e0_executed": false,
+      "first_seal_created": false,
+      "scientific_prediction": null
     }
   ]
 }
