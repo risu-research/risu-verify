@@ -1,0 +1,53 @@
+name: RISU Diff E0 machine-first freeze
+
+on:
+  pull_request:
+    paths:
+      - protocols/RISU_DIFF_E0_MACHINE_FIRST_FREEZE_v0.1.json
+      - schemas/risu-diff-e0-machine-input.v0.1.schema.json
+      - schemas/risu-diff-e0-output-seal.v0.1.schema.json
+      - risu_e0/machine_first.py
+      - tools/risu_e0_machine_first.py
+      - tools/risu_e0_machine_freeze_verify.py
+      - tests/test_risu_diff_e0_machine_freeze.py
+      - docs/RISU_DIFF_E0_MACHINE_FIRST_FREEZE.md
+      - experiments/risu-diff-e0/MACHINE_FIRST_FREEZE_QUALIFICATION.json
+      - .github/workflows/risu-diff-e0-machine-freeze.yml
+  push:
+    branches: [main]
+    paths:
+      - protocols/RISU_DIFF_E0_MACHINE_FIRST_FREEZE_v0.1.json
+      - schemas/risu-diff-e0-machine-input.v0.1.schema.json
+      - schemas/risu-diff-e0-output-seal.v0.1.schema.json
+      - risu_e0/machine_first.py
+      - tools/risu_e0_machine_first.py
+      - tools/risu_e0_machine_freeze_verify.py
+      - tests/test_risu_diff_e0_machine_freeze.py
+      - docs/RISU_DIFF_E0_MACHINE_FIRST_FREEZE.md
+      - experiments/risu-diff-e0/MACHINE_FIRST_FREEZE_QUALIFICATION.json
+      - .github/workflows/risu-diff-e0-machine-freeze.yml
+
+permissions:
+  contents: read
+
+jobs:
+  freeze:
+    runs-on: ubuntu-24.04
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Re-verify exact E0 foundation and held-out firewall
+        run: python tools/risu_e0_foundation_verify.py
+      - name: Verify prospective machine-first freeze bytes and boundaries
+        run: python tools/risu_e0_machine_freeze_verify.py
+      - name: Syntax check machine-first freeze layer
+        run: python -m py_compile risu_e0/machine_first.py tools/risu_e0_machine_first.py tools/risu_e0_machine_freeze_verify.py tests/test_risu_diff_e0_machine_freeze.py
+      - name: Run machine-first adversarial freeze qualification
+        run: python -m unittest -v tests.test_risu_diff_e0_machine_freeze
+      - name: Run full E0 qualification including frozen firewall regressions
+        run: python tools/risu_e0_qualify.py
+      - name: Verify canonical Corpus enrollment remains valid
+        run: python tools/corpus01_validate.py --json

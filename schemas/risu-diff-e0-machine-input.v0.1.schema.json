@@ -1,0 +1,99 @@
+{
+  "$id": "https://risu-research.example/schemas/risu-diff-e0-machine-input.v0.1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "acquisition": {
+      "description": "Opaque nonsemantic provenance metadata only. Semantic-injection keys remain forbidden by the frozen runner.",
+      "type": "object"
+    },
+    "evidence_files": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "enum": [
+              "SOURCE_TEXT",
+              "TARGET_TEXT",
+              "TOOL_SURFACE",
+              "MACHINE_OBSERVATION"
+            ]
+          },
+          "language": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "path": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "sha256",
+          "kind"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "run_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "schema": {
+      "const": "risu.diff-e0-machine-input/v0.1"
+    },
+    "screened_operation": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "surface": {
+      "additionalProperties": false,
+      "properties": {
+        "arguments": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        },
+        "name": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "arguments"
+      ],
+      "type": "object"
+    },
+    "target_revision": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "unit_id": {
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema",
+    "run_id",
+    "unit_id",
+    "target_revision",
+    "screened_operation",
+    "surface",
+    "evidence_files"
+  ],
+  "title": "RISU Diff E0 machine-first input packet",
+  "type": "object"
+}
