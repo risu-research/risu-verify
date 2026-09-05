@@ -1,0 +1,145 @@
+{
+  "schema": "risu.e1-remaining-gold-adjudication-protocol/v0.1alpha1",
+  "protocol_id": "E1_REMAINING_GOLD_006_008_001",
+  "status": "FROZEN_AFTER_MACHINE_DISCLOSURE_BEFORE_GOLD_SEMANTIC_ADJUDICATION",
+  "base_machine_closure_commit": "a5e7c4c2fb0a93d9a4e63a3414a44b645ae98682",
+  "machine_awareness_boundary": {
+    "adjudicator_blind_to_machine_verdict": false,
+    "already_known_machine_verdicts": {
+      "corpus01-unit-006": "E1_PREDICTED_ASSURANCE_INCOMPLETE",
+      "corpus01-unit-007": "E1_PREDICTED_ASSURANCE_INCOMPLETE",
+      "corpus01-unit-008": "E1_PREDICTED_ASSURANCE_INCOMPLETE"
+    },
+    "machine_artifacts_may_be_used_as_gold_evidence": false,
+    "machine_selected_paths_may_define_gold_evidence_scope": false,
+    "machine_unresolved_roles_may_define_gold_model": false,
+    "safeguard": "Gold is evidence-independent and rule-precommitted rather than adjudicator-blind."
+  },
+  "units": [
+    {
+      "unit_id": "corpus01-unit-006",
+      "binding_blob": "d753cca16d06b51d6291da66c1ea99046a81f4a5",
+      "repository": "kubernetes-client/python",
+      "revision": "9b65f41e065aa5158b09868cf043a8636752ce4f",
+      "tree_sha": "ce3c9e5626fb62a081fc075a8886da6ad803a286",
+      "screened_operation": "patch_namespaced_config_map with metadata.resource_version precondition",
+      "mechanism_family": "REVISION_OR_RESOURCE_VERSION"
+    },
+    {
+      "unit_id": "corpus01-unit-007",
+      "binding_blob": "1a32a7cc879fe4b60181872d7ff3329d648d1849",
+      "repository": "aashari/mcp-server-atlassian-confluence",
+      "revision": "13f3b4fdf75da6948d9ce4e8a0b47799e9059537",
+      "tree_sha": "9c8a0d5bed33b65b982a743a4d9423e43e2c9dfb",
+      "screened_operation": "Confluence PUT API tool on /wiki/api/v2/pages/{id}",
+      "mechanism_family": "REVISION_OR_RESOURCE_VERSION"
+    },
+    {
+      "unit_id": "corpus01-unit-008",
+      "binding_blob": "16a167840bd3d08bd14b817234b1ba03d10dc1e7",
+      "repository": "yoda-digital/mcp-gitlab-server",
+      "revision": "177adc871ef94c39902bcdb8c89200d000e02e64",
+      "tree_sha": "b8803a5a553ada80a6dc421faa8e2b181443cb48",
+      "screened_operation": "create_or_update_file",
+      "mechanism_family": "COMMIT_OR_OBJECT_IDENTITY"
+    }
+  ],
+  "fixed_meta_theory": {
+    "path": "protocols/CTV_META_THEORY_v0.1.json",
+    "git_blob": "c53766c7bb1b322b4b706ddac5e90d957eb8e397",
+    "amendment_path": "protocols/CTV_META_THEORY_v0.1_AMENDMENT_001.json",
+    "amendment_git_blob": "7ca86d42fa56a4aecb67c7ca1c9fc4418ec4c716",
+    "primary_checker_path": "tools/ctv_finite_primary.py",
+    "primary_checker_git_blob": "e66e3b38b33bb856e091231f032dd02bb6f820b9",
+    "independent_checker_path": "tools/ctv_finite_independent.py",
+    "independent_checker_git_blob": "ac1156e6cd6301ec0a0e28172e04b209ab1863f6",
+    "checker_mutation_allowed": false,
+    "verdict_namespace_mutation_allowed": false
+  },
+  "evidence_admissibility": {
+    "source_lane": [
+      "official API/vendor documentation for the exact screened operation or governing API semantics",
+      "official upstream source/specification when documentation is insufficient",
+      "version-pinned dependency source when needed to interpret an exact target call"
+    ],
+    "target_lane": [
+      "exact bound repository revision only",
+      "exact dependency versions pinned by that revision when necessary",
+      "tests at the exact bound revision when they directly establish operative realization"
+    ],
+    "forbidden": [
+      "E1 machine packet as semantic evidence",
+      "E1 selected-path list as evidence-selection authority",
+      "later target commits used to repair or reinterpret the bound target",
+      "issues or discussions used as substitutes for operative source semantics when exact code is available",
+      "unstated assumptions about stale-write behavior"
+    ]
+  },
+  "gold_model_construction": {
+    "worlds": "Exactly two admissible worlds W_MATCH and W_STALE unless authoritative source semantics prove that a two-world concurrency slice is invalid for the enrolled mechanism; the worlds differ only in the enrolled concurrency/version coordinate.",
+    "unit006_coordinate_rule": "Use metadata.resourceVersion because it was explicitly named in the pre-verdict enrolled screened operation. W_MATCH uses the current resourceVersion; W_STALE uses a different stale resourceVersion.",
+    "unit007_coordinate_rule": "Use the authoritative Confluence page-update revision/version coordinate required or defined by the official PUT /wiki/api/v2/pages/{id} contract. If more than one such coordinate is documented, choose the request field whose documented purpose directly controls update version ordering; record all alternatives and the deterministic choice. If none is authoritative, gold is ASSURANCE_INCOMPLETE rather than guessed.",
+    "unit008_coordinate_rule": "Use the authoritative GitLab repository-file update commit/object-identity precondition coordinate for the screened create_or_update_file path. If more than one candidate exists, choose the request field explicitly documented as the previous/current commit identity guard; record alternatives and deterministic choice. If none is authoritative, gold is ASSURANCE_INCOMPLETE rather than guessed.",
+    "source_consequence_rule": "kappa_S is derived only from authoritative source semantics for W_MATCH and W_STALE.",
+    "target_realization_rule": "rho_T is the operative target request/effect realization at the exact bound revision, including any target-side read-before-write that changes the effective concurrency semantics.",
+    "effect_cut_rule": "Place the effect cut at the first externally consequential mutation attempt whose acceptance/rejection is controlled by the enrolled source concurrency coordinate.",
+    "factorization_rule": "Apply the frozen deterministic CTV factorization/kernel criterion without target-specific threshold changes.",
+    "stable_rule": "CONSEQUENCE_STABLE_IN_DECLARED_SCOPE requires both factorization and an explicit target consequence interpretation/refinement satisfying all declared-scope obligations; factorization alone is insufficient.",
+    "regression_rule": "CONSEQUENCE_REGRESSION requires a concrete pair of admitted worlds with identical target realization and distinct source consequence, or an explicit target interpretation mismatch under the frozen meta-theory.",
+    "incomplete_rule": "If evidence cannot establish the source consequence map, target realization map, or required refinement obligations, return ASSURANCE_INCOMPLETE; do not infer the missing semantic link."
+  },
+  "authoring_and_primary_order": [
+    "1_FREEZE_THIS_PROTOCOL",
+    "2_COLLECT_SOURCE_AND_TARGET_EVIDENCE_FOR_ALL_THREE_UNITS_WITHOUT_MODIFYING_E1",
+    "3_AUTHOR_SOURCE_LANE_TARGET_LANE_BOUNDARY_MODEL_AND_GOLD_EVIDENCE_PER_UNIT",
+    "4_ATOMICALLY_FREEZE_ALL_THREE_NORMATIVE_GOLD_MODELS_BEFORE_ANY_PRIMARY_RESULT",
+    "5_RECORD_AUTHOR_ACCEPTANCE_FOR_ALL_THREE_BEFORE_PRIMARY",
+    "6_RUN_THE_ALREADY_FROZEN_GENERIC_PRIMARY_AND_INDEPENDENT_CHECKER_FOR_ALL_THREE",
+    "7_UPLOAD_ONE_COMBINED_GOLD_ARCHIVE",
+    "8_COMMIT_ARTIFACT_IDENTITY_RECEIPT_BEFORE_RESULT_INSPECTION",
+    "9_VERIFY_ARCHIVE_HASHES_THEN_INSPECT_GOLD_RESULTS",
+    "10_CANONICALIZE_MACHINE_VS_GOLD_CLASSIFICATION",
+    "11_CLOSE_E1_WITHOUT_RESCORING_ANY_FIRST_PREDICTION"
+  ],
+  "cross_unit_firewall": {
+    "gold_result_of_one_unit_may_change_another_units_world_rule": false,
+    "gold_result_of_one_unit_may_change_checker_bytes": false,
+    "gold_result_of_one_unit_may_change_evidence_admissibility": false,
+    "gold_result_of_one_unit_may_change_machine_prediction": false,
+    "all_three_normative_models_frozen_before_any_gold_primary_result": true
+  },
+  "final_e1_scoring_rule": {
+    "pristine_denominator": ["corpus01-unit-006", "corpus01-unit-007", "corpus01-unit-008"],
+    "unit005_role": "ENROLLED_PROTOCOL_CONTAMINATED_CONTROL_EXCLUDED_FROM_PRISTINE_ACCURACY",
+    "machine_abstention_on_gold_regression": "VALID_FAIL_CLOSED_ABSTENTION_ON_A_GOLD_REGRESSION",
+    "machine_abstention_on_gold_stable": "VALID_CONSERVATIVE_ABSTENTION_ON_A_GOLD_STABLE_CASE",
+    "machine_regression_on_gold_regression": "TRUE_REGRESSION_DETECTION",
+    "machine_preservation_on_gold_stable": "TRUE_STABILITY_SUPPORT",
+    "machine_regression_on_gold_stable": "FALSE_REGRESSION_CLAIM",
+    "machine_preservation_on_gold_regression": "FALSE_STABILITY_CLAIM",
+    "gold_incomplete": "UNSCORABLE_GOLD_INCOMPLETE",
+    "report": [
+      "pristine unit count",
+      "gold verdict counts",
+      "machine outcome counts",
+      "unsafe false-stability count",
+      "false-regression count",
+      "regression detections",
+      "fail-closed abstentions on regressions",
+      "conservative abstentions on stable cases",
+      "gold-incomplete count"
+    ],
+    "forbidden_metrics": [
+      "population prevalence",
+      "general population accuracy",
+      "precision or recall estimates presented as population estimates"
+    ]
+  },
+  "immutability": {
+    "protocol_may_change_after_semantic_evidence_access": false,
+    "machine_predictions_may_change": false,
+    "e1_bytes_may_change_before_final_e1_closure": false,
+    "unit006_008_may_be_reused_as_fresh_e2_test_cases": false
+  },
+  "claim_boundary": "This protocol establishes the rules and independence safeguards for post-machine gold adjudication of the three pristine remaining E1 units. It does not itself establish any gold verdict."
+}
