@@ -1,0 +1,34 @@
+name: RISU Diff E0 machine-freeze byte audit
+
+on:
+  push:
+    branches: [risu-diff-e0-machine-freeze-byte-audit]
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Audit every freeze manifest and engine-identity byte
+        run: |
+          python - <<'PY'
+          import hashlib, json, pathlib, subprocess
+          root = pathlib.Path('.')
+          q = json.loads((root/'experiments/risu-diff-e0/MACHINE_FIRST_FREEZE_QUALIFICATION.json').read_text())
+          def h(b): return hashlib.sha256(b).hexdigest()
+          def obj(rel): return subprocess.check_output(['git','show',f'HEAD:{rel}'])
+          rows=[]
+          for rel, expected in sorted(q['file_sha256'].items()):
+              gb=h(obj(rel)); wb=h((root/rel).read_bytes())
+              rows.append({'scope':'file_sha256','path':rel,'expected':expected,'git_object_sha256':gb,'working_tree_sha256':wb,'expected_match':expected==gb,'checkout_transform':gb!=wb})
+          comps=[]
+          for rel, expected in sorted(q['engine_identity_components'].items()):
+              gb=h(obj(rel)); wb=h((root/rel).read_bytes())
+              comps.append({'scope':'engine_identity_components','path':rel,'expected':expected,'git_object_sha256':gb,'working_tree_sha256':wb,'expected_match':expected==gb,'checkout_transform':gb!=wb})
+          print(json.dumps({'file_rows':rows,'component_rows':comps,'file_mismatches':[r for r in rows if not r['expected_match'] or r['checkout_transform']], 'component_mismatches':[r for r in comps if not r['expected_match'] or r['checkout_transform']]}, indent=2, sort_keys=True))
+          PY
