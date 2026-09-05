@@ -6,9 +6,9 @@
       "sha256": "8284797a0ccd3c7bbb23c75ecb617e284ac00f28589a42a0b21492f55ced6430"
     },
     "carrier_envelope": {
-      "authoring_commit": "6218b5d4a09a3a447a33bf2b7f90a21a417c5049",
+      "authoring_commit": "1b62e4a36b4906a277f4611128b77340c3ed8e8d",
       "path": "vbe.envelope.json",
-      "sha256": "0243c54dc7042a808b8e6ef0dce968f2b78f3148374d90b5e2a234dfe0499ce1"
+      "sha256": "1c82258ec2c174354740a2377403442e05f731059f178490ba574bf778cc71d0"
     },
     "source_lane": {
       "freeze_commit": "2536a131fd969f9b57d5a1f64b6439690052397a",
@@ -122,7 +122,7 @@
     "native_accept_kind": "MERGE_ACCEPTED",
     "native_stale_kind": "REJECTED_EXPECTED_HEAD_MISMATCH",
     "pattern": "PRESERVED_COMPARE",
-    "program_version": "0.8",
+    "program_version": "0.5",
     "reviewed_anchor_constant": "reviewed_head_sha_anchor",
     "scope_id": "GUARDED_OCTOKIT_PULLS_MERGE_REVIEWED_HEAD_SHA",
     "signature_current_field": "request_head_sha",
