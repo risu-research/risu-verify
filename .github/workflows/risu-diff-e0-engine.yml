@@ -1,0 +1,49 @@
+name: RISU Diff E0 foundation
+
+on:
+  pull_request:
+    paths:
+      - risu_e0/**
+      - tools/risu_e0_qualify.py
+      - tools/risu_e0_witness_check.py
+      - tools/risu_e0_foundation_verify.py
+      - tests/test_risu_diff_e0_*.py
+      - tests/e0_support.py
+      - tests/__init__.py
+      - docs/RISU_DIFF_E0_FOUNDATION.md
+      - experiments/risu-diff-e0/FOUNDATION_QUALIFICATION.json
+      - .github/workflows/risu-diff-e0-engine.yml
+  push:
+    branches: [main]
+    paths:
+      - risu_e0/**
+      - tools/risu_e0_qualify.py
+      - tools/risu_e0_witness_check.py
+      - tools/risu_e0_foundation_verify.py
+      - tests/test_risu_diff_e0_*.py
+      - tests/e0_support.py
+      - tests/__init__.py
+      - docs/RISU_DIFF_E0_FOUNDATION.md
+      - experiments/risu-diff-e0/FOUNDATION_QUALIFICATION.json
+      - .github/workflows/risu-diff-e0-engine.yml
+
+permissions:
+  contents: read
+
+jobs:
+  foundation:
+    runs-on: ubuntu-24.04
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify frozen firewall and exact E0 foundation bytes
+        run: python tools/risu_e0_foundation_verify.py
+      - name: Syntax check E0 foundation
+        run: python -m py_compile risu_e0/*.py tools/risu_e0_qualify.py tools/risu_e0_witness_check.py tools/risu_e0_foundation_verify.py tests/e0_support.py tests/test_risu_diff_e0_*.py
+      - name: Run adversarial E0 foundation qualification
+        run: python tools/risu_e0_qualify.py
+      - name: Verify canonical Corpus enrollment remains valid
+        run: python tools/corpus01_validate.py --json
