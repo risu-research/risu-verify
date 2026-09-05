@@ -1,0 +1,32 @@
+{
+  "anchor": {
+    "git_blob_sha1": "f92957adfadd156c3fdac1cfbbf9a0dbb1561339",
+    "path": "src/fetch-wrapper.ts",
+    "repository": "octokit/request.js",
+    "revision": "1aeac5672c04bc508e46796660465b1b67cf397c"
+  },
+  "boundary": "Establishes pinned client result behavior. It does not independently establish which status the live GitHub service will return.",
+  "claims": [
+    {
+      "id": "OCT_U002_BODY_SENT_AS_JSON",
+      "status": "ESTABLISHED"
+    },
+    {
+      "id": "OCT_U002_NON2XX_REJECTS",
+      "status": "ESTABLISHED"
+    },
+    {
+      "id": "OCT_U002_409_NOT_SUCCESS",
+      "status": "ESTABLISHED"
+    }
+  ],
+  "evidence_id": "OCT_U002_ERROR_PATH",
+  "observations": [
+    "The pinned request wrapper JSON-stringifies plain-object request bodies before fetch.",
+    "For any response status >= 400, including 409, it throws RequestError rather than returning a normal OctokitResponse.",
+    "Statuses below 400 proceed to the success-response return path."
+  ],
+  "role": "PINNED_TARGET_RESULT_INTERPRETER",
+  "schema": "risu.corpus-evidence/v0.1alpha1",
+  "unit_id": "corpus01-unit-002"
+}
