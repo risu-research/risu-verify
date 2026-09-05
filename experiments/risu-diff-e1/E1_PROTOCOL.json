@@ -1,0 +1,166 @@
+{
+  "schema": "risu.diff-e1-protocol/v0.1",
+  "protocol_id": "RISU_DIFF_E1_PROSPECTIVE_001",
+  "status": "PROSPECTIVE_PROTOCOL_BEFORE_E1_IMPLEMENTATION",
+  "parent_main_commit": "b3da8d9e5cec1f79d3bf462e629c2e0b8bbcd314",
+  "e0_engine_identity_digest": "7979ff811765cf1617602b2ef9ed89935f24da2c1f32eceb417dfd209e335c60",
+  "scientific_objective": "Increase machine-first structural evidence coverage and autonomous refinement while preserving fail-closed semantics and preventing retrospective improvement claims on Unit003.",
+  "unit003_learning_boundary": {
+    "canonical_record": "experiments/unit003-blind-machine-first/FIRST_SEAL_CANONICAL.json",
+    "canonical_status_required": "CANONICAL_FIRST_SEAL_ARCHIVED",
+    "allowed_learning_signals": [
+      "path-only acquisition precision after exact anchor hits was poor under the frozen no-threshold top-24 policy",
+      "the frozen E0 Python-only extractor did not extract Go structural candidates",
+      "generated refinement requests had no machine-ingestion loop",
+      "E0 correctly failed closed with unresolved material obligations"
+    ],
+    "forbidden_adaptation": [
+      "no Unit003 target source bytes may be copied into E1 implementation tests or fixtures",
+      "no kubectl-specific repository, command, path, identifier, package, function, or symbol special case",
+      "no annotate-specific special case",
+      "no Unit003 selected-path allowlist or ranking bonus",
+      "no resource-version-specific rule beyond the pre-existing general version-token family already present in E0",
+      "no E1 score, tuning, threshold, or promotion decision may use Unit003 as validation",
+      "no E0 scientific artifact may be rewritten to incorporate E1 behavior",
+      "Unit003 may never be rescored as the first E1 prospective validation unit"
+    ],
+    "unit003_future_role": "READ_ONLY_POST_RESULT_LEARNING_SAMPLE_ONLY"
+  },
+  "e1_architecture": {
+    "A1_adaptive_evidence_acquisition": {
+      "goal": "Replace fixed lexical filler with bounded deterministic machine-only evidence expansion.",
+      "round0": "tree-metadata-only anchor enrollment from screened operation tokens and surface arguments",
+      "round0_max_files": 4,
+      "round1_and_round2": "content-informed but machine-only expansion from explicit import/include/call/reference tokens extracted from already enrolled files; candidate paths are resolved only against the frozen repository tree",
+      "maximum_expansion_rounds_after_round0": 2,
+      "maximum_total_files": 32,
+      "no_score_threshold_fallback_fill": false,
+      "determinism": "all candidate scores and tie breaks must be canonical and lexical; the same tree, operation, and enrolled bytes must reproduce the same evidence set",
+      "human_semantic_selection_allowed": false,
+      "network_scope": "exact pinned target repository and revision only"
+    },
+    "A2_typed_language_aware_structural_extraction": {
+      "languages_required_for_e1_freeze": ["python", "go"],
+      "python": "AST-based extraction retained and extended with assignment/dataflow/call/branch spans",
+      "go": "Go-standard-library AST extraction; no regex-only authority upgrade",
+      "generic_fallback": "token/name hints may request refinement but may never establish a material role",
+      "fact_types": [
+        "VERSION_LIKE_COORDINATE",
+        "SURFACE_ARGUMENT_BINDING",
+        "ASSIGNMENT_FLOW",
+        "COMPARISON_GUARD",
+        "MUTATION_OR_EFFECT_CALL",
+        "ERROR_OR_MISMATCH_BRANCH",
+        "CALL_EDGE",
+        "IMPORT_OR_INCLUDE_EDGE"
+      ],
+      "every_fact_requires": ["evidence_path", "byte_or_line_span", "extractor_id", "deterministic_fact_id"],
+      "semantic_authority_default": false
+    },
+    "A3_material_role_proof_assembler": {
+      "roles": [
+        "authoritative_version_coordinate",
+        "current_version_at_effect_coordinate",
+        "binding_or_compare_guard",
+        "declared_effect",
+        "stale_mismatch_outcome_or_interpreter"
+      ],
+      "role_statuses": ["UNRESOLVED", "STRUCTURALLY_SUPPORTED"],
+      "structurally_supported_rule": "a role may be STRUCTURALLY_SUPPORTED only from typed facts connected by explicit evidence-backed dataflow/call/branch relations; name similarity alone is insufficient",
+      "consequence_authority": false,
+      "reason": "E1 is a machine prediction layer evaluated prospectively against later independent adjudication; it does not self-certify scientific truth"
+    },
+    "A4_closed_loop_refinement": {
+      "goal": "Turn unresolved obligations into deterministic machine actions when the action can be satisfied from the same frozen repository without human semantic translation.",
+      "allowed_actions": [
+        "acquire additional exact-revision files selected from AST-derived dependency/reference evidence",
+        "re-run language extractors on newly acquired bytes",
+        "rebuild typed fact graph and material-role support",
+        "emit unresolved probes for obligations that remain unsatisfied"
+      ],
+      "forbidden_actions": [
+        "live side-effecting calls",
+        "human answer injection before the prediction seal",
+        "web search during an exam run",
+        "unbounded repository crawl",
+        "changing the scientific evaluation contract"
+      ],
+      "termination": "fixed point, maximum expansion rounds, or maximum total files, whichever occurs first"
+    },
+    "A5_prediction_layer": {
+      "namespace": [
+        "E1_PREDICTED_PRESERVATION_EVIDENCE",
+        "E1_PREDICTED_REGRESSION_WITNESS",
+        "E1_PREDICTED_ASSURANCE_INCOMPLETE"
+      ],
+      "preservation_rule": "all material roles structurally supported and no contradictory flow/witness candidate remains; machine prediction only, not canonical scientific authority",
+      "regression_rule": "requires a positive contradictory structural witness showing a consequence-defining surface input or coordinate is disconnected, overwritten, bypassed, or mapped to an unconditional effect path; mere absence of evidence can never produce regression",
+      "incomplete_rule": "any unresolved material obligation, conflicting structural interpretation, extractor failure on material evidence, or refinement termination before proof closure",
+      "abstention_is_valid": true,
+      "canonical_scientific_authority": false
+    }
+  },
+  "synthetic_development_and_qualification": {
+    "allowed_inputs": [
+      "new synthetic Python fixtures",
+      "new synthetic Go fixtures",
+      "pre-Unit003 repository-generic synthetic/calibration patterns whose expected structural truth was fixed independently of Unit003"
+    ],
+    "forbidden_inputs": [
+      "Unit003 target source bytes",
+      "Unit003 selected file contents",
+      "Unit004 or later target source bytes before E1 freeze"
+    ],
+    "required_positive_families": [
+      "surface argument flows to version/precondition coordinate, guarded effect, mismatch branch",
+      "equivalent multi-hop assignment and helper-call flow",
+      "Python and Go realizations"
+    ],
+    "required_negative_and_adversarial_families": [
+      "version-like names with no material flow",
+      "comparison unrelated to the effect",
+      "argument parsed then overwritten before mutation",
+      "unconditional mutation with decorative version token",
+      "ambiguous dual coordinates",
+      "parse failure on a material file",
+      "metadata/order perturbations"
+    ],
+    "hard_promotion_gates": {
+      "false_regression_from_absence": 0,
+      "authority_upgrade_from_name_only": 0,
+      "ambiguous_case_must_abstain": true,
+      "deterministic_semantic_outputs": true,
+      "metadata_order_invariance": true,
+      "e0_byte_identity_unchanged": true,
+      "unit003_scoring_used": false,
+      "unit004_content_consumed_before_freeze": false
+    }
+  },
+  "freeze_sequence": [
+    "commit this protocol before E1 implementation",
+    "implement E1 only against allowed synthetic inputs",
+    "run adversarial qualification and repair implementation defects only against allowed synthetic inputs",
+    "freeze exact E1 component byte identities and evaluation contract",
+    "only after E1 freeze create and execute Unit004 target-selection protocol",
+    "seal Unit004 machine prediction before any human gold or target-specific repair",
+    "adjudicate Unit004 independently after the machine seal",
+    "never retroactively retune E1 on Unit004 and report it as prospective performance"
+  ],
+  "unit004_role": "FIRST_PROSPECTIVE_E1_VALIDATION_UNIT",
+  "allowed_unit004_machine_outcomes": [
+    "E1_PREDICTED_PRESERVATION_EVIDENCE",
+    "E1_PREDICTED_REGRESSION_WITNESS",
+    "E1_PREDICTED_ASSURANCE_INCOMPLETE",
+    "INFRASTRUCTURE_INVALID_BEFORE_PREDICTION"
+  ],
+  "claim_boundary": {
+    "e1_freeze_will_establish": "a prospectively frozen machine prediction system with deterministic acquisition/extraction/refinement mechanics and explicit abstention rules",
+    "e1_freeze_will_not_establish": [
+      "real-target accuracy",
+      "population accuracy",
+      "a kubectl consequence verdict",
+      "independent replication",
+      "live deployment conformance"
+    ]
+  }
+}
