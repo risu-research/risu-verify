@@ -1,0 +1,143 @@
+{
+  "schema": "risu.unit004-selection-protocol/v0.1alpha1",
+  "protocol_id": "UNIT004_SELECTION_PROTOCOL_001",
+  "status": "FROZEN_BEFORE_UNIT004_METADATA_INSPECTION",
+  "base_main_commit": "28ea74b2180c7c408b8d306592cf8d6839ca2437",
+  "frozen_e1": {
+    "freeze_id": "RISU_DIFF_E1_FREEZE_001",
+    "engine_identity_digest": "ed33d12881fa1395d1332ae165b5638518b2d472a7a520f0ae893d07e3b146b7",
+    "freeze_commit": "80ac477f7111a0119415388c11c83c62cf212829"
+  },
+  "prospective_state_at_protocol_commit": {
+    "unit004_enrollment_row_content_inspected_for_this_exam": false,
+    "unit004_candidate_search_performed_for_this_exam": false,
+    "unit004_target_repository_metadata_inspected_for_this_exam": false,
+    "unit004_target_content_inspected_for_this_exam": false,
+    "unit004_prediction_observed": false,
+    "unit004_human_gold_started": false
+  },
+  "selection_authority": {
+    "mode": "PREEXISTING_FROZEN_ENROLLMENT_ORDER",
+    "enrollment_record": "corpus/0.1/ENROLLMENT.json",
+    "completed_predecessor_position": 3,
+    "primary_position": 4,
+    "rule": "Select the lowest frozen enrollment_position strictly greater than 3 that remains objectively materializable under the pre-existing enrollment record. No new candidate search or discretionary draw is permitted while a frozen enrolled position remains materializable.",
+    "rationale": "The verdict-blind enrollment predates E1 and Unit003 outcome observation. Re-drawing from a contemporary candidate universe would add post-result selection discretion and weaken the held-out design.",
+    "human_selection_discretion": false,
+    "new_candidate_insertion_before_frozen_queue_exhaustion": false,
+    "outcome_aware_selection": false
+  },
+  "candidate_universe": {
+    "definition": "The already-frozen enrolled rows after position 3 in corpus/0.1/ENROLLMENT.json, in their frozen order.",
+    "current_public_web_search_used_to_construct_universe": false,
+    "ranking_recomputed_after_unit003": false,
+    "e1_capability_used_to_rank_candidates": false,
+    "unit003_result_used_to_rank_candidates": false
+  },
+  "eligibility": {
+    "evaluated_only_after_protocol_commit": true,
+    "surface_only_before_target_binding": true,
+    "allowed_prebinding_checks": [
+      "frozen enrollment row exists and is structurally well-formed",
+      "named public repository or artifact locator resolves",
+      "exact enrolled revision can be addressed or materialized",
+      "screened operation locator is nonempty",
+      "no duplicate of an already-scored enrollment position"
+    ],
+    "forbidden_prebinding_checks": [
+      "whether E1 is likely to produce a decisive prediction",
+      "whether the target appears preserved or regressed",
+      "whether the target has an easy witness",
+      "whether source semantics are easy to reconstruct",
+      "whether the target is publication-friendly"
+    ]
+  },
+  "ineligibility_and_substitution": {
+    "substitution_allowed": true,
+    "allowed_only_if": "Before semantic-content inspection, the frozen row is objectively non-materializable or structurally invalid under the pre-existing enrollment record.",
+    "required_before_substitution": [
+      "commit an INELIGIBILITY_RECORD.json identifying the frozen position and objective reason",
+      "attest that no target semantic content or E1 prediction was observed for that position",
+      "advance only to the next frozen enrollment_position"
+    ],
+    "forbidden_reasons": [
+      "E1 returns or is expected to return ASSURANCE_INCOMPLETE",
+      "E1 appears likely to miss the mechanism",
+      "target is difficult",
+      "target appears preserved",
+      "target appears regressed",
+      "a more interesting candidate exists",
+      "insufficient publication value"
+    ],
+    "silent_skip": false
+  },
+  "target_binding": {
+    "required_before_target_tree_or_content_access": true,
+    "artifact": "experiments/unit004-blind-e1/TARGET_BINDING.json",
+    "must_bind": [
+      "frozen enrollment position",
+      "enrollment record Git-object identity",
+      "target repository or artifact locator",
+      "exact enrolled revision",
+      "screened operation",
+      "frozen E1 engine identity"
+    ],
+    "binding_may_not_include_prediction_or_human_semantics": true
+  },
+  "acquisition_protocol": {
+    "starts_only_after_target_binding_commit": true,
+    "round_0": {
+      "mode": "TREE_OR_SURFACE_METADATA_ONLY",
+      "target_content_bytes_allowed": false,
+      "purpose": "Produce deterministic acquisition seeds without semantic-content inspection."
+    },
+    "adaptive_rounds": {
+      "mode": "FROZEN_E1_MACHINE_ONLY",
+      "human_evidence_selection": false,
+      "human_semantic_reranking": false,
+      "stop_when": [
+        "E1 emits a sealed prediction under its frozen rules",
+        "E1 reaches its frozen acquisition/refinement budget",
+        "objective infrastructure failure prevents execution"
+      ]
+    },
+    "nonselected_content_ingestion": false,
+    "target_specific_code_change": false
+  },
+  "first_prediction": {
+    "all_admissible": [
+      "E1_PREDICTED_CONSEQUENCE_STABLE_IN_DECLARED_SCOPE",
+      "E1_PREDICTED_CONSEQUENCE_REGRESSION",
+      "E1_PREDICTED_ASSURANCE_INCOMPLETE",
+      "E1_INFRASTRUCTURE_FAILURE_BEFORE_PREDICTION"
+    ],
+    "first_valid_seal_is_immutable": true,
+    "rerun_may_only_be_classified_as": "DETERMINISTIC_REPLAY_OR_ARCHIVAL_RECOVERY",
+    "rerun_may_not_replace_first_valid_prediction": true
+  },
+  "scientific_adjudication": {
+    "begins_only_after_first_valid_machine_prediction_seal": true,
+    "machine_prediction_is_not_canonical_scientific_authority": true,
+    "human_gold_must_not_modify_e1": true,
+    "unit004_may_be_used_for_future_e2_learning_only_after_gold_freeze": true,
+    "unit004_may_not_be_rescored_as_e1_after_learning": true
+  },
+  "anti_contamination": {
+    "unit003_read_only": true,
+    "e1_engine_bytes_immutable_for_unit004": true,
+    "e1_expected_qualification_outcomes_immutable_for_unit004": true,
+    "selection_protocol_change_after_target_metadata_inspection": "FORBIDDEN_EXCEPT_SEPARATELY_IDENTIFIED_PRECONTENT_ERRATUM_FOR_A_GENUINE_PROTOCOL_DEFECT",
+    "target_specific_special_case": false,
+    "result_specific_exception": false
+  },
+  "claim_boundary": {
+    "protocol_freeze_establishes_only": "Prospective selection and acquisition rules for Unit004 under frozen E1.",
+    "does_not_establish": [
+      "Unit004 target identity until TARGET_BINDING.json is committed",
+      "Unit004 preservation or regression",
+      "E1 real-target accuracy",
+      "population accuracy",
+      "live deployment conformance"
+    ]
+  }
+}
