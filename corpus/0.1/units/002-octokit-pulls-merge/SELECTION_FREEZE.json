@@ -1,0 +1,53 @@
+{
+  "schema": "risu.unit002-r-selection-freeze/v0.1alpha1",
+  "experiment_id": "UNIT002_R_REAL_PROSPECTIVE_FALSIFICATION",
+  "status": "TARGET_SELECTION_FROZEN_BEFORE_UNIT_SPECIFIC_SEMANTIC_AUTHORING",
+  "scientific_role": "REAL_TARGET_PROSPECTIVE_FALSIFICATION",
+  "selection_basis": {
+    "mode": "NEXT_PREVIOUSLY_ENROLLED_UNIT_IN_FROZEN_ORDER",
+    "source_enrollment_id": "RISU_CORPUS_0.1_ENROLLMENT_001",
+    "source_enrollment_path": "corpus/0.1/ENROLLMENT.json",
+    "source_enrollment_git_blob_sha1": "3de113beb7b5fec6011500084646c67eb9dc4a5f",
+    "source_protocol_sha256": "9fbf3fcdf48e5554840c4f2418803779ad82757e1a5df71411212421c225ad70",
+    "source_enrollment_status": "COMPLETE_VERDICT_BLIND_ENROLLMENT_FROZEN",
+    "verdicts_observed_before_original_enrollment_freeze": 0,
+    "selection_algorithm": "Choose the lowest enrollment_position greater than the last completed real Corpus unit; do not score, rerank, replace, or skip based on any later RISU result.",
+    "selected_enrollment_position": 2
+  },
+  "selected_target": {
+    "unit_id": "corpus01-unit-002",
+    "candidate_id": "octokit/rest.js::github-version-bound-write",
+    "organization": "octokit",
+    "stratum": "NON_AGENT_SPECIFIC",
+    "mechanism_family": "COMMIT_OR_OBJECT_IDENTITY",
+    "repository": "octokit/rest.js",
+    "target_revision": "cd9cb8cd4965d99c7dac8c87d249308956250be3",
+    "screened_operation": "octokit.rest.pulls.merge"
+  },
+  "independence_guarantees": {
+    "unit001_primary_outcome_used_for_selection": false,
+    "unit002_m_outcomes_used_for_selection": false,
+    "expected_unit002_r_verdict_used_for_selection": false,
+    "issue_tracker_bug_discovery_used_for_selection": false,
+    "detailed_target_semantic_evidence_used_for_selection": false,
+    "target_revision_identity_existence_check_only_before_this_freeze": true,
+    "reserve_pool_substitution_allowed": false,
+    "reordering_allowed": false
+  },
+  "allowed_primary_outcomes": [
+    "PRESERVED",
+    "CONSEQUENCE_REGRESSION",
+    "INCOMPLETE_ASSURANCE"
+  ],
+  "authoring_rule": "After this freeze, reconstruct SOURCE and TARGET lanes independently under the existing Corpus 0.1 authoring protocol. A material evidence gap narrows the claim or produces AUTHORING_BLOCKED; it may not trigger target replacement.",
+  "no_cherry_pick_rule": "The selected target remains Unit 002 even if detailed authoring predicts an unfavorable, favorable, or unresolved primary outcome. Only an AUTHORING_BLOCKED record may stop primary execution, and it does not permit skipping directly to a different target as a replacement.",
+  "next_steps": [
+    "freeze SOURCE lane from authoritative immutable evidence",
+    "freeze TARGET lane from pinned target bytes and generated binding evidence",
+    "freeze bounded worlds and effect cut",
+    "merge lanes into a VBE instance",
+    "AUTHOR_ACCEPTED or AUTHORING_BLOCKED",
+    "seal with infrastructure v0.8 without executing the primary verifier",
+    "execute one first primary and freeze it regardless of semantic outcome"
+  ]
+}
