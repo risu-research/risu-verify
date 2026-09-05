@@ -1,0 +1,26 @@
+{
+  "schema": "risu.unit002-m-archive-descriptor/v0.1alpha1",
+  "experiment_id": "UNIT002_M_PAIRED_MUTATION_CONTROL",
+  "canonical_run_id": 33943444386,
+  "canonical_actions_artifact": {
+    "artifact_id": 9962563353,
+    "zip_sha256": "46d31d919db3bd3d3da163053f1853b81243f4a974495cad804a72ec5c8da064",
+    "retention_policy_at_execution": "90 days"
+  },
+  "compact_capsule": {
+    "sha256": "c0cf5468952b79a1d784630e4af317d2c2b1475ec2d1c6bd9b6eb35dc9c39179",
+    "bytes": 7751,
+    "contents": [
+      {"path": "MATRIX_RESULT.json", "sha256": "79918b47feac59bd440b7184b5cfb1c180b78966297fc44122a87aa6d553330e"},
+      {"path": "MATRIX_RESULT.md", "sha256": "1801b9cdfbbaca716a79c7dac2ed999f36858bce5218345b00bb4ca65ba9b618"},
+      {"path": "ARTIFACT_MANIFEST.json", "sha256": "d6203d1f6b86e6522885448a7d39db7a448bc5e97cc51a608ac7dff643e726ac"}
+    ],
+    "note": "A compact capsule was created from the exact canonical Actions artifact bytes. The durable repository CANONICAL_RESULT.json separately preserves all promotion metrics and per-cell certificate/proof identities, so canonical interpretation does not depend on artifact retention."
+  },
+  "durable_repository_record": {
+    "canonical_result": "experiments/unit002-m/CANONICAL_RESULT.json",
+    "human_summary": "experiments/unit002-m/CANONICAL_RESULT.md",
+    "canonical_verifier": "tools/unit002m_canonical_verify.py",
+    "replay_rule": "Later executions must match the canonical metrics and certificate/proof/witness ledger but may not replace the canonical run."
+  }
+}

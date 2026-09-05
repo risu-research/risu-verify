@@ -2,7 +2,7 @@
   "schema": "risu.unit002-m-implementation-attempts/v0.1alpha1",
   "experiment_id": "UNIT002_M_PAIRED_MUTATION_CONTROL",
   "plan_freeze_commit": "cecaf792cb131f022a1c7bcdd3ab12c0968a409f",
-  "rule": "These are post-freeze implementation diagnostics, not canonical detector-control results. The frozen PLAN and scoring predicates are unchanged. A canonical result requires a complete matrix result emitted after freeze verification.",
+  "rule": "These post-freeze records preserve implementation-invalid or non-promoted attempts. They never replace the first eligible canonical result. The frozen PLAN and semantic scoring predicates remain unchanged.",
   "attempts": [
     {
       "github_actions_run_id": 33943174730,
@@ -27,10 +27,33 @@
       "canonical_eligibility": false,
       "diagnostic_artifact": {
         "artifact_id": 9962502290,
-        "artifact_zip_sha256": "3416e9383912ca55cb8d937c4fedc7cbb137c959b8cf6eaef4292f32aa14e5af",
-        "note": "Intermediate execution bytes were retained automatically. They are diagnostics only and do not replace the first future complete frozen-matrix result."
+        "artifact_zip_sha256": "3416e9383912ca55cb8d937c4fedc7cbb137c959b8cf6eaef4292f32aa14e5af"
       }
+    },
+    {
+      "github_actions_run_id": 33943331517,
+      "checkout_head_sha": "61da7a89724c44a1bdb32fd8f06a2522e31bae57",
+      "classification": "COMPLETE_OUTPUT_BUT_CONTROL_IMPLEMENTATION_INVALID_FOR_PROMOTION_DUE_TO_LOCALITY_SCORING_DEFECT",
+      "failure_phase": "MUTATION_LOCALITY_SCORING_COMPOSITION",
+      "plan_freeze_verified": true,
+      "mutation_matrix_execution_started": true,
+      "complete_matrix_result_emitted": true,
+      "reported_status": "FALSIFIED_OR_NOT_PROMOTED",
+      "canonical_eligibility": false,
+      "matrix_result_sha256": "0dda9916975bdf94ef9f963184fe65ed46a4a6e9a2c3ca987beb78ff9488aa49",
+      "diagnostic_artifact": {
+        "artifact_id": 9962533401,
+        "artifact_zip_sha256": "14946f4f469dcf9e44cb0dbd1e2792a9ed99103b44c4227666e066c353411c8d"
+      },
+      "diagnosis_record": "experiments/unit002-m/IMPLEMENTATION_CORRECTION_001.json",
+      "note": "The complete artifact showed that all six positive semantic predicates and all six negative specificity predicates already passed; the implementation incorrectly represented an allowed parent JSON subtree as multiple descendant leaf deltas and then required exact path-set equality."
     }
   ],
-  "permitted_fix_scope": "Correct implementation defects only. No seed, operator, expectation, metric, promotion threshold, or semantic-view definition from frozen PLAN.json may change."
+  "first_eligible_canonical_result": {
+    "github_actions_run_id": 33943444386,
+    "checkout_head_sha": "ba3613aef6531d07d559d20b79f16544a8db6871",
+    "status": "PROMOTED",
+    "record": "experiments/unit002-m/CANONICAL_RESULT.json"
+  },
+  "permitted_fix_scope": "Implementation fixes may not change PLAN.json, FREEZE.json, either seed, any mutation operator or mutated field, semantic-view definition, expected semantic predicate, repetition count, or promotion threshold."
 }
