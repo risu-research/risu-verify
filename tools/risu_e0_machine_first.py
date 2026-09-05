@@ -43,7 +43,7 @@ def main() -> int:
         packet = load_machine_packet(args.packet_dir)
         write_semantic_outputs(args.packet_dir, args.output_dir, engine_identity())
         verified = verify_output_dir(args.output_dir)
-    except (MachineInputError, ValueError, OSError, json.JSONDecodeError) as exc:
+    except (MachineInputError, ValueError, OSError, json.JSONDecodeError, RuntimeError) as exc:
         print(json.dumps({
             "status": "E0_INFRASTRUCTURE_FAILURE",
             "consequence_authority": False,
