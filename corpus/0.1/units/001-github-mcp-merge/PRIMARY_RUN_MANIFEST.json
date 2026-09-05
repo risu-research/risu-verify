@@ -36,7 +36,7 @@
     },
     {
       "path": "corpus/0.1/units/001-github-mcp-merge/AUTHOR_ACCEPTANCE.json",
-      "sha256": "89386bac47b376c3fb18b16a49411c09651d20df328927fd30b8d1ac6570a252"
+      "sha256": "71ec1f795b42b2a7896947c21b7ee7a8ed3ecd5abf7124f9fcbba4a040565ee9"
     },
     {
       "path": "corpus/0.1/units/001-github-mcp-merge/vbe.instance.json",
@@ -45,6 +45,16 @@
   ],
   "instance_id": "corpus01-001-github-mcp-merge-current",
   "instance_path": "corpus/0.1/units/001-github-mcp-merge/vbe.instance.json",
+  "manifest_corrections": [
+    {
+      "affected_scientific_input": false,
+      "correction": "Replaced an incorrectly precomputed AUTHOR_ACCEPTANCE.json SHA-256 with the SHA-256 of the already frozen bytes at authoring_freeze_commit.",
+      "failed_run_id": 33936192199,
+      "primary_verifier_executed_in_failed_run": false,
+      "primary_verdict_observed_before_correction": false,
+      "reason": "The freeze gate rejected the execution before compilation or verification because the manifest checksum did not match the frozen acceptance bytes."
+    }
+  ],
   "post_freeze_allowed_paths": [
     "corpus/0.1/units/001-github-mcp-merge/PRIMARY_RUN_MANIFEST.json"
   ],
