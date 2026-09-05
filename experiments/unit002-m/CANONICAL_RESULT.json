@@ -1,0 +1,82 @@
+{
+  "archive": {
+    "compact_capsule_contents": [
+      "MATRIX_RESULT.json",
+      "MATRIX_RESULT.md",
+      "ARTIFACT_MANIFEST.json"
+    ],
+    "compact_capsule_sha256": "c0cf5468952b79a1d784630e4af317d2c2b1475ec2d1c6bd9b6eb35dc9c39179",
+    "full_actions_artifact_retention": "GITHUB_ACTIONS_90_DAY_DEFAULT_FOR_THIS_WORKFLOW",
+    "note": "The durable repository record preserves all scientific metrics and per-cell certificate/proof identities; the full Actions artifact identity is cryptographically pinned above."
+  },
+  "boundaries": {
+    "live_runtime_claim": false,
+    "prevalence_claim": false,
+    "real_target_result": false,
+    "supported_interpretation": "On the two frozen preserved calibration seeds and six predeclared mutation families, RISU detected all six semantic-loss mutants, ignored all six nonsemantic mutants, localized all four regression witnesses as predeclared, and repeated deterministically.",
+    "universal_detector_accuracy_claim": false
+  },
+  "canonical_execution": {
+    "actions_artifact_zip_sha256": "46d31d919db3bd3d3da163053f1853b81243f4a974495cad804a72ec5c8da064",
+    "artifact_id": 9962563353,
+    "artifact_manifest_sha256": "d6203d1f6b86e6522885448a7d39db7a448bc5e97cc51a608ac7dff643e726ac",
+    "checkout_head_sha": "ba3613aef6531d07d559d20b79f16544a8db6871",
+    "github_actions_run_id": 33943444386,
+    "github_pr_merge_ref_sha_observed_in_env": "d281f3dfa322c1487c1016dd9c9309b7dc725d62",
+    "matrix_result_md_sha256": "1801b9cdfbbaca716a79c7dac2ed999f36858bce5218345b00bb4ca65ba9b618",
+    "matrix_result_sha256": "79918b47feac59bd440b7184b5cfb1c180b78966297fc44122a87aa6d553330e",
+    "total_verifier_seconds": 9.096698,
+    "verifier_runs": 28
+  },
+  "canonicality_rule": "This run is the first complete execution eligible after documented Implementation Correction 001. Run 33943331517 remains retained as complete-but-implementation-invalid and non-promoted. Later CI executions are deterministic replay/qualification witnesses and may not replace this canonical record.",
+  "experiment_id": "UNIT002_M_PAIRED_MUTATION_CONTROL",
+  "implementation_correction": {
+    "base_executor_sha256": "ff7d3d49be1506ef570daed74d7407823fc715608ee58c5788c01a636d0a3cee",
+    "correction_wrapper_sha256": "159acfca3a9cba59aa457977f864d773670ae114df1761d0b0e1e67289efe8a7",
+    "frozen_plan_changed": false,
+    "id": "UNIT002_M_IMPLEMENTATION_CORRECTION_001",
+    "mutation_bytes_changed": false,
+    "record_sha256": "dd4763a673184623e1b55e8115cf54484568dd981c2448ae495c6df5c104b4c6",
+    "scope": "MUTATION_LOCALITY_DIFF_REPRESENTATION_ONLY",
+    "semantic_scoring_predicates_changed": false
+  },
+  "metrics": {
+    "baseline_validity": {"passed": 2, "total": 2},
+    "deterministic_repeatability": {"passed": 12, "total": 12},
+    "discriminator_detection": {"passed": 2, "total": 2},
+    "false_semantic_alarm_count": {"required": 0, "value": 0},
+    "mutation_locality": {"passed": 12, "total": 12},
+    "negative_specificity": {"passed": 6, "total": 6},
+    "positive_sensitivity": {"passed": 6, "total": 6},
+    "regression_witness_localization": {"passed": 4, "total": 4},
+    "source_contract_invariance": {"passed": 12, "total": 12}
+  },
+  "promotion_rule_satisfied": true,
+  "proof_identity_ledger": [
+    {"D":"D1","certificate_sha256":"8ccfc9b7e58fbabab90a66078c2c37849b327045d203422bb3adb3a4db9ead64","class":"BASELINE","exact_status":"REALIZATION_ESTABLISHED","minimal_witness_world":null,"operator_id":"BASELINE","outcome":"PRESERVED","proof_digest":"cae08be9ae60f17c7795b132eca6415522d50a4fd361a3a9a3e0103a07052a58","repeat_identity":true,"seed_id":"AZDO_ETAG_PRESERVED"},
+    {"D":"D1","certificate_sha256":"a18052a4759f56181383e878771d0f528bc3cc5ed25cbbb4a2ef54ddecc77339","class":"BASELINE","exact_status":"REALIZATION_ESTABLISHED","minimal_witness_world":null,"operator_id":"BASELINE","outcome":"PRESERVED","proof_digest":"de69c75777bd0d9eb2270dec2b1682878cbfb3785a5800a453494ec73c1ad3ec","repeat_identity":true,"seed_id":"GITHUB_BLOB_SHA_AFTER_PRESERVED"},
+    {"D":"D1","certificate_sha256":"ff0248e26f3ed15a20706a38727924232dbeb365e45608d100b5e2f2a17abd2f","class":"POSITIVE_SEMANTIC_LOSS","exact_status":"REALIZATION_CONTRADICTED","minimal_witness_world":"W-91d952c20f111d685f4a","operator_id":"P_MECHANISM_ALWAYS_ACCEPTS","outcome":"CONSEQUENCE_REGRESSION","proof_digest":"40bf4ce43ad583e78e142fc85c231941311c780f0aea123bc9c2482fd2b27aac","repeat_identity":true,"seed_id":"AZDO_ETAG_PRESERVED"},
+    {"D":"D0","certificate_sha256":"c7535c032eab1f9310272f817def77e57c6b2a666a2552889ae2c7333dd62b0a","class":"POSITIVE_SEMANTIC_LOSS","exact_status":"REALIZATION_ESTABLISHED","minimal_witness_world":null,"operator_id":"P_DISCRIMINATOR_COLLAPSE","outcome":"INCOMPLETE_ASSURANCE","proof_digest":"3d01c83ba877d78eef97e7bc99057273ff786bfd3daa3cf1f79c9da192aebeaf","repeat_identity":true,"seed_id":"AZDO_ETAG_PRESERVED"},
+    {"D":"D1","certificate_sha256":"7ec1edd1c2daedc53e8902404c1150118dc47405b1882b99d1b8620a92a9f0b4","class":"POSITIVE_SEMANTIC_LOSS","exact_status":"REALIZATION_CONTRADICTED","minimal_witness_world":"W-91d952c20f111d685f4a","operator_id":"P_INTERPRETER_ALWAYS_SUCCESS","outcome":"CONSEQUENCE_REGRESSION","proof_digest":"b67026e4d6df3b548909570ed72c7f1c1494dff6225da18d3e43b0c49132bd28","repeat_identity":true,"seed_id":"AZDO_ETAG_PRESERVED"},
+    {"D":"D1","certificate_sha256":"8ccfc9b7e58fbabab90a66078c2c37849b327045d203422bb3adb3a4db9ead64","class":"NEGATIVE_NONSEMANTIC","exact_status":"REALIZATION_ESTABLISHED","minimal_witness_world":null,"operator_id":"N_CASE_METADATA_ONLY","outcome":"PRESERVED","proof_digest":"cae08be9ae60f17c7795b132eca6415522d50a4fd361a3a9a3e0103a07052a58","repeat_identity":true,"seed_id":"AZDO_ETAG_PRESERVED"},
+    {"D":"D1","certificate_sha256":"cea146fc1a05b6e8c073ecacec5ee69624841ca4725cb26e7cf95ce566662a75","class":"NEGATIVE_NONSEMANTIC","exact_status":"REALIZATION_ESTABLISHED","minimal_witness_world":null,"operator_id":"N_PROVENANCE_EDGE_ORDER_ONLY","outcome":"PRESERVED","proof_digest":"baed359f600f3cabf119eb3ac79e33f52e349f16084b8f5d7d9994543ba18faf","repeat_identity":true,"seed_id":"AZDO_ETAG_PRESERVED"},
+    {"D":"D1","certificate_sha256":"6836591539bdc11f2b452a326f955230cce02ec1b2bc76785d4e41152514c833","class":"NEGATIVE_NONSEMANTIC","exact_status":"REALIZATION_ESTABLISHED","minimal_witness_world":null,"operator_id":"N_DERIVATION_FACT_ORDER_ONLY","outcome":"PRESERVED","proof_digest":"b594853f4393c662a31a3361ded7d10ccc4e2e0cd18e80ceb2536809bb901628","repeat_identity":true,"seed_id":"AZDO_ETAG_PRESERVED"},
+    {"D":"D1","certificate_sha256":"de26a19065001a1134217a3615b3cec476d84e8e84b1ca9dbebad740b8ed40d8","class":"POSITIVE_SEMANTIC_LOSS","exact_status":"REALIZATION_CONTRADICTED","minimal_witness_world":"W-156ec19991f34bd9b865","operator_id":"P_MECHANISM_ALWAYS_ACCEPTS","outcome":"CONSEQUENCE_REGRESSION","proof_digest":"c5edfac64b2c1d2f7cf5347b73d9d704e0058d271a06d2ae2ba9121663dbcb76","repeat_identity":true,"seed_id":"GITHUB_BLOB_SHA_AFTER_PRESERVED"},
+    {"D":"D0","certificate_sha256":"818a0548e03f3dce229a40f4195f9f5964bb2950314cd0d8c2e0a4843e096310","class":"POSITIVE_SEMANTIC_LOSS","exact_status":"REALIZATION_ESTABLISHED","minimal_witness_world":null,"operator_id":"P_DISCRIMINATOR_COLLAPSE","outcome":"INCOMPLETE_ASSURANCE","proof_digest":"4a274feb400ab546460f41a46eeeb65fa0398b6347862eaf2514f82e133a1e18","repeat_identity":true,"seed_id":"GITHUB_BLOB_SHA_AFTER_PRESERVED"},
+    {"D":"D1","certificate_sha256":"1131c9c9a361885a2d54e1e9e0855a794f3c9b44661683a0d47301bc026e5dd0","class":"POSITIVE_SEMANTIC_LOSS","exact_status":"REALIZATION_CONTRADICTED","minimal_witness_world":"W-156ec19991f34bd9b865","operator_id":"P_INTERPRETER_ALWAYS_SUCCESS","outcome":"CONSEQUENCE_REGRESSION","proof_digest":"f247d0d38a46a68a24af3bcbe1c007acf8f449047abf1932b7dd299d2b28eac5","repeat_identity":true,"seed_id":"GITHUB_BLOB_SHA_AFTER_PRESERVED"},
+    {"D":"D1","certificate_sha256":"a18052a4759f56181383e878771d0f528bc3cc5ed25cbbb4a2ef54ddecc77339","class":"NEGATIVE_NONSEMANTIC","exact_status":"REALIZATION_ESTABLISHED","minimal_witness_world":null,"operator_id":"N_CASE_METADATA_ONLY","outcome":"PRESERVED","proof_digest":"de69c75777bd0d9eb2270dec2b1682878cbfb3785a5800a453494ec73c1ad3ec","repeat_identity":true,"seed_id":"GITHUB_BLOB_SHA_AFTER_PRESERVED"},
+    {"D":"D1","certificate_sha256":"ef15e60eb51f6abbb6107d6c7854d670ea91130a39d3dae849c1d6311b3699f9","class":"NEGATIVE_NONSEMANTIC","exact_status":"REALIZATION_ESTABLISHED","minimal_witness_world":null,"operator_id":"N_PROVENANCE_EDGE_ORDER_ONLY","outcome":"PRESERVED","proof_digest":"820d1d29f28964425c1223a6719150a927d838a64282611e1fa8c223d2942829","repeat_identity":true,"seed_id":"GITHUB_BLOB_SHA_AFTER_PRESERVED"},
+    {"D":"D1","certificate_sha256":"ed578a9a2eafcabaf6a58619aaf2428b4059103b161a254848a4d281158a07e5","class":"NEGATIVE_NONSEMANTIC","exact_status":"REALIZATION_ESTABLISHED","minimal_witness_world":null,"operator_id":"N_DERIVATION_FACT_ORDER_ONLY","outcome":"PRESERVED","proof_digest":"29da77fda12e686d7eef08ab80854c1a2f8d08771fdb0809ab3fe8d9e7405ee8","repeat_identity":true,"seed_id":"GITHUB_BLOB_SHA_AFTER_PRESERVED"}
+  ],
+  "prospective_integrity": {
+    "freeze_sha256": "e5c9fe28528a53200ce00f11c36a550a090fe0d46a1f377445beb93264507210",
+    "plan_freeze_commit": "cecaf792cb131f022a1c7bcdd3ab12c0968a409f",
+    "plan_frozen_before_executor_and_outputs": true,
+    "plan_git_blob_sha1": "958bf01dbf89d338aa0f59a5d892127d65704222",
+    "plan_sha256": "735e5ce1e4523f965798bcab94a29a834291254a3fbda8494ad40525a192e913",
+    "unit002_r_target_selection_from_result": "PROHIBITED"
+  },
+  "schema": "risu.unit002-m-canonical-result/v0.1alpha1",
+  "scientific_role": "DETECTOR_CONTROL_NOT_REAL_TARGET_RESULT",
+  "status": "PROMOTED_CANONICAL_CONTROL_RESULT"
+}

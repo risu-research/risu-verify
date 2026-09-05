@@ -1,0 +1,46 @@
+{
+  "schema": "risu.unit002-m-implementation-correction/v0.1alpha1",
+  "correction_id": "UNIT002_M_IMPLEMENTATION_CORRECTION_001",
+  "experiment_id": "UNIT002_M_PAIRED_MUTATION_CONTROL",
+  "timing": "AFTER_FIRST_COMPLETE_MATRIX_OUTPUT_BEFORE_ANY_PROMOTION",
+  "frozen_plan_unchanged": {
+    "freeze_commit": "cecaf792cb131f022a1c7bcdd3ab12c0968a409f",
+    "git_blob_sha1": "958bf01dbf89d338aa0f59a5d892127d65704222",
+    "sha256": "735e5ce1e4523f965798bcab94a29a834291254a3fbda8494ad40525a192e913"
+  },
+  "triggering_complete_run": {
+    "github_actions_run_id": 33943331517,
+    "checkout_head_sha": "61da7a89724c44a1bdb32fd8f06a2522e31bae57",
+    "artifact_id": 9962533401,
+    "artifact_zip_sha256": "14946f4f469dcf9e44cb0dbd1e2792a9ed99103b44c4227666e066c353411c8d",
+    "matrix_result_sha256": "0dda9916975bdf94ef9f963184fe65ed46a4a6e9a2c3ca987beb78ff9488aa49",
+    "reported_status": "FALSIFIED_OR_NOT_PROMOTED"
+  },
+  "diagnosis": {
+    "classification": "MUTATION_LOCALITY_CHECKER_REPRESENTATION_DEFECT",
+    "observation": "All six positive semantic mutations satisfied their predeclared semantic detection predicates on both repeats, all six negative mutations preserved the baseline semantic view, and all 12 source contracts were invariant. The only common positive-cell failure was mutation_locality_pass=false.",
+    "root_cause": "The frozen PLAN defines locality as changing only a predeclared compiled-field surface such as target.derivation.program.mechanism.expr. The implementation's recursive diff represented replacement of that dictionary subtree as leaf paths such as .expr.op, .expr.cond, .expr.then, .expr.else, and .expr.value, but then incorrectly required the actual leaf-path set to equal the single parent surface path exactly.",
+    "artifact_evidence": {
+      "positive_semantic_predicates_passed_before_locality_composition": "6/6 cells on both repeats",
+      "negative_semantic_specificity": "6/6",
+      "false_semantic_alarms": 0,
+      "deterministic_repeatability": "12/12",
+      "source_contract_invariance": "12/12",
+      "locality_checker_reported": "6/12 because every positive parent-subtree replacement was represented as descendant leaf deltas"
+    }
+  },
+  "correction": {
+    "allowed_change": "Change only mutation-locality evaluation so an actual diff path is admissible iff it is equal to, or a descendant of, a predeclared allowed surface; also require every declared allowed surface to contain at least one actual delta. Keep source-contract byte equality mandatory.",
+    "semantic_meaning": "A predeclared field surface denotes its JSON subtree. Replacing expr may necessarily change multiple keys inside expr without touching any field outside expr.",
+    "forbidden_changes": [
+      "Changing PLAN.json or FREEZE.json",
+      "Changing either seed",
+      "Changing any mutation operator or mutated field",
+      "Changing any expected product status, C/D/O predicate, exact-realization predicate, stale witness coordinate, semantic-view definition, repetition count, or promotion threshold",
+      "Deleting or replacing any failed cell",
+      "Adding an outcome-specific exception for a seed or operator"
+    ]
+  },
+  "classification_of_triggering_run": "COMPLETE_OUTPUT_BUT_CONTROL_IMPLEMENTATION_INVALID_FOR_PROMOTION_DUE_TO_LOCALITY_SCORING_DEFECT",
+  "canonical_rule": "Run 33943331517 remains permanently retained and non-promoted. A rerun is eligible to become the first valid canonical control result only if the frozen PLAN identity still verifies, the correction is limited to the declared locality semantics, and the entire original 2x6x2 matrix is executed again without changing any frozen predicate."
+}

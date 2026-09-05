@@ -1,0 +1,59 @@
+{
+  "schema": "risu.unit002-m-implementation-attempts/v0.1alpha1",
+  "experiment_id": "UNIT002_M_PAIRED_MUTATION_CONTROL",
+  "plan_freeze_commit": "cecaf792cb131f022a1c7bcdd3ab12c0968a409f",
+  "rule": "These post-freeze records preserve implementation-invalid or non-promoted attempts. They never replace the first eligible canonical result. The frozen PLAN and semantic scoring predicates remain unchanged.",
+  "attempts": [
+    {
+      "github_actions_run_id": 33943174730,
+      "checkout_head_sha": "21902e36d3e85162659d7f5b34300a684f4b0c04",
+      "classification": "IMPLEMENTATION_INVALID_BEFORE_FREEZE_CHECK_OR_MUTATION_EXECUTION",
+      "failure_phase": "PYTHON_SYNTAX_CHECK",
+      "failure": "SyntaxError: '(' was never closed in the executor implementation.",
+      "plan_freeze_verified": false,
+      "mutation_matrix_execution_started": false,
+      "complete_matrix_result_emitted": false,
+      "canonical_eligibility": false
+    },
+    {
+      "github_actions_run_id": 33943228267,
+      "checkout_head_sha": "409e40e0f85369000b1bdd0fc0de2b2ffdb8766c",
+      "classification": "IMPLEMENTATION_INVALID_DURING_RESULT_SERIALIZATION",
+      "failure_phase": "POST_VERIFIER_RESULT_OBJECT_CONSTRUCTION",
+      "failure": "Python NameError caused by JSON-style false literals in a result-boundary dictionary.",
+      "plan_freeze_verified": true,
+      "mutation_matrix_execution_started": true,
+      "complete_matrix_result_emitted": false,
+      "canonical_eligibility": false,
+      "diagnostic_artifact": {
+        "artifact_id": 9962502290,
+        "artifact_zip_sha256": "3416e9383912ca55cb8d937c4fedc7cbb137c959b8cf6eaef4292f32aa14e5af"
+      }
+    },
+    {
+      "github_actions_run_id": 33943331517,
+      "checkout_head_sha": "61da7a89724c44a1bdb32fd8f06a2522e31bae57",
+      "classification": "COMPLETE_OUTPUT_BUT_CONTROL_IMPLEMENTATION_INVALID_FOR_PROMOTION_DUE_TO_LOCALITY_SCORING_DEFECT",
+      "failure_phase": "MUTATION_LOCALITY_SCORING_COMPOSITION",
+      "plan_freeze_verified": true,
+      "mutation_matrix_execution_started": true,
+      "complete_matrix_result_emitted": true,
+      "reported_status": "FALSIFIED_OR_NOT_PROMOTED",
+      "canonical_eligibility": false,
+      "matrix_result_sha256": "0dda9916975bdf94ef9f963184fe65ed46a4a6e9a2c3ca987beb78ff9488aa49",
+      "diagnostic_artifact": {
+        "artifact_id": 9962533401,
+        "artifact_zip_sha256": "14946f4f469dcf9e44cb0dbd1e2792a9ed99103b44c4227666e066c353411c8d"
+      },
+      "diagnosis_record": "experiments/unit002-m/IMPLEMENTATION_CORRECTION_001.json",
+      "note": "The complete artifact showed that all six positive semantic predicates and all six negative specificity predicates already passed; the implementation incorrectly represented an allowed parent JSON subtree as multiple descendant leaf deltas and then required exact path-set equality."
+    }
+  ],
+  "first_eligible_canonical_result": {
+    "github_actions_run_id": 33943444386,
+    "checkout_head_sha": "ba3613aef6531d07d559d20b79f16544a8db6871",
+    "status": "PROMOTED",
+    "record": "experiments/unit002-m/CANONICAL_RESULT.json"
+  },
+  "permitted_fix_scope": "Implementation fixes may not change PLAN.json, FREEZE.json, either seed, any mutation operator or mutated field, semantic-view definition, expected semantic predicate, repetition count, or promotion threshold."
+}

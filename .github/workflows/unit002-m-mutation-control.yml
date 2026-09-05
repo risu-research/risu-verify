@@ -1,0 +1,77 @@
+name: RISU Unit 002-M mutation control
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  paired-mutation-control:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+
+      - name: Restore executable entrypoints
+        run: |
+          chmod +x risu-verify
+          chmod +x tools/*.py
+
+      - name: Syntax-check frozen executor, correction, and canonical verifier
+        run: |
+          python -m py_compile tools/unit002_mutation_control.py
+          python -m py_compile tools/unit002_mutation_control_correction001.py
+          python -m py_compile tools/unit002m_canonical_verify.py
+
+      - name: Verify pre-execution PLAN freeze identity
+        run: |
+          python - <<'PY'
+          import sys
+          sys.path.insert(0, 'tools')
+          import unit002_mutation_control as u
+          plan, freeze, check = u.verify_freeze()
+          print(check)
+          assert plan['status'] == 'PREDECLARED_BEFORE_MUTATION_EXECUTION'
+          assert freeze['status'] == 'FROZEN_BEFORE_MUTATION_EXECUTION'
+          PY
+
+      - name: Verify immutable canonical control record
+        run: python tools/unit002m_canonical_verify.py --json
+
+      - name: Execute unchanged matrix as deterministic replay
+        run: |
+          python tools/unit002_mutation_control_correction001.py \
+            --output .risu/unit002-m \
+            --json
+
+      - name: Require replay proof identities to equal canonical Run 33943444386
+        run: |
+          python tools/unit002m_canonical_verify.py \
+            --replay-result .risu/unit002-m/MATRIX_RESULT.json \
+            --json
+
+      - name: Write control summary
+        if: always()
+        shell: bash
+        run: |
+          if [ -f .risu/unit002-m/MATRIX_RESULT.md ]; then
+            cat .risu/unit002-m/MATRIX_RESULT.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "## Unit 002-M" >> "$GITHUB_STEP_SUMMARY"
+            echo "Control replay did not produce a complete matrix result." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload complete mutation-control replay evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit002-m-replay-${{ github.sha }}-${{ github.run_id }}
+          path: .risu/unit002-m/**
+          if-no-files-found: warn
+          retention-days: 90
