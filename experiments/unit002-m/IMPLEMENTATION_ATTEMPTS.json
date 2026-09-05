@@ -1,0 +1,36 @@
+{
+  "schema": "risu.unit002-m-implementation-attempts/v0.1alpha1",
+  "experiment_id": "UNIT002_M_PAIRED_MUTATION_CONTROL",
+  "plan_freeze_commit": "cecaf792cb131f022a1c7bcdd3ab12c0968a409f",
+  "rule": "These are post-freeze implementation diagnostics, not canonical detector-control results. The frozen PLAN and scoring predicates are unchanged. A canonical result requires a complete matrix result emitted after freeze verification.",
+  "attempts": [
+    {
+      "github_actions_run_id": 33943174730,
+      "checkout_head_sha": "21902e36d3e85162659d7f5b34300a684f4b0c04",
+      "classification": "IMPLEMENTATION_INVALID_BEFORE_FREEZE_CHECK_OR_MUTATION_EXECUTION",
+      "failure_phase": "PYTHON_SYNTAX_CHECK",
+      "failure": "SyntaxError: '(' was never closed in the executor implementation.",
+      "plan_freeze_verified": false,
+      "mutation_matrix_execution_started": false,
+      "complete_matrix_result_emitted": false,
+      "canonical_eligibility": false
+    },
+    {
+      "github_actions_run_id": 33943228267,
+      "checkout_head_sha": "409e40e0f85369000b1bdd0fc0de2b2ffdb8766c",
+      "classification": "IMPLEMENTATION_INVALID_DURING_RESULT_SERIALIZATION",
+      "failure_phase": "POST_VERIFIER_RESULT_OBJECT_CONSTRUCTION",
+      "failure": "Python NameError caused by JSON-style false literals in a result-boundary dictionary.",
+      "plan_freeze_verified": true,
+      "mutation_matrix_execution_started": true,
+      "complete_matrix_result_emitted": false,
+      "canonical_eligibility": false,
+      "diagnostic_artifact": {
+        "artifact_id": 9962502290,
+        "artifact_zip_sha256": "3416e9383912ca55cb8d937c4fedc7cbb137c959b8cf6eaef4292f32aa14e5af",
+        "note": "Intermediate execution bytes were retained automatically. They are diagnostics only and do not replace the first future complete frozen-matrix result."
+      }
+    }
+  ],
+  "permitted_fix_scope": "Correct implementation defects only. No seed, operator, expectation, metric, promotion threshold, or semantic-view definition from frozen PLAN.json may change."
+}
