@@ -1,0 +1,104 @@
+{
+  "schema": "risu.unit004-scientific-adjudication-protocol/v0.1alpha1",
+  "protocol_id": "UNIT004_SCIENTIFIC_ADJUDICATION_PROTOCOL_001",
+  "status": "FROZEN_AFTER_FIRST_E1_SEAL_BEFORE_TARGET_SEMANTIC_CONTENT_INSPECTION",
+  "machine_result_binding": {
+    "canonical_record_id": "UNIT004_E1_FIRST_PREDICTION_CANONICAL_001",
+    "first_valid_run_id": 33983013393,
+    "seal_digest": "a553c6eb7ba59558a22994f40d6bba8278a6798fbbe60539b7dd55fe40f50d22",
+    "prediction_class_observed_by_adjudicator": "E1_PREDICTED_ASSURANCE_INCOMPLETE"
+  },
+  "blinding_disclosure": {
+    "same_conversation_adjudicator_has_seen_machine_prediction_class": true,
+    "claim_human_adjudicator_blind_to_machine_output": false,
+    "mitigation": "Freeze evidence hierarchy, semantic questions, effect cut, admissible outcomes, and no-retrofit rules before reading target semantic source content. E1 outputs are prohibited as gold evidence."
+  },
+  "target": {
+    "repository": "ofershap/mcp-server-s3",
+    "revision": "f16b3715de4bd61dc8262b03d8e04f10e2142141",
+    "tree_sha": "4a9670aaebd49dd8a04030cba21b1d358325a6e2",
+    "screened_operation": "delete_object",
+    "enrollment_mechanism_family": "HTTP_PRECONDITION_OR_ETAG"
+  },
+  "scientific_question": "Within a prospectively bounded finite world family, does the agent-facing delete_object realization preserve the source operation's consequence-relevant conditional/version-bound distinction identified by the frozen enrollment mechanism family, or does evidence remain insufficient?",
+  "evidence_hierarchy": [
+    {
+      "priority": 1,
+      "class": "PINNED_TARGET_TOOL_SURFACE_AND_IMPLEMENTATION",
+      "rule": "Use exact-revision target tool declaration, implementation call chain, and target tests/docs only. No later target revision may repair or condemn the pinned target."
+    },
+    {
+      "priority": 2,
+      "class": "PINNED_TARGET_DEPENDENCY_IDENTITY",
+      "rule": "Derive underlying SDK/library dependency versions only from the exact target revision's package/dependency lock material."
+    },
+    {
+      "priority": 3,
+      "class": "AUTHORITATIVE_UPSTREAM_OPERATION_SEMANTICS",
+      "rule": "Use provider/vendor API documentation or corresponding authoritative SDK/service model for the operation semantics relevant to conditional/version-bound deletion."
+    },
+    {
+      "priority": 4,
+      "class": "TARGET_EXECUTABLE_TEST_OR_MACHINE_OBSERVATION",
+      "rule": "Use only if needed to resolve an ambiguity left by higher-priority evidence; no live destructive side effect is required or permitted merely to force a decisive outcome."
+    }
+  ],
+  "forbidden_gold_evidence": [
+    "E1_PREDICTION.json as evidence of target semantics",
+    "E1 typed facts or E1 acquisition failure as evidence that the target lacks a semantic feature",
+    "later target commits",
+    "post-hoc candidate substitution",
+    "LLM intuition without pinned or authoritative evidence"
+  ],
+  "semantic_obligations": [
+    "identify the source-side consequence-relevant version/precondition coordinate, if established",
+    "identify the admitted stale-vs-current world distinction, if established",
+    "identify whether the agent-facing surface can represent the coordinate",
+    "identify whether the implementation forwards/binds/compares that coordinate before the destructive effect",
+    "identify stale-mismatch or failed-precondition behavior and its interpretation",
+    "identify the destructive effect cut and ensure any guard occurs before it",
+    "distinguish absence of evidence from evidence of semantic absence"
+  ],
+  "world_model_rule": {
+    "bounded": true,
+    "minimum_counterexample_preference": "Prefer a two-world current-vs-stale pair differing in the fewest consequence-relevant coordinates when the evidence supports such a model.",
+    "no_world_invented_without_evidence": true
+  },
+  "admissible_scientific_outcomes": [
+    "CONSEQUENCE_STABLE_IN_DECLARED_SCOPE",
+    "CONSEQUENCE_REGRESSION",
+    "ASSURANCE_INCOMPLETE"
+  ],
+  "outcome_symmetry": {
+    "all_outcomes_admissible": true,
+    "decisive_result_required": false,
+    "machine_incomplete_may_not_force_gold_incomplete": true,
+    "machine_incomplete_may_not_force_gold_decisive": true
+  },
+  "anti_retrofit": {
+    "e1_engine_may_change_during_gold": false,
+    "unit004_machine_prediction_may_be_replaced": false,
+    "semantic_question_may_be_changed_after_target_content_read": false,
+    "effect_cut_may_be_moved_to_make_result_decisive": false,
+    "source_semantics_may_be_weakened_to_match_target": false,
+    "target_semantics_may_be_strengthened_from undocumented intent": false
+  },
+  "gold_freeze_sequence": [
+    "collect and hash exact target evidence according to hierarchy",
+    "freeze source semantic contract and target realization mapping",
+    "freeze admitted worlds and effect cut",
+    "run existing Corpus v0.8 audit/seal machinery where representable",
+    "record scientific result separately from E1 machine prediction",
+    "only after gold freeze may Unit004 inform E2"
+  ],
+  "claim_boundary": {
+    "protocol_establishes_only": "Prospective rules for post-E1 scientific adjudication of Unit004.",
+    "does_not_establish": [
+      "a source precondition exists",
+      "the target preserves it",
+      "the target loses it",
+      "E1 accuracy",
+      "population prevalence"
+    ]
+  }
+}

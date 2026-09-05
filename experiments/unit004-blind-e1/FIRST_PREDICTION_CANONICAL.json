@@ -1,0 +1,92 @@
+{
+  "schema": "risu.unit004-e1-first-prediction-canonical/v0.1alpha1",
+  "record_id": "UNIT004_E1_FIRST_PREDICTION_CANONICAL_001",
+  "status": "CANONICAL_FIRST_E1_SEAL_ARCHIVED",
+  "first_valid_run": {
+    "run_id": 33983013393,
+    "head_sha": "78522a8c355a5a55922963b7f63da2e5b05e759a",
+    "selection_job_id": 101351493904,
+    "execution_job_id": 101351518667,
+    "conclusion": "success"
+  },
+  "prior_invalid_attempt": {
+    "run_id": 33982923997,
+    "head_sha": "c3affcc5135ce0e9c4e872b8518e77c5a21edc34",
+    "classification": "PRESELECTION_INFRASTRUCTURE_INVALID",
+    "target_content_consumed": false,
+    "e1_prediction_executed": false
+  },
+  "target": {
+    "binding_id": "UNIT004_TARGET_BINDING_001",
+    "enrollment_position": 4,
+    "repository": "ofershap/mcp-server-s3",
+    "revision": "f16b3715de4bd61dc8262b03d8e04f10e2142141",
+    "tree_sha": "4a9670aaebd49dd8a04030cba21b1d358325a6e2",
+    "screened_operation": "delete_object"
+  },
+  "frozen_e1": {
+    "freeze_id": "RISU_DIFF_E1_FREEZE_001",
+    "engine_identity_digest": "ed33d12881fa1395d1332ae165b5638518b2d472a7a520f0ae893d07e3b146b7"
+  },
+  "selection_and_acquisition": {
+    "tree_path_count": 24,
+    "round0_selected_count": 0,
+    "round_counts": [0, 0, 0],
+    "evidence_count": 0,
+    "round0_plan_digest": "a930ec39e7339fde7af6a7f1009d621c595aab52ec9324dde1e8387212ae64aa",
+    "acquisition_plan_digest": "4abfc2dd60362c6b26d2b7f9063764594fcd2948770bcfae48ff2057482729c7",
+    "human_selection": false,
+    "human_semantic_reranking": false,
+    "target_content_bytes_in_machine_packet": 0
+  },
+  "first_seal": {
+    "machine_input_sha256": "0869148c409230054b5fb5849fdebda6aaff8b2929f948e0ae894ef98d4d467b",
+    "input_packet_digest": "cabb84fda8636e8b7bf9b40fa60480a9dbd102f20c9cfa2559d000b216a8a4a4",
+    "e1_output_seal_sha256": "560203b9199eabeedc79f2c403d739c186819eb2aeffb7aaae51cc53b7348f99",
+    "seal_digest": "a553c6eb7ba59558a22994f40d6bba8278a6798fbbe60539b7dd55fe40f50d22",
+    "prediction_artifact_sha256": "cefb7348a9be6bed2150e94a390849642ba305867bf31819addf6731081261ab"
+  },
+  "archive": {
+    "artifact_id": 9974300093,
+    "artifact_name": "unit004-e1-first-seal-78522a8c355a5a55922963b7f63da2e5b05e759a-33983013393",
+    "artifact_zip_sha256": "243fa81538243ce006107d0a5dacb8fd77ee930458cb055d0db9c993bb36faf9",
+    "zip_digest_independently_recomputed_equal": true,
+    "round0_artifact_id": 9974297272,
+    "round0_artifact_zip_sha256": "49ebccd4ac047502d3175f700387d5bcae4acde34cecbc11a63b29bf00faa5ec",
+    "retention_days": 90
+  },
+  "machine_prediction": {
+    "prediction": "E1_PREDICTED_ASSURANCE_INCOMPLETE",
+    "hard_stop": "UNRESOLVED_MATERIAL_OBLIGATION",
+    "unresolved_material_roles": [
+      "authoritative_version_coordinate",
+      "binding_or_compare_guard",
+      "current_version_at_effect_coordinate",
+      "declared_effect",
+      "stale_mismatch_outcome_or_interpreter"
+    ],
+    "regression_witness": null,
+    "canonical_scientific_authority": false,
+    "consequence_authority": false
+  },
+  "mechanical_interpretation": {
+    "typed_fact_count": 0,
+    "machine_selected_content_count": 0,
+    "first_prediction_is_target_consequence_verdict": false,
+    "establishes": "Frozen E1 produced a valid, fail-closed first prediction seal on Unit004 while selecting zero target content under its prospectively frozen acquisition rules."
+  },
+  "claim_boundary": {
+    "does_not_establish": [
+      "that delete_object preserves source consequence semantics",
+      "that delete_object regresses source consequence semantics",
+      "that the target is safe or unsafe",
+      "that E1 is accurate on real targets generally",
+      "that E1's acquisition failure is caused by any particular language until separately adjudicated"
+    ]
+  },
+  "immutability": {
+    "first_valid_e1_seal_may_be_replaced": false,
+    "future_same-input_runs_are": "DETERMINISTIC_REPLAY_OR_ARCHIVAL_RECOVERY_ONLY",
+    "e1_may_be_modified_to_rescore_unit004": false
+  }
+}
