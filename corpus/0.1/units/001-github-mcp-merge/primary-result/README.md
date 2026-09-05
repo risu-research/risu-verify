@@ -32,9 +32,9 @@ Run `33939366714` remains a **post-result deterministic replay witness**, never 
 
 Its raw artifact is preserved at `archive/raw/corpus01-unit001-replay.zip`. Across the 12 uploaded entries, 10 are byte-identical to the first primary. The two differing entries are the run-specific observation wrapper and its checksum manifest. `DETERMINISTIC_REPLAY.json` records the exact comparison.
 
-## Closure state
+## Closure state — CLOSED
 
-`CLOSURE.json` is the authoritative closure ledger. It may become `CLOSED` only after:
+Unit 001 is **CLOSED**. `CLOSURE.json` is the authoritative closure ledger. Final PR head `0d5014ff3eeba17986b7caa853df5da5e2fff994` passed final CI run `33941654950`, and PR #1 was merged with head-drift protection as merge commit `d682f6820cd26bbf2617841b96b44762ff17ade2` at `2026-09-05T03:22:45Z`. The closure gates were:
 
 1. the exact final PR head passes the Corpus 0.1 procedural validator;
 2. the Unit 001 archive verifier passes;
@@ -42,4 +42,4 @@ Its raw artifact is preserved at `archive/raw/corpus01-unit001-replay.zip`. Acro
 4. PR #1 is merged without head drift; and
 5. the merge SHA and final CI run identity are recorded on `main`.
 
-The auto-triggering Unit 001 primary workflow remains retired. Archival and CI work do not alter the frozen scientific result.
+The auto-triggering Unit 001 primary workflow remains retired. No closure step re-executed the Unit 001 primary semantic verifier or rewrote frozen scientific inputs. Any future work is post-closure and must not replace this historical primary.

@@ -5,19 +5,35 @@
     "workflow_run_id": 33941343083
   },
   "authoring_freeze_commit": "355a4b77187d5b2118ac71eae9dec1cadc036847",
+  "closed_at": "2026-09-05T03:22:45Z",
   "closure_gates": {
     "CLOSE_1_FIRST_PRIMARY_IDENTITY_IMMUTABLE": "PASS",
     "CLOSE_2_FROZEN_SCIENTIFIC_INPUT_IDENTITY_IMMUTABLE": "PASS",
     "CLOSE_3_CLAIMED_EXACT_ARCHIVAL_BYTES_VERIFIED": "PASS",
     "CLOSE_4_PRIMARY_AND_REPLAY_ARCHIVES_CRYPTOGRAPHICALLY_ANCHORED": "PASS",
-    "CLOSE_5_FINAL_PR_HEAD_CORPUS_VALIDATOR_AND_PUBLIC_SEMANTIC_SMOKE": "PENDING_FINAL_PR_HEAD",
-    "CLOSE_6_PR1_MERGED_WITH_MERGE_SHA_RECORDED": "PENDING"
+    "CLOSE_5_FINAL_PR_HEAD_CORPUS_VALIDATOR_AND_PUBLIC_SEMANTIC_SMOKE": "PASS",
+    "CLOSE_6_PR1_MERGED_WITH_MERGE_SHA_RECORDED": "PASS"
   },
   "controls": {
     "archive_capture_did_not_execute_primary_semantic_verifier": true,
     "known_audit_defects_retained_not_rewritten": true,
     "post_result_replay_is_secondary": true,
     "primary_workflow_retired": true
+  },
+  "finalization": {
+    "final_pr_ci": {
+      "conclusion": "success",
+      "corpus_procedural_validator": "PASS",
+      "github_actions_run_id": 33941654950,
+      "public_semantic_smoke": "PASS",
+      "unit001_archive_verifier": "PASS",
+      "workflow": "RISU Verify \u2014 public semantic smoke"
+    },
+    "final_pr_head_sha": "0d5014ff3eeba17986b7caa853df5da5e2fff994",
+    "head_drift_guarded": true,
+    "merge_commit_sha": "d682f6820cd26bbf2617841b96b44762ff17ade2",
+    "merged_at": "2026-09-05T03:22:45Z",
+    "pull_request_number": 1
   },
   "first_primary": {
     "artifact_id": 9961142844,
@@ -28,9 +44,9 @@
     "proof_digest": "23a6f2dc76c0bd7a99f76b973bf6cadacfa542852e18feac0e740798ab84ae8c",
     "semantic_exit_code": 0
   },
-  "next_state_rule": "Set status to CLOSED only after the exact final PR head passes the Corpus 0.1 validator, Unit 001 archive verifier, and public semantic smoke; PR #1 is then merged without head drift; and the merge SHA plus final CI identity are recorded on main.",
+  "next_state_rule": "CLOSED. The canonical first primary, frozen scientific inputs, exact archival bytes, bounded claim, and recorded audit defects are immutable historical records. Any later work is a separately versioned post-closure record and must not replace or rewrite Unit 001.",
   "schema": "risu.corpus-unit-closure/v0.1alpha1",
   "scientific_state": "FROZEN_FIRST_PRIMARY_RESULT",
-  "status": "READY_FOR_FINAL_CI_AND_MERGE",
+  "status": "CLOSED",
   "unit_id": "corpus01-unit-001"
 }
