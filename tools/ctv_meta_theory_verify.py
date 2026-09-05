@@ -9,7 +9,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 CONTRACT_PATH = ROOT / "protocols" / "CTV_META_THEORY_v0.1.json"
 SEAL_PATH = ROOT / "protocols" / "CTV_META_THEORY_v0.1_SEAL.json"
 ENROLLMENT_PATH = ROOT / "corpus" / "0.1" / "ENROLLMENT.json"
-U1_CLOSURE = ROOT / "corpus" / "0.1" / "units" / "001-github-mcp-merge" / "CLOSURE.json"
+U1_CLOSURE = ROOT / "corpus" / "0.1" / "units" / "001-github-mcp-merge" / "primary-result" / "CLOSURE.json"
 U2_CLOSURE = ROOT / "corpus" / "0.1" / "units" / "002-octokit-pulls-merge" / "CLOSURE.json"
 
 
