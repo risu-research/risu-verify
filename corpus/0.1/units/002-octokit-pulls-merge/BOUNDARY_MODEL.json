@@ -1,0 +1,90 @@
+{
+  "boundary_schema": "risu.corpus-vbe-boundary/v0.1alpha1",
+  "claim_scope": {
+    "all_merge_failures": "OUT_OF_SCOPE",
+    "general_unguarded_calls": "OUT_OF_SCOPE",
+    "live_remote_deployment": "NOT_CLAIMED",
+    "model_relative": true,
+    "operation": "octokit/rest.js octokit.rest.pulls.merge at revision cd9cb8cd4965d99c7dac8c87d249308956250be3",
+    "profile": "guarded merge call with sha equal to reviewed head H0"
+  },
+  "coordinates": {
+    "otherwise_mergeable": {
+      "domain": [
+        true
+      ]
+    },
+    "request_head_sha": {
+      "domain": [
+        "H0",
+        "H1"
+      ]
+    },
+    "reviewed_head_sha": {
+      "anchor": "H0",
+      "mode": "literal"
+    }
+  },
+  "effect_cut": {
+    "definition": "The point at which GitHub evaluates the supplied merge sha against the current pull-request head before permitting merge effect.",
+    "name": "MERGE_SHA_PRECONDITION_EFFECT_CUT",
+    "post_review_transition": "request_head_sha may change from H0 to H1 after review and before this cut."
+  },
+  "exact_realization_question": "For every admissible bounded world, does the projected Octokit guarded-merge mechanism produce the same consequence label as the frozen source contract?",
+  "freeze_rule": "The world set, effect cut, guarded-call profile, held-fixed dimensions, and exclusions are frozen before VBE compilation and primary execution.",
+  "held_fixed": [
+    "owner, repository, and pull request identity",
+    "supported merge method",
+    "authorization and repository permissions",
+    "otherwise-mergeable state",
+    "absence of unrelated provider, transport, validation, abuse-rate, and policy failures"
+  ],
+  "independence_controls": {
+    "issue_tracker_bug_evidence_used": false,
+    "primary_risu_verdict_observed": false,
+    "selection_was_frozen_before_unit_specific_semantic_authoring": true,
+    "source_lane_frozen_before_target_lane": true,
+    "unit002_m_result_used_to_set_worlds": false
+  },
+  "source_lane": {
+    "freeze_commit": "2536a131fd969f9b57d5a1f64b6439690052397a",
+    "path": "corpus/0.1/units/002-octokit-pulls-merge/SOURCE_LANE.json",
+    "sha256": "a141d38509796aaf871e812ad4007d14706b9625150641ffc8e190774c4fb79b"
+  },
+  "status": "FROZEN_BOUNDARY_AND_WORLD_MODEL",
+  "target_lane": {
+    "freeze_commit": "1406bc33afaf252d49f73a043234e66a76c2dfdf",
+    "path": "corpus/0.1/units/002-octokit-pulls-merge/TARGET_LANE.json",
+    "sha256": "206650add24f2dbb5a0567f4cf034d5c3eb99098507a3f06c046392c552ad810"
+  },
+  "target_observation_model": {
+    "client_stale_observation": "HTTP 409 surfaces as rejected operation in pinned Octokit request path",
+    "current_head_coordinate": "provider-side current PR head at effect cut",
+    "local_current_head_read": "NOT_REQUIRED_BY_DECLARED_MECHANISM",
+    "operative_binding": "sha -> PUT JSON body sha -> GitHub merge sha precondition",
+    "reviewed_head_carrier": "Octokit sha argument supplied as H0",
+    "stale_native_kind": "REJECTED_EXPECTED_HEAD_MISMATCH",
+    "success_native_kind": "MERGE_ACCEPTED"
+  },
+  "unit_id": "corpus01-unit-002",
+  "worlds": [
+    {
+      "coordinates": {
+        "otherwise_mergeable": true,
+        "request_head_sha": "H0",
+        "reviewed_head_sha": "H0"
+      },
+      "id": "W_MATCH",
+      "required_source_consequence": "MERGED_REVIEWED_HEAD"
+    },
+    {
+      "coordinates": {
+        "otherwise_mergeable": true,
+        "request_head_sha": "H1",
+        "reviewed_head_sha": "H0"
+      },
+      "id": "W_STALE",
+      "required_source_consequence": "STALE_REQUEST_REJECTED"
+    }
+  ]
+}
