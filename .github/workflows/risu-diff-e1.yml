@@ -1,0 +1,97 @@
+name: RISU Diff E1 prospective qualification
+
+on:
+  push:
+    branches:
+      - risu-diff-e1-prospective
+    paths:
+      - risu_e1/**
+      - tools/risu_e1_**
+      - tests/test_risu_e1.py
+      - experiments/risu-diff-e1/**
+      - .github/workflows/risu-diff-e1.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  UNIT003_MAIN_MERGE: b3da8d9e5cec1f79d3bf462e629c2e0b8bbcd314
+  E1_PROTOCOL_COMMIT: 93fed963a04fb33b3fe68ec47b2aec38a1f39f86
+  E1_PROTOCOL_BLOB: 61c8d11cc16930e48b502438e39c760fecd1938b
+  UNIT003_FIREWALL_BLOB: 5fcf3a3d38f89110d5f677d8568237da34439c3e
+
+jobs:
+  qualify-e1:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify prospective lineage and Unit003 firewall
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor "$UNIT003_MAIN_MERGE" HEAD
+          git merge-base --is-ancestor "$E1_PROTOCOL_COMMIT" HEAD
+          test "$(git rev-parse HEAD:experiments/risu-diff-e1/E1_PROTOCOL.json)" = "$E1_PROTOCOL_BLOB"
+          test "$(git rev-parse HEAD:experiments/risu-diff-e1/UNIT003_LEARNING_FIREWALL.json)" = "$UNIT003_FIREWALL_BLOB"
+          python - <<'PY'
+          import json, pathlib, subprocess
+          root=pathlib.Path(".")
+          fw=json.loads((root/"experiments/risu-diff-e1/UNIT003_LEARNING_FIREWALL.json").read_text())
+          assert fw["unit003_status"] == "READ_ONLY_POST_RESULT_LEARNING_SAMPLE_ONLY"
+          assert fw["first_valid_e1_prospective_target"] == "corpus01-unit-004"
+          changed=subprocess.check_output(["git","diff","--name-only","b3da8d9e5cec1f79d3bf462e629c2e0b8bbcd314..HEAD"],text=True).splitlines()
+          forbidden_prefixes=("experiments/unit003-blind-machine-first/","risu_e0/","experiments/risu-diff-e0/")
+          forbidden_exact={"tools/risu_e0_machine_first.py"}
+          bad=[p for p in changed if p.startswith(forbidden_prefixes) or p in forbidden_exact]
+          assert not bad, bad
+          print(json.dumps({"status":"PASS","changed_paths":len(changed),"forbidden_changes":bad},sort_keys=True))
+          PY
+
+      - name: Static qualification
+        run: |
+          set -euo pipefail
+          python -m py_compile risu_e1/*.py tools/risu_e1_machine_first.py tools/risu_e1_qualify.py tests/test_risu_e1.py
+          test -z "$(gofmt -d tools/risu_e1_go_extract.go)"
+          printf '{"files":[]}
+' | go run tools/risu_e1_go_extract.go > /tmp/e1-go-empty.json
+          test "$(cat /tmp/e1-go-empty.json)" = '{"files":[]}'
+
+      - name: Run E1 adversarial unit suite
+        run: python -m unittest -v tests.test_risu_e1
+
+      - name: Run prospective synthetic qualification matrix
+        run: |
+          mkdir -p "$RUNNER_TEMP/e1-qualification"
+          python -m tools.risu_e1_qualify | tee "$RUNNER_TEMP/e1-qualification/QUALIFICATION_RESULT.json"
+
+      - name: Verify qualification metrics and no Unit003 identifiers in implementation
+        run: |
+          python - <<'PY'
+          import json, os, pathlib
+          p=pathlib.Path(os.environ["RUNNER_TEMP"])/"e1-qualification/QUALIFICATION_RESULT.json"
+          r=json.loads(p.read_text())
+          m=r["metrics"]
+          assert m["status"]=="PASS"
+          assert m["case_passes"]==m["cases"]==11
+          assert m["false_regression_from_absence"]==0
+          assert m["authority_upgrade_from_name_only"]==0
+          assert m["cross_scope_false_support"]==0
+          assert m["acquisition_filler_admitted"]==0
+          assert m["round0_order_invariant"] is True
+          impl=["risu_e1/acquisition.py","risu_e1/extractor.py","risu_e1/engine.py","tools/risu_e1_go_extract.go"]
+          text="\n".join(pathlib.Path(x).read_text().lower() for x in impl)
+          assert "kubectl" not in text
+          assert "annotate" not in text
+          print(json.dumps({"status":"PASS","metrics":m},sort_keys=True))
+          PY
+
+      - name: Upload E1 qualification evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: risu-diff-e1-qualification-${{ github.sha }}
+          path: ${{ runner.temp }}/e1-qualification/QUALIFICATION_RESULT.json
+          if-no-files-found: error
+          retention-days: 90
