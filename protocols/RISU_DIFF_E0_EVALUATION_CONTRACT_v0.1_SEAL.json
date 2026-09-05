@@ -1,0 +1,18 @@
+{
+  "seal_id": "RISU_DIFF_E0_EVALUATION_001_SEAL",
+  "status": "SEALED_BEFORE_UNIT003_SEMANTIC_INSPECTION",
+  "contract_id": "RISU_DIFF_E0_EVALUATION_001",
+  "base_main_sha": "bd9ed54e9c1703f505f1b08ff3cb4c8f22c48afc",
+  "hash_staging_run": 33971412072,
+  "normative_file_sha256": {
+    "protocols/RISU_DIFF_E0_EVALUATION_CONTRACT_v0.1.json": "0c93107237295afcc2aede6ddd4f24fc989831d2357e7468e8af43954ac571a9",
+    "docs/RISU_DIFF_E0_EVALUATION_CONTRACT_v0.1.md": "016eaf6c79f9a85e23164310515c2aa05db6d4395335b2253fa9b5f2630d333b"
+  },
+  "heldout_unit_at_seal": "corpus01-unit-003",
+  "heldout_semantic_inspection_observed_before_seal": false,
+  "unit003_authoring_started_at_seal": false,
+  "unit003_authoring_frozen_at_seal": false,
+  "machine_first_output_observed_before_seal": false,
+  "canonical_unit003_result_observed_before_seal": false,
+  "rule": "The E0 development firewall, scoring semantics, blind-gold isolation, hard stops, and baseline roles are fixed before held-out Unit003 semantic inspection. Later changes require a timed amendment."
+}
