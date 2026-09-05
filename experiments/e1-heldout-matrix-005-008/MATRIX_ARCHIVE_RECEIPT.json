@@ -1,0 +1,73 @@
+{
+  "schema": "risu.e1-heldout-matrix-archive-receipt/v0.1alpha1",
+  "receipt_id": "E1_REMAINING_HELDOUT_MATRIX_005_008_ARCHIVE_RECEIPT_001",
+  "status": "ARCHIVE_IDENTITY_LOCKED_BEFORE_RESULT_INSPECTION",
+  "first_canonical_matrix_run": {
+    "workflow": "E1 remaining held-out matrix 005-008",
+    "workflow_id": 351111337,
+    "run_id": 33986339337,
+    "run_attempt": 1,
+    "event": "push",
+    "execution_commit": "7e30a1246eb8d77d7d96d81a30183e2d2b3b8fa1",
+    "execution_tree": "f0453ad2fe47c12aed2cea572922f95a1ef489de",
+    "qualify_job_conclusion": "success",
+    "execute_job_conclusion": "success",
+    "generic_final_gate_conclusion": "success"
+  },
+  "combined_artifact": {
+    "id": 9975264545,
+    "name": "e1-heldout-matrix-first-7e30a1246eb8d77d7d96d81a30183e2d2b3b8fa1-33986339337",
+    "size_in_bytes": 413120,
+    "github_digest": "sha256:8f024af36dded40ade219dec09e010ab8395c4642edea8988e5a08372e3a9b72",
+    "expired": false,
+    "retention_days": 90
+  },
+  "scientific_slot_state_before_inspection": {
+    "unit005": {
+      "matrix_role": "PROTOCOL_CONTAMINATED_NO_PRISTINE_E1_ATTEMPT",
+      "fresh_accuracy_eligible": false,
+      "replacement_allowed": false,
+      "violation_id": "E1_MATRIX_005_008_PROTOCOL_VIOLATION_001"
+    },
+    "unit006": {
+      "matrix_role": "PRISTINE_HELDOUT",
+      "first_seal_emission_known_only_from_generic_success_gate": true,
+      "prediction_value_known": false
+    },
+    "unit007": {
+      "matrix_role": "PRISTINE_HELDOUT",
+      "first_seal_emission_known_only_from_generic_success_gate": true,
+      "prediction_value_known": false
+    },
+    "unit008": {
+      "matrix_role": "PRISTINE_HELDOUT",
+      "first_seal_emission_known_only_from_generic_success_gate": true,
+      "prediction_value_known": false
+    }
+  },
+  "preinspection_attestation": {
+    "artifact_downloaded_before_receipt": false,
+    "artifact_archive_bytes_inspected_before_receipt": false,
+    "prediction_values_observed_before_receipt": false,
+    "unresolved_material_roles_observed_before_receipt": false,
+    "selected_paths_inspected_before_receipt": false,
+    "round0_selected_paths_inspected_before_receipt": false,
+    "unit006_008_target_content_inspected_before_receipt": false,
+    "unit006_008_machine_input_content_inspected_before_receipt": false,
+    "unit006_008_e1_output_files_inspected_before_receipt": false,
+    "workflow_job_logs_containing_redirected_prediction_outputs_inspected_before_receipt": false,
+    "gold_adjudication_started_before_receipt": false,
+    "artifact_identity_selected_after_prediction_value": false
+  },
+  "integrity_chain": {
+    "selection_protocol_commit": "d661ff03e803f5227067ee96e0ddff451de630fc",
+    "unit005_violation_commit": "879e8985bc78c691e821e4dd00716c289057c114",
+    "binding_freeze_commit": "86ed08305b352444e22ede2dc3525f89c39acb27",
+    "execution_freeze_commit": "7e30a1246eb8d77d7d96d81a30183e2d2b3b8fa1",
+    "frozen_e1_engine_identity_digest": "ed33d12881fa1395d1332ae165b5638518b2d472a7a520f0ae893d07e3b146b7",
+    "reused_harness_git_blob": "5272b62db86571c8ec19fe3770a7514d1d246e92",
+    "workflow_git_blob": "2332c303ed66c1d9107d0ba9823064dd8cb58da1"
+  },
+  "next_allowed_action": "After this receipt is committed, download exactly artifact 9975264545, independently recompute its ZIP SHA-256, verify the recursive archive manifest, and only then inspect the frozen E1 prediction values. Gold adjudication remains prohibited at this stage.",
+  "claim_boundary": "This receipt fixes the identity of the first combined matrix artifact before human inspection of any Unit006-008 prediction, selected path, target content, or E1 semantic output. It records no prediction value and no gold conclusion."
+}
