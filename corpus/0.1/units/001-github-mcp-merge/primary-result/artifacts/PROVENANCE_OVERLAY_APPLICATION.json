@@ -1,7 +1,15 @@
 {
   "added_edges": [
-    {"from":"FACT-U001-EXPECTED-INPUT","relation":"USES","to":"DERIVE-EXACT"},
-    {"from":"FACT-U001-LIBRARY-PIN","relation":"USES","to":"DERIVE-EXACT"}
+    {
+      "from": "FACT-U001-EXPECTED-INPUT",
+      "relation": "USES",
+      "to": "DERIVE-EXACT"
+    },
+    {
+      "from": "FACT-U001-LIBRARY-PIN",
+      "relation": "USES",
+      "to": "DERIVE-EXACT"
+    }
   ],
   "amended_adapter_sha256": "424199a68454abe55096a21c0d2d443fee70823c397c126238d4c66fcbc03f95",
   "frozen_vbe_compiler_unchanged": true,
