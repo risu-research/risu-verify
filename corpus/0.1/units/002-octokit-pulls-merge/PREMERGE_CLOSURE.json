@@ -1,0 +1,51 @@
+{
+  "authoring_freeze_commit": "ce4c3a311bcf9f6b74b43af24e8732d1af8fd5ac",
+  "canonical_phrase": "Corpus 0.1 \u2014 Unit 002-R: READY FOR GUARDED MERGE",
+  "closure_conditions": {
+    "authoritative_main_closure_pending_merge_identity": true,
+    "closure_candidate_surface_exactly_checked": true,
+    "coverage_gap_retained_without_posthoc_alias": true,
+    "enrollment_selection_identity_unchanged": true,
+    "friction_closed_without_fabricated_timing": true,
+    "guarded_pr_merge_still_required": true,
+    "preprimary_automatic_workflow_retired": true,
+    "primary_bytes_immutable_since_result_freeze": true,
+    "target_qualification_automatic_workflow_retired": true
+  },
+  "history_retained": {
+    "canonical_primary_rerun_prohibited": true,
+    "failed_closure_v1_run": 33947411380,
+    "invalid_prevalid_toolchain_run": 33946439332,
+    "post_result_wrapper_failure_on_canonical_run": true,
+    "presemantic_mode_gate_stop": 33947000387
+  },
+  "primary": {
+    "C": "C1",
+    "D": "D1",
+    "O": "O1",
+    "actions_artifact_sha256": "a622c27422d36a9d28302893e4ad9001114bd86e62815aa4f62f3e68918f8a9b",
+    "artifact_id": 9963646702,
+    "artifact_index_sha256": "3586a6e6c1307376e0463c6c22a138fc45ab77db9f72d2c64c86d9152182b805",
+    "exact_realization": "REALIZATION_ESTABLISHED",
+    "job_id": 101254891951,
+    "primary_result_sha256": "0d7c940e5f5b1918a9b832644df779a1afb3355d8092cb151ee45d8abbe76351",
+    "product_status": "PRESERVED_IN_DECLARED_SCOPE",
+    "run_id": 33947031284,
+    "self_contained_bundle_sha256": "eb0dcf71ea5ae6b0f40c9899dc8fe3e0e6e54fab84bcc1ee927f44e627f8cf95",
+    "semantic_exit_code": 0
+  },
+  "primary_result_freeze_commit": "b52bde0d0fdef0a2be7d5973e564daccd12296c9",
+  "retained_limitations": {
+    "all_merge_failures": "OUT_OF_SCOPE",
+    "coverage_complete": false,
+    "coverage_diagnostic": "post-result/COVERAGE_DIAGNOSTIC.json",
+    "general_unguarded_calls": "OUT_OF_SCOPE",
+    "live_github_service_conformance": "NOT_CLAIMED",
+    "model_relative": true,
+    "unqualified_preserved_claim_prohibited": true
+  },
+  "schema": "risu.corpus-premerge-closure/v0.1alpha2",
+  "sealed_scientific_head": "1f9fba3a270f05d06763a5c81216d2edddffad8b",
+  "status": "READY_FOR_GUARDED_MERGE",
+  "unit_id": "corpus01-unit-002"
+}
