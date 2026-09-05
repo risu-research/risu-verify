@@ -1,0 +1,68 @@
+{
+  "allowed_changes": [
+    "Add the provenance overlay file named in this amendment.",
+    "Extend tools/corpus01_compile.py with a generic add-existing-fact-provenance-edges-only overlay mode; tools/vbe_compile.py remains unchanged.",
+    "Add tools/corpus01_provenance_preflight.py to fail before the frozen verifier when an established compiler fact is not upstream of the EXACT claim.",
+    "Extend tools/corpus01_primary_gate.py to pin and validate the overlay identity and pre-verdict status.",
+    "Update .github/workflows/corpus-0.1-primary.yml to pass the pinned overlay and run the preflight before invoking the unchanged frozen verifier.",
+    "Update PRIMARY_RUN_MANIFEST.json to pin this amendment, overlay, and correction tooling."
+  ],
+  "amendment_id": "RISU_CORPUS_0.1_AUTHORING_PROTOCOL_AMENDMENT_002",
+  "amendment_schema": "risu.corpus-authoring-protocol-amendment/v0.1alpha1",
+  "correction": {
+    "mode": "POST_COMPILE_PROVENANCE_OVERLAY",
+    "overlay_path": "corpus/0.1/units/001-github-mcp-merge/PROVENANCE_OVERLAY_002.json",
+    "overlay_sha256": "67358e9a49b13ae5e6ac865df6e9f11277566917d0a1b1ce7f61f8cb5eeead65",
+    "rationale": "Preserve every original AUTHOR_ACCEPTED input byte. Apply only two declared provenance edges to the generated adapter, with machine checks that all non-edge adapter content is identical and each edge originates at an already-ESTABLISHED fact required by the frozen program."
+  },
+  "could_alter_execution_validity": true,
+  "could_alter_primary_semantic_outcome": false,
+  "diagnosis": {
+    "classification": "PROVENANCE_GRAPH_COMPLETENESS_DEFECT",
+    "facts_already_established_before_failure": true,
+    "facts_already_frozen_before_failure": [
+      "GH_U001_EXPECTED_HEAD_INPUT",
+      "GH_U001_LIBRARY_PIN"
+    ],
+    "facts_already_required_by_frozen_target_program": true,
+    "missing_links": [
+      {
+        "from": "FACT-U001-EXPECTED-INPUT",
+        "relation": "USES",
+        "to": "DERIVE-EXACT"
+      },
+      {
+        "from": "FACT-U001-LIBRARY-PIN",
+        "relation": "USES",
+        "to": "DERIVE-EXACT"
+      }
+    ],
+    "source_target_boundary_pattern_or_world_change_required": false
+  },
+  "forbidden_changes": [
+    "Changing any of the ten original frozen Unit 001 scientific input bytes.",
+    "Changing SOURCE_LANE.json, TARGET_LANE.json, BOUNDARY_MODEL.json, vbe.envelope.json, AUTHOR_ACCEPTANCE.json, or vbe.instance.json.",
+    "Adding or changing any evidence binding, derivation fact, fact status, provenance node, claim root, source contract, target program, structural template, bounded world, target pattern, or semantic consequence.",
+    "Changing tools/vbe_compile.py, the frozen core archive, the risu-verify verifier command, or valid semantic exit-code interpretation.",
+    "Using the diagnostic failure to choose a different source consequence, target pattern, enrolled unit, or expected primary result."
+  ],
+  "interpretation": "This amendment can turn an invalid provenance-gate execution into a valid execution. It does not predetermine whether that valid execution will be PRESERVED, CONSEQUENCE_REGRESSION, or INCOMPLETE_ASSURANCE.",
+  "issue_tracker_bug_discovery_performed_before_amendment": false,
+  "parent_authoring_protocol": "corpus/0.1/AUTHORING_PROTOCOL.json",
+  "previous_amendment": "corpus/0.1/AUTHORING_PROTOCOL_AMENDMENT_001.json",
+  "primary_verdict_observed_before_amendment": false,
+  "scientific_input_freeze_commit_unchanged": "355a4b77187d5b2118ac71eae9dec1cadc036847",
+  "status": "RECORDED_AFTER_INVALID_PROVENANCE_GATE_FAILURE_BEFORE_ANY_PRIMARY_SEMANTIC_VERDICT",
+  "triggering_invalid_run": {
+    "compile_completed": true,
+    "failure_log": "risu-projection: compiler fact GH_U001_EXPECTED_HEAD_INPUT provenance node is not upstream of the EXACT claim",
+    "freeze_gate_completed": true,
+    "primary_verdict_observed": false,
+    "risu_exit_code": 30,
+    "run_id": 33936365055,
+    "valid_semantic_exit_code": false,
+    "verifier_reached": true,
+    "workflow_head_sha": "09501467ca5f803b6a9ff350617ecd2966c28d61"
+  },
+  "unit_id": "corpus01-unit-001"
+}
