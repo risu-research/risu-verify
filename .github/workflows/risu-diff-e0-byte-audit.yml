@@ -1,0 +1,31 @@
+name: RISU Diff E0 byte audit
+
+on:
+  push:
+    branches: [risu-diff-e0-byte-audit]
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit all foundation bytes against manifest
+        run: |
+          python - <<'PY'
+          import hashlib, json, pathlib
+          root = pathlib.Path('.')
+          q = json.loads((root/'experiments/risu-diff-e0/FOUNDATION_QUALIFICATION.json').read_text())
+          rows=[]
+          bad=[]
+          for rel, expected in sorted(q['file_sha256'].items()):
+              p=root/rel
+              actual=hashlib.sha256(p.read_bytes()).hexdigest() if p.exists() else None
+              row={'path':rel,'expected':expected,'actual':actual,'match':actual==expected}
+              rows.append(row)
+              if not row['match']: bad.append(row)
+          print(json.dumps({'checked':len(rows),'mismatch_count':len(bad),'mismatches':bad,'rows':rows}, indent=2, sort_keys=True))
+          raise SystemExit(1 if bad else 0)
+          PY
