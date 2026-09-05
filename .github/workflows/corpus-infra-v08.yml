@@ -1,0 +1,88 @@
+name: RISU Corpus infrastructure v0.8
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  v08-protocol-preserving-seal:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Restore executable entrypoints
+        run: |
+          chmod +x risu-verify
+          chmod +x tools/*.py
+
+      - name: Syntax-check v0.8 execution boundary
+        run: |
+          python -m py_compile \
+            tools/corpus01_bound_evidence.py \
+            tools/corpus01_primary_v08.py \
+            tools/corpus01_seal.py
+
+      - name: Unit-test explicit-bound-evidence compiler
+        run: python tests/test_corpus01_bound_evidence.py
+
+      - name: Unit-test seal pin and report metadata isolation
+        run: python tests/test_corpus01_primary_v08.py
+
+      - name: Preserve v0.1 harness regression tests
+        run: python tests/test_corpus01_unit_harness.py
+
+      - name: Materialize retained case infrastructure
+        run: python tools/materialize_case_bundles.py
+
+      - name: Real closed-Unit-001 compile probe under explicit-bound-evidence sandbox
+        shell: bash
+        run: |
+          rm -rf .risu/v08-u001-probe
+          python tools/corpus01_compile.py \
+            corpus/0.1/units/001-github-mcp-merge/vbe.instance.json \
+            --output .risu/v08-u001-probe \
+            --provenance-overlay corpus/0.1/units/001-github-mcp-merge/PROVENANCE_OVERLAY_002.json
+          python - <<'PY'
+          import json, sys
+          from pathlib import Path
+          sys.path.insert(0, 'tools')
+          from corpus01_primary_v08 import sanitize_report_metadata
+          unit = Path('corpus/0.1/units/001-github-mcp-merge')
+          sanitize_report_metadata(
+              Path('.risu/v08-u001-probe'),
+              json.loads((unit/'TARGET_LANE.json').read_text()),
+              json.loads((unit/'BOUNDARY_MODEL.json').read_text()),
+          )
+          PY
+          python tools/corpus01_bound_evidence.py \
+            .risu/v08-u001-probe \
+            corpus/0.1/units/001-github-mcp-merge \
+            corpus/0.1/units/001-github-mcp-merge/PRIMARY_RUN_MANIFEST.json \
+            --json
+          python tools/corpus01_provenance_preflight.py \
+            .risu/v08-u001-probe/assurance/adapter.json \
+            --json
+
+      - name: Re-detect Unit 001 historical pre-overlay friction exactly
+        run: |
+          python tools/corpus01_unit_harness.py audit \
+            corpus/0.1/units/001-github-mcp-merge \
+            --expect-finding PROVENANCE_NOT_UPSTREAM_OF_EXACT:GH_U001_EXPECTED_HEAD_INPUT \
+            --expect-finding PROVENANCE_NOT_UPSTREAM_OF_EXACT:GH_U001_LIBRARY_PIN \
+            --json
+
+      - name: Assert Unit 001 remains CLOSED and untouched
+        run: |
+          python tools/corpus01_unit001_archive_verify.py --json
+
+      - name: Preserve public semantic behavior
+        run: |
+          python tools/vbe_differential.py
+          bash tests/semantic_ci_demo.sh
