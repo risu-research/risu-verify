@@ -1,0 +1,53 @@
+{
+  "byte_observations": [
+    {
+      "id": "TGT_EXPECTED_HEAD_INPUT",
+      "observation": "merge_pull_request input schema contains expectedHeadSha as a string parameter."
+    },
+    {
+      "id": "TGT_EXPECTED_HEAD_READ",
+      "observation": "The handler reads expectedHeadSha with OptionalParam[string]."
+    },
+    {
+      "id": "TGT_EXPECTED_HEAD_TO_LIBRARY_SHA",
+      "observation": "The handler assigns expectedHeadSha to github.PullRequestOptions.SHA."
+    },
+    {
+      "id": "TGT_OPTIONS_REACH_MERGE",
+      "observation": "The same options object is passed to client.PullRequests.Merge for the requested pull number."
+    }
+  ],
+  "evidence_id": "CORPUS01-U001-TARGET-GITHUB-MCP-MERGE-IMPLEMENTATION",
+  "evidence_layers": [
+    "L0_IDENTITY_OR_UPSTREAM_REFERENCE",
+    "L1_PINNED_BYTES_OR_IMMUTABLE_ARTIFACT",
+    "L2_DETERMINISTIC_EXTRACTED_FACT",
+    "L3_SEMANTIC_INTERPRETATION"
+  ],
+  "evidence_schema": "risu.corpus-evidence/v0.1alpha1",
+  "lane": "TARGET",
+  "not_claimed": [
+    "live remote MCP deployment conformance",
+    "all merge failures are head-SHA conflicts",
+    "the MCP server itself independently validates current head before calling GitHub"
+  ],
+  "semantic_interpretation": {
+    "discharge_cut": "GitHub merge endpoint precondition evaluation",
+    "interpreter": "Successful merge corresponds to MERGED_REVIEWED_HEAD only in the match world; head-SHA conflict corresponds to STALE_REQUEST_REJECTED.",
+    "mechanism": "The MCP handler forwards caller-supplied expectedHeadSha into the underlying GitHub merge request SHA field.",
+    "operation": "merge_pull_request",
+    "operative_signature_fields": [
+      "request_head_sha",
+      "reviewed_head_sha"
+    ],
+    "reviewed_binding_input": "expectedHeadSha"
+  },
+  "strength": "PINNED_TARGET_GIT_BLOB_WITH_DIRECT_IMPLEMENTATION_PATH",
+  "unit_id": "corpus01-unit-001",
+  "upstream": {
+    "commit": "9205304fedf10540c33ae41fcf6352fa97dcc9be",
+    "git_blob_sha1": "5cee8b323143b702477fb4109a04b8085f61ee0c",
+    "path": "pkg/github/pullrequests.go",
+    "repository": "github/github-mcp-server"
+  }
+}
