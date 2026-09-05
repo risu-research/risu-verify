@@ -1,0 +1,135 @@
+{
+  "$id": "https://risuinstitute.org/schemas/refinement-map.v0.1alpha1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "entries": {
+      "items": {
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "relation": {
+                  "enum": [
+                    "ESTABLISHED_EQUIVALENT",
+                    "REPRESENTED_BY"
+                  ]
+                }
+              },
+              "required": [
+                "relation"
+              ]
+            },
+            "then": {
+              "properties": {
+                "evidence_refs": {
+                  "minItems": 1
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "relation": {
+                  "const": "UNRESOLVED"
+                }
+              },
+              "required": [
+                "relation"
+              ]
+            },
+            "then": {
+              "properties": {
+                "direction": {
+                  "const": "NONE"
+                }
+              }
+            }
+          }
+        ],
+        "properties": {
+          "direction": {
+            "enum": [
+              "BIDIRECTIONAL",
+              "SOURCE_TO_TARGET",
+              "TARGET_TO_SOURCE",
+              "NONE"
+            ]
+          },
+          "evidence_refs": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "notes": {
+            "type": "string"
+          },
+          "relation": {
+            "enum": [
+              "EXACT_IDENTITY",
+              "ESTABLISHED_EQUIVALENT",
+              "REPRESENTED_BY",
+              "DISTINCT",
+              "UNRESOLVED"
+            ]
+          },
+          "source_id": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "target_id": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "source_id",
+          "target_id",
+          "relation",
+          "direction",
+          "evidence_refs"
+        ],
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "frozen_before_primary": {
+      "const": true
+    },
+    "mapping_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "mapping_schema": {
+      "const": "risu.refinement-map/v0.1alpha1"
+    },
+    "mapping_version": {
+      "const": "0.1"
+    },
+    "source_model_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "target_cir_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "mapping_schema",
+    "mapping_version",
+    "mapping_id",
+    "source_model_digest",
+    "target_cir_digest",
+    "frozen_before_primary",
+    "entries"
+  ],
+  "title": "RISU Explicit Refinement Map v0.1alpha1",
+  "type": "object"
+}
