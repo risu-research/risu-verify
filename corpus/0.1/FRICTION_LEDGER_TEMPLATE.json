@@ -1,0 +1,25 @@
+{
+  "ledger_schema": "risu.corpus-friction-ledger/v0.1alpha1",
+  "candidate_id": "REPLACE_AFTER_ENROLLMENT",
+  "unit_id": "REPLACE_AFTER_ENROLLMENT",
+  "measurement_boundary": "Record actual effort for the enrolled unit. Wall-clock time includes waiting within the active work session; active time estimates direct researcher/tooling effort. Corrections count substantive rework, not spelling edits.",
+  "phases": {
+    "operation_identification": {"wall_clock_seconds": 0, "active_seconds": 0, "correction_count": 0, "notes": [], "automation_opportunities_observed": []},
+    "source_semantic_reconstruction": {"wall_clock_seconds": 0, "active_seconds": 0, "correction_count": 0, "notes": [], "automation_opportunities_observed": []},
+    "boundary_definition": {"wall_clock_seconds": 0, "active_seconds": 0, "correction_count": 0, "notes": [], "automation_opportunities_observed": []},
+    "evidence_acquisition": {"wall_clock_seconds": 0, "active_seconds": 0, "correction_count": 0, "notes": [], "automation_opportunities_observed": []},
+    "version_binding_discovery": {"wall_clock_seconds": 0, "active_seconds": 0, "correction_count": 0, "notes": [], "automation_opportunities_observed": []},
+    "adapter_or_envelope_authoring": {"wall_clock_seconds": 0, "active_seconds": 0, "correction_count": 0, "notes": [], "automation_opportunities_observed": []},
+    "human_correction": {"wall_clock_seconds": 0, "active_seconds": 0, "correction_count": 0, "notes": [], "automation_opportunities_observed": []},
+    "verification_runtime": {"wall_clock_seconds": 0, "active_seconds": 0, "correction_count": 0, "notes": [], "automation_opportunities_observed": []}
+  },
+  "cross_phase": {
+    "tool_calls": 0,
+    "files_authored": 0,
+    "evidence_objects_pinned": 0,
+    "human_acceptance_events": 0,
+    "uncertainties_left_open": [],
+    "candidate_automation_not_adopted_yet": []
+  },
+  "rule": "Do not backfill fictitious precision. If timing was not measured, record null with an explicit note and treat the ledger as incomplete rather than inventing a duration. Automation decisions belong after repeated observations across units."
+}
