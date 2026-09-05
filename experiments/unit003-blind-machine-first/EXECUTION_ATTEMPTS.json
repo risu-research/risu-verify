@@ -1,0 +1,23 @@
+{
+  "attempts": [
+    {
+      "classification": "IMPLEMENTATION_INVALID_PRE_TARGET_FETCH",
+      "e0_executed": false,
+      "failed_job": "select-tree-only",
+      "failed_job_id": 101336638350,
+      "failed_step": "Verify frozen E0 and prospective Unit003 run freeze",
+      "first_seal_created": false,
+      "head_sha": "bddd6b4a2f8c4d0749f06ee239ba7b720aed4211",
+      "machine_packet_created": false,
+      "reason": "Freeze-construction verifier rejected post-freeze Unit003 branch paths before any target fetch.",
+      "run_id": 33977484176,
+      "scientific_prediction": null,
+      "selection_created": false,
+      "sequence": 1,
+      "target_tree_or_content_fetched_by_workflow": false
+    }
+  ],
+  "exam_id": "UNIT003_BLIND_MACHINE_FIRST_E0_001",
+  "rule": "Never delete invalid attempts. A later valid first seal does not replace or reinterpret this lineage.",
+  "schema": "risu.unit003-blind-machine-first-execution-attempts/v0.1"
+}

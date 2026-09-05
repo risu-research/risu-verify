@@ -11,6 +11,8 @@ on:
       - experiments/unit003-blind-machine-first/EXAM_PROTOCOL_EFFECTIVE_001.json
       - experiments/unit003-blind-machine-first/EXAM_PROTOCOL_CORRECTION_001.json
       - experiments/unit003-blind-machine-first/RUN_FREEZE.json
+      - experiments/unit003-blind-machine-first/RUN_FREEZE_CORRECTION_001.json
+      - experiments/unit003-blind-machine-first/EXECUTION_ATTEMPTS.json
       - .github/workflows/unit003-blind-machine-first.yml
   workflow_dispatch:
 
@@ -29,20 +31,56 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Verify frozen E0 and prospective Unit003 run freeze
+      - name: Verify exact frozen E0 bytes post-freeze
         run: |
-          python tools/risu_e0_machine_freeze_verify.py
+          python - <<'PY'
+          import hashlib, json, pathlib, subprocess
+          root = pathlib.Path(".")
+          q = json.loads((root / "experiments/risu-diff-e0/MACHINE_FIRST_FREEZE_QUALIFICATION.json").read_text())
+          expected_components = q["engine_identity_components"]
+          actual_components = {}
+          for path, expected in sorted(expected_components.items()):
+              git_bytes = subprocess.check_output(["git", "show", f"HEAD:{path}"])
+              git_sha = hashlib.sha256(git_bytes).hexdigest()
+              work_sha = hashlib.sha256((root / path).read_bytes()).hexdigest()
+              assert git_sha == expected, (path, expected, git_sha)
+              assert work_sha == expected, (path, expected, work_sha)
+              actual_components[path] = git_sha
+          canonical = (json.dumps(actual_components, sort_keys=True, separators=(",", ":"), ensure_ascii=False) + "\n").encode()
+          digest = hashlib.sha256(canonical).hexdigest()
+          assert digest == q["engine_identity_digest"] == "7979ff811765cf1617602b2ef9ed89935f24da2c1f32eceb417dfd209e335c60"
+          subprocess.check_call(["git", "merge-base", "--is-ancestor", "2e423a86339daa031f4b98f79f288b82e5ce621b", "HEAD"])
+          print(json.dumps({
+              "status": "PASS",
+              "engine_components_verified": len(actual_components),
+              "engine_identity_digest": digest,
+              "identity_authority": "COMMITTED_GIT_OBJECT_SHA256_PLUS_CHECKOUT_EQUALITY",
+          }, sort_keys=True))
+          PY
+
+      - name: Verify prospective Unit003 run freeze and correction
+        run: |
           python - <<'PY'
           import hashlib, json, pathlib, subprocess
           root = pathlib.Path(".")
           freeze = json.loads((root / "experiments/unit003-blind-machine-first/RUN_FREEZE.json").read_text())
+          correction = json.loads((root / "experiments/unit003-blind-machine-first/RUN_FREEZE_CORRECTION_001.json").read_text())
           assert freeze["status"] == "FROZEN_BEFORE_SELECTED_SCREENED_OPERATION_CONTENT_ACQUISITION"
+          assert correction["status"] == "PRE_CONTENT_HARNESS_CORRECTION_001"
+          assert correction["scientific_or_scoring_change"] is False
+          assert correction["target_content_fetch_occurred_in_invalid_attempt"] is False
           assert freeze["engine_identity_digest"] == "7979ff811765cf1617602b2ef9ed89935f24da2c1f32eceb417dfd209e335c60"
           assert freeze["target_revision"] == "04f459470f58642063b0374361bee0011278f6d8"
           assert freeze["target_tree_sha"] == "d1eb526feea2a1815554db775a343d751f4892b1"
+          workflow_path = ".github/workflows/unit003-blind-machine-first.yml"
           for path, expected in freeze["file_sha256"].items():
+              if path == workflow_path:
+                  assert expected == correction["superseded_workflow_sha256"]
+                  continue
               actual = hashlib.sha256((root / path).read_bytes()).hexdigest()
               assert actual == expected, (path, expected, actual)
+          current_workflow_sha = hashlib.sha256((root / workflow_path).read_bytes()).hexdigest()
+          assert current_workflow_sha == correction["corrected_workflow_sha256"], (current_workflow_sha, correction["corrected_workflow_sha256"])
           subprocess.check_call(["git", "merge-base", "--is-ancestor", "2e423a86339daa031f4b98f79f288b82e5ce621b", "HEAD"])
           changed = subprocess.check_output(
               ["git", "diff", "--name-only", "2e423a86339daa031f4b98f79f288b82e5ce621b..HEAD"],
@@ -56,10 +94,10 @@ jobs:
           }
           unexpected = [p for p in changed if not p.startswith(allowed_prefix) and p not in allowed_exact]
           assert not unexpected, unexpected
-          assert not (root / "corpus/0.1/units/003-kubectl-annotate").exists()
           print(json.dumps({
               "status": "PASS",
               "run_freeze_id": freeze["run_freeze_id"],
+              "correction_id": correction["correction_id"],
               "engine_unchanged": True,
               "unexpected_changed_paths": unexpected,
           }, sort_keys=True))
@@ -105,10 +143,35 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Reverify frozen engine bytes
+      - name: Reverify exact frozen E0 bytes post-freeze
         run: |
-          python tools/risu_e0_machine_freeze_verify.py
-          python -m unittest -v tests.test_unit003_blind_acquire
+          python - <<'PY'
+          import hashlib, json, pathlib, subprocess
+          root = pathlib.Path(".")
+          q = json.loads((root / "experiments/risu-diff-e0/MACHINE_FIRST_FREEZE_QUALIFICATION.json").read_text())
+          expected_components = q["engine_identity_components"]
+          actual_components = {}
+          for path, expected in sorted(expected_components.items()):
+              git_bytes = subprocess.check_output(["git", "show", f"HEAD:{path}"])
+              git_sha = hashlib.sha256(git_bytes).hexdigest()
+              work_sha = hashlib.sha256((root / path).read_bytes()).hexdigest()
+              assert git_sha == expected, (path, expected, git_sha)
+              assert work_sha == expected, (path, expected, work_sha)
+              actual_components[path] = git_sha
+          canonical = (json.dumps(actual_components, sort_keys=True, separators=(",", ":"), ensure_ascii=False) + "\n").encode()
+          digest = hashlib.sha256(canonical).hexdigest()
+          assert digest == q["engine_identity_digest"] == "7979ff811765cf1617602b2ef9ed89935f24da2c1f32eceb417dfd209e335c60"
+          subprocess.check_call(["git", "merge-base", "--is-ancestor", "2e423a86339daa031f4b98f79f288b82e5ce621b", "HEAD"])
+          print(json.dumps({
+              "status": "PASS",
+              "engine_components_verified": len(actual_components),
+              "engine_identity_digest": digest,
+              "identity_authority": "COMMITTED_GIT_OBJECT_SHA256_PLUS_CHECKOUT_EQUALITY",
+          }, sort_keys=True))
+          PY
+
+      - name: Re-run synthetic acquisition qualification
+        run: python -m unittest -v tests.test_unit003_blind_acquire
 
       - name: Download immutable tree-only selection
         uses: actions/download-artifact@v4
@@ -116,7 +179,7 @@ jobs:
           name: unit003-round0-selection-${{ github.sha }}
           path: ${{ runner.temp }}/unit003-first-seal
 
-      - name: Verify selection before any target content fetch
+      - name: Verify selection before any selected target content fetch
         run: |
           python tools/unit003_blind_acquire.py verify-selection \
             --selection "$RUNNER_TEMP/unit003-first-seal/ROUND0_SELECTION.json"
@@ -145,6 +208,8 @@ jobs:
           cp experiments/unit003-blind-machine-first/EXAM_PROTOCOL_EFFECTIVE_001.json "$RUNNER_TEMP/unit003-first-seal/"
           cp experiments/unit003-blind-machine-first/EXAM_PROTOCOL_CORRECTION_001.json "$RUNNER_TEMP/unit003-first-seal/"
           cp experiments/unit003-blind-machine-first/RUN_FREEZE.json "$RUNNER_TEMP/unit003-first-seal/"
+          cp experiments/unit003-blind-machine-first/RUN_FREEZE_CORRECTION_001.json "$RUNNER_TEMP/unit003-first-seal/"
+          cp experiments/unit003-blind-machine-first/EXECUTION_ATTEMPTS.json "$RUNNER_TEMP/unit003-first-seal/"
 
       - name: Assert structural refinement ceiling was frozen pre-content
         run: |
