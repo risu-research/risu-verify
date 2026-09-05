@@ -6,14 +6,24 @@
   "candidate_id": "octokit/rest.js::github-version-bound-write",
   "draft": {
     "path": "corpus/0.1/units/002-octokit-pulls-merge/vbe.instance.draft.json",
-    "commit": "66748bf46aacdb016fa565944c19e9d2b0484297",
-    "git_blob_sha1": "9d961463d24b223fc3d4c95d5b2e994ff416c993"
+    "commit": "42a59cfec17a17efdeb5ed214be1fdfb327500a0",
+    "git_blob_sha1": "61bc0191cbacf8e108d7c2ab4f548779c5c24793"
   },
   "accepted_instance_expected": {
     "path": "corpus/0.1/units/002-octokit-pulls-merge/vbe.instance.json",
-    "transformation_from_draft": "Only the top-level status changes from DRAFT_UNVERIFIED to AUTHOR_ACCEPTED. No source, target, boundary, evidence, fact, pattern, or claim field may change.",
+    "transformation_from_draft": "After the explicitly recorded Amendment 003 checksum-pointer correction, only the top-level status changes from DRAFT_UNVERIFIED to AUTHOR_ACCEPTED. No source, target, boundary, evidence, fact, pattern, or claim field changes.",
     "sha256_hand_entry": "PROHIBITED_USE_V08_SEAL_FROM_COMMITTED_BYTES"
   },
+  "amendments_applied": [
+    {
+      "id": "RISU_CORPUS_0.1_AUTHORING_PROTOCOL_AMENDMENT_003",
+      "path": "corpus/0.1/AUTHORING_PROTOCOL_AMENDMENT_003.json",
+      "classification": "CHECKSUM_POINTER_BOOKKEEPING_DEFECT",
+      "triggering_invalid_run": 33945675255,
+      "primary_verdict_observed_before_amendment": false,
+      "semantic_input_or_claim_changed": false
+    }
+  ],
   "accepted_scope": {
     "profile": "Guarded Octokit pulls.merge invocation in which sha is supplied as the reviewed head H0.",
     "worlds": ["W_MATCH", "W_STALE"],
@@ -39,7 +49,7 @@
     {
       "path": "corpus/0.1/units/002-octokit-pulls-merge/vbe.envelope.json",
       "commit": "6218b5d4a09a3a447a33bf2b7f90a21a417c5049",
-      "sha256": "38be6f5e4d199c579e34566de8286cacd42eb7956f012bd64890660ab939ce32"
+      "sha256": "0243c54dc7042a808b8e6ef0dce968f2b78f3148374d90b5e2a234dfe0499ce1"
     }
   ],
   "evidence_audit": {
@@ -48,7 +58,8 @@
     "target": "Pinned @octokit/rest revision delegates to lockfile-pinned endpoint/request packages. Static implementation evidence establishes the merge route, sha body serialization, and >=400 rejection path.",
     "target_runtime": "First target-only qualification Run 33945317155 built the exact selected target under its lockfile, observed sha=H0 in the one outbound PUT JSON body for both mock paths, observed mock 200 resolve and mock 409 reject, and did not contact the live provider or run RISU.",
     "provenance": "Every ESTABLISHED derivation fact in the envelope is explicitly upstream of the EXACT claim before primary execution.",
-    "verdict_blindness": "No Unit 002-R primary RISU verifier output was observed before this acceptance record."
+    "amendment_003": "Run 33945675255 blocked before seal because a manually entered envelope SHA pointer was wrong. Amendment 003 corrected only that pointer to the SHA-256 of the already-committed envelope; the envelope and all semantic propositions remained unchanged.",
+    "verdict_blindness": "No Unit 002-R primary RISU verifier output was observed before this acceptance record or Amendment 003."
   },
   "required_statements": {
     "evidence_references_checked_against_pinned_identities": true,
@@ -70,6 +81,6 @@
     "Provider-side current pull-request head is modeled as operative state at the merge precondition effect cut rather than a separate Octokit input.",
     "Authoring-phase timing was not instrumented from the first action and will not be backfilled with fictitious precision."
   ],
-  "post_acceptance_rule": "No frozen Unit 002-R scientific input may change before the first primary run. Any material correction discovered before execution requires an explicit numbered amendment and may not be silently rewritten or used to replace the enrolled target.",
+  "post_acceptance_rule": "No frozen Unit 002-R scientific input may change before the first primary run except through an explicit numbered pre-primary amendment that records timing, exact scope, whether a primary verdict was observed, and whether the change could alter a semantic outcome. Target replacement remains prohibited.",
   "primary_verdict_observed_before_acceptance": false
 }
