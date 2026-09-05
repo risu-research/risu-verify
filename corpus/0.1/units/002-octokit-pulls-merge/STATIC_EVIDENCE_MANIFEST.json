@@ -1,0 +1,35 @@
+{
+  "schema": "risu.unit002-r-static-evidence-manifest/v0.1alpha1",
+  "unit_id": "corpus01-unit-002",
+  "status": "PREQUALIFICATION_STATIC_EVIDENCE_COMMITTED",
+  "entries": [
+    {
+      "path": "evidence/source-github-merge-sha.json",
+      "sha256": "5a74889a43eb45dc5b9cb24c1931ac82f75bf40d4305137c4a822d5295c8c050",
+      "role": "SOURCE_SEMANTICS"
+    },
+    {
+      "path": "evidence/target-octokit-dependency-pin.json",
+      "sha256": "6b71de7990d2c5e617f0e47f6c7022b1c98f0e2b49ae7eddcf09ecb2754a82cd",
+      "role": "TARGET_DEPENDENCY_IDENTITY"
+    },
+    {
+      "path": "evidence/target-octokit-merge-surface.json",
+      "sha256": "ff2e8f757aee42642fed087e49ef504ea0107c09763cce95fb49f68cafb2a2d5",
+      "role": "TARGET_CALLABLE_SURFACE"
+    },
+    {
+      "path": "evidence/target-octokit-request-path.json",
+      "sha256": "dd8b12ad2a84ceb69bb0a36d97b26415ed7e866c31cf0e93f6cd55a1605e43cf",
+      "role": "TARGET_SERIALIZATION_PATH"
+    },
+    {
+      "path": "evidence/target-octokit-error-path.json",
+      "sha256": "b706268dc8ea68fb265646efec021bf4d7ff5ad5996d7a827b227dce65749cca",
+      "role": "TARGET_RESULT_INTERPRETER"
+    }
+  ],
+  "primary_risu_verdict_observed": false,
+  "target_selection_already_frozen": true,
+  "rule": "These identities may be used by the target lane after qualification. A failed qualification does not permit substituting another target."
+}
