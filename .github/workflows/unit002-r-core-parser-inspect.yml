@@ -1,0 +1,75 @@
+name: RISU Unit 002-R frozen-core parser inspection
+
+on:
+  push:
+    branches:
+      - unit002-r-core-parser-inspect
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact sealed scientific head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: 743b30050753afdbcd416f48b8ac48b91d1bb9f2
+
+      - name: Assert checkout and frozen-core pin
+        run: |
+          test "$(git rev-parse HEAD)" = "743b30050753afdbcd416f48b8ac48b91d1bb9f2"
+          python - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+          pin=json.loads(Path('CORE_PIN.json').read_text())
+          p=Path(pin['archive'])
+          h=hashlib.sha256(p.read_bytes()).hexdigest()
+          assert h == pin['archive_sha256']
+          print(pin['archive'])
+          print(h)
+          PY
+
+      - name: Inspect parser source only; do not execute verifier
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/core-inspect
+          mkdir -p /tmp/core-inspect /tmp/parser-evidence
+          python - <<'PY'
+          import json, zipfile
+          from pathlib import Path
+          pin=json.loads(Path('CORE_PIN.json').read_text())
+          with zipfile.ZipFile(pin['archive']) as z:
+              z.extractall('/tmp/core-inspect')
+          PY
+          grep -R -n -E 'unsupported verification input|adapter_version|adapter.*version|verification input' /tmp/core-inspect > /tmp/parser-evidence/grep.txt || true
+          python - <<'PY'
+          from pathlib import Path
+          hits=[]
+          for p in Path('/tmp/core-inspect').rglob('*.py'):
+              t=p.read_text(encoding='utf-8',errors='replace')
+              if 'unsupported verification input' in t or 'adapter_version' in t:
+                  hits.append(p)
+          out=Path('/tmp/parser-evidence/source-excerpts.txt')
+          with out.open('w',encoding='utf-8') as f:
+              for p in sorted(hits):
+                  f.write(f'===== {p} =====\n')
+                  lines=p.read_text(encoding='utf-8',errors='replace').splitlines()
+                  for i,line in enumerate(lines,1):
+                      if 'unsupported verification input' in line or 'adapter_version' in line or 'adapter' in line and 'version' in line:
+                          lo=max(1,i-18); hi=min(len(lines),i+22)
+                          for j in range(lo,hi+1):
+                              f.write(f'{j:05d}: {lines[j-1]}\n')
+                          f.write('\n')
+          print(out.read_text())
+          PY
+
+      - name: Upload parser evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit002-r-frozen-core-parser-inspection-${{ github.run_id }}
+          path: /tmp/parser-evidence/**
+          if-no-files-found: error
+          retention-days: 90
