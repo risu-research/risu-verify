@@ -1,11 +1,6 @@
 name: RISU Unit 002-R target qualification
 
 on:
-  pull_request:
-    paths:
-      - "corpus/0.1/units/002-octokit-pulls-merge/**"
-      - "tools/unit002r_octokit_probe.mjs"
-      - ".github/workflows/unit002-r-target-qualification.yml"
   workflow_dispatch:
 
 permissions:
