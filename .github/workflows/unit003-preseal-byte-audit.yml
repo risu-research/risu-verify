@@ -1,0 +1,65 @@
+name: RISU Unit003 preseal byte audit
+
+on:
+  push:
+    branches: [unit003-preseal-byte-audit]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Audit all preseal harness bytes
+        run: |
+          python - <<'PY'
+          import hashlib, json, pathlib, subprocess
+          root = pathlib.Path('.')
+          paths = [
+            'tools/unit003_blind_acquire.py',
+            'tests/test_unit003_blind_acquire.py',
+            '.github/workflows/unit003-blind-machine-first.yml',
+            'experiments/unit003-blind-machine-first/RUN_FREEZE.json',
+            'experiments/unit003-blind-machine-first/RUN_FREEZE_CORRECTION_001.json',
+            'experiments/unit003-blind-machine-first/EXECUTION_ATTEMPTS.json',
+            'experiments/unit003-blind-machine-first/EXAM_PROTOCOL.json',
+            'experiments/unit003-blind-machine-first/EXAM_PROTOCOL_EFFECTIVE_001.json',
+            'experiments/unit003-blind-machine-first/EXAM_PROTOCOL_CORRECTION_001.json',
+          ]
+          freeze = json.loads((root/'experiments/unit003-blind-machine-first/RUN_FREEZE.json').read_text())
+          correction = json.loads((root/'experiments/unit003-blind-machine-first/RUN_FREEZE_CORRECTION_001.json').read_text())
+          declared = dict(freeze.get('file_sha256', {}))
+          declared['.github/workflows/unit003-blind-machine-first.yml'] = correction['corrected_workflow_sha256']
+          rows=[]
+          for rel in paths:
+              git_bytes = subprocess.check_output(['git','show',f'HEAD:{rel}'])
+              work_bytes = (root/rel).read_bytes()
+              git_sha256 = hashlib.sha256(git_bytes).hexdigest()
+              work_sha256 = hashlib.sha256(work_bytes).hexdigest()
+              blob_sha = subprocess.check_output(['git','rev-parse',f'HEAD:{rel}'], text=True).strip()
+              rows.append({
+                'path': rel,
+                'git_blob_sha': blob_sha,
+                'git_object_sha256': git_sha256,
+                'working_tree_sha256': work_sha256,
+                'checkout_transform': git_sha256 != work_sha256,
+                'declared_sha256': declared.get(rel),
+                'declared_match': declared.get(rel) is None or declared.get(rel) == git_sha256,
+              })
+          out = {
+            'audit_schema':'risu.unit003-preseal-byte-audit/v0.1',
+            'exam_head_parent':'7693e82c1edccbdd086cb844064700a01dd4d6a1',
+            'target_network_access': False,
+            'target_content_access': False,
+            'rows':rows,
+            'mismatches':[r for r in rows if (not r['declared_match']) or r['checkout_transform']],
+            'mismatch_count':sum(1 for r in rows if (not r['declared_match']) or r['checkout_transform']),
+          }
+          print(json.dumps(out, indent=2, sort_keys=True))
+          assert all(not r['checkout_transform'] for r in rows)
+          PY
