@@ -1,0 +1,101 @@
+{
+  "candidate_id": "github/github-mcp-server::github-version-bound-write",
+  "cross_phase": {
+    "candidate_automation_not_adopted_yet": [
+      "Do not automate source-contract extraction from a single unit; collect repeated friction first."
+    ],
+    "evidence_objects_pinned": 1,
+    "files_authored": 1,
+    "human_acceptance_events": 0,
+    "tool_calls": null,
+    "uncertainties_left_open": [
+      "Target-side expectedHeadSha operative path remains to be frozen independently.",
+      "No RISU primary verdict has been observed."
+    ]
+  },
+  "ledger_schema": "risu.corpus-friction-ledger/v0.1alpha2",
+  "measurement_boundary": "Timing instrumentation was not active at the first post-enrollment evidence action. No retroactive durations are invented. Semantically completed but untimed early phases remain marked IN_PROGRESS with explicit notes under the frozen v0.1alpha2 status vocabulary.",
+  "phases": {
+    "adapter_or_envelope_authoring": {
+      "active_seconds": null,
+      "automation_opportunities_observed": [],
+      "correction_count": 0,
+      "notes": [],
+      "status": "NOT_STARTED",
+      "wall_clock_seconds": null
+    },
+    "boundary_definition": {
+      "active_seconds": null,
+      "automation_opportunities_observed": [],
+      "correction_count": 0,
+      "notes": [],
+      "status": "NOT_STARTED",
+      "wall_clock_seconds": null
+    },
+    "evidence_acquisition": {
+      "active_seconds": null,
+      "automation_opportunities_observed": [
+        "Record commit, path, Git blob identity, and selected byte observations in a standard evidence-capture command."
+      ],
+      "correction_count": 0,
+      "notes": [
+        "Initial source evidence was acquired without reliable phase timing; durations intentionally remain null."
+      ],
+      "status": "IN_PROGRESS",
+      "wall_clock_seconds": null
+    },
+    "human_correction": {
+      "active_seconds": null,
+      "automation_opportunities_observed": [],
+      "correction_count": 0,
+      "notes": [],
+      "status": "NOT_STARTED",
+      "wall_clock_seconds": null
+    },
+    "operation_identification": {
+      "active_seconds": null,
+      "automation_opportunities_observed": [
+        "Operation selection can later be generated from the frozen screening record rather than re-entered manually."
+      ],
+      "correction_count": 0,
+      "notes": [
+        "Operation identity was already fixed by deterministic screening. Timing was not separately measured, so this ledger does not relabel it COMPLETE."
+      ],
+      "status": "IN_PROGRESS",
+      "wall_clock_seconds": null
+    },
+    "source_semantic_reconstruction": {
+      "active_seconds": null,
+      "automation_opportunities_observed": [
+        "Extract version-precondition parameter semantics from pinned SDK/API descriptions into a candidate source-contract draft."
+      ],
+      "correction_count": 0,
+      "notes": [
+        "Pinned go-github source semantics and official GitHub REST corroboration were reconstructed before timing instrumentation was available."
+      ],
+      "status": "IN_PROGRESS",
+      "wall_clock_seconds": null
+    },
+    "verification_runtime": {
+      "active_seconds": null,
+      "automation_opportunities_observed": [],
+      "correction_count": 0,
+      "notes": [],
+      "status": "NOT_STARTED",
+      "wall_clock_seconds": null
+    },
+    "version_binding_discovery": {
+      "active_seconds": null,
+      "automation_opportunities_observed": [],
+      "correction_count": 0,
+      "notes": [
+        "Source-side reviewed-head SHA binding was identified; target-side operative binding is not yet frozen."
+      ],
+      "status": "IN_PROGRESS",
+      "wall_clock_seconds": null
+    }
+  },
+  "primary_result_frozen": false,
+  "rule": "No backfilled timing. Scientific authoring completion and telemetry completeness are distinct; this ledger remains measurement-incomplete where the frozen status vocabulary cannot express completed-but-untimed work.",
+  "unit_id": "corpus01-unit-001"
+}
