@@ -1,4 +1,4 @@
-# RISU Verify - Preserved
+# RISU Verify — Preserved
 
 **Case:** Prospective Corpus 0.1 - corpus01-unit-001 - corpus01-001-github-mcp-merge-current  
 **Action:** GitHub MCP · merge_pull_request  
@@ -25,8 +25,8 @@ A pull request can change after review but before the merge effect. Preserving t
 
 ## Technical proof surface
 
-- Structural: `C1 / D1 / O1` - `STRUCTURAL_ASSURANCE_ESTABLISHED`
-- Exact Realization: `REALIZATION_ESTABLISHED` - `NONE`
+- Structural: `C1 / D1 / O1` — `STRUCTURAL_ASSURANCE_ESTABLISHED`
+- Exact Realization: `REALIZATION_ESTABLISHED` — `NONE`
 - Coverage complete in declared profile: `true`
 - Core archive SHA-256: `bc3c0be440b1b729d3131a630491cce62f1f885fb305aa46a4483fee0adad72f`
 - Source contract SHA-256: `4b80861fc7aa28891fc3d1590cc8ae7a6e95b249e5791ae61c654d398e524925`
