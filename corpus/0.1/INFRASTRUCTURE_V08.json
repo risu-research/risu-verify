@@ -1,0 +1,82 @@
+{
+  "schema": "risu.corpus-infrastructure/v0.8alpha1",
+  "version": "0.8",
+  "parent": "corpus/0.1/INFRASTRUCTURE_CONTRACT.json",
+  "status": "QUALIFICATION_CANDIDATE",
+  "objective": "Drive mechanical primary-execution friction toward zero without changing scientific authoring semantics or outcome classification.",
+  "protocol_version_unchanged": true,
+  "scientific_protocol": "PROSPECTIVE_CORPUS_0.1",
+  "execution_boundary": {
+    "human_or_researcher_owned": [
+      "source consequence semantics",
+      "target facts and mechanism interpretation",
+      "bounded worlds and admissibility",
+      "effect cut",
+      "claim scope and evidence-strength labels",
+      "target pattern selection",
+      "AUTHOR_ACCEPTED"
+    ],
+    "mechanically_automated": [
+      "primary manifest hashes from frozen Git bytes",
+      "cross-record consistency checks",
+      "provenance reachability preflight",
+      "explicit-bound-evidence compilation",
+      "report-only scaffold metadata sanitation",
+      "sealed primary readiness record",
+      "manifest-driven primary execution",
+      "deterministic full compiled-case archive",
+      "mechanical runtime telemetry"
+    ]
+  },
+  "bound_evidence_rule": {
+    "mode": "EXPLICIT_BINDINGS_ONLY",
+    "empirical_evidence": "Each EVIDENCE binding must map one-to-one by SHA-256 to a frozen manifest path.",
+    "methodological_qualification": "Each QUALIFICATION binding must have a SEALED_* role and exact retained digest.",
+    "inherited_unbound_bytes": "REMOVED_BEFORE_PRIMARY_VERIFIER",
+    "semantic_adapter_or_source_contract_mutation": "FORBIDDEN"
+  },
+  "seal_rule": {
+    "command": "python tools/corpus01_seal.py <unit-dir>",
+    "precondition": "Clean committed AUTHOR_ACCEPTED authoring head; freeze commit equals HEAD.",
+    "primary_verifier_execution": false,
+    "semantic_outcome_observation": false,
+    "outputs": ["PRIMARY_RUN_MANIFEST.json", "UNIT_SEAL.json"],
+    "hash_policy": "No primary sealing/execution hash is hand-entered; manifest hashes are generated from frozen bytes and the seal cryptographically pins the generated manifest."
+  },
+  "primary_rule": {
+    "runner": "tools/corpus01_primary_v08.py",
+    "workflow": ".github/workflows/corpus-0.1-generic-primary.yml",
+    "dispatch": "EXPLICIT_MANUAL_ONLY",
+    "seal_required": true,
+    "valid_scientific_exit_codes": [0, 10, 20],
+    "outcome_preference": "NONE",
+    "other_exit_codes": "INFRASTRUCTURE_FAILURE"
+  },
+  "report_metadata_rule": {
+    "display": "INHERITED_DISPLAY_REMOVED",
+    "external_system": "DERIVED_ONLY_FROM_FROZEN_TARGET_LANE",
+    "claim_boundary": "DERIVED_ONLY_FROM_FROZEN_BOUNDARY_MODEL",
+    "adapter_and_source_contract_bytes": "MUST_REMAIN_IDENTICAL"
+  },
+  "qualification_gates": [
+    "new v0.8 scripts compile",
+    "bound-evidence unit tests pass",
+    "seal/metadata unit tests pass",
+    "closed Unit 001 compiles under its historical predeclared provenance overlay and passes explicit-bound-evidence sandbox plus provenance preflight without executing a new primary",
+    "closed Unit 001 historical pre-overlay provenance defects are still rediscovered exactly",
+    "Unit 001 frozen archive verifier remains green",
+    "existing public semantic smoke remains green",
+    "PR-head CI passes",
+    "merge uses expected-head protection",
+    "main CI passes"
+  ],
+  "non_goals": [
+    "automatic source-contract extraction",
+    "automatic target semantic interpretation",
+    "automatic world selection",
+    "automatic claim-strength selection",
+    "automatic provenance repair after AUTHOR_ACCEPTED",
+    "automatic evidence acquisition from arbitrary upstream systems"
+  ],
+  "next_scientific_gate_after_qualification": "Unit 002-M paired mutation control: semantic-loss positive mutations plus non-semantic negative mutations."
+}
