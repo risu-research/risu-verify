@@ -8,7 +8,7 @@
     "carrier_envelope": {
       "authoring_commit": "6218b5d4a09a3a447a33bf2b7f90a21a417c5049",
       "path": "vbe.envelope.json",
-      "sha256": "38be6f5e4d199c579e34566de8286cacd42eb7956f012bd64890660ab939ce32"
+      "sha256": "0243c54dc7042a808b8e6ef0dce968f2b78f3148374d90b5e2a234dfe0499ce1"
     },
     "source_lane": {
       "freeze_commit": "2536a131fd969f9b57d5a1f64b6439690052397a",
