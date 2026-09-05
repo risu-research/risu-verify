@@ -1,0 +1,14 @@
+{
+  "schema": "risu.unit002-r-preprimary-state/v0.1alpha1",
+  "unit_id": "corpus01-unit-002",
+  "status": "READY_FOR_TARGET_ONLY_QUALIFICATION",
+  "selection_freeze_commit": "063a3c5fda765d4cf94f77f0888349db7de16554",
+  "source_lane_freeze_commit": "2536a131fd969f9b57d5a1f64b6439690052397a",
+  "target_static_evidence_manifest_committed": true,
+  "claim_boundary_predeclared": true,
+  "target_lane_frozen": false,
+  "boundary_world_model_frozen": false,
+  "author_accepted": false,
+  "primary_risu_verdict_observed": false,
+  "next_action": "Run the target-only carrier qualification on the exact branch head."
+}
