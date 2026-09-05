@@ -1,0 +1,53 @@
+{
+  "schema": "risu.e1-heldout-matrix-archive-manifest-defect/v0.1alpha1",
+  "defect_id": "E1_MATRIX_005_008_ARCHIVE_MANIFEST_DEFECT_001",
+  "status": "RECORDED_BEFORE_PREDICTION_INSPECTION",
+  "artifact": {
+    "id": 9975264545,
+    "github_digest": "sha256:8f024af36dded40ade219dec09e010ab8395c4642edea8988e5a08372e3a9b72",
+    "independently_recomputed_zip_sha256": "8f024af36dded40ade219dec09e010ab8395c4642edea8988e5a08372e3a9b72",
+    "zip_digest_equal": true
+  },
+  "archive_manifest": {
+    "sha256": "71d618b67a4616ffb54d0c255e52a23f07878676cb0d268c5541d4fc11da7f4d",
+    "declared_entry_count": 128,
+    "listed_entries_present": 128,
+    "listed_entries_hash_and_size_verified": 128,
+    "listed_entry_mismatches": 0,
+    "listed_entry_missing": 0,
+    "unlisted_files_in_zip": [
+      "ANY_EXEC_FAILURE.txt",
+      "PREFLIGHT_FAILED.txt"
+    ],
+    "unlisted_file_count": 2
+  },
+  "root_cause": "WORKFLOW_ORDERING_PACKAGING_DEFECT: ARCHIVE_MANIFEST.json was generated before two final generic status files were written into the archive directory.",
+  "classification": "PACKAGING_MANIFEST_COMPLETENESS_DEFECT_ONLY",
+  "scientific_impact": {
+    "changes_frozen_e1_bytes": false,
+    "changes_target_bindings": false,
+    "changes_acquisition": false,
+    "changes_machine_inputs": false,
+    "changes_e1_outputs": false,
+    "changes_first_attempt_identity": false,
+    "changes_unit005_contamination_status": false,
+    "invalidates_any_listed_entry_hash": false,
+    "prediction_values_observed_during_detection": false,
+    "selected_paths_inspected_during_detection": false,
+    "target_content_inspected_during_detection": false
+  },
+  "canonicality_policy": {
+    "first_artifact_may_be_replaced": false,
+    "first_run_may_be_rerun_as_replacement": false,
+    "original_manifest_may_be_rewritten_inside_original_artifact": false,
+    "later_git_canonicalization_must_preserve_original_manifest_and_record_this_defect": true,
+    "a_corrected_complete_manifest_may_be_created_only_as_a_posthoc_archival_index_not_as_the_original_first_attempt_manifest": true
+  },
+  "inspection_gate": "Because the ZIP identity is locked and independently verified, every manifest-listed byte is verified, and the only unlisted paths are two workflow-generated generic status files written after manifest creation, prediction inspection may proceed only after this defect record is committed. Gold adjudication remains prohibited.",
+  "preinspection_attestation": {
+    "prediction_values_observed_before_this_record": false,
+    "unresolved_roles_observed_before_this_record": false,
+    "selected_paths_inspected_before_this_record": false,
+    "unit006_008_target_content_inspected_before_this_record": false
+  }
+}
