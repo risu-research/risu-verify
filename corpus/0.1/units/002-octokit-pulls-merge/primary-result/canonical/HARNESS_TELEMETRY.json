@@ -1,0 +1,17 @@
+{
+  "authoring_time_not_inferred": true,
+  "measured": {
+    "bound_evidence_seconds": 0.002999,
+    "compile_seconds": 0.030115,
+    "corpus_validate_seconds": 0.027108,
+    "freeze_gate_seconds": 0.045565,
+    "materialize_seconds": 0.036972,
+    "package_seconds": 0.009808,
+    "provenance_preflight_seconds": 0.023855,
+    "total_mechanical_seconds": 0.647976,
+    "verifier_seconds": 0.471554
+  },
+  "schema": "risu.corpus-harness-telemetry/v0.8alpha1",
+  "scope": "MECHANICAL_PRIMARY_HARNESS_ONLY",
+  "unit_id": "corpus01-unit-002"
+}

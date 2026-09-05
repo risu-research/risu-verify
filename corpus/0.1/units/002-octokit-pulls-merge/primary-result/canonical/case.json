@@ -1,0 +1,41 @@
+{
+  "adapter": "adapter.json",
+  "assurance_dir": "assurance",
+  "case_id": "CORPUS01-U002-OCTOKIT-PULLS-MERGE-VBE-COMPILED",
+  "case_version": "0.1",
+  "claim_boundary": {
+    "claim_scope": {
+      "all_merge_failures": "OUT_OF_SCOPE",
+      "general_unguarded_calls": "OUT_OF_SCOPE",
+      "live_remote_deployment": "NOT_CLAIMED",
+      "model_relative": true,
+      "operation": "octokit/rest.js octokit.rest.pulls.merge at revision cd9cb8cd4965d99c7dac8c87d249308956250be3",
+      "profile": "guarded merge call with sha equal to reviewed head H0"
+    },
+    "effect_cut": {
+      "definition": "The point at which GitHub evaluates the supplied merge sha against the current pull-request head before permitting merge effect.",
+      "name": "MERGE_SHA_PRECONDITION_EFFECT_CUT",
+      "post_review_transition": "request_head_sha may change from H0 to H1 after review and before this cut."
+    },
+    "source": "FROZEN_BOUNDARY_MODEL"
+  },
+  "corpus": {
+    "authoring_status": "AUTHOR_ACCEPTED",
+    "enrollment_position": 2,
+    "id": "PROSPECTIVE_CORPUS_0.1",
+    "unit_id": "corpus01-unit-002"
+  },
+  "external_system": {
+    "pinned_projection_ref": "cd9cb8cd4965d99c7dac8c87d249308956250be3",
+    "project": "octokit/rest.js",
+    "projection": "octokit.rest.pulls.merge"
+  },
+  "kind": "VBE_PROFILE_COMPILED_PROSPECTIVE",
+  "profile": {
+    "id": "version-bound-effect",
+    "instance": "corpus01-002-octokit-pulls-merge-current",
+    "source_instance_sha256": "5e3552f5805039f17bece68a99a1830e634f185e2d1cbd9017ba178f364eda5c",
+    "version": "0.1-development"
+  },
+  "title": "Prospective Corpus 0.1 - corpus01-unit-002 - corpus01-002-octokit-pulls-merge-current"
+}

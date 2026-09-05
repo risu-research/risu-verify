@@ -1,0 +1,103 @@
+{
+  "adapter_sha256_unchanged": "0ad010b72164bd30024f2401db336be097dedcc7fc89a96aba1bb465e30d8bc7",
+  "binding_count": 8,
+  "bindings": [
+    {
+      "binding_id": "B-EXACT-QUAL",
+      "kind": "QUALIFICATION",
+      "path": "qualification/Projection_Assurance_Exact_Realization_Gate_001.zip",
+      "role": "SEALED_EXACT_QUALIFICATION",
+      "sha256": "bc5f7a4758b1a0723c75935cc57c714c1d05dd6793b928c7648f74fa0ab9bee3",
+      "source": {
+        "mode": "RETAINED_SEALED_QUALIFICATION"
+      }
+    },
+    {
+      "binding_id": "B-SIGNATURE-QUAL",
+      "kind": "QUALIFICATION",
+      "path": "qualification/Projection_Assurance_Signature_Grounding_Gate_001.zip",
+      "role": "SEALED_SIGNATURE_QUALIFICATION",
+      "sha256": "bb0edc6da7961175c1ec4236cb969c9f509b78ed2f8828634fdfcd84bd940b5c",
+      "source": {
+        "mode": "RETAINED_SEALED_QUALIFICATION"
+      }
+    },
+    {
+      "binding_id": "B-U002-SOURCE",
+      "kind": "EVIDENCE",
+      "path": "evidence/corpus01-unit002/source-github-merge-sha.json",
+      "role": "PINNED_SOURCE_CONTRACT_EVIDENCE",
+      "sha256": "5a74889a43eb45dc5b9cb24c1931ac82f75bf40d4305137c4a822d5295c8c050",
+      "source": {
+        "mode": "FROZEN_PATH_BY_SHA256",
+        "path": "corpus/0.1/units/002-octokit-pulls-merge/evidence/source-github-merge-sha.json"
+      }
+    },
+    {
+      "binding_id": "B-U002-TARGET-DEP",
+      "kind": "EVIDENCE",
+      "path": "evidence/corpus01-unit002/target-octokit-dependency-pin.json",
+      "role": "PINNED_TARGET_DEPENDENCY_CHAIN",
+      "sha256": "6b71de7990d2c5e617f0e47f6c7022b1c98f0e2b49ae7eddcf09ecb2754a82cd",
+      "source": {
+        "mode": "FROZEN_PATH_BY_SHA256",
+        "path": "corpus/0.1/units/002-octokit-pulls-merge/evidence/target-octokit-dependency-pin.json"
+      }
+    },
+    {
+      "binding_id": "B-U002-TARGET-ERROR",
+      "kind": "EVIDENCE",
+      "path": "evidence/corpus01-unit002/target-octokit-error-path.json",
+      "role": "PINNED_TARGET_RESULT_INTERPRETER",
+      "sha256": "b706268dc8ea68fb265646efec021bf4d7ff5ad5996d7a827b227dce65749cca",
+      "source": {
+        "mode": "FROZEN_PATH_BY_SHA256",
+        "path": "corpus/0.1/units/002-octokit-pulls-merge/evidence/target-octokit-error-path.json"
+      }
+    },
+    {
+      "binding_id": "B-U002-TARGET-REQUEST",
+      "kind": "EVIDENCE",
+      "path": "evidence/corpus01-unit002/target-octokit-request-path.json",
+      "role": "PINNED_TARGET_SERIALIZATION_PATH",
+      "sha256": "dd8b12ad2a84ceb69bb0a36d97b26415ed7e866c31cf0e93f6cd55a1605e43cf",
+      "source": {
+        "mode": "FROZEN_PATH_BY_SHA256",
+        "path": "corpus/0.1/units/002-octokit-pulls-merge/evidence/target-octokit-request-path.json"
+      }
+    },
+    {
+      "binding_id": "B-U002-TARGET-RUNTIME",
+      "kind": "EVIDENCE",
+      "path": "evidence/corpus01-unit002/target-octokit-runtime-qualification.json",
+      "role": "TARGET_ONLY_PREPRIMARY_CARRIER_QUALIFICATION",
+      "sha256": "c1ad608332405e21b24c6744371156fa09d4e7bb7b37193b42e7b3244c63df77",
+      "source": {
+        "mode": "FROZEN_PATH_BY_SHA256",
+        "path": "corpus/0.1/units/002-octokit-pulls-merge/evidence/target-octokit-runtime-qualification.json"
+      }
+    },
+    {
+      "binding_id": "B-U002-TARGET-SURFACE",
+      "kind": "EVIDENCE",
+      "path": "evidence/corpus01-unit002/target-octokit-merge-surface.json",
+      "role": "PINNED_TARGET_CALLABLE_SURFACE",
+      "sha256": "ff2e8f757aee42642fed087e49ef504ea0107c09763cce95fb49f68cafb2a2d5",
+      "source": {
+        "mode": "FROZEN_PATH_BY_SHA256",
+        "path": "corpus/0.1/units/002-octokit-pulls-merge/evidence/target-octokit-merge-surface.json"
+      }
+    }
+  ],
+  "mode": "EXPLICIT_BINDINGS_ONLY",
+  "removed_unbound_paths": [
+    "evidence/merge_pull_request.block.go",
+    "evidence/minimal_pull_request.block.go",
+    "evidence/source_merge_guard.block.go"
+  ],
+  "schema": "risu.corpus-bound-evidence/v0.8alpha1",
+  "scientific_semantics_modified": false,
+  "source_contract_sha256_unchanged": "1e330c9cae597798613538d16fada720fd7a607fc178dc7ffe906587e9e16c16",
+  "unbound_managed_file_count_after": 0,
+  "unit_id": "corpus01-unit-002"
+}

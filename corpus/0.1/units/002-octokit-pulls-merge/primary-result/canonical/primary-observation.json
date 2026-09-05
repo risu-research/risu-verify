@@ -1,0 +1,23 @@
+{
+  "authoring_freeze_commit": "ce4c3a311bcf9f6b74b43af24e8732d1af8fd5ac",
+  "bound_evidence_manifest_sha256": "81827faea492aa6fe0789156f3df5fa1b784e10d5a9c5cfeb0763e1027c78ce3",
+  "certificate_sha256": "75cbdba31eb7717ea3b30f084b3b5f77a05cecbd3eeba26a20cb7f55bf38d418",
+  "compile_manifest_sha256": "dfcdd8f47d4b6ea6813d87cb0b80534afc1dd97b7e11f916ffa2a7e4aede328f",
+  "github_run_attempt": "1",
+  "github_run_id": "33947031284",
+  "harness_schema": "risu.corpus-unit-harness/v0.1alpha1",
+  "input_rewrite_after_result": "PROHIBITED",
+  "instance_id": "corpus01-002-octokit-pulls-merge-current",
+  "product_status": "PRESERVED_IN_DECLARED_SCOPE",
+  "report_json_sha256": "a09e52ac538f8a43646703eeb81e6d5dee36b1e4ad282e54885bb6090169ddb2",
+  "report_md_sha256": "9366df1ff2185c4939b8ba7f329bd5171856e5899738c012f63f289d8d185ff6",
+  "report_metadata_sanitization_sha256": "4be9436bb88fb8e66b4f28e97e729d800e7c101ce77dad034d3fe13929c5c303",
+  "result_is_observation_only": true,
+  "runner_schema": "risu.corpus-primary-runner/v0.8alpha1",
+  "schema": "risu.corpus-primary-observation/v0.2alpha1",
+  "seal_record_sha256": "da47f9789083beefa87c3f2545fcd89a0da8f2ce84c1023a233d2f8e0b17c794",
+  "self_contained_bundle_required": true,
+  "semantic_exit_code": 0,
+  "unit_id": "corpus01-unit-002",
+  "workflow_head_sha": "1f9fba3a270f05d06763a5c81216d2edddffad8b"
+}
