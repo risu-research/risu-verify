@@ -79,8 +79,7 @@ jobs:
             --json
 
       - name: Assert Unit 001 remains CLOSED and untouched
-        run: |
-          python tools/corpus01_unit001_archive_verify.py --json
+        run: python tools/unit001_archive_verify.py
 
       - name: Preserve public semantic behavior
         run: |
