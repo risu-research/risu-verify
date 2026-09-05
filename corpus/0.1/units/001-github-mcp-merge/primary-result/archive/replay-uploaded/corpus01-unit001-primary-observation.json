@@ -1,0 +1,19 @@
+{
+  "authoring_freeze_commit": "355a4b77187d5b2118ac71eae9dec1cadc036847",
+  "certificate_sha256": "ac57a340d5300602bb7655a5bd16f559c35bd751011a09bb5e071d69cfeca138",
+  "compile_manifest_sha256": "5f82e63df66ef2a8fa03a869bf1a932287d74835934bc9ae1f55d64d90b1cd1f",
+  "github_run_attempt": "1",
+  "github_run_id": "33939366714",
+  "input_rewrite_after_result": "PROHIBITED",
+  "instance_id": "corpus01-001-github-mcp-merge-current",
+  "product_status": "PRESERVED",
+  "provenance_overlay_application_sha256": "da61cd492e2ba0d1cccfce6a451aebb69e2d1cbf58b3715dea250081617da92d",
+  "provenance_overlay_sha256": "67358e9a49b13ae5e6ac865df6e9f11277566917d0a1b1ce7f61f8cb5eeead65",
+  "report_json_sha256": "65946b88c7a5da3b7a1289ed2dacbaf37636d7d206e6c19731448dbdcfc3fef4",
+  "report_md_sha256": "1991e7b4418b01929d4930ccf1e5489f75b480a4d1831cf1c488a32dd0fd97c4",
+  "result_is_observation_only": true,
+  "schema": "risu.corpus-primary-observation/v0.1alpha1",
+  "semantic_exit_code": 0,
+  "unit_id": "corpus01-unit-001",
+  "workflow_head_sha": "519ea278188097b86c37ac69b38b000dde0ebe14"
+}

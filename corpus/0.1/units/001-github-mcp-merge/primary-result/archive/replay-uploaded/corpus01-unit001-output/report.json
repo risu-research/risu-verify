@@ -1,0 +1,117 @@
+{
+  "assurance_integrity": "PASS",
+  "case_id": "CORPUS01-U001-GITHUB-MCP-MERGE-VBE-COMPILED",
+  "certificate": {
+    "consumer_check": "PASS",
+    "sha256": "ac57a340d5300602bb7655a5bd16f559c35bd751011a09bb5e071d69cfeca138",
+    "version": "0.7"
+  },
+  "claim_boundary": {
+    "current_live_runtime_conformance": "NOT_CLAIMED",
+    "independent_reproduction": "NOT_CLAIMED_BY_CASE_AUTHOR",
+    "note": "This commissioning case reproduces the v0.7 pinned external-evidence result. The product layer does not upgrade the core's model-relative claim.",
+    "source_model_adequacy": "DECLARED_PREMISE"
+  },
+  "commitments": {
+    "adapter_digest": "06479e052110de3d7d4f806827558b35d86e39346eb7a7d3bfbc1fb59da6d9cd",
+    "core_archive_sha256": "bc3c0be440b1b729d3131a630491cce62f1f885fb305aa46a4483fee0adad72f",
+    "core_version": "0.7.0",
+    "coverage_complete": true,
+    "exact_failure_mode": "NONE",
+    "exact_status": "REALIZATION_ESTABLISHED",
+    "normalized_bundle_digest": "ee8c8a065b20e2a4fe71bedffc3448276b869229c472e4993466b8b20a5c2ba2",
+    "product_status": "PRESERVED",
+    "proof_digest": "23a6f2dc76c0bd7a99f76b973bf6cadacfa542852e18feac0e740798ab84ae8c",
+    "source_contract_file_sha256": "4b80861fc7aa28891fc3d1590cc8ae7a6e95b249e5791ae61c654d398e524925",
+    "source_semantic_digest": "04002cf8516ec9c0800777d56a151ce2ea17289533d212cd84796233754a1839",
+    "structural": {
+      "C": "C1",
+      "D": "D1",
+      "O": "O1"
+    },
+    "structural_classification": "STRUCTURAL_ASSURANCE_ESTABLISHED"
+  },
+  "core": {
+    "archive_sha256": "bc3c0be440b1b729d3131a630491cce62f1f885fb305aa46a4483fee0adad72f",
+    "name": "Consequence-Preserving Projections",
+    "pin_status": "PASS",
+    "version": "0.7.0"
+  },
+  "display": {
+    "action": "GitHub MCP \u00b7 merge_pull_request",
+    "consequence_labels": {
+      "MERGED_REVIEWED_HEAD": "merge reviewed head",
+      "STALE_REQUEST_REJECTED": "reject stale request"
+    },
+    "coordinate_labels": {
+      "otherwise_mergeable": "Otherwise mergeable",
+      "request_head": "Head at merge request",
+      "reviewed_head": "Reviewed head"
+    },
+    "declared_consequence": "Merge the reviewed head; if the request-time head differs from the reviewed head, reject the stale request.",
+    "repair_epistemic_status": "SUGGESTED_NOT_CERTIFIED",
+    "suggested_repair": "Bind the merge effect to the reviewed head SHA, or perform an equivalent effect-time revalidation that rejects a changed head.",
+    "why_it_matters": "A pull request can change after review but before the merge effect. Preserving the visible head is not enough if the effect path is not bound to the reviewed head."
+  },
+  "exact_realization": {
+    "failure_mode": "NONE",
+    "minimal_counterexample": null,
+    "repair_obligations": [],
+    "status": "REALIZATION_ESTABLISHED"
+  },
+  "external_system": {
+    "pinned_projection_ref": "822c87761f8587395b3e1a04b5386b2611252cd1",
+    "pinned_source_ref": "34349a88bac3",
+    "project": "github/github-mcp-server",
+    "projection": "MCP tool merge_pull_request",
+    "repository": "https://github.com/github/github-mcp-server",
+    "source_library": "google/go-github"
+  },
+  "minimal_witness_world": null,
+  "predeclaration": null,
+  "product_status": "PRESERVED",
+  "provenance": null,
+  "risu_verify_version": "0.4.0-rc1",
+  "semantic_exit_code": 0,
+  "structural": {
+    "C": "C1",
+    "D": "D1",
+    "O": "O1",
+    "classification": "STRUCTURAL_ASSURANCE_ESTABLISHED",
+    "coverage_complete": true,
+    "operative_basis": {
+      "evaluation_cut": "EFFECT",
+      "gates_effect": true,
+      "post_check_material_transition_possible": true
+    }
+  },
+  "title": "Prospective Corpus 0.1 - corpus01-unit-001 - corpus01-001-github-mcp-merge-current",
+  "worlds": [
+    {
+      "coordinates": {
+        "otherwise_mergeable": true,
+        "request_head_sha": "H0"
+      },
+      "matches": true,
+      "projected_effect": {
+        "label": "MERGED_REVIEWED_HEAD",
+        "space": "C"
+      },
+      "required_consequence": "MERGED_REVIEWED_HEAD",
+      "world": "W-356628c135a9c5e2c765"
+    },
+    {
+      "coordinates": {
+        "otherwise_mergeable": true,
+        "request_head_sha": "H1"
+      },
+      "matches": true,
+      "projected_effect": {
+        "label": "STALE_REQUEST_REJECTED",
+        "space": "C"
+      },
+      "required_consequence": "STALE_REQUEST_REJECTED",
+      "world": "W-4fd4721b4931c7a44593"
+    }
+  ]
+}
