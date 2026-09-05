@@ -1,0 +1,356 @@
+name: RISU Unit 002-R freeze first valid primary
+
+on:
+  push:
+    branches:
+      - unit002-r-primary-freeze
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  freeze:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      EXPECTED_SCIENTIFIC_HEAD: "1f9fba3a270f05d06763a5c81216d2edddffad8b"
+      SCIENTIFIC_BRANCH: "unit002-r-real-prospective"
+      PRIMARY_RUN_ID: "33947031284"
+      PRIMARY_JOB_ID: "101254891951"
+      PRIMARY_ARTIFACT_ID: "9963646702"
+      PRIMARY_ARTIFACT_SHA256: "a622c27422d36a9d28302893e4ad9001114bd86e62815aa4f62f3e68918f8a9b"
+      SELF_CONTAINED_SHA256: "eb0dcf71ea5ae6b0f40c9899dc8fe3e0e6e54fab84bcc1ee927f44e627f8cf95"
+      RESULT_DIR: "corpus/0.1/units/002-octokit-pulls-merge/primary-result"
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout exact sealed scientific branch
+        uses: actions/checkout@v4
+        with:
+          ref: unit002-r-real-prospective
+          fetch-depth: 0
+
+      - name: Assert result-free starting point
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SCIENTIFIC_HEAD"
+          test -z "$(git status --porcelain)"
+          test ! -e "$RESULT_DIR"
+
+      - name: Download exact uploaded Actions artifact
+        run: |
+          set -euo pipefail
+          curl --fail --location --silent --show-error \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/risu-research/risu-verify/actions/artifacts/$PRIMARY_ARTIFACT_ID/zip" \
+            -o /tmp/unit002-r-actions-artifact.zip
+          test "$(sha256sum /tmp/unit002-r-actions-artifact.zip | awk '{print $1}')" = "$PRIMARY_ARTIFACT_SHA256"
+
+      - name: Verify all primary layers and construct immutable result archive
+        run: |
+          python - <<'PY'
+          from __future__ import annotations
+          import hashlib, json, os, shutil, zipfile
+          from pathlib import Path
+
+          repo=Path('.')
+          result_dir=repo/os.environ['RESULT_DIR']
+          action_zip=Path('/tmp/unit002-r-actions-artifact.zip')
+          extracted=Path('/tmp/unit002-r-actions-artifact')
+          expected_action=os.environ['PRIMARY_ARTIFACT_SHA256']
+          expected_bundle=os.environ['SELF_CONTAINED_SHA256']
+          authoring_freeze='ce4c3a311bcf9f6b74b43af24e8732d1af8fd5ac'
+          sealed_head=os.environ['EXPECTED_SCIENTIFIC_HEAD']
+          manifest_path='corpus/0.1/units/002-octokit-pulls-merge/PRIMARY_RUN_MANIFEST_AMENDMENT005.json'
+          seal_path='corpus/0.1/units/002-octokit-pulls-merge/UNIT_SEAL_AMENDMENT005.json'
+          manifest_sha='6460d6391385db3f7d71fa93065c700480420d38bdef2677946bdb87d573256a'
+          seal_sha='da47f9789083beefa87c3f2545fcd89a0da8f2ce84c1023a233d2f8e0b17c794'
+
+          def sha_bytes(b:bytes): return hashlib.sha256(b).hexdigest()
+          def sha(p:Path): return sha_bytes(p.read_bytes())
+          def load(p:Path): return json.loads(p.read_text(encoding='utf-8'))
+          def write(p:Path,obj):
+              p.parent.mkdir(parents=True,exist_ok=True)
+              p.write_text(json.dumps(obj,indent=2,sort_keys=True)+'\n',encoding='utf-8')
+
+          assert sha(action_zip)==expected_action
+          if extracted.exists(): shutil.rmtree(extracted)
+          extracted.mkdir(parents=True)
+          with zipfile.ZipFile(action_zip) as z: z.extractall(extracted)
+          root=extracted/'corpus01-v08/corpus01-unit-002'
+          assert root.is_dir(), sorted(str(x) for x in extracted.iterdir())
+
+          result=load(root/'HARNESS_RESULT.json')
+          obs=load(root/'primary-observation.json')
+          report=load(root/'verifier-output/report.json')
+          cert=load(root/'verifier-output/certificate.json')
+          bundle_result=load(root/'bundle/BUNDLE_RESULT.json')
+          exit_text=(root/'semantic-exit-code.txt').read_text(encoding='utf-8')
+
+          # Canonical semantic outcome invariants.
+          assert result['schema']=='risu.corpus-primary-runner/v0.8alpha1'
+          assert result['status']=='VALID_SEMANTIC_OUTCOME'
+          assert result['unit_id']=='corpus01-unit-002'
+          assert result['semantic_exit_code']==0
+          assert result['product_status']=='PRESERVED_IN_DECLARED_SCOPE'
+          assert exit_text=='0\n'
+          assert obs['schema']=='risu.corpus-primary-observation/v0.2alpha1'
+          assert obs['unit_id']=='corpus01-unit-002'
+          assert obs['authoring_freeze_commit']==authoring_freeze
+          assert obs['workflow_head_sha']==sealed_head
+          assert obs['semantic_exit_code']==0
+          assert obs['product_status']=='PRESERVED_IN_DECLARED_SCOPE'
+          assert obs['result_is_observation_only'] is True
+          assert report['product_status']=='PRESERVED_IN_DECLARED_SCOPE'
+          assert report['structural']['C']=='C1'
+          assert report['structural']['D']=='D1'
+          assert report['structural']['O']=='O1'
+          assert report['exact_realization']['status']=='REALIZATION_ESTABLISHED'
+          assert report['exact_realization']['failure_mode']=='NONE'
+          assert report['exact_realization']['minimal_counterexample'] is None
+          assert report['exact_realization']['repair_obligations']==[]
+
+          # Cross-file hash binding.
+          expected_direct={
+            'verifier-output/report.json':'a09e52ac538f8a43646703eeb81e6d5dee36b1e4ad282e54885bb6090169ddb2',
+            'verifier-output/report.md':'9366df1ff2185c4939b8ba7f329bd5171856e5899738c012f63f289d8d185ff6',
+            'verifier-output/certificate.json':'75cbdba31eb7717ea3b30f084b3b5f77a05cecbd3eeba26a20cb7f55bf38d418',
+            'compiled-case/VBE_COMPILE_MANIFEST.json':'dfcdd8f47d4b6ea6813d87cb0b80534afc1dd97b7e11f916ffa2a7e4aede328f',
+            'compiled-case/BOUND_EVIDENCE_MANIFEST.json':'81827faea492aa6fe0789156f3df5fa1b784e10d5a9c5cfeb0763e1027c78ce3',
+            'compiled-case/REPORT_METADATA_SANITIZATION.json':'4be9436bb88fb8e66b4f28e97e729d800e7c101ce77dad034d3fe13929c5c303',
+            'compiled-case/assurance/adapter.json':'0ad010b72164bd30024f2401db336be097dedcc7fc89a96aba1bb465e30d8bc7',
+            'compiled-case/assurance/source-contract.json':'1e330c9cae597798613538d16fada720fd7a607fc178dc7ffe906587e9e16c16',
+            'primary-observation.json':'4b0d87ca6be5001ba3fcf552f475748b6ac7769573eb2f28b1325933d3479262',
+            'HARNESS_RESULT.json':'1bf2c23419cd8fcc82516c22a2e14c0e6c731d5ecedee33f8f83a2f27b2106c1',
+          }
+          for rel,digest in expected_direct.items(): assert sha(root/rel)==digest,(rel,sha(root/rel))
+          assert obs['report_json_sha256']==expected_direct['verifier-output/report.json']
+          assert obs['report_md_sha256']==expected_direct['verifier-output/report.md']
+          assert obs['certificate_sha256']==expected_direct['verifier-output/certificate.json']
+          assert obs['compile_manifest_sha256']==expected_direct['compiled-case/VBE_COMPILE_MANIFEST.json']
+          assert obs['bound_evidence_manifest_sha256']==expected_direct['compiled-case/BOUND_EVIDENCE_MANIFEST.json']
+          assert obs['report_metadata_sanitization_sha256']==expected_direct['compiled-case/REPORT_METADATA_SANITIZATION.json']
+          assert obs['seal_record_sha256']==seal_sha
+          assert report['certificate']['sha256']==expected_direct['verifier-output/certificate.json']
+
+          # Self-contained bundle is complete and internally self-checking.
+          bundle=root/'bundle/corpus01-unit-002-self-contained-primary.zip'
+          assert sha(bundle)==expected_bundle
+          assert bundle_result['zip_sha256']==expected_bundle
+          with zipfile.ZipFile(bundle) as z:
+              names=set(z.namelist())
+              assert 'BUNDLE.json' in names and 'MANIFEST.sha256' in names
+              manifest_lines=z.read('MANIFEST.sha256').decode('utf-8').strip().splitlines()
+              assert len(manifest_lines)==24
+              for line in manifest_lines:
+                  digest,rel=line.split('  ',1)
+                  assert sha_bytes(z.read(rel))==digest,(rel,digest)
+              bmeta=json.loads(z.read('BUNDLE.json'))
+              assert bmeta['contains_full_compiled_case_tree'] is True
+              assert bmeta['contains_verifier_output_tree'] is True
+              assert bmeta['authoring_freeze_commit']==authoring_freeze
+
+          # Uploaded top-level and bundle-staging semantic outputs are exact duplicates.
+          duplicate_pairs=[
+            ('primary-observation.json','bundle/staging/primary-observation.json'),
+            ('semantic-exit-code.txt','bundle/staging/semantic-exit-code.txt'),
+            ('verifier-output/report.json','bundle/staging/verifier-output/report.json'),
+            ('verifier-output/report.md','bundle/staging/verifier-output/report.md'),
+            ('verifier-output/certificate.json','bundle/staging/verifier-output/certificate.json'),
+            ('verifier-output/run-manifest.json','bundle/staging/verifier-output/run-manifest.json'),
+            ('compiled-case/assurance/adapter.json','bundle/staging/compiled-case/assurance/adapter.json'),
+            ('compiled-case/assurance/source-contract.json','bundle/staging/compiled-case/assurance/source-contract.json'),
+          ]
+          for a,b in duplicate_pairs: assert (root/a).read_bytes()==(root/b).read_bytes(),(a,b)
+
+          result_dir.mkdir(parents=True)
+          canonical=result_dir/'canonical'
+          canonical.mkdir()
+          # Preserve the exact uploaded Actions artifact and the deterministic inner bundle.
+          shutil.copyfile(action_zip,result_dir/'actions-artifact-33947031284.zip')
+          shutil.copyfile(bundle,result_dir/'self-contained-primary.zip')
+
+          selected={
+            'HARNESS_RESULT.json':'HARNESS_RESULT.json',
+            'HARNESS_TELEMETRY.json':'HARNESS_TELEMETRY.json',
+            'ARTIFACT_MANIFEST.json':'ARTIFACT_MANIFEST.json',
+            'primary-observation.json':'primary-observation.json',
+            'semantic-exit-code.txt':'semantic-exit-code.txt',
+            'report.json':'verifier-output/report.json',
+            'report.md':'verifier-output/report.md',
+            'certificate.json':'verifier-output/certificate.json',
+            'run-manifest.json':'verifier-output/run-manifest.json',
+            'consumer.log':'verifier-output/consumer.log',
+            'producer.log':'verifier-output/producer.log',
+            'BUNDLE_RESULT.json':'bundle/BUNDLE_RESULT.json',
+            'VBE_COMPILE_MANIFEST.json':'compiled-case/VBE_COMPILE_MANIFEST.json',
+            'BOUND_EVIDENCE_MANIFEST.json':'compiled-case/BOUND_EVIDENCE_MANIFEST.json',
+            'REPORT_METADATA_SANITIZATION.json':'compiled-case/REPORT_METADATA_SANITIZATION.json',
+            'adapter.json':'compiled-case/assurance/adapter.json',
+            'source-contract.json':'compiled-case/assurance/source-contract.json',
+            'case.json':'compiled-case/case.json',
+            'console.json':'console.json',
+          }
+          for dst,src in selected.items(): shutil.copyfile(root/src,canonical/dst)
+
+          selected_hashes={name:{'sha256':sha(canonical/name),'bytes':(canonical/name).stat().st_size,'artifact_source':src} for name,src in selected.items()}
+          index={
+            'schema':'risu.corpus-primary-artifact-index/v0.1alpha1',
+            'status':'VERIFIED_EXACT_BYTES',
+            'unit_id':'corpus01-unit-002',
+            'primary_run_id':int(os.environ['PRIMARY_RUN_ID']),
+            'primary_job_id':int(os.environ['PRIMARY_JOB_ID']),
+            'actions_artifact':{
+              'id':int(os.environ['PRIMARY_ARTIFACT_ID']),
+              'name':'unit002-r-amendment005-first-primary-33947031284',
+              'sha256':expected_action,
+              'archived_path':str((result_dir/'actions-artifact-33947031284.zip').relative_to(repo)),
+            },
+            'self_contained_bundle':{
+              'sha256':expected_bundle,
+              'archived_path':str((result_dir/'self-contained-primary.zip').relative_to(repo)),
+              'internal_manifest_entries_verified':24,
+              'internal_manifest_mismatches':0,
+            },
+            'selected_exact_copies':selected_hashes,
+            'top_level_vs_bundle_staging_pairs_byte_identical':len(duplicate_pairs),
+            'authoring_freeze_commit':authoring_freeze,
+            'sealed_scientific_head':sealed_head,
+            'primary_manifest':{'path':manifest_path,'sha256':manifest_sha},
+            'unit_seal':{'path':seal_path,'sha256':seal_sha},
+          }
+          write(result_dir/'PRIMARY_ARTIFACT_INDEX.json',index)
+
+          primary={
+            'schema':'risu.corpus-primary-result-freeze/v0.1alpha1',
+            'status':'FROZEN_FIRST_VALID_PRIMARY',
+            'unit_id':'corpus01-unit-002',
+            'candidate_id':'octokit/rest.js::github-version-bound-write',
+            'target':{
+              'repository':'octokit/rest.js',
+              'revision':'cd9cb8cd4965d99c7dac8c87d249308956250be3',
+              'operation':'octokit.rest.pulls.merge',
+            },
+            'prospective_identity':{
+              'enrollment_position':2,
+              'selection_inherited_from_original_verdict_blind_enrollment':True,
+              'authoring_freeze_commit':authoring_freeze,
+              'sealed_scientific_head':sealed_head,
+            },
+            'canonical_primary':{
+              'run_id':int(os.environ['PRIMARY_RUN_ID']),
+              'job_id':int(os.environ['PRIMARY_JOB_ID']),
+              'actions_artifact_id':int(os.environ['PRIMARY_ARTIFACT_ID']),
+              'semantic_exit_code':0,
+              'product_status':'PRESERVED_IN_DECLARED_SCOPE',
+              'harness_status':'VALID_SEMANTIC_OUTCOME',
+              'self_contained_bundle_sha256':expected_bundle,
+              'actions_artifact_sha256':expected_action,
+              'primary_observation_sha256':expected_direct['primary-observation.json'],
+              'report_json_sha256':expected_direct['verifier-output/report.json'],
+              'certificate_sha256':expected_direct['verifier-output/certificate.json'],
+            },
+            'scientific_result':{
+              'C':'C1','D':'D1','O':'O1',
+              'exact_realization':'REALIZATION_ESTABLISHED',
+              'exact_failure_mode':'NONE',
+              'minimal_counterexample':None,
+              'repair_obligations':[],
+              'coverage_complete':report['structural']['coverage_complete'],
+              'claim_scope':report['claim_boundary']['claim_scope'],
+              'effect_cut':report['claim_boundary']['effect_cut'],
+            },
+            'claim_limits':{
+              'general_unguarded_calls':'OUT_OF_SCOPE',
+              'live_github_service_conformance':'NOT_CLAIMED',
+              'all_merge_failures':'OUT_OF_SCOPE',
+              'model_relative':True,
+              'coverage_gap_retained_exactly_as_reported':report['structural'].get('coverage_gap'),
+            },
+            'pre_valid_execution_history':[
+              {
+                'run_id':33946439332,
+                'classification':'INVALID_TOOLCHAIN_EXIT_BEFORE_SEMANTIC_VERDICT',
+                'exit_code':30,
+                'cause':'frozen-core adapter/program protocol label compatibility defects subsequently recorded by Amendments 004 and 005',
+                'valid_semantic_outcome_observed':False,
+              },
+              {
+                'run_id':33947000387,
+                'classification':'EXECUTION_CAPSULE_FILESYSTEM_MODE_GATE_STOP',
+                'cause':'verifier executable bit absent in connector-created checkout; semantic primary step was skipped',
+                'valid_semantic_outcome_observed':False,
+              },
+            ],
+            'post_result_workflow_status':{
+              'workflow_conclusion':'FAILURE_AFTER_VALID_PRIMARY',
+              'primary_execution_step':'SUCCESS',
+              'reason':'post-result assertion glob matched both top-level primary-observation.json and its byte-identical self-contained bundle staging copy',
+              'semantic_result_affected':False,
+              'rerun_permitted_for_scientific_result':False,
+            },
+            'canonicality_rule':'The first execution producing a valid semantic exit in {0,10,20} is canonical regardless of later wrapper status. No semantic-input rewrite or primary rerun may replace this result.',
+          }
+          write(result_dir/'PRIMARY_RESULT.json',primary)
+          wrapper={
+            'schema':'risu.corpus-post-result-wrapper-failure/v0.1alpha1',
+            'unit_id':'corpus01-unit-002',
+            'run_id':int(os.environ['PRIMARY_RUN_ID']),
+            'job_id':int(os.environ['PRIMARY_JOB_ID']),
+            'primary_runner_status':'VALID_SEMANTIC_OUTCOME',
+            'primary_product_status':'PRESERVED_IN_DECLARED_SCOPE',
+            'primary_semantic_exit_code':0,
+            'wrapper_assertion_status':'FAILED_AFTER_PRIMARY',
+            'observed_duplicate_paths':[
+              'corpus01-v08/corpus01-unit-002/primary-observation.json',
+              'corpus01-v08/corpus01-unit-002/bundle/staging/primary-observation.json',
+            ],
+            'duplicate_bytes_identical':True,
+            'interpretation':'The workflow-level failure is post-result assertion logic only. It neither invalidates nor reruns the already completed first valid semantic primary.',
+          }
+          write(result_dir/'POST_RESULT_WRAPPER_FAILURE.json',wrapper)
+
+          # Final archive-level checks after copies/records exist.
+          assert sha(result_dir/'actions-artifact-33947031284.zip')==expected_action
+          assert sha(result_dir/'self-contained-primary.zip')==expected_bundle
+          assert load(result_dir/'PRIMARY_RESULT.json')['canonical_primary']['product_status']=='PRESERVED_IN_DECLARED_SCOPE'
+          print(json.dumps({
+            'status':'PRIMARY_RESULT_ARCHIVE_READY',
+            'actions_artifact_sha256':expected_action,
+            'self_contained_bundle_sha256':expected_bundle,
+            'primary_result_sha256':sha(result_dir/'PRIMARY_RESULT.json'),
+            'artifact_index_sha256':sha(result_dir/'PRIMARY_ARTIFACT_INDEX.json'),
+            'canonical_file_count':len(selected),
+          },indent=2,sort_keys=True))
+          PY
+
+      - name: Commit only immutable primary-result archive and fast-forward scientific branch
+        run: |
+          set -euo pipefail
+          git config user.name "RISU Protocol Bot"
+          git config user.email "protocol-bot@users.noreply.github.com"
+          git add "$RESULT_DIR"
+          git commit -m "Freeze Unit 002-R first valid primary result"
+          unexpected="$(git diff --name-only "$EXPECTED_SCIENTIFIC_HEAD"..HEAD | grep -v '^corpus/0.1/units/002-octokit-pulls-merge/primary-result/' || true)"
+          test -z "$unexpected"
+          test "$(git merge-base "$EXPECTED_SCIENTIFIC_HEAD" HEAD)" = "$EXPECTED_SCIENTIFIC_HEAD"
+          git push origin HEAD:refs/heads/unit002-r-real-prospective
+
+      - name: Emit committed result identity
+        run: |
+          python - <<'PY'
+          import hashlib,json,subprocess
+          from pathlib import Path
+          r=Path('corpus/0.1/units/002-octokit-pulls-merge/primary-result')
+          out={
+            'status':'COMMITTED_FIRST_VALID_PRIMARY',
+            'commit':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
+            'primary_result_sha256':hashlib.sha256((r/'PRIMARY_RESULT.json').read_bytes()).hexdigest(),
+            'artifact_index_sha256':hashlib.sha256((r/'PRIMARY_ARTIFACT_INDEX.json').read_bytes()).hexdigest(),
+            'actions_artifact_sha256':hashlib.sha256((r/'actions-artifact-33947031284.zip').read_bytes()).hexdigest(),
+            'self_contained_bundle_sha256':hashlib.sha256((r/'self-contained-primary.zip').read_bytes()).hexdigest(),
+          }
+          print(json.dumps(out,indent=2,sort_keys=True))
+          PY
