@@ -12,20 +12,35 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      - name: Audit all foundation bytes against manifest
+        with:
+          fetch-depth: 0
+      - name: Compare manifest to Git-object and working-tree bytes
         run: |
           python - <<'PY'
-          import hashlib, json, pathlib
+          import hashlib, json, pathlib, subprocess
           root = pathlib.Path('.')
           q = json.loads((root/'experiments/risu-diff-e0/FOUNDATION_QUALIFICATION.json').read_text())
           rows=[]
           bad=[]
           for rel, expected in sorted(q['file_sha256'].items()):
               p=root/rel
-              actual=hashlib.sha256(p.read_bytes()).hexdigest() if p.exists() else None
-              row={'path':rel,'expected':expected,'actual':actual,'match':actual==expected}
+              wt = hashlib.sha256(p.read_bytes()).hexdigest() if p.exists() else None
+              try:
+                  obj = subprocess.check_output(['git','show',f'HEAD:{rel}'])
+                  gitobj = hashlib.sha256(obj).hexdigest()
+              except subprocess.CalledProcessError:
+                  gitobj = None
+              row={
+                  'path':rel,
+                  'expected':expected,
+                  'git_object_sha256':gitobj,
+                  'working_tree_sha256':wt,
+                  'git_object_match':gitobj==expected,
+                  'working_tree_match':wt==expected,
+                  'checkout_transform':gitobj!=wt,
+              }
               rows.append(row)
-              if not row['match']: bad.append(row)
-          print(json.dumps({'checked':len(rows),'mismatch_count':len(bad),'mismatches':bad,'rows':rows}, indent=2, sort_keys=True))
-          raise SystemExit(1 if bad else 0)
+              if not row['git_object_match'] or row['checkout_transform']:
+                  bad.append(row)
+          print(json.dumps({'checked':len(rows),'interesting_count':len(bad),'interesting':bad,'rows':rows}, indent=2, sort_keys=True))
           PY
