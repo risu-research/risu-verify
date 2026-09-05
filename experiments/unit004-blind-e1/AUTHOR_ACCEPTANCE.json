@@ -1,0 +1,41 @@
+{
+  "schema": "risu.unit004-gold-author-acceptance/v0.1alpha1",
+  "acceptance_id": "UNIT004_GOLD_AUTHOR_ACCEPTANCE_001",
+  "status": "AUTHOR_ACCEPTED_BEFORE_PRIMARY_GOLD_VALIDATION",
+  "gold_model_freeze": {
+    "freeze_id": "UNIT004_GOLD_MODEL_FREEZE_001",
+    "commit": "641c9d29f380247fddb934b0c9e2f86e0634865c",
+    "git_blob": "b1c8daccb49eaf59f38198dd8aa1b0c13b8c7a7f"
+  },
+  "accepted_normative_git_blobs": {
+    "GOLD_EVIDENCE.json": "a9ce8bff8dc988c15be45d3773deb8d4dcf887d1",
+    "SOURCE_LANE.json": "fca762e7d519c66f4ee1acefd3d897b4a04b6035",
+    "TARGET_LANE.json": "a2286f98beca1ac0b61eb6d61d98eeed929039d0",
+    "BOUNDARY_MODEL.json": "204ab13829fc183268251afab7b00fcc1f2f9ed7"
+  },
+  "acceptance": {
+    "source_contract_accepted": true,
+    "target_realization_model_accepted": true,
+    "bounded_worlds_accepted": true,
+    "effect_cut_accepted": true,
+    "claim_scope_and_exclusions_accepted": true,
+    "evidence_strength_boundary_accepted": true,
+    "all_primary_outcomes_equally_admissible": true,
+    "expected_primary_outcome_recorded": false
+  },
+  "admissible_primary_outcomes": [
+    "CONSEQUENCE_STABLE_IN_DECLARED_SCOPE",
+    "CONSEQUENCE_REGRESSION",
+    "ASSURANCE_INCOMPLETE",
+    "INFRASTRUCTURE_FAILURE"
+  ],
+  "no_retrofit": {
+    "source_lane_may_change_after_primary": false,
+    "target_lane_may_change_after_primary": false,
+    "world_model_may_change_after_primary": false,
+    "effect_cut_may_change_after_primary": false,
+    "target_revision_may_change_after_primary": false,
+    "machine_e1_result_may_be_used_to_rewrite_gold": false
+  },
+  "claim_boundary": "Author acceptance freezes the model for primary validation; it is not itself a semantic result."
+}
