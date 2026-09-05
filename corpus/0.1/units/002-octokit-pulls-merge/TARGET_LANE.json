@@ -1,0 +1,170 @@
+{
+  "callable_surface": {
+    "corpus_world_precondition": "The bounded Unit 002-R call supplies sha=H0, the reviewed pull-request head.",
+    "input_type": "string",
+    "note": "Optionality in the general Octokit method is not treated as preservation. The primary claim is limited to the predeclared guarded invocation profile.",
+    "required_by_general_api": false,
+    "reviewed_binding_input": "sha"
+  },
+  "candidate_id": "octokit/rest.js::github-version-bound-write",
+  "evidence": [
+    {
+      "path": "corpus/0.1/units/002-octokit-pulls-merge/evidence/target-octokit-dependency-pin.json",
+      "sha256": "6b71de7990d2c5e617f0e47f6c7022b1c98f0e2b49ae7eddcf09ecb2754a82cd"
+    },
+    {
+      "path": "corpus/0.1/units/002-octokit-pulls-merge/evidence/target-octokit-merge-surface.json",
+      "sha256": "ff2e8f757aee42642fed087e49ef504ea0107c09763cce95fb49f68cafb2a2d5"
+    },
+    {
+      "path": "corpus/0.1/units/002-octokit-pulls-merge/evidence/target-octokit-request-path.json",
+      "sha256": "dd8b12ad2a84ceb69bb0a36d97b26415ed7e866c31cf0e93f6cd55a1605e43cf"
+    },
+    {
+      "path": "corpus/0.1/units/002-octokit-pulls-merge/evidence/target-octokit-error-path.json",
+      "sha256": "b706268dc8ea68fb265646efec021bf4d7ff5ad5996d7a827b227dce65749cca"
+    },
+    {
+      "path": "corpus/0.1/units/002-octokit-pulls-merge/evidence/target-octokit-runtime-qualification.json",
+      "sha256": "c1ad608332405e21b24c6744371156fa09d4e7bb7b37193b42e7b3244c63df77"
+    }
+  ],
+  "evidence_strength_boundary": {
+    "live_github_provider_conformance": "NOT_CLAIMED",
+    "live_real_pull_request_execution": "NOT_CLAIMED",
+    "model_relative": true,
+    "pinned_dependency_chain": "ESTABLISHED",
+    "pinned_target_implementation": "ESTABLISHED",
+    "target_only_runtime_carrier_behavior": "ESTABLISHED"
+  },
+  "freeze_rule": "After this lane is committed, target facts and mechanism interpretation may not be strengthened, weakened, or replaced in response to the Unit 002-R primary RISU result.",
+  "independence_controls": {
+    "issue_tracker_consulted_for_bug_discovery": false,
+    "primary_risu_verdict_observed": false,
+    "source_success_or_failure_label_used_to_invent_missing_target_mechanism": false,
+    "target_qualification_contacted_live_provider": false,
+    "unit002_m_result_used_as_target_fact": false
+  },
+  "lane_schema": "risu.corpus-target-lane/v0.1alpha1",
+  "mechanism_model": {
+    "call_to_route": "octokit.rest.pulls.merge -> PUT /repos/{owner}/{repo}/pulls/{pull_number}/merge",
+    "client_interpreter": "HTTP status >=400 is surfaced as RequestError; target-only qualification observed mocked 409 -> rejected HttpError status 409.",
+    "current_version_location": "GitHub provider-side pull-request head at merge precondition effect cut",
+    "local_preflight_read_required_for_claim": false,
+    "match_native_kind": "MERGE_ACCEPTED",
+    "mismatch_native_kind": "REJECTED_EXPECTED_HEAD_MISMATCH",
+    "provider_precondition": "GitHub merge semantics require supplied sha to match current pull-request head to allow merge.",
+    "reviewed_version_carrier": "sha",
+    "serialization": "For this PUT route, sha is a non-URL parameter and becomes JSON request-body field sha.",
+    "silent_retry_in_target_qualification": "NOT_OBSERVED"
+  },
+  "open_uncertainties": [
+    "The general Octokit merge method permits sha omission; Unit 002-R evaluates only the guarded invocation profile with sha=H0.",
+    "The target-only qualification injects provider status rather than reproducing live GitHub state transitions.",
+    "Provider-side current head is operative state at the effect cut, not a separate Octokit input."
+  ],
+  "operative_path": [
+    "caller supplies sha=H0 to octokit.rest.pulls.merge",
+    "pinned @octokit/rest exposes the generated pulls.merge method",
+    "pinned endpoint mapping selects PUT /repos/{owner}/{repo}/pulls/{pull_number}/merge",
+    "pinned @octokit/endpoint serializes sha as a JSON body field for the PUT route",
+    "pinned @octokit/request JSON-stringifies the body and sends one fetch request",
+    "GitHub evaluates the supplied sha against provider-side current pull-request head before merge effect",
+    "provider success is surfaced as a resolved response; provider 409 is surfaced as a rejected client operation"
+  ],
+  "qualification": {
+    "artifact_id": 9963129068,
+    "artifact_zip_sha256": "89b9ba49ad782fc3c948fb7462ddbc5b7a95d52f20ee7451da344e3ac07de254",
+    "classification": "TARGET_ONLY_PREPRIMARY_CARRIER_QUALIFICATION",
+    "result_sha256": "c1ad608332405e21b24c6744371156fa09d4e7bb7b37193b42e7b3244c63df77",
+    "run_head_sha": "60d3d9f4e5c04d9403c1ba173479f1eb5f41fb9c",
+    "run_id": 33945317155
+  },
+  "selection_freeze_commit": "063a3c5fda765d4cf94f77f0888349db7de16554",
+  "source_lane_freeze_commit": "2536a131fd969f9b57d5a1f64b6439690052397a",
+  "status": "FROZEN_TARGET_LANE",
+  "target": {
+    "dependency_manifest": "package-lock.json",
+    "operation": "octokit.rest.pulls.merge",
+    "repository": "octokit/rest.js",
+    "revision": "cd9cb8cd4965d99c7dac8c87d249308956250be3",
+    "source_library_pins": {
+      "@octokit/endpoint": "11.0.2@6bf64182b249f9cd748b1a3003d86455eb2bf6f2",
+      "@octokit/plugin-rest-endpoint-methods": "17.0.0@c82898ae7a9ad9e92e39fc62e570a1cd4783a45b",
+      "@octokit/request": "10.0.6@1aeac5672c04bc508e46796660465b1b67cf397c"
+    }
+  },
+  "target_facts": [
+    {
+      "basis": "pinned dependency evidence",
+      "id": "OCT_U002_PLUGIN_PIN",
+      "status": "ESTABLISHED"
+    },
+    {
+      "basis": "pinned dependency evidence",
+      "id": "OCT_U002_ENDPOINT_PIN",
+      "status": "ESTABLISHED"
+    },
+    {
+      "basis": "pinned dependency evidence",
+      "id": "OCT_U002_REQUEST_PIN",
+      "status": "ESTABLISHED"
+    },
+    {
+      "basis": "pinned callable-surface evidence",
+      "id": "OCT_U002_REST_METHOD_WIRED",
+      "status": "ESTABLISHED"
+    },
+    {
+      "basis": "pinned callable-surface evidence",
+      "id": "OCT_U002_MERGE_ROUTE_PINNED",
+      "status": "ESTABLISHED"
+    },
+    {
+      "basis": "pinned callable-surface evidence",
+      "id": "OCT_U002_SHA_INPUT_EXPOSED",
+      "status": "ESTABLISHED"
+    },
+    {
+      "basis": "pinned request-path evidence",
+      "id": "OCT_U002_SHA_BODY_SERIALIZED",
+      "status": "ESTABLISHED"
+    },
+    {
+      "basis": "pinned request-path evidence",
+      "id": "OCT_U002_REQUEST_PATH_TO_PROVIDER",
+      "status": "ESTABLISHED"
+    },
+    {
+      "basis": "pinned request-interpreter evidence",
+      "id": "OCT_U002_BODY_SENT_AS_JSON",
+      "status": "ESTABLISHED"
+    },
+    {
+      "basis": "pinned request-interpreter evidence",
+      "id": "OCT_U002_NON2XX_REJECTS",
+      "status": "ESTABLISHED"
+    },
+    {
+      "basis": "pinned request-interpreter evidence",
+      "id": "OCT_U002_409_NOT_SUCCESS",
+      "status": "ESTABLISHED"
+    },
+    {
+      "basis": "first target-only black-box qualification",
+      "id": "OCT_U002_RUNTIME_SHA_BODY",
+      "status": "ESTABLISHED"
+    },
+    {
+      "basis": "first target-only black-box qualification",
+      "id": "OCT_U002_RUNTIME_409_REJECTS",
+      "status": "ESTABLISHED"
+    },
+    {
+      "basis": "first target-only black-box qualification",
+      "id": "OCT_U002_NO_SILENT_RETRY",
+      "status": "ESTABLISHED"
+    }
+  ],
+  "unit_id": "corpus01-unit-002"
+}
