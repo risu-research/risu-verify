@@ -15,9 +15,9 @@ TIMESTAMP = ROOT / "protocols" / "EXTERNAL_TIMESTAMP_RECORD_001.json"
 POOL = CORPUS / "CANDIDATE_POOL.json"
 PROCEDURE = CORPUS / "SCREENING_PROCEDURE.json"
 OP_RULE = CORPUS / "OPERATION_SELECTION_RULE.json"
+AUTHORING_PROTOCOL = CORPUS / "AUTHORING_PROTOCOL.json"
 SCREENING_LOG = CORPUS / "SCREENING_LOG.jsonl"
 ENROLLMENT = CORPUS / "ENROLLMENT.json"
-FRICTION_DIR = CORPUS / "friction"
 
 EXPECTED_PROTOCOL_SHA256 = "9fbf3fcdf48e5554840c4f2418803779ad82757e1a5df71411212421c225ad70"
 TARGET_ENROLLMENT = 8
@@ -31,6 +31,7 @@ FRICTION_FIELDS = [
     "human_correction",
     "verification_runtime",
 ]
+PHASE_STATUS_VALUES = {"NOT_STARTED", "IN_PROGRESS", "COMPLETE", "BLOCKED"}
 REJECTION_CODES = {
     "NOT_INDEPENDENT_EXTERNAL_SYSTEM",
     "NO_CONSEQUENTIAL_WRITE_OR_STATE_TRANSITION",
@@ -124,6 +125,13 @@ def validate_static(errors: list[str]) -> tuple[dict, dict, dict]:
     operation_rule = read_json(OP_RULE)
     if operation_rule.get("status_at_commit") != "PRECOMMITTED_BEFORE_DETAILED_ELIGIBILITY_SCREENING":
         fail(errors, "operation selection rule lacks pre-screening status")
+
+    if AUTHORING_PROTOCOL.exists():
+        authoring = read_json(AUTHORING_PROTOCOL)
+        if authoring.get("status_at_commit") != "PRECOMMITTED_AFTER_ENROLLMENT_FREEZE_BEFORE_PRIMARY_VERDICTS":
+            fail(errors, "authoring protocol has unexpected timing status")
+        if authoring.get("parent_protocol_sha256") != EXPECTED_PROTOCOL_SHA256:
+            fail(errors, "authoring protocol parent protocol pin mismatch")
 
     pool = read_json(POOL)
     candidates = pool.get("candidates") or []
@@ -246,6 +254,9 @@ def validate_enrollment(pool: dict, rows: list[dict], errors: list[str]) -> dict
         if count > 2:
             fail(errors, f"organization cap exceeded: {org} has {count} units")
 
+    eligible_rows = [r for r in rows if r.get("eligibility") == "ELIGIBLE"]
+    rejected_rows = [r for r in rows if r.get("eligibility") == "REJECTED"]
+
     if len(units) == TARGET_ENROLLMENT:
         if len(orgs) < 4:
             fail(errors, "completed enrollment has fewer than 4 organizations")
@@ -255,6 +266,32 @@ def validate_enrollment(pool: dict, rows: list[dict], errors: list[str]) -> dict
         strata = {u.get("stratum") for u in units}
         if not {"AGENT_FACING", "NON_AGENT_SPECIFIC"}.issubset(strata):
             fail(errors, "completed enrollment lacks one required stratum")
+
+        if enrollment.get("status") != "COMPLETE_VERDICT_BLIND_ENROLLMENT_FROZEN":
+            fail(errors, "completed eight-unit enrollment is not marked frozen")
+        if enrollment.get("verdicts_observed_before_enrollment_freeze") != 0:
+            fail(errors, "completed enrollment does not record zero pre-freeze verdicts")
+        if enrollment.get("screened_candidates") != len(rows):
+            fail(errors, "enrollment screened_candidates metadata mismatch")
+        if enrollment.get("eligible_candidates") != len(eligible_rows):
+            fail(errors, "enrollment eligible_candidates metadata mismatch")
+        if enrollment.get("rejected_candidates") != len(rejected_rows):
+            fail(errors, "enrollment rejected_candidates metadata mismatch")
+
+        eligible_count = 0
+        eighth_eligible_sequence = None
+        for row in rows:
+            if row.get("eligibility") == "ELIGIBLE":
+                eligible_count += 1
+                if eligible_count == TARGET_ENROLLMENT:
+                    eighth_eligible_sequence = row.get("sequence")
+                    break
+        if eighth_eligible_sequence is None:
+            fail(errors, "eight enrolled units exist without eight eligible screening rows")
+        elif len(rows) != eighth_eligible_sequence:
+            fail(errors, "screening continued after the eighth eligible unit instead of stopping immediately")
+        if enrollment.get("reserve_pool_starts_at_candidate_order") != len(rows) + 1:
+            fail(errors, "reserve pool start does not follow the final screened candidate")
 
     # Enrolled units must be the eligible stream in pool order, except hard org-cap skips.
     simulated = []
@@ -275,12 +312,18 @@ def validate_enrollment(pool: dict, rows: list[dict], errors: list[str]) -> dict
     return enrollment
 
 
+def _nonnegative_number(value) -> bool:
+    return isinstance(value, (int, float)) and not isinstance(value, bool) and value >= 0
+
+
 def validate_friction(enrollment: dict | None, errors: list[str]) -> None:
     if not enrollment:
         return
     for unit in enrollment.get("units") or []:
         cid = unit.get("candidate_id")
         if not unit.get("authoring_started"):
+            if unit.get("friction_ledger") is not None:
+                fail(errors, f"unit {cid} has a friction ledger before authoring_started")
             continue
         ledger_rel = unit.get("friction_ledger")
         if not ledger_rel:
@@ -293,22 +336,49 @@ def validate_friction(enrollment: dict | None, errors: list[str]) -> None:
         ledger = read_json(ledger_path)
         if ledger.get("candidate_id") != cid:
             fail(errors, f"friction ledger candidate mismatch for {cid}")
+        if ledger.get("unit_id") != unit.get("unit_id"):
+            fail(errors, f"friction ledger unit mismatch for {cid}")
         phases = ledger.get("phases") or {}
         for field in FRICTION_FIELDS:
             phase = phases.get(field)
             if not isinstance(phase, dict):
                 fail(errors, f"friction ledger for {cid} missing phase {field}")
                 continue
-            for measure in ["wall_clock_seconds", "active_seconds", "correction_count"]:
-                value = phase.get(measure)
-                if not isinstance(value, (int, float)) or value < 0:
-                    fail(errors, f"friction ledger {cid}/{field} has invalid {measure}")
+            status = phase.get("status")
+            if status not in PHASE_STATUS_VALUES:
+                fail(errors, f"friction ledger {cid}/{field} has invalid status {status!r}")
+            corrections = phase.get("correction_count")
+            if not isinstance(corrections, int) or isinstance(corrections, bool) or corrections < 0:
+                fail(errors, f"friction ledger {cid}/{field} has invalid correction_count")
+            wall = phase.get("wall_clock_seconds")
+            active = phase.get("active_seconds")
+            if status == "COMPLETE":
+                if not _nonnegative_number(wall) or not _nonnegative_number(active):
+                    fail(errors, f"COMPLETE friction phase {cid}/{field} requires numeric nonnegative timing")
+                elif active > wall:
+                    fail(errors, f"friction ledger {cid}/{field} active time exceeds wall-clock time")
+            elif status in {"NOT_STARTED", "IN_PROGRESS"}:
+                for name, value in [("wall_clock_seconds", wall), ("active_seconds", active)]:
+                    if value is not None and not _nonnegative_number(value):
+                        fail(errors, f"friction ledger {cid}/{field} has invalid partial {name}")
+            elif status == "BLOCKED":
+                if not phase.get("notes"):
+                    fail(errors, f"BLOCKED friction phase {cid}/{field} requires explanatory notes")
+                for name, value in [("wall_clock_seconds", wall), ("active_seconds", active)]:
+                    if value is not None and not _nonnegative_number(value):
+                        fail(errors, f"friction ledger {cid}/{field} has invalid blocked {name}")
+
+        if ledger.get("primary_result_frozen") is True:
+            runtime = phases.get("verification_runtime") or {}
+            if runtime.get("status") != "COMPLETE":
+                fail(errors, f"primary-result-frozen ledger {cid} lacks COMPLETE verification_runtime")
 
 
 def build_status(pool: dict, rows: list[dict], enrollment: dict | None, errors: list[str]) -> dict:
     units = (enrollment or {}).get("units") or []
     eligible = sum(1 for r in rows if r.get("eligibility") == "ELIGIBLE")
     rejected = sum(1 for r in rows if r.get("eligibility") == "REJECTED")
+    complete = len(units) == TARGET_ENROLLMENT
     return {
         "status": "PASS" if not errors else "FAIL",
         "protocol_sha256": EXPECTED_PROTOCOL_SHA256,
@@ -318,7 +388,9 @@ def build_status(pool: dict, rows: list[dict], enrollment: dict | None, errors: 
         "rejected": rejected,
         "enrolled": len(units),
         "target_enrollment": TARGET_ENROLLMENT,
-        "next_candidate_order": len(rows) + 1 if len(rows) < len(pool.get("candidates") or []) else None,
+        "enrollment_complete": complete,
+        "next_candidate_order": None if complete else (len(rows) + 1 if len(rows) < len(pool.get("candidates") or []) else None),
+        "reserve_pool_start": (enrollment or {}).get("reserve_pool_starts_at_candidate_order") if complete else None,
         "errors": errors,
     }
 
@@ -346,7 +418,9 @@ def main() -> int:
     else:
         print(f"Corpus 0.1 integrity: {result['status']}")
         print(f"  pool={result['candidate_pool']} screened={result['screened']} eligible={result['eligible']} rejected={result['rejected']} enrolled={result['enrolled']}/{TARGET_ENROLLMENT}")
-        if result["next_candidate_order"] is not None:
+        if result["enrollment_complete"]:
+            print(f"  enrollment_complete=true reserve_pool_start={result['reserve_pool_start']}")
+        elif result["next_candidate_order"] is not None:
             print(f"  next_candidate_order={result['next_candidate_order']}")
         for error in errors:
             print(f"  ERROR: {error}", file=sys.stderr)
