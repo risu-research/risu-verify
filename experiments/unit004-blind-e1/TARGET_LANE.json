@@ -1,0 +1,99 @@
+{
+  "lane_schema": "risu.corpus-target-lane/v0.2alpha1",
+  "unit_id": "corpus01-unit-004",
+  "candidate_id": "ofershap/mcp-server-s3::s3-version-bound-write",
+  "status": "FROZEN_TARGET_LANE_PREPRIMARY",
+  "target": {
+    "repository": "ofershap/mcp-server-s3",
+    "revision": "f16b3715de4bd61dc8262b03d8e04f10e2142141",
+    "tree_sha": "4a9670aaebd49dd8a04030cba21b1d358325a6e2",
+    "operation": "delete_object",
+    "dependency_manifest": "package-lock.json",
+    "locked_aws_sdk_client_s3": "3.994.0"
+  },
+  "callable_surface": {
+    "tool_name": "delete_object",
+    "inputs": ["bucket", "key"],
+    "etag_or_if_match_input_exposed": false,
+    "version_or_revision_input_exposed": false,
+    "surface_evidence_git_blob": "f8bc610e1ead1dec605a9c9551fca00492bdba85"
+  },
+  "operative_path": [
+    "MCP caller invokes delete_object(bucket, key)",
+    "pinned src/index.ts calls deleteObject(bucket, key)",
+    "pinned src/s3.ts constructs DeleteObjectCommand({ Bucket: bucket, Key: key })",
+    "pinned @aws-sdk/client-s3 3.994.0 serializes and sends the S3 DeleteObject request",
+    "S3 applies ordinary DeleteObject semantics without an If-Match condition because no IfMatch field was supplied"
+  ],
+  "mechanism_model": {
+    "reviewed_version_carrier": "ABSENT",
+    "current_version_location": "S3 current object's ETag at the service-side effect cut",
+    "pre_effect_compare_guard": "ABSENT_IN_PINNED_TARGET_REQUEST_PATH",
+    "destructive_effect": "unconditional DeleteObject request for fixed bucket and key",
+    "stale_native_kind": "NO_DISTINCT_STALE_REQUEST_FORM",
+    "success_native_kind": "DELETEOBJECT_REQUEST_WITH_BUCKET_AND_KEY",
+    "target_interpreter": "MCP handler reports successful completion when deleteObject resolves and reports an error only when the underlying SDK call rejects"
+  },
+  "target_facts": [
+    {
+      "id": "U004_SURFACE_BUCKET_KEY_ONLY",
+      "status": "ESTABLISHED",
+      "basis": "pinned src/index.ts Git blob f8bc610e1ead1dec605a9c9551fca00492bdba85"
+    },
+    {
+      "id": "U004_DELETE_WRAPPER_BUCKET_KEY_ONLY",
+      "status": "ESTABLISHED",
+      "basis": "pinned src/s3.ts Git blob a42cce98b633b1b5f837bfbc9b35f1ba0ba15af5"
+    },
+    {
+      "id": "U004_SDK_REQUEST_BUCKET_KEY_ONLY",
+      "status": "ESTABLISHED",
+      "basis": "DeleteObjectCommand({ Bucket: bucket, Key: key }) in pinned src/s3.ts"
+    },
+    {
+      "id": "U004_TEST_REQUIRES_TWO_FIELD_DELETE_INPUT",
+      "status": "ESTABLISHED",
+      "basis": "pinned tests/s3.test.ts Git blob c06c771c9a27c7fd5d58d8d13107fabe442897cd"
+    },
+    {
+      "id": "U004_AWS_SDK_PIN_3_994_0",
+      "status": "ESTABLISHED",
+      "basis": "pinned package-lock.json Git blob 5fb5c2930474d6e6bbd53c108b68bb41bf90d279"
+    },
+    {
+      "id": "U004_NO_IFMATCH_FORWARDING",
+      "status": "ESTABLISHED",
+      "basis": "callable surface plus implementation plus test all omit IfMatch/ETag carrier"
+    }
+  ],
+  "evidence": {
+    "gold_evidence_path": "experiments/unit004-blind-e1/GOLD_EVIDENCE.json",
+    "gold_evidence_git_blob": "a9ce8bff8dc988c15be45d3773deb8d4dcf887d1",
+    "target_git_blobs": {
+      "src/index.ts": "f8bc610e1ead1dec605a9c9551fca00492bdba85",
+      "src/s3.ts": "a42cce98b633b1b5f837bfbc9b35f1ba0ba15af5",
+      "tests/s3.test.ts": "c06c771c9a27c7fd5d58d8d13107fabe442897cd",
+      "package.json": "0d8561835e73f817637450e1df94f2401264715f",
+      "package-lock.json": "5fb5c2930474d6e6bbd53c108b68bb41bf90d279"
+    }
+  },
+  "evidence_strength_boundary": {
+    "pinned_target_surface": "ESTABLISHED",
+    "pinned_target_implementation": "ESTABLISHED",
+    "pinned_target_test_corroboration": "ESTABLISHED",
+    "pinned_dependency_identity": "ESTABLISHED",
+    "live_aws_request_execution": "NOT_REQUIRED_FOR_DECLARED_STATIC_REALIZATION_CLAIM",
+    "live_deployment_conformance": "NOT_CLAIMED"
+  },
+  "independence_controls": {
+    "e1_prediction_used_as_target_fact": false,
+    "e1_zero_evidence_packet_used_as_target_fact": false,
+    "later_target_revision_used": false,
+    "issue_tracker_used_for_bug_discovery": false
+  },
+  "open_uncertainties": [
+    "This lane establishes the exact pinned source-code request shape, not every behavior of deployed copies or modified builds.",
+    "The AWS service may exhibit unrelated failures outside the bounded world model; those are held out of scope."
+  ],
+  "freeze_rule": "After this lane is committed, target request shape, carrier absence, dependency identity, and evidence-strength labels may not be changed in response to the primary gold validator result."
+}

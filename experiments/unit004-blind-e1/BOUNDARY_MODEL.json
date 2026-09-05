@@ -1,0 +1,104 @@
+{
+  "boundary_schema": "risu.corpus-vbe-boundary/v0.2alpha1",
+  "unit_id": "corpus01-unit-004",
+  "status": "FROZEN_BOUNDARY_AND_WORLD_MODEL_PREPRIMARY",
+  "claim_scope": {
+    "operation": "ofershap/mcp-server-s3 delete_object at revision f16b3715de4bd61dc8262b03d8e04f10e2142141",
+    "profile": "Amazon S3 DeleteObject conditional-delete slice with supplied If-Match ETag E0",
+    "all_s3_deleteobject_features": "OUT_OF_SCOPE",
+    "general_unconditional_delete_correctness": "OUT_OF_SCOPE",
+    "live_remote_deployment": "NOT_CLAIMED",
+    "population_prevalence": "NOT_CLAIMED",
+    "model_relative": true
+  },
+  "coordinates": {
+    "supplied_if_match_etag": {
+      "anchor": "E0",
+      "mode": "literal"
+    },
+    "current_object_etag": {
+      "domain": ["E0", "E1"]
+    },
+    "bucket_versioning": {
+      "domain": ["DISABLED"]
+    },
+    "object_exists": {
+      "domain": [true]
+    }
+  },
+  "held_fixed": [
+    "general-purpose S3 bucket",
+    "bucket versioning disabled",
+    "bucket identity",
+    "object key",
+    "same object exists in both worlds before the effect cut",
+    "caller has s3:DeleteObject and s3:GetObject permissions",
+    "supplied If-Match ETag remains E0",
+    "no concurrent request changes the object during evaluation",
+    "no unrelated retention, policy, ownership, transport, or service failure determines the outcome"
+  ],
+  "effect_cut": {
+    "name": "S3_IF_MATCH_DELETE_EFFECT_CUT",
+    "definition": "The service-side point at which S3 evaluates an If-Match ETag condition before applying the DeleteObject effect to the current object.",
+    "target_effect": "The pinned target reaches S3 with Bucket and Key but without IfMatch, so there is no target realization of the declared ETag precondition before this cut."
+  },
+  "worlds": [
+    {
+      "id": "W_MATCH",
+      "coordinates": {
+        "supplied_if_match_etag": "E0",
+        "current_object_etag": "E0",
+        "bucket_versioning": "DISABLED",
+        "object_exists": true
+      },
+      "required_source_consequence": "CONDITIONAL_DELETE_APPLIED"
+    },
+    {
+      "id": "W_STALE",
+      "coordinates": {
+        "supplied_if_match_etag": "E0",
+        "current_object_etag": "E1",
+        "bucket_versioning": "DISABLED",
+        "object_exists": true
+      },
+      "required_source_consequence": "PRECONDITION_REJECTED_NO_DELETE"
+    }
+  ],
+  "target_observation_model": {
+    "surface_projection": "Both W_MATCH and W_STALE project to the same agent-facing invocation delete_object(bucket, key).",
+    "operative_request": "Both worlds produce the same pinned SDK request DeleteObjectCommand({Bucket, Key}).",
+    "conditional_coordinate_carried": false,
+    "target_realization_label": "UNCONDITIONAL_DELETEOBJECT_BUCKET_KEY",
+    "target_equivalence": "rho_T(W_MATCH) == rho_T(W_STALE)"
+  },
+  "ctv_question": {
+    "deterministic_factorization": "Does there exist g such that source consequence kappa_S = g o rho_T for both admitted worlds?",
+    "kernel_condition": "If rho_T collapses two worlds, source consequences must be equal for consequence preservation.",
+    "constructive_failure_witness": "W_MATCH and W_STALE differ only in current_object_etag, share the same target realization, and require different source consequences."
+  },
+  "expected_validator_policy": {
+    "allowed_primary_outcomes": ["CONSEQUENCE_STABLE_IN_DECLARED_SCOPE", "CONSEQUENCE_REGRESSION", "ASSURANCE_INCOMPLETE"],
+    "no_expected_outcome_value_frozen": true,
+    "validator_must_derive_result_from_frozen_worlds_and_realization": true
+  },
+  "source_lane": {
+    "path": "experiments/unit004-blind-e1/SOURCE_LANE.json",
+    "git_blob": "fca762e7d519c66f4ee1acefd3d897b4a04b6035"
+  },
+  "target_lane": {
+    "path": "experiments/unit004-blind-e1/TARGET_LANE.json",
+    "git_blob": "a2286f98beca1ac0b61eb6d61d98eeed929039d0"
+  },
+  "evidence": {
+    "path": "experiments/unit004-blind-e1/GOLD_EVIDENCE.json",
+    "git_blob": "a9ce8bff8dc988c15be45d3773deb8d4dcf887d1"
+  },
+  "anti_retrofit": {
+    "machine_e1_prediction_used_to_set_worlds": false,
+    "worlds_may_change_after_primary": false,
+    "effect_cut_may_change_after_primary": false,
+    "declared_conditional_profile_may_change_after_primary": false,
+    "target_realization_may_be_strengthened_after_primary": false
+  },
+  "freeze_rule": "Worlds, effect cut, held-fixed dimensions, projection equivalence, and claim scope are immutable after this boundary model is committed and before primary gold validation."
+}

@@ -1,0 +1,114 @@
+{
+  "schema": "risu.unit004-gold-evidence/v0.1alpha1",
+  "evidence_id": "UNIT004_GOLD_EVIDENCE_001",
+  "status": "FROZEN_PREPRIMARY_EVIDENCE_SET",
+  "target_revision": "f16b3715de4bd61dc8262b03d8e04f10e2142141",
+  "target_tree_sha": "4a9670aaebd49dd8a04030cba21b1d358325a6e2",
+  "retrieved_on": "2026-09-05",
+  "pinned_target_evidence": [
+    {
+      "id": "U004_TARGET_TOOL_SURFACE",
+      "path": "src/index.ts",
+      "git_blob_sha1": "f8bc610e1ead1dec605a9c9551fca00492bdba85",
+      "facts": [
+        "The MCP tool named delete_object exposes exactly bucket and key inputs.",
+        "The handler calls deleteObject(bucket, key).",
+        "No ETag, If-Match, version, revision, or conditional-precondition input is exposed by this tool surface."
+      ]
+    },
+    {
+      "id": "U004_TARGET_IMPLEMENTATION",
+      "path": "src/s3.ts",
+      "git_blob_sha1": "a42cce98b633b1b5f837bfbc9b35f1ba0ba15af5",
+      "facts": [
+        "deleteObject accepts only bucket and key.",
+        "deleteObject sends new DeleteObjectCommand({ Bucket: bucket, Key: key }).",
+        "No IfMatch or other version-bound conditional field is supplied before the delete effect."
+      ]
+    },
+    {
+      "id": "U004_TARGET_TEST",
+      "path": "tests/s3.test.ts",
+      "git_blob_sha1": "c06c771c9a27c7fd5d58d8d13107fabe442897cd",
+      "facts": [
+        "The deleteObject test invokes deleteObject with bucket and key only.",
+        "The test requires the SDK command input to equal Bucket plus Key with no conditional field."
+      ]
+    },
+    {
+      "id": "U004_TARGET_MANIFEST",
+      "path": "package.json",
+      "git_blob_sha1": "0d8561835e73f817637450e1df94f2401264715f",
+      "facts": [
+        "The target declares @aws-sdk/client-s3 with range ^3.700.0."
+      ]
+    },
+    {
+      "id": "U004_TARGET_LOCK",
+      "path": "package-lock.json",
+      "git_blob_sha1": "5fb5c2930474d6e6bbd53c108b68bb41bf90d279",
+      "facts": [
+        "The exact target lock resolves node_modules/@aws-sdk/client-s3 to version 3.994.0."
+      ]
+    }
+  ],
+  "authoritative_source_evidence": [
+    {
+      "id": "AWS_DELETEOBJECT_API",
+      "authority": "AWS official API documentation",
+      "url": "https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObject.html",
+      "retrieved_on": "2026-09-05",
+      "facts": [
+        "DeleteObject accepts If-Match.",
+        "With If-Match, S3 deletes only when the supplied ETag matches the object's ETag.",
+        "An ETag mismatch returns 412 Precondition Failed."
+      ]
+    },
+    {
+      "id": "AWS_CONDITIONAL_DELETE_GUIDE",
+      "authority": "AWS official S3 User Guide",
+      "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/conditional-deletes.html",
+      "retrieved_on": "2026-09-05",
+      "facts": [
+        "Conditional DeleteObject can use If-Match with an ETag to check whether an object changed.",
+        "Matching ETag succeeds with 204 No Content; mismatching ETag fails with 412 Precondition Failed.",
+        "Conditional delete evaluation applies to the current object version."
+      ]
+    },
+    {
+      "id": "AWS_SDK_V3_DELETEOBJECT_INPUT",
+      "authority": "AWS official SDK for JavaScript v3 documentation",
+      "url": "https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/Package/-aws-sdk-client-s3/Interface/DeleteObjectRequest/",
+      "retrieved_on": "2026-09-05",
+      "facts": [
+        "DeleteObjectRequest includes IfMatch as a string input.",
+        "IfMatch is defined with the same ETag-match / 412-mismatch semantics."
+      ]
+    },
+    {
+      "id": "AWS_CONDITIONAL_DELETE_RELEASE",
+      "authority": "AWS official S3 document history / What's New",
+      "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/WhatsNew.html",
+      "retrieved_on": "2026-09-05",
+      "facts": [
+        "Amazon S3 added conditional deletes for general purpose buckets on 2025-09-16.",
+        "AWS stated the feature is available through the S3 API, SDKs, and CLI."
+      ]
+    }
+  ],
+  "dependency_timing": {
+    "locked_client_s3_version": "3.994.0",
+    "locked_version_release_date": "2026-02-19",
+    "conditional_delete_general_purpose_release_date": "2025-09-16",
+    "conclusion": "The conditional-delete capability predates the target's locked AWS SDK version; omission cannot be attributed to a pre-feature SDK dependency."
+  },
+  "machine_result_exclusion": {
+    "e1_prediction_used_as_gold_evidence": false,
+    "e1_typed_facts_used_as_gold_evidence": false,
+    "e1_acquisition_failure_used_as_target_semantic_evidence": false
+  },
+  "open_evidence_limits": [
+    "AWS latest documentation is a retrieval-time official source rather than a repository-pinned immutable AWS documentation object.",
+    "No live destructive S3 call is required because the source conditional semantics and pinned target request shape are directly documented and statically observable."
+  ]
+}

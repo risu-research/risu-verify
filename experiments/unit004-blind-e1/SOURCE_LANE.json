@@ -1,0 +1,82 @@
+{
+  "lane_schema": "risu.corpus-source-lane/v0.2alpha1",
+  "unit_id": "corpus01-unit-004",
+  "candidate_id": "ofershap/mcp-server-s3::s3-version-bound-write",
+  "status": "FROZEN_SOURCE_LANE_PREPRIMARY",
+  "source_operation": {
+    "identity": "Amazon S3 DeleteObject conditional-delete profile",
+    "method": "DELETE Object",
+    "declared_profile": "DeleteObject with If-Match set to the previously observed/reviewed ETag E0",
+    "scope_origin": "Frozen Corpus 0.1 enrollment position 4 mechanism_family=HTTP_PRECONDITION_OR_ETAG, selected before Unit004 E1 prediction and before gold target semantic inspection."
+  },
+  "consequence_contract": {
+    "contract_id": "SRC-CORPUS01-U004-S3-ETAG-CONDITIONAL-DELETE",
+    "reviewed_coordinate": {
+      "name": "supplied_if_match_etag",
+      "anchor": "E0",
+      "mode": "literal"
+    },
+    "current_coordinate": {
+      "name": "current_object_etag",
+      "domain": ["E0", "E1"]
+    },
+    "match_predicate": "current_object_etag == supplied_if_match_etag",
+    "success_consequence": "CONDITIONAL_DELETE_APPLIED",
+    "stale_consequence": "PRECONDITION_REJECTED_NO_DELETE",
+    "stale_native_status": "412_PRECONDITION_FAILED",
+    "effect_cut": "S3 evaluates the If-Match ETag precondition before applying DeleteObject to the current object."
+  },
+  "bounded_worlds": [
+    {
+      "world": "W_MATCH",
+      "supplied_if_match_etag": "E0",
+      "current_object_etag": "E0",
+      "required_consequence": "CONDITIONAL_DELETE_APPLIED"
+    },
+    {
+      "world": "W_STALE",
+      "supplied_if_match_etag": "E0",
+      "current_object_etag": "E1",
+      "required_consequence": "PRECONDITION_REJECTED_NO_DELETE"
+    }
+  ],
+  "admissibility": {
+    "bucket_class": "GENERAL_PURPOSE",
+    "bucket_versioning": "DISABLED",
+    "object_exists_in_both_worlds": true,
+    "caller_permissions": ["s3:DeleteObject", "s3:GetObject"],
+    "held_fixed": [
+      "bucket identity",
+      "object key",
+      "caller identity and required permissions",
+      "general-purpose bucket class",
+      "bucket versioning disabled",
+      "object exists at the effect cut",
+      "no concurrent request changes the object during precondition evaluation",
+      "no unrelated transport, policy, retention, ownership, or service failure determines the outcome"
+    ],
+    "only_material_difference_between_worlds": "current_object_etag"
+  },
+  "evidence": {
+    "gold_evidence_path": "experiments/unit004-blind-e1/GOLD_EVIDENCE.json",
+    "gold_evidence_git_blob": "a9ce8bff8dc988c15be45d3773deb8d4dcf887d1",
+    "source_evidence_ids": [
+      "AWS_DELETEOBJECT_API",
+      "AWS_CONDITIONAL_DELETE_GUIDE",
+      "AWS_SDK_V3_DELETEOBJECT_INPUT",
+      "AWS_CONDITIONAL_DELETE_RELEASE"
+    ],
+    "strength": "OFFICIAL_AWS_API_AND_USER_GUIDE_WITH_RELEASE_TIMING_CORROBORATION"
+  },
+  "independence_controls": {
+    "e1_prediction_used_to_define_source_semantics": false,
+    "target_implementation_used_to_define_source_semantics": false,
+    "unit003_result_used_to_define_source_semantics": false,
+    "mechanism_family_was_frozen_before_unit004_selection": true
+  },
+  "open_uncertainties": [
+    "The claim is restricted to the predeclared If-Match/ETag conditional-delete slice, not every optional DeleteObject request field.",
+    "The gold source lane relies on retrieval-time official AWS documentation rather than an immutable AWS documentation Git object."
+  ],
+  "freeze_rule": "After this lane is committed, its source consequence labels, ETag coordinates, admitted worlds, and effect cut may not be changed in response to the primary gold validator result."
+}

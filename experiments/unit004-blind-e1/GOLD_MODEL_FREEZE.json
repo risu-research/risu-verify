@@ -1,0 +1,56 @@
+{
+  "schema": "risu.unit004-gold-model-freeze/v0.1alpha1",
+  "freeze_id": "UNIT004_GOLD_MODEL_FREEZE_001",
+  "status": "FROZEN_BEFORE_PRIMARY_GOLD_VALIDATION",
+  "parent_scientific_adjudication_protocol": {
+    "protocol_id": "UNIT004_SCIENTIFIC_ADJUDICATION_PROTOCOL_001",
+    "git_blob": "ea6cd673792ea367b22f5a732f31dc45337f2786",
+    "commit": "f8fc58a9e64d85b9bee3a5fd728355800e3e0ba0"
+  },
+  "normative_gold_model": {
+    "experiments/unit004-blind-e1/GOLD_EVIDENCE.json": "a9ce8bff8dc988c15be45d3773deb8d4dcf887d1",
+    "experiments/unit004-blind-e1/SOURCE_LANE.json": "fca762e7d519c66f4ee1acefd3d897b4a04b6035",
+    "experiments/unit004-blind-e1/TARGET_LANE.json": "a2286f98beca1ac0b61eb6d61d98eeed929039d0",
+    "experiments/unit004-blind-e1/BOUNDARY_MODEL.json": "204ab13829fc183268251afab7b00fcc1f2f9ed7"
+  },
+  "target_identity": {
+    "repository": "ofershap/mcp-server-s3",
+    "revision": "f16b3715de4bd61dc8262b03d8e04f10e2142141",
+    "tree_sha": "4a9670aaebd49dd8a04030cba21b1d358325a6e2",
+    "screened_operation": "delete_object"
+  },
+  "preprimary_state": {
+    "primary_gold_validator_executed": false,
+    "primary_gold_result_observed": false,
+    "normative_source_lane_frozen": true,
+    "normative_target_lane_frozen": true,
+    "world_model_frozen": true,
+    "effect_cut_frozen": true,
+    "machine_e1_result_used_as_gold_evidence": false
+  },
+  "model_cardinality": {
+    "admitted_worlds": 2,
+    "varying_consequence_coordinate_count": 1,
+    "varying_coordinate": "current_object_etag",
+    "source_consequence_classes": 2,
+    "target_realization_classes_declared": 1
+  },
+  "primary_validator_requirements": [
+    "load normative files by exact Git-object identity",
+    "reject any world, consequence label, target realization, or effect-cut mutation",
+    "check source consequence labels against the frozen source contract",
+    "check target realization equality for the two frozen worlds",
+    "derive factorization/kernel-preservation result without an expected-result parameter",
+    "emit a constructive witness only if the frozen model entails one",
+    "treat incomplete/malformed evidence binding as ASSURANCE_INCOMPLETE or infrastructure failure rather than inventing semantics"
+  ],
+  "forbidden_after_freeze": [
+    "rewriting the source ETag contract to fit the validator result",
+    "adding an IfMatch carrier to the target realization",
+    "removing W_STALE because it produces an inconvenient result",
+    "changing the effect cut",
+    "using E1's INCOMPLETE prediction as proof of the gold result",
+    "substituting a later target revision"
+  ],
+  "claim_boundary": "This freeze records the preprimary gold model only. It does not itself declare preservation, regression, or incomplete assurance."
+}
