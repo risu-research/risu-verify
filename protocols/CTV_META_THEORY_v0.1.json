@@ -1,0 +1,102 @@
+{
+  "amendment_rule": "Any normative change after this freeze requires a new version or numbered amendment with timing relative to observed Unit003-008 verdicts and explicit result-impact classification.",
+  "base_main_sha": "9e1c293ee20be741f2326e04a011c602ed9ef66e",
+  "canonical_prior_results": {
+    "corpus01-unit-001": {
+      "authority": "existing Unit 001 closure; not re-adjudicated by CTV",
+      "status": "CLOSED"
+    },
+    "corpus01-unit-002": {
+      "authority": "existing Unit 002-R closure; not re-adjudicated by CTV",
+      "canonical_result": "PRESERVED_IN_DECLARED_SCOPE",
+      "coverage_complete": false,
+      "status": "CLOSED"
+    }
+  },
+  "cir": {
+    "edge_kinds": [
+      "CARRIES",
+      "DERIVES",
+      "BINDS_TO",
+      "COMPARES",
+      "GUARDS",
+      "PRECEDES",
+      "MUTATES",
+      "REJECTS_AS",
+      "INTERPRETS_AS",
+      "EVIDENCED_BY"
+    ],
+    "node_kinds": [
+      "OPERATION",
+      "RESOURCE",
+      "INPUT",
+      "SEMANTIC_COORDINATE",
+      "GUARD",
+      "EFFECT",
+      "OUTCOME",
+      "FAILURE",
+      "INTERPRETER",
+      "EVIDENCE"
+    ],
+    "role": "CARRIER_NEUTRAL_UNTRUSTED_REPRESENTATION_NOT_VERDICT_ENGINE",
+    "schema": "schemas/consequence-ir.v0.1alpha1.schema.json"
+  },
+  "compatibility_levels": [
+    "L0_SURFACE",
+    "L1_REPRESENTATION",
+    "L2_DISTINCTION",
+    "L3_OPERATIVE",
+    "L4_CONSEQUENCE_REFINEMENT",
+    "L5_DECLARED_SCOPE_COVERAGE"
+  ],
+  "contract_id": "RISU_CTV_META_THEORY_001",
+  "contract_schema": "risu.ctv-meta-theory/v0.1",
+  "coverage_model_adequacy_separation": true,
+  "effective_from_unit": "corpus01-unit-003",
+  "future_verdicts": {
+    "ASSURANCE_INCOMPLETE": "required when neither regression nor required stability obligations are established",
+    "CONSEQUENCE_REGRESSION": "requires a valid concrete consequence-refinement witness",
+    "CONSEQUENCE_STABLE_IN_DECLARED_SCOPE": "requires established declared-scope refinement obligations and no admitted counterexample; coverage reported separately",
+    "INFRASTRUCTURE_FAILURE": "not a semantic CTV verdict"
+  },
+  "refinement_mapping": {
+    "must_be_explicit": true,
+    "relations": [
+      "EXACT_IDENTITY",
+      "ESTABLISHED_EQUIVALENT",
+      "REPRESENTED_BY",
+      "DISTINCT",
+      "UNRESOLVED"
+    ],
+    "schema": "schemas/refinement-map.v0.1alpha1.schema.json",
+    "unresolved_policy": "MAY_NARROW_COVERAGE_OR_REQUIRE_ASSURANCE_INCOMPLETE_NEVER_SILENTLY_UPGRADE_AFTER_PRIMARY"
+  },
+  "retroactive_units": [
+    "corpus01-unit-001",
+    "corpus01-unit-002"
+  ],
+  "retroactivity_rule": "NO_REINTERPRETATION_NO_UPGRADE",
+  "status": "FROZEN_BEFORE_UNIT003_AUTHORING",
+  "theory": {
+    "deterministic_equivalent_kernel_rule": "ker(rho_T) subseteq ker(kappa_S).",
+    "deterministic_factorization": "There exists g such that kappa_S = g o rho_T.",
+    "deterministic_regression_witness": "rho_T(w1)=rho_T(w2) and kappa_S(w1)!=kappa_S(w2).",
+    "general_relational_refinement": "For every admitted world w, union_{r in T(w)} M(r) is a subset of S(w).",
+    "repair_rule": "A repair must refine the target-induced partition until no admitted violating pair remains co-blocked; minimality is relative to an explicit cost/order."
+  },
+  "trust_direction": {
+    "target": [
+      "SMALL_CIR_AND_MAPPING_VALIDATOR",
+      "SMALL_CONSEQUENCE_SEMANTICS",
+      "INDEPENDENT_WITNESS_OR_PROOF_CHECKER"
+    ],
+    "untrusted": [
+      "LLM_EXTRACTION",
+      "STATIC_EXTRACTION",
+      "BLACK_BOX_LEARNING",
+      "GENERATED_PROBES",
+      "REPAIR_SYNTHESIS",
+      "SMT_SEARCH"
+    ]
+  }
+}
