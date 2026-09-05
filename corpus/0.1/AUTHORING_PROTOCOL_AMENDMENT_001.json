@@ -1,0 +1,31 @@
+{
+  "amendment_id": "RISU_CORPUS_0.1_AUTHORING_PROTOCOL_AMENDMENT_001",
+  "amendment_schema": "risu.corpus-authoring-protocol-amendment/v0.1alpha1",
+  "affected_rule": "Post-freeze workflow diagnostics only; no SOURCE, TARGET, boundary, evidence, envelope, instance, core, verifier invocation, or semantic classification rule is changed.",
+  "allowed_changes": [
+    ".github/workflows/corpus-0.1-primary.yml may print the already-produced verifier failure.log before exiting on invalid/toolchain exit codes",
+    "PRIMARY_RUN_MANIFEST.json may list this amendment and the workflow path as explicit post-freeze allowed paths"
+  ],
+  "could_alter_primary_semantic_outcome": false,
+  "failed_run": {
+    "compile_completed": true,
+    "freeze_gate_completed": true,
+    "primary_verdict_observed": false,
+    "risu_exit_code": 30,
+    "run_id": 33936266357,
+    "verifier_reached": true
+  },
+  "forbidden_changes": [
+    "changing any frozen Unit 001 scientific input",
+    "changing the frozen core or compiler semantics",
+    "changing valid semantic exit codes 0, 10, or 20",
+    "changing the verifier command or adding a fallback verifier path",
+    "using the diagnostic error to select a different source consequence or target pattern"
+  ],
+  "parent_authoring_protocol": "corpus/0.1/AUTHORING_PROTOCOL.json",
+  "primary_verdict_observed_before_amendment": false,
+  "reason": "The second GitHub Actions attempt passed corpus integrity, byte freeze, materialization, and prospective compilation, then returned RISU exit 30. The wrapper reported that details were written to failure.log, but the workflow exited without printing or uploading that file. The error cannot be classified without exposing the already-generated diagnostic bytes.",
+  "scientific_input_freeze_commit_unchanged": "355a4b77187d5b2118ac71eae9dec1cadc036847",
+  "status": "RECORDED_BEFORE_DIAGNOSTIC_WORKFLOW_CHANGE",
+  "unit_id": "corpus01-unit-001"
+}
