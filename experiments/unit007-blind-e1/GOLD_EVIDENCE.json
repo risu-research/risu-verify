@@ -1,0 +1,82 @@
+{
+  "schema": "risu.unit007-gold-evidence/v0.1alpha1",
+  "evidence_id": "UNIT007_GOLD_EVIDENCE_001",
+  "status": "FROZEN_PREPRIMARY_EVIDENCE_SET",
+  "target_revision": "13f3b4fdf75da6948d9ce4e8a0b47799e9059537",
+  "target_tree_sha": "9c8a0d5bed33b65b982a743a4d9423e43e2c9dfb",
+  "retrieved_on": "2026-09-05",
+  "pinned_target_evidence": [
+    {
+      "id": "U007_GENERIC_BODY_SCHEMA",
+      "path": "src/tools/atlassian.api.types.ts",
+      "git_blob_sha1": "ad0429df1cfbfb5d9fa0b12f6df16592190f5fab",
+      "facts": [
+        "RequestWithBodyArgs accepts body as Record<string, unknown>.",
+        "No schema field in this generic PUT surface independently reads or derives the remote current page version."
+      ]
+    },
+    {
+      "id": "U007_CONF_PUT_HANDLER",
+      "path": "src/tools/atlassian.api.tool.ts",
+      "git_blob_sha1": "abc48c6ab17b31c21b98dc78660bb5976625453e",
+      "facts": [
+        "The conf_put MCP tool uses RequestWithBodyArgs and the createWriteHandler path.",
+        "The handler passes caller arguments to handlePut.",
+        "Its own documentation example includes a version.number field and states that the version number must be incremented."
+      ]
+    },
+    {
+      "id": "U007_CONTROLLER_BODY_FORWARDING",
+      "path": "src/controllers/atlassian.api.controller.ts",
+      "git_blob_sha1": "8c124ded4ffc6624a5126266a54c4148690d74d3",
+      "facts": [
+        "handlePut delegates to handleRequest with method PUT.",
+        "handleRequest forwards options.body to the Atlassian API service."
+      ]
+    },
+    {
+      "id": "U007_SERVICE_BODY_FORWARDING",
+      "path": "src/services/vendor.atlassian.api.service.ts",
+      "git_blob_sha1": "8086509e4caf15986eea7bfbd6b9eb317c7e4527",
+      "facts": [
+        "For PUT, the service assigns options.body to fetchOptions.body and calls fetchAtlassian.",
+        "This pinned path contains no service-layer read-before-write of the current page version."
+      ]
+    }
+  ],
+  "authoritative_source_evidence": [
+    {
+      "id": "ATLASSIAN_V2_UPDATE_PAGE_REFERENCE",
+      "authority": "Atlassian official Confluence Cloud REST API v2 reference",
+      "url": "https://developer.atlassian.com/cloud/confluence/rest/v2/api-group-page/",
+      "retrieved_on": "2026-09-05",
+      "facts": [
+        "PUT /pages/{id} requires a version object in the request body.",
+        "A successful page update returns 200 OK.",
+        "The documented response set also includes 400 Bad Request, 401 Unauthorized, and 404 Not Found."
+      ]
+    },
+    {
+      "id": "ATLASSIAN_V2_OPENAPI_PAGE_UPDATE_REQUEST",
+      "authority": "Atlassian official Confluence Cloud REST API v2 OpenAPI",
+      "url": "https://dac-static.atlassian.com/cloud/confluence/openapi-v2.v3.json",
+      "retrieved_on": "2026-09-05",
+      "facts": [
+        "PageUpdateRequest requires id, status, title, body, and version.",
+        "version.number is documented as the new version of the updated page.",
+        "For a current page, version.number is to be set to the current version number plus one; callers are directed to Get page by id if the current version is unknown.",
+        "The admitted OpenAPI does not state an exact stale/non-next version mutation consequence."
+      ]
+    }
+  ],
+  "machine_result_exclusion": {
+    "e1_prediction_used_as_gold_evidence": false,
+    "e1_typed_facts_used_as_gold_evidence": false,
+    "e1_acquisition_packet_used_as_target_semantic_evidence": false
+  },
+  "open_evidence_limits": [
+    "Official Atlassian documentation is retrieval-time web evidence rather than an immutable vendor Git object.",
+    "The evidence establishes a next-version ordering requirement but not the exact mutation consequence of a stale/non-next supplied version.",
+    "The target claim is a static request-realization claim at the pinned MCP revision; no live Confluence deployment conformance is claimed."
+  ]
+}

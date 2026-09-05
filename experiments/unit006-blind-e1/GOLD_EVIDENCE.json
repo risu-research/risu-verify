@@ -1,0 +1,61 @@
+{
+  "schema": "risu.unit006-gold-evidence/v0.1alpha1",
+  "evidence_id": "UNIT006_GOLD_EVIDENCE_001",
+  "status": "FROZEN_PREPRIMARY_EVIDENCE_SET",
+  "target_revision": "9b65f41e065aa5158b09868cf043a8636752ce4f",
+  "target_tree_sha": "ce3c9e5626fb62a081fc075a8886da6ad803a286",
+  "retrieved_on": "2026-09-05",
+  "pinned_target_evidence": [
+    {
+      "id": "U006_COREV1_PATCH_SERIALIZATION",
+      "path": "kubernetes/client/api/core_v1_api.py",
+      "git_blob_sha1": "5336e3033fb7ee71652c4fc8a49cf0c91a24ef6c",
+      "facts": [
+        "patch_namespaced_config_map accepts a body object and passes that same body into _patch_namespaced_config_map_serialize.",
+        "The serializer assigns body to _body_params and calls ApiClient.param_serialize with method PATCH and resource path /api/v1/namespaces/{namespace}/configmaps/{name}.",
+        "The serialized request body therefore carries body metadata, including a supplied metadata.resourceVersion, rather than synthesizing or discarding that coordinate in this operation path."
+      ]
+    },
+    {
+      "id": "U006_OBJECTMETA_RESOURCEVERSION_ALIAS",
+      "path": "kubernetes/client/models/v1_object_meta.py",
+      "git_blob_sha1": "ccf4cfd573789b9b4eaaa6cccbb4a6ae79a716c9",
+      "facts": [
+        "V1ObjectMeta exposes the resource_version field for Kubernetes object metadata.",
+        "The model maps that Python field to the Kubernetes wire name resourceVersion."
+      ]
+    },
+    {
+      "id": "U006_APICLIENT_MODEL_SERIALIZATION",
+      "path": "kubernetes/client/api_client.py",
+      "git_blob_sha1": "40eaa6ea655ad792814c85b76cb1df4f7b3ac09f",
+      "facts": [
+        "The pinned ApiClient serializes model-backed request bodies for transport.",
+        "This closes the pinned client-side path from V1ObjectMeta.resource_version to the request body consumed by patch_namespaced_config_map."
+      ]
+    }
+  ],
+  "authoritative_source_evidence": [
+    {
+      "id": "K8S_API_CONCEPTS_RESOURCEVERSION",
+      "authority": "Kubernetes official documentation",
+      "url": "https://kubernetes.io/docs/reference/using-api/api-concepts/",
+      "retrieved_on": "2026-09-05",
+      "facts": [
+        "Kubernetes uses metadata.resourceVersion to detect lost updates.",
+        "When the resourceVersion supplied by a client is stale, the API server returns 409 Conflict.",
+        "Clients that need lost-update detection can make either PUT or PATCH conditional on the existing resourceVersion and handle conflicts."
+      ]
+    }
+  ],
+  "machine_result_exclusion": {
+    "e1_prediction_used_as_gold_evidence": false,
+    "e1_typed_facts_used_as_gold_evidence": false,
+    "e1_acquisition_packet_used_as_target_semantic_evidence": false
+  },
+  "open_evidence_limits": [
+    "The Kubernetes documentation is retrieval-time official documentation rather than an immutable documentation Git object.",
+    "The target claim is a static realization claim at the pinned client revision; no live cluster deployment conformance is claimed.",
+    "Unrelated admission, authorization, schema-validation, transport, or service failures are excluded by the held-fixed world model."
+  ]
+}

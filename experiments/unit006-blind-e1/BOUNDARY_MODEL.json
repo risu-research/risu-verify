@@ -1,0 +1,113 @@
+{
+  "boundary_schema": "risu.corpus-vbe-boundary/v0.2alpha1",
+  "unit_id": "corpus01-unit-006",
+  "status": "FROZEN_BOUNDARY_AND_WORLD_MODEL_PREPRIMARY",
+  "claim_scope": {
+    "operation": "kubernetes-client/python patch_namespaced_config_map at revision 9b65f41e065aa5158b09868cf043a8636752ce4f",
+    "profile": "ConfigMap PATCH carrying reviewed metadata.resourceVersion R0",
+    "all_kubernetes_patch_behaviors": "OUT_OF_SCOPE",
+    "live_remote_deployment": "NOT_CLAIMED",
+    "population_prevalence": "NOT_CLAIMED",
+    "model_relative": true
+  },
+  "coordinates": {
+    "supplied_metadata_resource_version": {
+      "anchor": "R0",
+      "mode": "literal"
+    },
+    "current_configmap_resource_version": {
+      "domain": [
+        "R0",
+        "R1"
+      ]
+    },
+    "configmap_exists": {
+      "domain": [
+        true
+      ]
+    }
+  },
+  "held_fixed": [
+    "cluster/API server, namespace, and ConfigMap identity",
+    "caller authorization",
+    "valid patch syntax and media type",
+    "supplied metadata.resourceVersion remains R0",
+    "ConfigMap exists before effect cut",
+    "no concurrent mutation during precondition/effect evaluation",
+    "no unrelated admission, validation, transport, policy, quota, or service failure determines the outcome"
+  ],
+  "effect_cut": {
+    "name": "K8S_CONFIGMAP_RESOURCEVERSION_PATCH_EFFECT_CUT",
+    "definition": "The API-server point at which the supplied metadata.resourceVersion is evaluated for lost-update protection before the ConfigMap patch is committed.",
+    "target_effect": "The pinned client carries the declared resourceVersion into the PATCH request, so the service-side guard remains operative at this cut."
+  },
+  "worlds": [
+    {
+      "id": "W_MATCH",
+      "coordinates": {
+        "supplied_metadata_resource_version": "R0",
+        "current_configmap_resource_version": "R0",
+        "configmap_exists": true
+      },
+      "required_source_consequence": "CONDITIONAL_PATCH_APPLIED"
+    },
+    {
+      "id": "W_STALE",
+      "coordinates": {
+        "supplied_metadata_resource_version": "R0",
+        "current_configmap_resource_version": "R1",
+        "configmap_exists": true
+      },
+      "required_source_consequence": "CONFLICT_REJECTED_NO_PATCH_EFFECT"
+    }
+  ],
+  "target_observation_model": {
+    "surface_projection": "Both worlds use the same API operation, but the service-side result remains sensitive to the current resourceVersion because R0 is carried in the request.",
+    "conditional_coordinate_carried": true,
+    "world_realizations": {
+      "W_MATCH": "PATCH_CONFIGMAP_WITH_RESOURCEVERSION_R0_MATCH_ACCEPTED",
+      "W_STALE": "PATCH_CONFIGMAP_WITH_RESOURCEVERSION_R0_STALE_409_CONFLICT"
+    },
+    "world_consequences": {
+      "W_MATCH": "TARGET_PATCH_APPLIED",
+      "W_STALE": "TARGET_409_CONFLICT_NO_PATCH_EFFECT"
+    },
+    "target_to_source_consequence_map": {
+      "TARGET_PATCH_APPLIED": "CONDITIONAL_PATCH_APPLIED",
+      "TARGET_409_CONFLICT_NO_PATCH_EFFECT": "CONFLICT_REJECTED_NO_PATCH_EFFECT"
+    }
+  },
+  "ctv_question": {
+    "deterministic_factorization": "Does there exist g such that source consequence kappa_S = g o rho_T for both admitted worlds?",
+    "kernel_condition": "Any worlds collapsed by rho_T must have the same source consequence.",
+    "refinement_requirement": "If factorization is consistent, each realized target consequence must explicitly refine to the required source consequence."
+  },
+  "expected_validator_policy": {
+    "allowed_primary_outcomes": [
+      "CONSEQUENCE_STABLE_IN_DECLARED_SCOPE",
+      "CONSEQUENCE_REGRESSION",
+      "ASSURANCE_INCOMPLETE"
+    ],
+    "no_expected_outcome_value_frozen": true,
+    "validator_must_derive_result_from_frozen_worlds_and_realization": true
+  },
+  "anti_retrofit": {
+    "machine_e1_prediction_used_to_set_worlds": false,
+    "worlds_may_change_after_primary": false,
+    "effect_cut_may_change_after_primary": false,
+    "target_realization_may_be_strengthened_after_primary": false
+  },
+  "freeze_rule": "Worlds, effect cut, held-fixed dimensions, target realizations, refinement map, and claim scope are immutable after this boundary model is committed and before primary validation.",
+  "source_lane": {
+    "path": "experiments/unit006-blind-e1/SOURCE_LANE.json",
+    "git_blob": "0820e23caa73e8c84596e8e7bda1dd3d9475378c"
+  },
+  "target_lane": {
+    "path": "experiments/unit006-blind-e1/TARGET_LANE.json",
+    "git_blob": "755bd0a336eb181bc94d9a2ad63d95af5d2664e2"
+  },
+  "evidence": {
+    "path": "experiments/unit006-blind-e1/GOLD_EVIDENCE.json",
+    "git_blob": "b3fbde79ddb234d6650ed32e172e073c98adf785"
+  }
+}

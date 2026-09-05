@@ -1,0 +1,82 @@
+{
+  "lane_schema": "risu.corpus-source-lane/v0.2alpha1",
+  "unit_id": "corpus01-unit-006",
+  "candidate_id": "kubernetes-client/python::configmap-resourceversion-conditioned-patch",
+  "status": "FROZEN_SOURCE_LANE_PREPRIMARY",
+  "source_operation": {
+    "identity": "Kubernetes ConfigMap resourceVersion-conditional PATCH profile",
+    "method": "PATCH ConfigMap",
+    "declared_profile": "PATCH an existing ConfigMap while supplying the previously observed metadata.resourceVersion R0 in the request body.",
+    "scope_origin": "Frozen Corpus 0.1 Unit006 enrollment at mechanism_family=REVISION_OR_RESOURCE_VERSION, selected before primary validation."
+  },
+  "consequence_contract": {
+    "contract_id": "SRC-CORPUS01-U006-K8S-CONFIGMAP-RV-PATCH",
+    "reviewed_coordinate": {
+      "name": "supplied_metadata_resource_version",
+      "anchor": "R0",
+      "mode": "literal"
+    },
+    "current_coordinate": {
+      "name": "current_configmap_resource_version",
+      "domain": [
+        "R0",
+        "R1"
+      ]
+    },
+    "match_predicate": "current_configmap_resource_version == supplied_metadata_resource_version",
+    "success_consequence": "CONDITIONAL_PATCH_APPLIED",
+    "stale_consequence": "CONFLICT_REJECTED_NO_PATCH_EFFECT",
+    "stale_native_status": "409_CONFLICT",
+    "effect_cut": "The Kubernetes API server checks the supplied resourceVersion as a lost-update precondition before committing the ConfigMap patch effect."
+  },
+  "bounded_worlds": [
+    {
+      "world": "W_MATCH",
+      "supplied_metadata_resource_version": "R0",
+      "current_configmap_resource_version": "R0",
+      "required_consequence": "CONDITIONAL_PATCH_APPLIED"
+    },
+    {
+      "world": "W_STALE",
+      "supplied_metadata_resource_version": "R0",
+      "current_configmap_resource_version": "R1",
+      "required_consequence": "CONFLICT_REJECTED_NO_PATCH_EFFECT"
+    }
+  ],
+  "admissibility": {
+    "configmap_exists_in_both_worlds": true,
+    "patch_payload_valid_except_for_world_varying_current_resource_version": true,
+    "held_fixed": [
+      "cluster and API server identity",
+      "namespace and ConfigMap name",
+      "caller identity and authorization",
+      "patch media type and patch payload other than the observed/current resourceVersion relation",
+      "supplied metadata.resourceVersion remains R0",
+      "ConfigMap exists before the effect cut",
+      "no concurrent mutation occurs during the single precondition/effect evaluation",
+      "no unrelated admission, validation, transport, policy, quota, or service failure determines the outcome"
+    ],
+    "only_material_difference_between_worlds": "current_configmap_resource_version"
+  },
+  "evidence": {
+    "source_evidence_ids": [
+      "K8S_API_CONCEPTS_RESOURCEVERSION",
+      "U006_OBJECTMETA_RESOURCEVERSION_ALIAS",
+      "U006_COREV1_PATCH_SERIALIZATION"
+    ],
+    "strength": "OFFICIAL_KUBERNETES_API_SEMANTICS_PLUS_EXACT_PINNED_CLIENT_SERIALIZATION",
+    "gold_evidence_path": "experiments/unit006-blind-e1/GOLD_EVIDENCE.json",
+    "gold_evidence_git_blob": "b3fbde79ddb234d6650ed32e172e073c98adf785"
+  },
+  "independence_controls": {
+    "e1_prediction_used_to_define_source_semantics": false,
+    "target_primary_result_used_to_define_source_semantics": false,
+    "later_target_revision_used": false,
+    "mechanism_family_was_frozen_before_gold_adjudication": true
+  },
+  "open_uncertainties": [
+    "The source contract is restricted to the declared resourceVersion-conditional ConfigMap PATCH slice, not every PATCH mode or server-side apply behavior.",
+    "The success world assumes all held-fixed request-validity and authorization conditions needed for the patch effect."
+  ],
+  "freeze_rule": "After this lane is committed, source consequence labels, resourceVersion coordinates, admitted worlds, and effect cut may not be changed in response to primary validation."
+}

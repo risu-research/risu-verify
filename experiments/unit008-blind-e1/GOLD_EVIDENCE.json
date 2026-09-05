@@ -1,0 +1,73 @@
+{
+  "schema": "risu.unit008-gold-evidence/v0.1alpha1",
+  "evidence_id": "UNIT008_GOLD_EVIDENCE_001",
+  "status": "FROZEN_PREPRIMARY_EVIDENCE_SET",
+  "target_revision": "177adc871ef94c39902bcdb8c89200d000e02e64",
+  "target_tree_sha": "b8803a5a553ada80a6dc421faa8e2b181443cb48",
+  "retrieved_on": "2026-09-05",
+  "pinned_target_evidence": [
+    {
+      "id": "U008_SCHEMA_ASYMMETRY",
+      "path": "src/schemas.ts",
+      "git_blob_sha1": "b993e01aa1d5a42b4061fde33a4cdc98fe3b7bc3",
+      "facts": [
+        "GitLabContentSchema includes optional last_commit_id on repository-file read results.",
+        "CreateOrUpdateFileSchema exposes project_id, file_path, content, commit_message, branch, and optional previous_path, but no last_commit_id."
+      ]
+    },
+    {
+      "id": "U008_HANDLER_ARGUMENT_PROJECTION",
+      "path": "src/index.ts",
+      "git_blob_sha1": "6004e3bc40cb8e722bd500b036c05569ab0216e2",
+      "facts": [
+        "The create_or_update_file handler parses CreateOrUpdateFileSchema.",
+        "It passes project_id, file_path, content, commit_message, branch, and previous_path to createOrUpdateFile; no last_commit_id argument exists on the screened path."
+      ]
+    },
+    {
+      "id": "U008_WRITE_IMPLEMENTATION",
+      "path": "src/gitlab-api.ts",
+      "git_blob_sha1": "81eddf50d4df783baeb57e473a57598f7c3c607c",
+      "facts": [
+        "createOrUpdateFile invokes getFileContents only to determine whether to use POST or PUT and discards the returned GitLabContent object.",
+        "For an existing file, the request body contains branch, content, commit_message, and optional previous_path.",
+        "The effectful PUT body contains no last_commit_id."
+      ]
+    }
+  ],
+  "authoritative_source_evidence": [
+    {
+      "id": "GITLAB_REPOSITORY_FILES_API",
+      "authority": "GitLab official Repository Files API documentation",
+      "url": "https://docs.gitlab.com/api/repository_files/",
+      "retrieved_on": "2026-09-05",
+      "facts": [
+        "Repository-file retrieval returns last_commit_id, the SHA of the last commit that modified the file.",
+        "Update file accepts optional last_commit_id, described as the last known file commit ID.",
+        "A successful update returns 200 OK; failed commits return 400 Bad Request with a non-specific error."
+      ]
+    },
+    {
+      "id": "GITLAB_FILES_REQUEST_SPEC_STALE_LAST_COMMIT",
+      "authority": "GitLab official upstream request specification",
+      "repository": "gitlab-org/gitlab",
+      "revision": "cb1008222e18febd66f9425b861aee0fc4bc4d89",
+      "path": "spec/requests/api/files_spec.rb",
+      "url": "https://gitlab.com/gitlab-org/gitlab/-/blob/cb1008222e18febd66f9425b861aee0fc4bc4d89/spec/requests/api/files_spec.rb",
+      "facts": [
+        "For an existing-file PUT with last_commit_id set to the prior commit for the path, the spec requires HTTP 400 and the message that the file changed since editing began.",
+        "For the same update profile with last_commit_id equal to the current last commit for the path, the spec requires HTTP 200 OK."
+      ]
+    }
+  ],
+  "machine_result_exclusion": {
+    "e1_prediction_used_as_gold_evidence": false,
+    "e1_typed_facts_used_as_gold_evidence": false,
+    "e1_acquisition_packet_used_as_target_semantic_evidence": false
+  },
+  "open_evidence_limits": [
+    "Current GitLab API documentation is retrieval-time web evidence; the exact stale/correct guard behavior is additionally anchored by an immutable official upstream request-spec revision.",
+    "The target claim is a static realization claim at the pinned MCP revision; no live GitLab deployment conformance is claimed.",
+    "No claim is made about other MCP tools or direct GitLab API callers that can supply last_commit_id."
+  ]
+}

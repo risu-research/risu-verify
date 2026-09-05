@@ -1,0 +1,87 @@
+{
+  "lane_schema": "risu.corpus-target-lane/v0.2alpha1",
+  "unit_id": "corpus01-unit-006",
+  "candidate_id": "kubernetes-client/python::configmap-resourceversion-conditioned-patch",
+  "status": "FROZEN_TARGET_LANE_PREPRIMARY",
+  "target": {
+    "repository": "kubernetes-client/python",
+    "revision": "9b65f41e065aa5158b09868cf043a8636752ce4f",
+    "tree_sha": "ce3c9e5626fb62a081fc075a8886da6ad803a286",
+    "operation": "patch_namespaced_config_map with metadata.resource_version precondition"
+  },
+  "callable_surface": {
+    "tool_name": "patch_namespaced_config_map",
+    "inputs": [
+      "name",
+      "namespace",
+      "body",
+      "optional request controls"
+    ],
+    "resource_version_carrier_exposed_via_body": true,
+    "surface_evidence_git_blob": "5336e3033fb7ee71652c4fc8a49cf0c91a24ef6c"
+  },
+  "operative_path": [
+    "Caller supplies a ConfigMap patch body containing metadata.resourceVersion R0.",
+    "Pinned CoreV1Api.patch_namespaced_config_map forwards body into _patch_namespaced_config_map_serialize.",
+    "The serializer places body into _body_params and calls ApiClient.param_serialize for PATCH /api/v1/namespaces/{namespace}/configmaps/{name}.",
+    "Pinned V1ObjectMeta maps resource_version to the wire coordinate resourceVersion and the pinned ApiClient serializes model-backed request bodies.",
+    "The Kubernetes API server receives the conditional resourceVersion coordinate and applies its documented lost-update check before the mutation effect."
+  ],
+  "mechanism_model": {
+    "reviewed_version_carrier": "metadata.resourceVersion=R0",
+    "current_version_location": "Kubernetes API server current ConfigMap metadata.resourceVersion",
+    "pre_effect_compare_guard": "PRESENT_AT_KUBERNETES_API_SERVER_FOR_CONDITIONAL_PATCH",
+    "match_native_kind": "PATCH_REQUEST_ACCEPTED_UNDER_HELD_FIXED_VALIDITY",
+    "stale_native_kind": "409_CONFLICT",
+    "target_interpreter": "HTTP/API result distinguishes accepted patch from stale-resourceVersion conflict."
+  },
+  "target_facts": [
+    {
+      "id": "U006_PATCH_BODY_FORWARDED",
+      "status": "ESTABLISHED",
+      "basis": "pinned core_v1_api.py blob 5336e3033fb7ee71652c4fc8a49cf0c91a24ef6c"
+    },
+    {
+      "id": "U006_RESOURCEVERSION_WIRE_ALIAS",
+      "status": "ESTABLISHED",
+      "basis": "pinned v1_object_meta.py blob ccf4cfd573789b9b4eaaa6cccbb4a6ae79a716c9"
+    },
+    {
+      "id": "U006_PINNED_SERIALIZATION_PATH",
+      "status": "ESTABLISHED",
+      "basis": "pinned api_client.py blob 40eaa6ea655ad792814c85b76cb1df4f7b3ac09f"
+    },
+    {
+      "id": "U006_SERVICE_CONFLICT_SEMANTICS",
+      "status": "ESTABLISHED_BY_OFFICIAL_SOURCE",
+      "basis": "Kubernetes API Concepts resourceVersion semantics"
+    }
+  ],
+  "evidence": {
+    "target_git_blobs": {
+      "kubernetes/client/api/core_v1_api.py": "5336e3033fb7ee71652c4fc8a49cf0c91a24ef6c",
+      "kubernetes/client/models/v1_object_meta.py": "ccf4cfd573789b9b4eaaa6cccbb4a6ae79a716c9",
+      "kubernetes/client/api_client.py": "40eaa6ea655ad792814c85b76cb1df4f7b3ac09f"
+    },
+    "gold_evidence_path": "experiments/unit006-blind-e1/GOLD_EVIDENCE.json",
+    "gold_evidence_git_blob": "b3fbde79ddb234d6650ed32e172e073c98adf785"
+  },
+  "evidence_strength_boundary": {
+    "pinned_target_surface": "ESTABLISHED",
+    "pinned_target_implementation": "ESTABLISHED",
+    "resource_version_wire_carrier": "ESTABLISHED",
+    "authoritative_service_semantics": "ESTABLISHED",
+    "live_cluster_execution": "NOT_REQUIRED_FOR_DECLARED_STATIC_REALIZATION_CLAIM",
+    "live_deployment_conformance": "NOT_CLAIMED"
+  },
+  "independence_controls": {
+    "e1_prediction_used_as_target_fact": false,
+    "later_target_revision_used": false,
+    "issue_tracker_used_for_bug_discovery": false
+  },
+  "open_uncertainties": [
+    "No claim is made about arbitrary user-provided dictionaries that do not encode a valid Kubernetes metadata.resourceVersion field.",
+    "No claim is made about live deployment wrappers that modify the pinned client request."
+  ],
+  "freeze_rule": "After this lane is committed, target request serialization, resourceVersion carrier status, and evidence-strength labels may not be changed in response to primary validation."
+}

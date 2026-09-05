@@ -1,0 +1,87 @@
+{
+  "lane_schema": "risu.corpus-target-lane/v0.2alpha1",
+  "unit_id": "corpus01-unit-007",
+  "candidate_id": "aashari/mcp-server-atlassian-confluence::page-version-conditioned-put",
+  "status": "FROZEN_TARGET_LANE_PREPRIMARY",
+  "target": {
+    "repository": "aashari/mcp-server-atlassian-confluence",
+    "revision": "13f3b4fdf75da6948d9ce4e8a0b47799e9059537",
+    "tree_sha": "9c8a0d5bed33b65b982a743a4d9423e43e2c9dfb",
+    "operation": "conf_put on /wiki/api/v2/pages/{id}"
+  },
+  "callable_surface": {
+    "tool_name": "conf_put",
+    "body_schema": "Record<string, unknown>",
+    "caller_supplied_version_carrier_exposed": true,
+    "target_side_current_version_lookup": "ABSENT_FROM_PINNED_CONF_PUT_PATH"
+  },
+  "operative_path": [
+    "RequestWithBodyArgs accepts a caller body as a generic JSON object.",
+    "The pinned conf_put handler passes the caller arguments to handlePut.",
+    "handlePut delegates to handleRequest, which passes options.body to the Atlassian API service.",
+    "The pinned service copies options.body to fetchOptions.body for PUT and sends it to fetchAtlassian.",
+    "No read-before-write of the current page version is present on this pinned conf_put path."
+  ],
+  "mechanism_model": {
+    "reviewed_version_carrier": "body.version.number=N_PLUS_1",
+    "current_version_location": "remote Confluence page state",
+    "target_pre_effect_compare_guard": "NOT_IMPLEMENTED_IN_PINNED_MCP_PATH",
+    "request_realization": "CALLER_SUPPLIED_VERSION_BODY_FORWARDED_TO_CONFLUENCE",
+    "remote_exact_stale_consequence": "NOT_ESTABLISHED_BY_ADMITTED_SOURCE_EVIDENCE",
+    "target_consequence_interpreter": "NOT_ESTABLISHED"
+  },
+  "target_facts": [
+    {
+      "id": "U007_GENERIC_BODY_SCHEMA",
+      "status": "ESTABLISHED",
+      "basis": "src/tools/atlassian.api.types.ts blob ad0429df1cfbfb5d9fa0b12f6df16592190f5fab"
+    },
+    {
+      "id": "U007_CONF_PUT_HANDLER",
+      "status": "ESTABLISHED",
+      "basis": "src/tools/atlassian.api.tool.ts blob abc48c6ab17b31c21b98dc78660bb5976625453e"
+    },
+    {
+      "id": "U007_CONTROLLER_BODY_FORWARDING",
+      "status": "ESTABLISHED",
+      "basis": "src/controllers/atlassian.api.controller.ts blob 8c124ded4ffc6624a5126266a54c4148690d74d3"
+    },
+    {
+      "id": "U007_SERVICE_BODY_FORWARDING",
+      "status": "ESTABLISHED",
+      "basis": "src/services/vendor.atlassian.api.service.ts blob 8086509e4caf15986eea7bfbd6b9eb317c7e4527"
+    },
+    {
+      "id": "U007_REMOTE_STALE_MUTATION_CONSEQUENCE",
+      "status": "NOT_ESTABLISHED_BY_ADMITTED_SOURCE_EVIDENCE",
+      "basis": "Official Atlassian v2 reference/OpenAPI specifies current+1 and possible response classes but not the exact stale/non-next mutation consequence."
+    }
+  ],
+  "evidence": {
+    "target_git_blobs": {
+      "src/tools/atlassian.api.types.ts": "ad0429df1cfbfb5d9fa0b12f6df16592190f5fab",
+      "src/tools/atlassian.api.tool.ts": "abc48c6ab17b31c21b98dc78660bb5976625453e",
+      "src/controllers/atlassian.api.controller.ts": "8c124ded4ffc6624a5126266a54c4148690d74d3",
+      "src/services/vendor.atlassian.api.service.ts": "8086509e4caf15986eea7bfbd6b9eb317c7e4527"
+    },
+    "gold_evidence_path": "experiments/unit007-blind-e1/GOLD_EVIDENCE.json"
+  },
+  "evidence_strength_boundary": {
+    "pinned_target_surface": "ESTABLISHED",
+    "pinned_target_body_forwarding": "ESTABLISHED",
+    "pinned_target_read_before_write_guard": "ABSENT",
+    "authoritative_version_ordering_rule": "ESTABLISHED",
+    "authoritative_exact_stale_mutation_consequence": "NOT_ESTABLISHED",
+    "live_deployment_conformance": "NOT_CLAIMED"
+  },
+  "independence_controls": {
+    "e1_prediction_used_as_target_fact": false,
+    "later_target_revision_used": false,
+    "issue_tracker_used_as_semantic_authority": false
+  },
+  "open_uncertainties": [
+    "The pinned MCP target preserves the caller-supplied version field but does not itself establish the Confluence service's exact stale-version consequence.",
+    "No target consequence/refinement mapping is inferred from a generic 400 response possibility."
+  ],
+  "freeze_rule": "After this lane is committed, body-forwarding facts, absence of a target-side read-before-write guard, and evidence-strength labels may not be changed in response to primary validation."
+}

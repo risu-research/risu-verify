@@ -1,0 +1,89 @@
+{
+  "lane_schema": "risu.corpus-target-lane/v0.2alpha1",
+  "unit_id": "corpus01-unit-008",
+  "candidate_id": "yoda-digital/mcp-gitlab-server::gitlab-version-bound-write",
+  "status": "FROZEN_TARGET_LANE_PREPRIMARY",
+  "target": {
+    "repository": "yoda-digital/mcp-gitlab-server",
+    "revision": "177adc871ef94c39902bcdb8c89200d000e02e64",
+    "tree_sha": "b8803a5a553ada80a6dc421faa8e2b181443cb48",
+    "operation": "create_or_update_file"
+  },
+  "callable_surface": {
+    "tool_name": "create_or_update_file",
+    "input_schema": "CreateOrUpdateFileSchema",
+    "caller_supplied_last_commit_id_exposed": false,
+    "read_response_last_commit_id_modeled": true,
+    "existence_probe_before_write": true,
+    "existence_probe_result_bound_to_write_guard": false
+  },
+  "operative_path": [
+    "GitLabContentSchema models last_commit_id on repository-file reads.",
+    "CreateOrUpdateFileSchema exposes project_id, file_path, content, commit_message, branch, and optional previous_path, but no last_commit_id.",
+    "The create_or_update_file handler parses that schema and passes only those exposed arguments to GitLabApi.createOrUpdateFile.",
+    "createOrUpdateFile calls getFileContents only to choose POST versus PUT; the returned GitLabContent value, including last_commit_id, is discarded.",
+    "For an existing file, createOrUpdateFile constructs a PUT body containing branch, content, commit_message, and optional previous_path, with no last_commit_id."
+  ],
+  "mechanism_model": {
+    "reviewed_identity_coordinate": "source last_commit_id=C0",
+    "target_argument_carrier_for_reviewed_identity": "ABSENT",
+    "current_identity_available_in_internal_get_result": true,
+    "current_identity_bound_to_effectful_write": false,
+    "target_pre_effect_compare_guard": "ABSENT_FROM_PINNED_CREATE_OR_UPDATE_FILE_PATH",
+    "request_realization": "EXISTING_FILE_PUT_WITHOUT_LAST_COMMIT_ID",
+    "projection_loss": "SOURCE_LAST_COMMIT_ID_GUARD_NOT_REPRESENTABLE_OR_FORWARDED"
+  },
+  "target_facts": [
+    {
+      "id": "U008_READ_SCHEMA_LAST_COMMIT_ID",
+      "status": "ESTABLISHED",
+      "basis": "src/schemas.ts blob b993e01aa1d5a42b4061fde33a4cdc98fe3b7bc3"
+    },
+    {
+      "id": "U008_WRITE_SCHEMA_OMITS_LAST_COMMIT_ID",
+      "status": "ESTABLISHED",
+      "basis": "src/schemas.ts blob b993e01aa1d5a42b4061fde33a4cdc98fe3b7bc3"
+    },
+    {
+      "id": "U008_HANDLER_ARGUMENT_PROJECTION",
+      "status": "ESTABLISHED",
+      "basis": "src/index.ts blob 6004e3bc40cb8e722bd500b036c05569ab0216e2"
+    },
+    {
+      "id": "U008_EXISTENCE_GET_RESULT_DISCARDED",
+      "status": "ESTABLISHED",
+      "basis": "src/gitlab-api.ts blob 81eddf50d4df783baeb57e473a57598f7c3c607c"
+    },
+    {
+      "id": "U008_PUT_BODY_OMITS_LAST_COMMIT_ID",
+      "status": "ESTABLISHED",
+      "basis": "src/gitlab-api.ts blob 81eddf50d4df783baeb57e473a57598f7c3c607c"
+    }
+  ],
+  "evidence": {
+    "target_git_blobs": {
+      "src/gitlab-api.ts": "81eddf50d4df783baeb57e473a57598f7c3c607c",
+      "src/index.ts": "6004e3bc40cb8e722bd500b036c05569ab0216e2",
+      "src/schemas.ts": "b993e01aa1d5a42b4061fde33a4cdc98fe3b7bc3"
+    },
+    "gold_evidence_path": "experiments/unit008-blind-e1/GOLD_EVIDENCE.json"
+  },
+  "evidence_strength_boundary": {
+    "pinned_target_read_schema": "ESTABLISHED",
+    "pinned_target_write_schema_omission": "ESTABLISHED",
+    "pinned_target_internal_get_discard": "ESTABLISHED",
+    "pinned_target_put_body_omission": "ESTABLISHED",
+    "authoritative_last_commit_guard_semantics": "ESTABLISHED",
+    "live_deployment_conformance": "NOT_CLAIMED"
+  },
+  "independence_controls": {
+    "e1_prediction_used_as_target_fact": false,
+    "later_target_revision_used": false,
+    "issue_tracker_used_as_semantic_authority": false
+  },
+  "open_uncertainties": [
+    "The target claim is static and revision-bounded: it establishes loss of the last_commit_id guard carrier on the pinned screened path, not all GitLab MCP operations.",
+    "The internal existence GET can retrieve last_commit_id, but the pinned function discards the returned object and therefore does not bind that identity to the effectful PUT."
+  ],
+  "freeze_rule": "After this lane is committed, the write-schema omission, discarded-read fact, PUT-body omission, and projection-loss characterization may not be changed in response to primary validation."
+}

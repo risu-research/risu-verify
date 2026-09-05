@@ -1,0 +1,74 @@
+{
+  "lane_schema": "risu.corpus-source-lane/v0.2alpha1",
+  "unit_id": "corpus01-unit-007",
+  "candidate_id": "aashari/mcp-server-atlassian-confluence::page-version-conditioned-put",
+  "status": "FROZEN_SOURCE_LANE_PREPRIMARY",
+  "source_operation": {
+    "identity": "Confluence Cloud REST API v2 Update page version-ordering profile",
+    "method": "PUT /wiki/api/v2/pages/{id}",
+    "declared_profile": "Update an existing current page while supplying version.number Vnext in the request body.",
+    "scope_origin": "Frozen E1 Unit007 enrollment at mechanism_family=REVISION_OR_RESOURCE_VERSION; machine artifacts are excluded from gold evidence."
+  },
+  "version_contract": {
+    "coordinate": "request body version.number",
+    "documented_rule": "For a current page update, set version.number to the current version number plus one.",
+    "current_version_discovery": "Official API documentation directs callers to Get page by id if the current version number is unknown.",
+    "success_response_if_updated": "200_OK",
+    "documented_error_responses": [
+      "400_BAD_REQUEST",
+      "401_UNAUTHORIZED",
+      "404_NOT_FOUND"
+    ],
+    "stale_or_non_next_exact_mutation_consequence": "NOT_AUTHORITATIVELY_ESTABLISHED_IN_ADMITTED_SOURCE_EVIDENCE",
+    "effect_cut": "The Confluence service evaluates the page update request containing version.number; the admitted official contract establishes the required next-version relation but not an exact stale-version mutation consequence."
+  },
+  "bounded_worlds": [
+    {
+      "world": "W_MATCH",
+      "supplied_version_number": "N_PLUS_1",
+      "current_page_version_number": "N",
+      "documented_version_relation": "SATISFIES_CURRENT_PLUS_ONE_RULE",
+      "required_consequence": "EXTERNAL_MUTATION_CONSEQUENCE_NOT_AUTHORITATIVELY_ESTABLISHED"
+    },
+    {
+      "world": "W_STALE",
+      "supplied_version_number": "N_PLUS_1",
+      "current_page_version_number": "N_PLUS_1",
+      "documented_version_relation": "DOES_NOT_SATISFY_CURRENT_PLUS_ONE_RULE",
+      "required_consequence": "EXTERNAL_MUTATION_CONSEQUENCE_NOT_AUTHORITATIVELY_ESTABLISHED"
+    }
+  ],
+  "admissibility": {
+    "page_exists_in_both_worlds": true,
+    "page_status": "current",
+    "held_fixed": [
+      "Confluence Cloud site and page identity",
+      "caller identity, authentication, and update permission",
+      "request path and HTTP method",
+      "request body fields other than the server-current-version relation",
+      "supplied version.number remains N_PLUS_1",
+      "page exists before the effect cut",
+      "no unrelated validation, authorization, transport, policy, reconciliation, or service failure determines the outcome"
+    ],
+    "only_material_difference_between_worlds": "current_page_version_number"
+  },
+  "evidence": {
+    "source_evidence_ids": [
+      "ATLASSIAN_V2_UPDATE_PAGE_REFERENCE",
+      "ATLASSIAN_V2_OPENAPI_PAGE_UPDATE_REQUEST"
+    ],
+    "strength": "OFFICIAL_ATLASSIAN_CLOUD_V2_REFERENCE_AND_OPENAPI",
+    "gold_evidence_path": "experiments/unit007-blind-e1/GOLD_EVIDENCE.json"
+  },
+  "independence_controls": {
+    "e1_prediction_used_to_define_source_semantics": false,
+    "target_primary_result_used_to_define_source_semantics": false,
+    "later_target_revision_used": false,
+    "unstated_stale_write_behavior_assumed": false
+  },
+  "open_uncertainties": [
+    "The official admitted source evidence states the required next-version relation and possible HTTP responses but does not establish the exact external mutation consequence for a stale/non-next supplied version.",
+    "No live Confluence deployment behavior is imported to fill this source-contract gap."
+  ],
+  "freeze_rule": "After this lane is committed, the admitted worlds, documented version relation, epistemic consequence boundary, and effect cut may not be strengthened in response to primary validation."
+}

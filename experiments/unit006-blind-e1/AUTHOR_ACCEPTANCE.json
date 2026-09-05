@@ -1,0 +1,45 @@
+{
+  "schema": "risu.unit006-gold-author-acceptance/v0.1alpha1",
+  "acceptance_id": "UNIT006_GOLD_AUTHOR_ACCEPTANCE_001",
+  "status": "AUTHOR_ACCEPTED_BEFORE_PRIMARY_GOLD_VALIDATION",
+  "gold_model_freeze": {
+    "freeze_id": "E1_UNITS006_008_ATOMIC_GOLD_FREEZE_001",
+    "mode": "SAME_COMMIT_ATOMIC_BINDING",
+    "parent_commit": "e845f275e61b438c246c24a3cbf2edaf021468ea",
+    "protocol_path": "experiments/e1-heldout-matrix-005-008/GOLD_ADJUDICATION_PROTOCOL.json",
+    "protocol_git_blob": "16bbbfc37ccf1e9587b3ba0094e8c24017a81621",
+    "final_commit_binding": "ESTABLISHED_BY_CONTAINING_GIT_COMMIT_AND_POSTWRITE_AUDIT",
+    "self_commit_sha_embedded": false
+  },
+  "accepted_normative_git_blobs": {
+    "GOLD_EVIDENCE.json": "b3fbde79ddb234d6650ed32e172e073c98adf785",
+    "SOURCE_LANE.json": "0820e23caa73e8c84596e8e7bda1dd3d9475378c",
+    "TARGET_LANE.json": "755bd0a336eb181bc94d9a2ad63d95af5d2664e2",
+    "BOUNDARY_MODEL.json": "7a3ed55f9170895d30378aef8d333fdde2ec67ef"
+  },
+  "acceptance": {
+    "source_contract_accepted": true,
+    "target_realization_model_accepted": true,
+    "bounded_worlds_accepted": true,
+    "effect_cut_accepted": true,
+    "claim_scope_and_exclusions_accepted": true,
+    "evidence_strength_boundary_accepted": true,
+    "all_primary_outcomes_equally_admissible": true,
+    "expected_primary_outcome_recorded": false
+  },
+  "admissible_primary_outcomes": [
+    "CONSEQUENCE_STABLE_IN_DECLARED_SCOPE",
+    "CONSEQUENCE_REGRESSION",
+    "ASSURANCE_INCOMPLETE",
+    "INFRASTRUCTURE_FAILURE"
+  ],
+  "no_retrofit": {
+    "source_lane_may_change_after_primary": false,
+    "target_lane_may_change_after_primary": false,
+    "world_model_may_change_after_primary": false,
+    "effect_cut_may_change_after_primary": false,
+    "target_revision_may_change_after_primary": false,
+    "machine_e1_result_may_be_used_to_rewrite_gold": false
+  },
+  "claim_boundary": "Author acceptance freezes the evidence-bounded model for primary validation; it is not itself a semantic result. The containing atomic Git commit, rather than a circular self-reference, binds this acceptance to the freeze."
+}

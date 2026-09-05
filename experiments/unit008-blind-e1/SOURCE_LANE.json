@@ -1,0 +1,81 @@
+{
+  "lane_schema": "risu.corpus-source-lane/v0.2alpha1",
+  "unit_id": "corpus01-unit-008",
+  "candidate_id": "yoda-digital/mcp-gitlab-server::gitlab-version-bound-write",
+  "status": "FROZEN_SOURCE_LANE_PREPRIMARY",
+  "source_operation": {
+    "identity": "GitLab Repository Files API update-file last_commit_id optimistic-concurrency profile",
+    "method": "PUT /projects/:id/repository/files/:file_path",
+    "declared_profile": "Update an existing file while supplying last_commit_id=C0 equal to the last file commit observed/reviewed before the edit.",
+    "scope_origin": "Frozen E1 Unit008 enrollment at mechanism_family=COMMIT_OR_OBJECT_IDENTITY; machine artifacts are excluded from gold evidence."
+  },
+  "consequence_contract": {
+    "contract_id": "SRC-E1-U008-GITLAB-LAST-COMMIT-CONDITIONAL-UPDATE",
+    "reviewed_coordinate": {
+      "name": "supplied_last_commit_id",
+      "anchor": "C0",
+      "mode": "literal"
+    },
+    "current_coordinate": {
+      "name": "current_file_last_commit_id",
+      "domain": [
+        "C0",
+        "C1"
+      ]
+    },
+    "match_predicate": "current_file_last_commit_id == supplied_last_commit_id",
+    "success_consequence": "GUARDED_FILE_UPDATE_APPLIED",
+    "stale_consequence": "STALE_GUARDED_FILE_UPDATE_REJECTED",
+    "stale_native_status": "400_BAD_REQUEST",
+    "stale_native_message": "You are attempting to update a file that has changed since you started editing it.",
+    "effect_cut": "GitLab evaluates last_commit_id against the file's current last commit before accepting the repository-file update."
+  },
+  "bounded_worlds": [
+    {
+      "world": "W_MATCH",
+      "supplied_last_commit_id": "C0",
+      "current_file_last_commit_id": "C0",
+      "required_consequence": "GUARDED_FILE_UPDATE_APPLIED"
+    },
+    {
+      "world": "W_STALE",
+      "supplied_last_commit_id": "C0",
+      "current_file_last_commit_id": "C1",
+      "required_consequence": "STALE_GUARDED_FILE_UPDATE_REJECTED"
+    }
+  ],
+  "admissibility": {
+    "file_exists_in_both_worlds": true,
+    "proposed_content_differs_from_current_content_in_both_worlds": true,
+    "held_fixed": [
+      "GitLab project, repository, branch, and file path",
+      "caller identity, authentication, and write permission",
+      "supplied last_commit_id remains C0",
+      "commit message and proposed file content",
+      "file exists before the effect cut",
+      "proposed content is non-empty and differs from current content in both worlds",
+      "no concurrent request or push occurs during evaluation",
+      "no unrelated validation, authorization, path, transport, branch-policy, or service failure determines the outcome"
+    ],
+    "only_material_difference_between_worlds": "current_file_last_commit_id"
+  },
+  "evidence": {
+    "source_evidence_ids": [
+      "GITLAB_REPOSITORY_FILES_API",
+      "GITLAB_FILES_REQUEST_SPEC_STALE_LAST_COMMIT"
+    ],
+    "strength": "OFFICIAL_GITLAB_API_DOCUMENTATION_PLUS_OFFICIAL_UPSTREAM_REQUEST_SPEC",
+    "gold_evidence_path": "experiments/unit008-blind-e1/GOLD_EVIDENCE.json"
+  },
+  "independence_controls": {
+    "e1_prediction_used_to_define_source_semantics": false,
+    "target_implementation_used_to_define_source_semantics": false,
+    "later_target_revision_used": false,
+    "issue_tracker_used_as_semantic_authority": false
+  },
+  "open_uncertainties": [
+    "The exact source contract is restricted to an existing-file update carrying last_commit_id; updates omitting the guard are outside the source contract.",
+    "Current GitLab documentation is retrieval-time web evidence; exact stale/correct behavior is additionally anchored by an immutable official GitLab upstream request-spec commit."
+  ],
+  "freeze_rule": "After this lane is committed, source consequence labels, last_commit_id coordinates, admitted worlds, and effect cut may not be changed in response to primary validation."
+}

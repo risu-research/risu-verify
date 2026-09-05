@@ -1,0 +1,113 @@
+{
+  "boundary_schema": "risu.corpus-vbe-boundary/v0.2alpha1",
+  "unit_id": "corpus01-unit-008",
+  "status": "FROZEN_BOUNDARY_AND_WORLD_MODEL_PREPRIMARY",
+  "claim_scope": {
+    "operation": "yoda-digital/mcp-gitlab-server create_or_update_file at revision 177adc871ef94c39902bcdb8c89200d000e02e64",
+    "profile": "existing GitLab repository file update whose source contract supplies reviewed last_commit_id C0",
+    "all_gitlab_file_write_behaviors": "OUT_OF_SCOPE",
+    "live_remote_deployment": "NOT_CLAIMED",
+    "population_prevalence": "NOT_CLAIMED",
+    "model_relative": true
+  },
+  "coordinates": {
+    "supplied_last_commit_id": {
+      "anchor": "C0",
+      "mode": "literal"
+    },
+    "current_file_last_commit_id": {
+      "domain": [
+        "C0",
+        "C1"
+      ]
+    },
+    "file_exists": {
+      "domain": [
+        true
+      ]
+    }
+  },
+  "held_fixed": [
+    "GitLab project, repository, branch, and file path",
+    "caller authentication and write permission",
+    "supplied source last_commit_id remains C0",
+    "commit message and proposed file content",
+    "file exists before effect cut",
+    "proposed content is non-empty and differs from current content in both worlds",
+    "no concurrent request or push occurs during evaluation",
+    "no unrelated validation, authorization, path, transport, branch-policy, or service failure determines the outcome"
+  ],
+  "effect_cut": {
+    "name": "GITLAB_REPOSITORY_FILE_LAST_COMMIT_GUARD_EFFECT_CUT",
+    "definition": "The source-contract point immediately before an existing-file update is accepted or rejected according to the supplied last_commit_id guard.",
+    "target_projection_boundary": "The pinned MCP target reaches its effectful PUT without carrying the reviewed last_commit_id coordinate."
+  },
+  "worlds": [
+    {
+      "id": "W_MATCH",
+      "coordinates": {
+        "supplied_last_commit_id": "C0",
+        "current_file_last_commit_id": "C0",
+        "file_exists": true
+      },
+      "required_source_consequence": "GUARDED_FILE_UPDATE_APPLIED"
+    },
+    {
+      "id": "W_STALE",
+      "coordinates": {
+        "supplied_last_commit_id": "C0",
+        "current_file_last_commit_id": "C1",
+        "file_exists": true
+      },
+      "required_source_consequence": "STALE_GUARDED_FILE_UPDATE_REJECTED"
+    }
+  ],
+  "target_observation_model": {
+    "surface_projection": "The screened tool cannot accept last_commit_id. Its existence GET may receive the current file metadata, but the return value is discarded; the effectful PUT body omits last_commit_id in both worlds.",
+    "conditional_coordinate_carried": false,
+    "current_coordinate_retrieved_but_discarded": true,
+    "current_coordinate_bound_to_write": false,
+    "world_realizations": {
+      "W_MATCH": "EXISTING_FILE_PUT_WITHOUT_LAST_COMMIT_ID",
+      "W_STALE": "EXISTING_FILE_PUT_WITHOUT_LAST_COMMIT_ID"
+    },
+    "world_consequences_status": "NOT_REQUIRED_FOR_PROJECTION_KERNEL_TEST_AND_NOT_CLAIMED",
+    "target_to_source_consequence_map_status": "NOT_REQUIRED_BEFORE_FACTORIZATION_TEST"
+  },
+  "ctv_question": {
+    "deterministic_factorization": "Does there exist g such that source consequence kappa_S = g o rho_T for both admitted worlds?",
+    "kernel_condition": "Any worlds collapsed by rho_T must have the same established source consequence.",
+    "refinement_requirement": "Refinement is evaluated only if deterministic factorization survives; no remote target consequence is invented for the kernel test."
+  },
+  "validator_input_boundary": {
+    "world_consequences_field_present": false,
+    "target_to_source_consequence_map_field_present": false,
+    "reason": "The source consequences and pinned target request realization are established. Remote unguarded PUT consequences are not needed to evaluate whether the target projection collapses distinct source consequences."
+  },
+  "expected_validator_policy": {
+    "allowed_primary_outcomes": [
+      "CONSEQUENCE_STABLE_IN_DECLARED_SCOPE",
+      "CONSEQUENCE_REGRESSION",
+      "ASSURANCE_INCOMPLETE"
+    ],
+    "no_expected_outcome_value_frozen": true,
+    "validator_must_derive_result_from_frozen_worlds_and_realization": true
+  },
+  "anti_retrofit": {
+    "machine_e1_prediction_used_to_set_worlds": false,
+    "worlds_may_change_after_primary": false,
+    "effect_cut_may_change_after_primary": false,
+    "target_realization_may_change_after_primary": false,
+    "missing_guard_coordinate_may_be_added_after_primary": false
+  },
+  "freeze_rule": "Worlds, effect cut, target request realization, projection boundary, and claim scope are immutable after this boundary model is committed and before primary validation.",
+  "source_lane": {
+    "path": "experiments/unit008-blind-e1/SOURCE_LANE.json"
+  },
+  "target_lane": {
+    "path": "experiments/unit008-blind-e1/TARGET_LANE.json"
+  },
+  "evidence": {
+    "path": "experiments/unit008-blind-e1/GOLD_EVIDENCE.json"
+  }
+}

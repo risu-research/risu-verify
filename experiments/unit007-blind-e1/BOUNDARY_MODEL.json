@@ -1,0 +1,112 @@
+{
+  "boundary_schema": "risu.corpus-vbe-boundary/v0.2alpha1",
+  "unit_id": "corpus01-unit-007",
+  "status": "FROZEN_BOUNDARY_AND_WORLD_MODEL_PREPRIMARY",
+  "claim_scope": {
+    "operation": "aashari/mcp-server-atlassian-confluence conf_put at revision 13f3b4fdf75da6948d9ce4e8a0b47799e9059537",
+    "profile": "Confluence current-page PUT carrying caller-supplied version.number N_PLUS_1",
+    "all_confluence_update_behaviors": "OUT_OF_SCOPE",
+    "live_remote_deployment": "NOT_CLAIMED",
+    "population_prevalence": "NOT_CLAIMED",
+    "model_relative": true
+  },
+  "coordinates": {
+    "supplied_version_number": {
+      "anchor": "N_PLUS_1",
+      "mode": "literal"
+    },
+    "current_page_version_number": {
+      "domain": [
+        "N",
+        "N_PLUS_1"
+      ]
+    },
+    "page_exists": {
+      "domain": [
+        true
+      ]
+    }
+  },
+  "held_fixed": [
+    "Confluence Cloud site and page identity",
+    "caller authentication and update permission",
+    "page status current",
+    "PUT path and all request fields other than the server-current-version relation",
+    "supplied version.number remains N_PLUS_1",
+    "page exists before effect cut",
+    "no unrelated validation, authorization, transport, policy, reconciliation, or service failure determines the outcome"
+  ],
+  "effect_cut": {
+    "name": "CONFLUENCE_PAGE_VERSIONED_PUT_EFFECT_CUT",
+    "definition": "The remote Confluence service point at which the update request carrying version.number is evaluated for the page mutation.",
+    "evidence_boundary": "The admitted source evidence establishes the required current+1 relation, but not the exact stale/non-next mutation consequence."
+  },
+  "worlds": [
+    {
+      "id": "W_MATCH",
+      "coordinates": {
+        "supplied_version_number": "N_PLUS_1",
+        "current_page_version_number": "N",
+        "page_exists": true
+      },
+      "documented_version_relation": "SATISFIES_CURRENT_PLUS_ONE_RULE",
+      "required_source_consequence": "EXTERNAL_MUTATION_CONSEQUENCE_NOT_AUTHORITATIVELY_ESTABLISHED"
+    },
+    {
+      "id": "W_STALE",
+      "coordinates": {
+        "supplied_version_number": "N_PLUS_1",
+        "current_page_version_number": "N_PLUS_1",
+        "page_exists": true
+      },
+      "documented_version_relation": "DOES_NOT_SATISFY_CURRENT_PLUS_ONE_RULE",
+      "required_source_consequence": "EXTERNAL_MUTATION_CONSEQUENCE_NOT_AUTHORITATIVELY_ESTABLISHED"
+    }
+  ],
+  "target_observation_model": {
+    "surface_projection": "The pinned MCP path forwards the same caller-supplied PUT body in both worlds and performs no current-version lookup before the remote service call.",
+    "conditional_coordinate_carried": true,
+    "server_current_coordinate_observed_by_target_before_write": false,
+    "world_realizations": {
+      "W_MATCH": "PUT_PAGE_WITH_CALLER_VERSION_N_PLUS_1_FORWARDED_UNCHANGED",
+      "W_STALE": "PUT_PAGE_WITH_CALLER_VERSION_N_PLUS_1_FORWARDED_UNCHANGED"
+    },
+    "world_consequences_status": "NOT_ESTABLISHED_BY_ADMITTED_EVIDENCE",
+    "target_to_source_consequence_map_status": "NOT_ESTABLISHED_BY_ADMITTED_EVIDENCE"
+  },
+  "ctv_question": {
+    "deterministic_factorization": "Does there exist g such that source consequence kappa_S = g o rho_T for both admitted worlds?",
+    "kernel_condition": "Any worlds collapsed by rho_T must have the same established source consequence.",
+    "refinement_requirement": "A stability result additionally requires explicit established target consequences and a target-to-source refinement map; neither may be guessed."
+  },
+  "validator_input_boundary": {
+    "world_consequences_field_present": false,
+    "target_to_source_consequence_map_field_present": false,
+    "reason": "The frozen checker treats missing target consequence interpretation/refinement as semantic incompleteness; inserting guessed external consequences would exceed admitted evidence."
+  },
+  "expected_validator_policy": {
+    "allowed_primary_outcomes": [
+      "CONSEQUENCE_STABLE_IN_DECLARED_SCOPE",
+      "CONSEQUENCE_REGRESSION",
+      "ASSURANCE_INCOMPLETE"
+    ],
+    "no_expected_outcome_value_frozen": true,
+    "validator_must_derive_result_from_frozen_worlds_and_realization": true
+  },
+  "anti_retrofit": {
+    "machine_e1_prediction_used_to_set_worlds": false,
+    "worlds_may_change_after_primary": false,
+    "effect_cut_may_change_after_primary": false,
+    "missing_external_consequence_may_be_filled_after_primary": false
+  },
+  "freeze_rule": "Worlds, effect cut, target request realization, evidence gaps, and claim scope are immutable after this boundary model is committed and before primary validation.",
+  "source_lane": {
+    "path": "experiments/unit007-blind-e1/SOURCE_LANE.json"
+  },
+  "target_lane": {
+    "path": "experiments/unit007-blind-e1/TARGET_LANE.json"
+  },
+  "evidence": {
+    "path": "experiments/unit007-blind-e1/GOLD_EVIDENCE.json"
+  }
+}
