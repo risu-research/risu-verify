@@ -1,0 +1,31 @@
+{
+  "schema": "risu.e1-gold-primary-artifact-identity-receipt/v0.1alpha1",
+  "status": "ARTIFACT_IDENTITY_COMMITTED_BEFORE_RESULT_INSPECTION",
+  "gold_freeze_commit": "c4a61623217de2bfa08f090359d952c7ee660fcc",
+  "execution_commit": "1992f6fc2a4abb0ad4da3ca22957f7d872e1f9fc",
+  "protocol_git_blob": "16bbbfc37ccf1e9587b3ba0094e8c24017a81621",
+  "workflow": {
+    "path": ".github/workflows/e1-gold-006-008-primary.yml",
+    "git_blob": "bf88ac3c81d2877d74bfc985c4d52e04bdc113da",
+    "run_id": 33998052078,
+    "run_attempt": 1,
+    "event": "push",
+    "conclusion": "success"
+  },
+  "artifact": {
+    "id": 9978645634,
+    "name": "e1-gold-006-008-first-primary-1992f6fc2a4abb0ad4da3ca22957f7d872e1f9fc-33998052078",
+    "size_in_bytes": 59020,
+    "digest": "sha256:1d86a519802252e0d3fec5a1886c6f7f9532671470b411492e084bda9ab212fc",
+    "expired_at_receipt": false,
+    "created_at": "2026-09-05T23:12:58Z",
+    "expires_at": "2026-12-04T23:12:46Z"
+  },
+  "inspection_barrier": {
+    "semantic_result_files_downloaded_before_receipt": false,
+    "semantic_result_files_opened_before_receipt": false,
+    "workflow_logs_used_to_extract_semantic_verdicts_before_receipt": false,
+    "receipt_binds_artifact_identity_before_semantic_inspection": true
+  },
+  "claim_boundary": "This receipt binds the first combined gold-primary artifact identity and execution provenance before semantic result inspection. It records no Unit006-008 semantic verdict."
+}
