@@ -1,0 +1,63 @@
+{
+  "schema": "risu.e1-heldout-gold-closure/v0.1alpha1",
+  "closure_id": "E1_REMAINING_HELDOUT_GOLD_CLOSURE_001",
+  "status": "E1_REMAINING_HELDOUT_GOLD_CLOSED",
+  "canonical_classification": {
+    "path": "experiments/e1-heldout-matrix-005-008/MACHINE_VS_GOLD_CANONICAL.json",
+    "git_blob": "3ab26d124e404ee09ef7243b9c7e9d688ac071f0"
+  },
+  "integrity_chain": {
+    "machine_matrix_git_blob": "1e6633bb0204251e5ef4f10fa390067defdf7fe2",
+    "machine_closure_git_blob": "de5ef57557a8e8d374ad6a17767c91a883a78564",
+    "gold_protocol_git_blob": "16bbbfc37ccf1e9587b3ba0094e8c24017a81621",
+    "gold_atomic_freeze_commit": "c4a61623217de2bfa08f090359d952c7ee660fcc",
+    "gold_execution_commit": "1992f6fc2a4abb0ad4da3ca22957f7d872e1f9fc",
+    "artifact_identity_receipt_commit": "112a8c7d6a787606f811748273e71575cced7456",
+    "gold_run_id": 33998052078,
+    "gold_artifact_id": 9978645634,
+    "gold_artifact_zip_sha256": "1d86a519802252e0d3fec5a1886c6f7f9532671470b411492e084bda9ab212fc",
+    "archive_manifest_sha256": "52c88cb34bf4fb6acd615cd95d46f58a50596490116ee9326b488561ff4c1cd0",
+    "artifact_verified_before_semantic_inspection": true,
+    "all_three_primary_independent_pairs_valid": true
+  },
+  "gold_findings": {
+    "unit006": {
+      "verdict": "CONSEQUENCE_STABLE_IN_DECLARED_SCOPE",
+      "interpretation": "Within the frozen two-world ConfigMap PATCH profile, the pinned Kubernetes Python client preserves metadata.resourceVersion into the effectful PATCH and the source consequences remain distinguishable with an established refinement."
+    },
+    "unit007": {
+      "verdict": "ASSURANCE_INCOMPLETE",
+      "interpretation": "The pinned Confluence target forwards the caller version field, but admitted authoritative evidence does not establish the exact stale/non-next external mutation consequence or the required target-to-source refinement; the gold layer therefore remains incomplete rather than guessing."
+    },
+    "unit008": {
+      "verdict": "CONSEQUENCE_REGRESSION",
+      "interpretation": "The GitLab source contract distinguishes matching from stale last_commit_id, while the pinned MCP target reaches the existing-file PUT without carrying that guard; W_MATCH and W_STALE collapse to one target realization despite distinct source consequences.",
+      "witness": "W_MATCH and W_STALE share EXISTING_FILE_PUT_WITHOUT_LAST_COMMIT_ID while requiring GUARDED_FILE_UPDATE_APPLIED versus STALE_GUARDED_FILE_UPDATE_REJECTED."
+    }
+  },
+  "machine_vs_gold_findings": {
+    "unit006": "VALID_CONSERVATIVE_ABSTENTION_ON_A_GOLD_STABLE_CASE",
+    "unit007": "UNSCORABLE_GOLD_INCOMPLETE",
+    "unit008": "VALID_FAIL_CLOSED_ABSTENTION_ON_A_GOLD_REGRESSION",
+    "unsafe_false_stability_count": 0,
+    "false_regression_count": 0,
+    "positive_regression_detection_count": 0,
+    "interpretation": "Frozen E1 abstained on all three pristine slots. Gold later showed one narrow stable case, one genuinely incomplete case, and one concrete regression. The Unit008 abstention was fail-closed rather than an unsafe stability claim; Unit006 was conservative rather than a false claim."
+  },
+  "scientific_boundaries": {
+    "unit005_remains_permanently_excluded_from_pristine_scoring": true,
+    "first_machine_predictions_remain_immutable": true,
+    "gold_did_not_rescore_or_rewrite_first_predictions": true,
+    "population_accuracy_claimed": false,
+    "precision_or_recall_claimed": false,
+    "population_prevalence_claimed": false,
+    "live_deployment_behavior_claimed": false,
+    "target_specific_claims_are_limited_to_frozen_revisions_and_declared_profiles": true
+  },
+  "post_closure_reuse": {
+    "unit006_008_may_now_inform_engine_development": true,
+    "unit006_008_may_be_reused_as_fresh_heldout_test_cases": false,
+    "future_fresh_evaluation_requires_new_precommitted_cases": true
+  },
+  "closure_boundary": "This closes the machine-first plus independent-gold E1 evaluation for the three pristine remaining held-out slots without changing frozen E1, machine predictions, gold models, or checker bytes."
+}

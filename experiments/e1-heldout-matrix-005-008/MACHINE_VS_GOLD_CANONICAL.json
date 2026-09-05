@@ -1,0 +1,105 @@
+{
+  "schema": "risu.e1-heldout-machine-vs-gold-canonical/v0.1alpha1",
+  "record_id": "E1_REMAINING_HELDOUT_MACHINE_VS_GOLD_CANONICAL_001",
+  "status": "CANONICAL_MACHINE_VS_GOLD_CLASSIFICATION_CLOSED",
+  "authority": {
+    "machine_matrix_path": "experiments/e1-heldout-matrix-005-008/FIRST_PREDICTION_MATRIX_CANONICAL.json",
+    "machine_matrix_git_blob": "1e6633bb0204251e5ef4f10fa390067defdf7fe2",
+    "machine_closure_git_blob": "de5ef57557a8e8d374ad6a17767c91a883a78564",
+    "gold_protocol_git_blob": "16bbbfc37ccf1e9587b3ba0094e8c24017a81621",
+    "gold_freeze_commit": "c4a61623217de2bfa08f090359d952c7ee660fcc",
+    "primary_execution_commit": "1992f6fc2a4abb0ad4da3ca22957f7d872e1f9fc",
+    "artifact_identity_receipt_commit": "112a8c7d6a787606f811748273e71575cced7456",
+    "github_run_id": 33998052078,
+    "artifact_id": 9978645634,
+    "artifact_zip_sha256": "1d86a519802252e0d3fec5a1886c6f7f9532671470b411492e084bda9ab212fc",
+    "archive_manifest_sha256": "52c88cb34bf4fb6acd615cd95d46f58a50596490116ee9326b488561ff4c1cd0",
+    "primary_run_record_sha256": "1d47706b089678140097dcfa4b4fc99fc07c5350da18283f61a05de402fb584d",
+    "primary_checker_git_blob": "e66e3b38b33bb856e091231f032dd02bb6f820b9",
+    "independent_checker_git_blob": "ac1156e6cd6301ec0a0e28172e04b209ab1863f6"
+  },
+  "archive_verification": {
+    "github_artifact_digest_equal_downloaded_zip_sha256": true,
+    "manifest_status": "SEALED_FIRST_GOLD_PRIMARY_ARCHIVE",
+    "manifest_listed_entries": 46,
+    "listed_entries_hash_and_size_verified": 46,
+    "listed_entry_mismatches": 0,
+    "manifest_coverage_complete": true,
+    "frozen_authority_and_normative_git_blob_checks": 20,
+    "frozen_authority_and_normative_git_blob_mismatches": 0,
+    "infrastructure_failure": false
+  },
+  "matrix": {
+    "enrolled_slots": 4,
+    "pristine_scoring_slots": 3,
+    "protocol_contaminated_slots": 1,
+    "unit005": {
+      "unit_id": "corpus01-unit-005",
+      "machine_outcome": null,
+      "gold_verdict": null,
+      "classification": "PROTOCOL_CONTAMINATED_NO_PRISTINE_E1_ATTEMPT",
+      "fresh_accuracy_eligible": false
+    },
+    "unit006": {
+      "unit_id": "corpus01-unit-006",
+      "machine_outcome": "E1_PREDICTED_ASSURANCE_INCOMPLETE",
+      "gold_verdict": "CONSEQUENCE_STABLE_IN_DECLARED_SCOPE",
+      "gold_reason": "FINITE_DECLARED_SCOPE_FACTORIZATION_AND_REFINEMENT_ESTABLISHED",
+      "primary_result_sha256": "5882d6ff68c8f4f0d1db450066faa851f5518fba47b55af7492850413ac2a222",
+      "independent_check_sha256": "e5edaeb94afcf1dc65494d00eb980981142e9209238c3de141c67c41fbc5387f",
+      "independent_agreement": true,
+      "classification": "VALID_CONSERVATIVE_ABSTENTION_ON_A_GOLD_STABLE_CASE"
+    },
+    "unit007": {
+      "unit_id": "corpus01-unit-007",
+      "machine_outcome": "E1_PREDICTED_ASSURANCE_INCOMPLETE",
+      "gold_verdict": "ASSURANCE_INCOMPLETE",
+      "gold_reason": "FACTORING_ESTABLISHED_BUT_REFINEMENT_NOT_ESTABLISHED",
+      "primary_result_sha256": "086f807f2407cb409865d47ce7ada2ca876f73285bcb0253148c72a2e443cd0b",
+      "independent_check_sha256": "a12c86539316ab4c0758bec3a255e834ca4bff152a0689bd6a65409ef5f7c72f",
+      "independent_agreement": true,
+      "classification": "UNSCORABLE_GOLD_INCOMPLETE",
+      "unresolved_gold_obligations": [
+        "TARGET_CONSEQUENCE_INTERPRETATION_MISSING",
+        "TARGET_TO_SOURCE_REFINEMENT_MAPPING_MISSING"
+      ]
+    },
+    "unit008": {
+      "unit_id": "corpus01-unit-008",
+      "machine_outcome": "E1_PREDICTED_ASSURANCE_INCOMPLETE",
+      "gold_verdict": "CONSEQUENCE_REGRESSION",
+      "gold_reason": "DETERMINISTIC_FACTORIZATION_VIOLATION",
+      "primary_result_sha256": "a585e085c5344aa879d49a6db3cc525f5b7df5b68a3866cb8857b500131f91a6",
+      "independent_check_sha256": "543e6a2269e2e5d779a1367665f1e53af570298b569a29237487a50b7c9b28d7",
+      "independent_agreement": true,
+      "classification": "VALID_FAIL_CLOSED_ABSTENTION_ON_A_GOLD_REGRESSION",
+      "collapse_witness": {
+        "world_1": "W_MATCH",
+        "world_2": "W_STALE",
+        "shared_target_realization": "EXISTING_FILE_PUT_WITHOUT_LAST_COMMIT_ID",
+        "source_consequence_1": "GUARDED_FILE_UPDATE_APPLIED",
+        "source_consequence_2": "STALE_GUARDED_FILE_UPDATE_REJECTED"
+      }
+    }
+  },
+  "frozen_sample_counts": {
+    "pristine_unit_count": 3,
+    "gold_stable_count": 1,
+    "gold_regression_count": 1,
+    "gold_incomplete_count": 1,
+    "machine_incomplete_count": 3,
+    "unsafe_false_stability_count": 0,
+    "false_regression_count": 0,
+    "regression_detection_count": 0,
+    "fail_closed_abstention_on_regression_count": 1,
+    "conservative_abstention_on_stable_count": 1
+  },
+  "immutability": {
+    "first_machine_predictions_rewritten_after_gold": false,
+    "e1_engine_modified_before_classification": false,
+    "gold_models_retrofitted_after_primary": false,
+    "unit005_reclassified_as_pristine": false,
+    "unit006_008_may_be_counted_as_fresh_future_test_cases": false
+  },
+  "claim_boundary": "These are descriptive classifications of the three frozen pristine E1 slots under the precommitted gold protocol. They are not population accuracy, precision, recall, prevalence, or live-deployment estimates."
+}
