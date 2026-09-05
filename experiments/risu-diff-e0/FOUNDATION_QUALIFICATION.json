@@ -1,0 +1,51 @@
+{
+  "additional_gates": [
+    "empty_interpretation_hard_stop",
+    "unresolved_material_fail_closed",
+    "semantic_change_digest_sensitivity",
+    "valid_shrunken_witness_independent_recheck",
+    "permutation_fuzz_64",
+    "all_material_node_edge_evidence_stripping",
+    "collapse_and_relational_tamper_matrices",
+    "minimal_difference_witness_selection",
+    "static_extractor_non_authority",
+    "cegar_science_rewrite_prohibition",
+    "metadata_only_negative_control"
+  ],
+  "base_main_sha": "51f56743373e7d979fef5905f6a5c1dadf7b791e",
+  "development_boundary": "Unit001/002 + historical/calibration + Unit002-M; Unit003 target-specific semantics withheld",
+  "file_sha256": {
+    ".github/workflows/risu-diff-e0-engine.yml": "327aed51db065ea8bcb780a4d55439f55b6e7ba3b97cac159e7176d32a2ce4c1",
+    "docs/RISU_DIFF_E0_FOUNDATION.md": "38d90316858dbfea16d4de958baae6dc64f29dd20105ac3fea3881ed317cdeb6",
+    "risu_e0/__init__.py": "ec8be11bcbddb257f35f2cd18f8116efa003be20d5a7e4c820b3d6337c38099a",
+    "risu_e0/adapters.py": "9d22c318ffbb6390f671a4b2b6028e6bd32391c94156c7d1540b8cdae9be213a",
+    "risu_e0/baselines.py": "3c9a9727784234c3cdc17a1849047fb81f6810e861169466d4d7ec56fffbfb05",
+    "risu_e0/cegar.py": "b2bedeafab48c98846c0f159386eafb7e5528400be69f30798f61b830b79bfd9",
+    "risu_e0/engine.py": "95c27f563155b6b65cea5eb903cd21956a16c8cb49809befae0db43880f8aed4",
+    "risu_e0/extractor.py": "f4ce66b8d2d07f93858516bbe4f653ae3d65572eb2dcf9b654231539754ade8d",
+    "risu_e0/graph.py": "d1fb74deec6155b09f18d87f22a91f41233116a34bee1164bf222048c09dfc6e",
+    "tests/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "tests/e0_support.py": "e44deac93dd15174879c7e9b048de0fc9902a17f8f4e375fc18e3f01924d0fdf",
+    "tests/test_risu_diff_e0_assurance.py": "74f1f545afb108decf7e5d5a8ad3b046fe2a112f1bbdf6857f094cf566216dc2",
+    "tests/test_risu_diff_e0_calibration.py": "3ba2791ef3198efd6bc0519fa2b2c1d2704e4f7d3d4e25aa5d950586e3f2622c",
+    "tests/test_risu_diff_e0_discovery.py": "9c1e39c484445fe2576cfdb0012b4b2a1e52f9fd3e15827d768d0eeed10071f5",
+    "tools/risu_e0_foundation_verify.py": "6209098e90cd2592745b4bbf38e0b8c9955e22db2b4389240a2f9b90544d3353",
+    "tools/risu_e0_qualify.py": "860bb030bf9f2211c7aa08244586520e847991520091401277a6aee529908d11",
+    "tools/risu_e0_witness_check.py": "1061b4504d47074070a9ef7dea7455014c56fc7a76f3a8b5c966904d8499d2d3"
+  },
+  "local_qualification": {
+    "errors": 0,
+    "failures": 0,
+    "status": "PASS",
+    "tests_run": 30
+  },
+  "qualification_id": "RISU_DIFF_E0_FOUNDATION_001",
+  "required_adversarial_gates": {
+    "baseline_non_authority": "PASS",
+    "evidence_less_established_rejection": "PASS",
+    "graph_order_digest_invariance": "PASS",
+    "relational_extra_consequence_hard_stop": "PASS",
+    "tampered_witness_rejection": "PASS"
+  },
+  "scientific_boundary": "E0 is noncanonical and has no consequence authority; canonical Corpus authority remains unchanged."
+}
