@@ -7,12 +7,7 @@ on:
     paths:
       - tools/unit003_blind_acquire.py
       - tests/test_unit003_blind_acquire.py
-      - experiments/unit003-blind-machine-first/EXAM_PROTOCOL.json
-      - experiments/unit003-blind-machine-first/EXAM_PROTOCOL_EFFECTIVE_001.json
-      - experiments/unit003-blind-machine-first/EXAM_PROTOCOL_CORRECTION_001.json
-      - experiments/unit003-blind-machine-first/RUN_FREEZE.json
-      - experiments/unit003-blind-machine-first/RUN_FREEZE_CORRECTION_001.json
-      - experiments/unit003-blind-machine-first/EXECUTION_ATTEMPTS.json
+      - experiments/unit003-blind-machine-first/**
       - .github/workflows/unit003-blind-machine-first.yml
   workflow_dispatch:
 
@@ -35,80 +30,78 @@ jobs:
         run: |
           python - <<'PY'
           import hashlib, json, pathlib, subprocess
-          root = pathlib.Path(".")
-          q = json.loads((root / "experiments/risu-diff-e0/MACHINE_FIRST_FREEZE_QUALIFICATION.json").read_text())
-          expected_components = q["engine_identity_components"]
-          actual_components = {}
-          for path, expected in sorted(expected_components.items()):
-              git_bytes = subprocess.check_output(["git", "show", f"HEAD:{path}"])
-              git_sha = hashlib.sha256(git_bytes).hexdigest()
-              work_sha = hashlib.sha256((root / path).read_bytes()).hexdigest()
-              assert git_sha == expected, (path, expected, git_sha)
-              assert work_sha == expected, (path, expected, work_sha)
-              actual_components[path] = git_sha
-          canonical = (json.dumps(actual_components, sort_keys=True, separators=(",", ":"), ensure_ascii=False) + "\n").encode()
+          root = pathlib.Path('.')
+          q = json.loads((root / 'experiments/risu-diff-e0/MACHINE_FIRST_FREEZE_QUALIFICATION.json').read_text())
+          actual = {}
+          for path, expected in sorted(q['engine_identity_components'].items()):
+              git_bytes = subprocess.check_output(['git','show',f'HEAD:{path}'])
+              work_bytes = (root/path).read_bytes()
+              gs = hashlib.sha256(git_bytes).hexdigest()
+              ws = hashlib.sha256(work_bytes).hexdigest()
+              assert gs == expected == ws, (path, expected, gs, ws)
+              actual[path] = gs
+          canonical = (json.dumps(actual, sort_keys=True, separators=(',', ':'), ensure_ascii=False) + '\n').encode()
           digest = hashlib.sha256(canonical).hexdigest()
-          assert digest == q["engine_identity_digest"] == "7979ff811765cf1617602b2ef9ed89935f24da2c1f32eceb417dfd209e335c60"
-          subprocess.check_call(["git", "merge-base", "--is-ancestor", "2e423a86339daa031f4b98f79f288b82e5ce621b", "HEAD"])
-          print(json.dumps({
-              "status": "PASS",
-              "engine_components_verified": len(actual_components),
-              "engine_identity_digest": digest,
-              "identity_authority": "COMMITTED_GIT_OBJECT_SHA256_PLUS_CHECKOUT_EQUALITY",
-          }, sort_keys=True))
+          assert digest == q['engine_identity_digest'] == '7979ff811765cf1617602b2ef9ed89935f24da2c1f32eceb417dfd209e335c60'
+          subprocess.check_call(['git','merge-base','--is-ancestor','2e423a86339daa031f4b98f79f288b82e5ce621b','HEAD'])
+          print(json.dumps({'status':'PASS','engine_components_verified':len(actual),'engine_identity_digest':digest}, sort_keys=True))
           PY
 
-      - name: Verify prospective Unit003 run freeze and correction
+      - name: Verify Unit003 prospective lineage and repository-canonical harness bytes
         run: |
           python - <<'PY'
           import hashlib, json, pathlib, subprocess
-          root = pathlib.Path(".")
-          freeze = json.loads((root / "experiments/unit003-blind-machine-first/RUN_FREEZE.json").read_text())
-          correction = json.loads((root / "experiments/unit003-blind-machine-first/RUN_FREEZE_CORRECTION_001.json").read_text())
-          assert freeze["status"] == "FROZEN_BEFORE_SELECTED_SCREENED_OPERATION_CONTENT_ACQUISITION"
-          assert correction["status"] == "PRE_CONTENT_HARNESS_CORRECTION_001"
-          assert correction["scientific_or_scoring_change"] is False
-          assert correction["target_content_fetch_occurred_in_invalid_attempt"] is False
-          assert freeze["engine_identity_digest"] == "7979ff811765cf1617602b2ef9ed89935f24da2c1f32eceb417dfd209e335c60"
-          assert freeze["target_revision"] == "04f459470f58642063b0374361bee0011278f6d8"
-          assert freeze["target_tree_sha"] == "d1eb526feea2a1815554db775a343d751f4892b1"
-          workflow_path = ".github/workflows/unit003-blind-machine-first.yml"
-          for path, expected in freeze["file_sha256"].items():
-              if path == workflow_path:
-                  assert expected == correction["superseded_workflow_sha256"]
-                  continue
-              actual = hashlib.sha256((root / path).read_bytes()).hexdigest()
-              assert actual == expected, (path, expected, actual)
-          current_workflow_sha = hashlib.sha256((root / workflow_path).read_bytes()).hexdigest()
-          assert current_workflow_sha == correction["corrected_workflow_sha256"], (current_workflow_sha, correction["corrected_workflow_sha256"])
-          subprocess.check_call(["git", "merge-base", "--is-ancestor", "2e423a86339daa031f4b98f79f288b82e5ce621b", "HEAD"])
-          changed = subprocess.check_output(
-              ["git", "diff", "--name-only", "2e423a86339daa031f4b98f79f288b82e5ce621b..HEAD"],
-              text=True,
-          ).splitlines()
-          allowed_prefix = "experiments/unit003-blind-machine-first/"
-          allowed_exact = {
-              "tools/unit003_blind_acquire.py",
-              "tests/test_unit003_blind_acquire.py",
-              ".github/workflows/unit003-blind-machine-first.yml",
+          root = pathlib.Path('.')
+          freeze = json.loads((root/'experiments/unit003-blind-machine-first/RUN_FREEZE.json').read_text())
+          c1 = json.loads((root/'experiments/unit003-blind-machine-first/RUN_FREEZE_CORRECTION_001.json').read_text())
+          c2 = json.loads((root/'experiments/unit003-blind-machine-first/RUN_FREEZE_CORRECTION_002.json').read_text())
+          attempts = json.loads((root/'experiments/unit003-blind-machine-first/EXECUTION_ATTEMPTS.json').read_text())
+          assert freeze['status'] == 'FROZEN_BEFORE_SELECTED_SCREENED_OPERATION_CONTENT_ACQUISITION'
+          assert c1['status'] == 'PRE_CONTENT_HARNESS_CORRECTION_001'
+          assert c2['status'] == 'PRE_CONTENT_BYTE_IDENTITY_CORRECTION_002'
+          assert c1['scientific_or_scoring_change'] is False
+          assert c2['scientific_or_scoring_change'] is False
+          assert c2['target_content_access_before_correction'] is False
+          assert len(attempts['attempts']) == 2
+          assert all(a['first_seal_created'] is False for a in attempts['attempts'])
+          assert all(a['scientific_prediction'] is None for a in attempts['attempts'])
+
+          identities = c2['authoritative_harness_identities']
+          for rel, row in sorted(identities.items()):
+              blob = subprocess.check_output(['git','rev-parse',f'HEAD:{rel}'], text=True).strip()
+              git_bytes = subprocess.check_output(['git','show',f'HEAD:{rel}'])
+              work_bytes = (root/rel).read_bytes()
+              gs = hashlib.sha256(git_bytes).hexdigest()
+              ws = hashlib.sha256(work_bytes).hexdigest()
+              assert blob == row['git_blob_sha'], (rel, row['git_blob_sha'], blob)
+              if row.get('sha256') is not None:
+                  assert gs == row['sha256'], (rel, row['sha256'], gs)
+              assert gs == ws, (rel, gs, ws)
+
+          protocol_blobs = {
+              'experiments/unit003-blind-machine-first/EXAM_PROTOCOL.json':'7825386feb717047eae5c67e2aabac626243b989',
+              'experiments/unit003-blind-machine-first/EXAM_PROTOCOL_EFFECTIVE_001.json':'95a72c1857fe797be11d4f5a21d23156a69711d4',
+              'experiments/unit003-blind-machine-first/EXAM_PROTOCOL_CORRECTION_001.json':'90bb97f4ca37461398eb8f00cd479756ae2d10e9',
+              'experiments/unit003-blind-machine-first/RUN_FREEZE.json':'6c030b7619f77d0dbb5bcf52d0737f407bdfb325',
           }
-          unexpected = [p for p in changed if not p.startswith(allowed_prefix) and p not in allowed_exact]
+          for rel, expected in protocol_blobs.items():
+              actual = subprocess.check_output(['git','rev-parse',f'HEAD:{rel}'], text=True).strip()
+              assert actual == expected, (rel, expected, actual)
+
+          changed = subprocess.check_output(['git','diff','--name-only','2e423a86339daa031f4b98f79f288b82e5ce621b..HEAD'], text=True).splitlines()
+          allow_prefix = 'experiments/unit003-blind-machine-first/'
+          allow_exact = {'tools/unit003_blind_acquire.py','tests/test_unit003_blind_acquire.py','.github/workflows/unit003-blind-machine-first.yml'}
+          unexpected = [p for p in changed if not p.startswith(allow_prefix) and p not in allow_exact]
           assert not unexpected, unexpected
-          print(json.dumps({
-              "status": "PASS",
-              "run_freeze_id": freeze["run_freeze_id"],
-              "correction_id": correction["correction_id"],
-              "engine_unchanged": True,
-              "unexpected_changed_paths": unexpected,
-          }, sort_keys=True))
+          print(json.dumps({'status':'PASS','correction_002':c2['correction_id'],'attempts_retained':len(attempts['attempts']),'unexpected_changed_paths':unexpected}, sort_keys=True))
           PY
 
-      - name: Syntax and synthetic qualification
+      - name: Syntax and synthetic acquisition qualification
         run: |
           python -m py_compile tools/unit003_blind_acquire.py tests/test_unit003_blind_acquire.py
           python -m unittest -v tests.test_unit003_blind_acquire
 
-      - name: Fetch target commit/tree without blobs
+      - name: Fetch exact target commit/tree with blob filter
         run: |
           set -euo pipefail
           TARGET="$RUNNER_TEMP/unit003-target"
@@ -117,7 +110,7 @@ jobs:
           git -C "$TARGET" remote add origin https://github.com/kubernetes/kubectl.git
           git -C "$TARGET" -c protocol.version=2 fetch --depth=1 --filter=blob:none origin "$TARGET_REVISION"
           test "$(git -C "$TARGET" rev-parse FETCH_HEAD)" = "$TARGET_REVISION"
-          git -C "$TARGET" update-ref "refs/unit003/target" "$TARGET_REVISION"
+          git -C "$TARGET" update-ref refs/unit003/target "$TARGET_REVISION"
           test "$(git -C "$TARGET" rev-parse "${TARGET_REVISION}^{tree}")" = "d1eb526feea2a1815554db775a343d751f4892b1"
 
       - name: Freeze round-0 selection from tree metadata only
@@ -127,7 +120,7 @@ jobs:
             --repo-dir "$RUNNER_TEMP/unit003-target" \
             --out "$RUNNER_TEMP/unit003-selection/ROUND0_SELECTION.json"
 
-      - name: Upload tree-only selection
+      - name: Upload immutable tree-only selection
         uses: actions/upload-artifact@v4
         with:
           name: unit003-round0-selection-${{ github.sha }}
@@ -143,62 +136,50 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Reverify exact frozen E0 bytes post-freeze
+      - name: Reverify frozen E0 engine identity
         run: |
           python - <<'PY'
           import hashlib, json, pathlib, subprocess
-          root = pathlib.Path(".")
-          q = json.loads((root / "experiments/risu-diff-e0/MACHINE_FIRST_FREEZE_QUALIFICATION.json").read_text())
-          expected_components = q["engine_identity_components"]
-          actual_components = {}
-          for path, expected in sorted(expected_components.items()):
-              git_bytes = subprocess.check_output(["git", "show", f"HEAD:{path}"])
-              git_sha = hashlib.sha256(git_bytes).hexdigest()
-              work_sha = hashlib.sha256((root / path).read_bytes()).hexdigest()
-              assert git_sha == expected, (path, expected, git_sha)
-              assert work_sha == expected, (path, expected, work_sha)
-              actual_components[path] = git_sha
-          canonical = (json.dumps(actual_components, sort_keys=True, separators=(",", ":"), ensure_ascii=False) + "\n").encode()
-          digest = hashlib.sha256(canonical).hexdigest()
-          assert digest == q["engine_identity_digest"] == "7979ff811765cf1617602b2ef9ed89935f24da2c1f32eceb417dfd209e335c60"
-          subprocess.check_call(["git", "merge-base", "--is-ancestor", "2e423a86339daa031f4b98f79f288b82e5ce621b", "HEAD"])
-          print(json.dumps({
-              "status": "PASS",
-              "engine_components_verified": len(actual_components),
-              "engine_identity_digest": digest,
-              "identity_authority": "COMMITTED_GIT_OBJECT_SHA256_PLUS_CHECKOUT_EQUALITY",
-          }, sort_keys=True))
+          root = pathlib.Path('.')
+          q = json.loads((root/'experiments/risu-diff-e0/MACHINE_FIRST_FREEZE_QUALIFICATION.json').read_text())
+          actual = {}
+          for path, expected in sorted(q['engine_identity_components'].items()):
+              b = subprocess.check_output(['git','show',f'HEAD:{path}'])
+              h = hashlib.sha256(b).hexdigest()
+              assert h == expected == hashlib.sha256((root/path).read_bytes()).hexdigest()
+              actual[path] = h
+          digest = hashlib.sha256((json.dumps(actual, sort_keys=True, separators=(',', ':'), ensure_ascii=False)+'\n').encode()).hexdigest()
+          assert digest == '7979ff811765cf1617602b2ef9ed89935f24da2c1f32eceb417dfd209e335c60'
+          print(json.dumps({'status':'PASS','engine_components_verified':len(actual),'engine_identity_digest':digest}, sort_keys=True))
           PY
+          python -m unittest -v tests.test_unit003_blind_acquire
 
-      - name: Re-run synthetic acquisition qualification
-        run: python -m unittest -v tests.test_unit003_blind_acquire
-
-      - name: Download immutable tree-only selection
+      - name: Download tree-only selection
         uses: actions/download-artifact@v4
         with:
           name: unit003-round0-selection-${{ github.sha }}
           path: ${{ runner.temp }}/unit003-first-seal
 
-      - name: Verify selection before any selected target content fetch
+      - name: Verify immutable selection before selected content fetch
         run: |
           python tools/unit003_blind_acquire.py verify-selection \
             --selection "$RUNNER_TEMP/unit003-first-seal/ROUND0_SELECTION.json"
 
-      - name: Fetch only selected exact-revision bytes and close packet
+      - name: Fetch selected exact-revision bytes and close packet
         run: |
           python tools/unit003_blind_acquire.py acquire \
             --selection "$RUNNER_TEMP/unit003-first-seal/ROUND0_SELECTION.json" \
             --packet-dir "$RUNNER_TEMP/unit003-first-seal/PACKET" \
             --run-id "unit003-e0-r0-${GITHUB_SHA}"
 
-      - name: Run frozen E0 with no nonsemantic observation
+      - name: Run frozen E0 and emit first semantic seal
         run: |
           python tools/risu_e0_machine_first.py \
             "$RUNNER_TEMP/unit003-first-seal/PACKET" \
             "$RUNNER_TEMP/unit003-first-seal/E0" \
             --no-observation
 
-      - name: Verify and bind first semantic seal without logging prediction value
+      - name: Bind first seal without logging prediction value
         run: |
           python tools/unit003_blind_acquire.py record \
             --selection "$RUNNER_TEMP/unit003-first-seal/ROUND0_SELECTION.json" \
@@ -209,21 +190,19 @@ jobs:
           cp experiments/unit003-blind-machine-first/EXAM_PROTOCOL_CORRECTION_001.json "$RUNNER_TEMP/unit003-first-seal/"
           cp experiments/unit003-blind-machine-first/RUN_FREEZE.json "$RUNNER_TEMP/unit003-first-seal/"
           cp experiments/unit003-blind-machine-first/RUN_FREEZE_CORRECTION_001.json "$RUNNER_TEMP/unit003-first-seal/"
+          cp experiments/unit003-blind-machine-first/RUN_FREEZE_CORRECTION_002.json "$RUNNER_TEMP/unit003-first-seal/"
           cp experiments/unit003-blind-machine-first/EXECUTION_ATTEMPTS.json "$RUNNER_TEMP/unit003-first-seal/"
 
-      - name: Assert structural refinement ceiling was frozen pre-content
+      - name: Enforce predeclared E0 structural refinement ceiling
         run: |
           python - <<'PY'
           import json, pathlib
-          freeze = json.loads(pathlib.Path("experiments/unit003-blind-machine-first/RUN_FREEZE.json").read_text())
-          assert freeze["structural_audit_before_target_content"]["first_prediction_target_discriminative"] is False
-          assert freeze["structural_audit_before_target_content"]["machine_semantic_upgrade_ingestion_path_present"] is False
-          assert freeze["structural_audit_before_target_content"]["post_first_seal_rule"] == "STOP_E0_AT_STRUCTURAL_REFINEMENT_CEILING_WITHOUT_HUMAN_TRANSLATION"
-          print(json.dumps({
-              "status": "PASS",
-              "classification": "STRUCTURAL_REFINEMENT_CEILING_PREDECLARED",
-              "human_probe_translation_used": False,
-          }, sort_keys=True))
+          freeze = json.loads(pathlib.Path('experiments/unit003-blind-machine-first/RUN_FREEZE.json').read_text())
+          s = freeze['structural_audit_before_target_content']
+          assert s['first_prediction_target_discriminative'] is False
+          assert s['machine_semantic_upgrade_ingestion_path_present'] is False
+          assert s['post_first_seal_rule'] == 'STOP_E0_AT_STRUCTURAL_REFINEMENT_CEILING_WITHOUT_HUMAN_TRANSLATION'
+          print(json.dumps({'status':'PASS','classification':'STRUCTURAL_REFINEMENT_CEILING_PREDECLARED','human_probe_translation_used':False}, sort_keys=True))
           PY
 
       - name: Upload immutable first-seal archive

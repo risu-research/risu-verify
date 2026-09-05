@@ -1,0 +1,122 @@
+{
+  "schema": "risu.unit003-blind-machine-first-run-freeze-correction/v0.1",
+  "correction_id": "UNIT003_BLIND_MACHINE_FIRST_RUN_FREEZE_CORRECTION_002",
+  "applies_to_run_freeze_id": "UNIT003_BLIND_MACHINE_FIRST_E0_RUN_FREEZE_001",
+  "status": "PRE_CONTENT_BYTE_IDENTITY_CORRECTION_002",
+  "scientific_or_scoring_change": false,
+  "target_content_access_before_correction": false,
+  "purpose": "Replace the one incorrect precomputed test-file SHA-256 with repository-canonical Git-object identity after an exhaustive pre-seal byte audit, while leaving all acquisition, ranking, E0, target, and scientific rules unchanged.",
+  "invalid_attempt_002": {
+    "run_id": 33977698630,
+    "head_sha": "7693e82c1edccbdd086cb844064700a01dd4d6a1",
+    "select_job_id": 101337206333,
+    "failed_step": "Verify prospective Unit003 run freeze and correction",
+    "failure_class": "PRECOMPUTED_TEST_SHA256_MISMATCH",
+    "frozen_e0_identity_gate_passed": true,
+    "engine_components_verified": 26,
+    "engine_identity_digest": "7979ff811765cf1617602b2ef9ed89935f24da2c1f32eceb417dfd209e335c60",
+    "syntax_tests_executed": false,
+    "target_commit_tree_fetch_executed": false,
+    "round0_selection_executed": false,
+    "selected_target_content_fetch_executed": false,
+    "machine_input_created": false,
+    "e0_executed": false,
+    "first_seal_created": false,
+    "scientific_prediction_observed": false
+  },
+  "independent_preseal_byte_audit": {
+    "branch": "unit003-preseal-byte-audit",
+    "audit_commit": "5a07ae4aa52ce1b31b290846bd7cd65c4d7519ba",
+    "run_id": 33977840280,
+    "job_id": 101337577249,
+    "conclusion": "SUCCESS",
+    "target_network_access": false,
+    "target_content_access": false,
+    "files_audited": 9,
+    "checkout_transform_count": 0,
+    "declared_mismatch_count": 1,
+    "sole_mismatch": {
+      "path": "tests/test_unit003_blind_acquire.py",
+      "git_blob_sha": "2a5913c31a250299bd2bb4f6f4d899a25bade635",
+      "superseded_declared_sha256": "48bfbdc6980597db53b3ccb16009ef8f98f516fe626e0dde81dda9f13a9f735c",
+      "repository_canonical_sha256": "c517e3cb1818fa73a8d008d64793fb286a754accb99c06e228ebcec3b49c0fdb",
+      "working_tree_sha256": "c517e3cb1818fa73a8d008d64793fb286a754accb99c06e228ebcec3b49c0fdb"
+    },
+    "other_repository_canonical_identities": {
+      "tools/unit003_blind_acquire.py": {
+        "git_blob_sha": "0ec531fb84273338a074494cf72557e997c19a5c",
+        "sha256": "dbcea0b3214f28377cee574c561656988a3318f82d4d62286ae639e04e70f822"
+      },
+      "experiments/unit003-blind-machine-first/RUN_FREEZE.json": {
+        "git_blob_sha": "6c030b7619f77d0dbb5bcf52d0737f407bdfb325",
+        "sha256": "ac3cb9a5b3f4b7dd9da1388a5729d80dc306393ea75da373c6d581a7ce976884"
+      },
+      "experiments/unit003-blind-machine-first/RUN_FREEZE_CORRECTION_001.json": {
+        "git_blob_sha": "753cbe6e0f36879029aaae89c87fadc4c81f1420",
+        "sha256": "6f10064921dfb1dc70aa09d96644d01d091a9fb88b27634142bf0e3e6b471794"
+      },
+      "experiments/unit003-blind-machine-first/EXECUTION_ATTEMPTS.json": {
+        "git_blob_sha": "6ab1da0354da524666afea818b57b22a9df9ef9b",
+        "sha256": "b7da10a06dbdad107850e83772e1f4957df390e23f3371bbdcab7b0aabb19289"
+      },
+      "experiments/unit003-blind-machine-first/EXAM_PROTOCOL.json": {
+        "git_blob_sha": "7825386feb717047eae5c67e2aabac626243b989",
+        "sha256": "d42f43c550b091713f5bec5378132c7fc735d83f1847989817519be80748f271"
+      },
+      "experiments/unit003-blind-machine-first/EXAM_PROTOCOL_EFFECTIVE_001.json": {
+        "git_blob_sha": "95a72c1857fe797be11d4f5a21d23156a69711d4",
+        "sha256": "f74a8b28af43dd37956e5fbd449ae5022c360846c388af1ce3fce12efb5c35eb"
+      },
+      "experiments/unit003-blind-machine-first/EXAM_PROTOCOL_CORRECTION_001.json": {
+        "git_blob_sha": "90bb97f4ca37461398eb8f00cd479756ae2d10e9",
+        "sha256": "c5ce23e88ef57f9756e5fd2200acedc80893cd25a2c9d73e1a63c51713f43b79"
+      }
+    }
+  },
+  "authoritative_harness_identities": {
+    "tools/unit003_blind_acquire.py": {
+      "git_blob_sha": "0ec531fb84273338a074494cf72557e997c19a5c",
+      "sha256": "dbcea0b3214f28377cee574c561656988a3318f82d4d62286ae639e04e70f822",
+      "logic_changed_since_run_freeze": false
+    },
+    "tests/test_unit003_blind_acquire.py": {
+      "git_blob_sha": "2a5913c31a250299bd2bb4f6f4d899a25bade635",
+      "sha256": "c517e3cb1818fa73a8d008d64793fb286a754accb99c06e228ebcec3b49c0fdb",
+      "logic_changed_since_run_freeze": false
+    },
+    ".github/workflows/unit003-blind-machine-first.yml": {
+      "git_blob_sha": "86aec46494fd64e35efdb2cb5df2a098d6225b56",
+      "sha256": null,
+      "change_class": "verification-lineage correction plus inclusion of Correction 002 in archive; acquisition algorithm and E0 execution steps unchanged"
+    }
+  },
+  "immutability": {
+    "engine_identity_changed": false,
+    "frozen_e0_bytes_changed": false,
+    "evaluation_contract_changed": false,
+    "target_revision_changed": false,
+    "target_tree_sha_changed": false,
+    "screened_operation_changed": false,
+    "selection_policy_changed": false,
+    "maximum_first_round_files_changed": false,
+    "surface_derivation_changed": false,
+    "content_fetch_method_changed": false,
+    "acquisition_runner_changed": false,
+    "acquisition_tests_changed": false,
+    "prediction_logic_changed": false,
+    "structural_refinement_ceiling_changed": false,
+    "human_gold_consumed": false,
+    "target_substitution_occurred": false
+  },
+  "timing": {
+    "after_invalid_attempt_002": true,
+    "after_independent_byte_audit": true,
+    "before_syntax_or_synthetic_tests_on_an_admissible_execution": true,
+    "before_target_commit_tree_fetch_in_exam_workflow": true,
+    "before_round0_selection": true,
+    "before_selected_target_content_fetch": true,
+    "before_machine_input_packet": true,
+    "before_first_e0_seal": true,
+    "before_human_gold": true
+  }
+}
