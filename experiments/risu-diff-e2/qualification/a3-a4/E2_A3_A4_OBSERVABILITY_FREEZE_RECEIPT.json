@@ -1,0 +1,166 @@
+{
+  "A3_coordinate_survival": {
+    "cells": [
+      "Q001",
+      "Q002",
+      "Q003",
+      "Q004",
+      "Q005",
+      "Q006",
+      "Q007",
+      "Q008",
+      "Q010",
+      "Q011",
+      "Q012",
+      "Q013",
+      "Q014",
+      "Q015",
+      "Q016",
+      "Q017",
+      "Q018",
+      "Q019",
+      "Q020",
+      "Q022",
+      "Q042",
+      "Q043",
+      "Q044",
+      "Q045",
+      "Q046",
+      "Q047",
+      "Q048",
+      "Q049",
+      "Q050",
+      "Q051",
+      "Q052",
+      "Q053",
+      "Q054",
+      "Q055",
+      "Q056",
+      "Q057",
+      "Q058"
+    ],
+    "claim_boundary": "This is an observability insufficiency finding, not a semantic-regression verdict for any individual cell.",
+    "interpretation": "The frozen v0.1 IR coalesces distinct definition sites into shared coordinate nodes in 37 structurally analyzable cells, so kill/replacement reasoning cannot be definitive there. Absence of this blocker in the other 18 cells is not promoted to A3 sufficiency.",
+    "multi_definition_coalescing_cell_count": 37,
+    "no_coalescing_blocker_observed_cell_count": 18
+  },
+  "A4_guard_effect_linkage": {
+    "claim_boundary": "Raw source order, names, comments, or arbitrary calls/returns may not substitute for the missing graph/control semantics.",
+    "insufficient_cell_count": 55,
+    "interpretation": "Across every structurally analyzable cell, the frozen v0.1 IR lacks explicit effect, control-dependence, and execution-order surfaces required by the pre-registered gate; therefore definitive guard-effect, bypass, or effect-before-guard claims are not licensed.",
+    "sufficient_candidate_count": 0
+  },
+  "authority": {
+    "branch": "e2-development",
+    "gate_preregistration_commit": "2922bf9317ab792240b3e4adf79a81cde543804a",
+    "input_ir_schema": "risu.e2-normalized-semantic-flow-ir/v0.1",
+    "repository": "risu-research/risu-verify",
+    "run_1_head": "448ee918df090281316282edd0f9e9cc7f7f28bc",
+    "run_1_to_run_2_scientific_surface_change": "NONE; trigger-only workflow comment",
+    "run_2_head": "b5fabfa7f613b1c63a7214947c52a882a0a189ee"
+  },
+  "cell_scope": {
+    "a1_a2_pass_cell_count": 55,
+    "assurance_incomplete_before_a3_a4": [
+      {
+        "cell_id": "Q029",
+        "reason": "ACQUISITION_BUDGET_EXHAUSTED"
+      }
+    ],
+    "frozen_cell_count": 58,
+    "infrastructure_invalid_before_prediction": [
+      {
+        "cell_id": "Q009",
+        "reason": "MATERIAL_PARSE_FAILURE"
+      },
+      {
+        "cell_id": "Q039",
+        "reason": "MATERIAL_PARSE_FAILURE"
+      }
+    ]
+  },
+  "execution_reproducibility": {
+    "cross_run_raw_audit_byte_identity": true,
+    "git": "2.55.0",
+    "go": "go1.23.2 linux/amd64",
+    "python": "CPython 3.13.15",
+    "raw_audit_bytes": 55279,
+    "raw_audit_sha256": "1aa90d0d9a5560c455c9715b9147f63083dee32fa091ea21e34c4b4ab0c0d73f",
+    "runner_image": "ubuntu-24.04 20260831.293.1",
+    "runs": [
+      {
+        "artifact_id": 9981403630,
+        "artifact_zip_sha256": "7adfa899928d80614797a5f938101f4cb8f4c2e9b758678653d0e98babead21e",
+        "conclusion": "success",
+        "head_sha": "448ee918df090281316282edd0f9e9cc7f7f28bc",
+        "job_id": 101417168467,
+        "run_id": 34007450185,
+        "run_receipt_sha256": "92af38bf93428a58834b412042da74ac8c3df149cb822a89d6bcfb5be7cb66a4",
+        "runner_region": "northcentralus"
+      },
+      {
+        "artifact_id": 9981410349,
+        "artifact_zip_sha256": "36410a2289653587d1b7cc2e39cdbfb887612fad1022fbc3613fd22f88119931",
+        "conclusion": "success",
+        "head_sha": "b5fabfa7f613b1c63a7214947c52a882a0a189ee",
+        "job_id": 101417226050,
+        "run_id": 34007471245,
+        "run_receipt_sha256": "2b7a99330a281d93a6da7afb8bcc7866bfb5928a5be28c965e42f07e9b310ee5",
+        "runner_region": "eastus2"
+      }
+    ],
+    "total_raw_executions": 4,
+    "within_run_byte_identity": "2/2 in run 1; 2/2 in run 2"
+  },
+  "freeze_conclusion": {
+    "a5_certificate_on_unpassed_relations_authorized": false,
+    "definitive_a3_on_v0_1_authorized": false,
+    "definitive_a4_on_v0_1_authorized": false,
+    "next_extension_constraint": "Any next step must be an explicit versioned observability extension, minimally adding definition-sensitive value identity and explicit effect/control/order structure, followed by requalification before A3/A4 verdict logic.",
+    "v0_1_preserved_as_evidence": true
+  },
+  "freeze_id": "RISU_DIFF_E2_A3_A4_OBSERVABILITY_FREEZE_001",
+  "freeze_status": "PASS",
+  "observed_ir_surface_over_55_pass_cells": {
+    "absent_edge_kinds": {
+      "GUARDS": 0,
+      "MUTATES": 0,
+      "PRECEDES": 0,
+      "REJECTS_AS": 0
+    },
+    "absent_node_kinds": {
+      "EFFECT": 0,
+      "FAILURE": 0,
+      "OUTCOME": 0,
+      "RESOURCE": 0
+    },
+    "edge_kind_totals": {
+      "BINDS_TO": 1802,
+      "CARRIES": 811,
+      "COMPARES": 422,
+      "DERIVES": 1682,
+      "EVIDENCED_BY": 5288
+    },
+    "node_kind_totals": {
+      "EVIDENCE": 1974,
+      "GUARD": 206,
+      "INPUT": 362,
+      "OPERATION": 1022,
+      "SEMANTIC_COORDINATE": 2180
+    }
+  },
+  "recommended_next": "PRESERVE_V0_1_AND_DESIGN_MINIMAL_VERSIONED_OBSERVABILITY_EXTENSION",
+  "schema": "risu.diff-e2-a3-a4-observability-freeze-receipt/v0.1",
+  "scientific_decision": "DO_NOT_IMPLEMENT_DEFINITIVE_A3_A4_ON_FROZEN_A2_V0_1",
+  "scientific_firewall": {
+    "expected_e2_primary_consumed": false,
+    "fresh_target_evaluation_authorized": false,
+    "fresh_target_selection_authorized": false,
+    "mutation_operator_names_consumed_as_features": false,
+    "source_comments_or_docstrings_consumed_as_features": false,
+    "source_line_order_used_as_control_semantics": false,
+    "target_or_repository_names_consumed_as_features": false,
+    "truth_labels_consumed": false
+  },
+  "semantic_authority": false
+}
