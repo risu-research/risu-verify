@@ -1,0 +1,229 @@
+name: E2 Blind 58 Anchor Transport Freeze
+
+on:
+  push:
+    branches: [e2-development]
+    paths:
+      - ".github/workflows/e2-anchor-transport-blind58-freeze.yml"
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  freeze:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exact freeze-trigger revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 3
+
+      - name: Verify scientific parent and frozen authorities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "c7b50bdef816aa29f658dfa7c3b5a617d7408500"
+          test "$(git hash-object tools/e2_anchor_transport_run_blind58.py)" = "9acd48e66a749c39ac0e648317e19336477b980b"
+          test "$(git hash-object tools/e2_anchor_transport_audit_blind58.py)" = "dfb7c68147245cd190bf1dc0db5e398308df59fe"
+          test "$(git hash-object .github/workflows/e2-anchor-transport-blind58.yml)" = "d74aebd6cf2d4a887c96d6c28c5901cff33265c8"
+          test "$(git hash-object experiments/risu-diff-e2/qualification/anchor-transport/admission/E2_SANITIZED_OPAQUE_58_ADMISSION_FREEZE_RECEIPT.json)" = "2c2ea8b9f6ca72c2262ffe6294287ee2e58fc00f"
+          test "$(git hash-object experiments/risu-diff-e2/qualification/anchor-transport/admission/E2_SANITIZED_OPAQUE_58_ADMISSION_MANIFEST.json)" = "f2fc78439d4bfadce5941bf71aadd15ec292bcb1"
+          test "$(git rev-parse HEAD:experiments/risu-diff-e2/qualification/materialized/cells)" = "34a30574c7420728bff57958c815194979a622ab"
+          test "$(git hash-object protocols/RISU_DIFF_E2_CANONICAL_SEED_CONSEQUENCE_ANCHORS_v0.1.json)" = "ec8d8b287a80b87c815f0362be366be076d2b091"
+          test "$(git hash-object protocols/RISU_DIFF_E2_MUTATION_BLIND_ANCHOR_TRANSPORT_v0.1.json)" = "7da7d3ac536d5edda56aa2c2636db1c8b02569b3"
+          test "$(git hash-object risu_e2/model.py)" = "64baf95a4939f168881627830134b314a6ee6098"
+          test "$(git hash-object risu_e2/ir.py)" = "d7edac40d4eeda86be74e5785bde3bfc28d4cf5e"
+
+      - name: Download the two already-produced hosted artifacts
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/freeze/run1" "$RUNNER_TEMP/freeze/run2"
+          for spec in "9983498736 run1 485143bacc5f36b81f212ceace9939697de3979296268f24b9e7e9d0e68a6f10" "9983513803 run2 ed18602dc74b183e85b38a73e1d188f044f9679c9c4d247318f5b7b709852b88"; do
+            set -- $spec
+            id="$1"; label="$2"; expected="$3"
+            curl -fsSL \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions/artifacts/$id/zip" \
+              -o "$RUNNER_TEMP/freeze/$label.zip"
+            echo "$expected  $RUNNER_TEMP/freeze/$label.zip" | sha256sum -c -
+            unzip -q "$RUNNER_TEMP/freeze/$label.zip" -d "$RUNNER_TEMP/freeze/$label"
+          done
+
+      - name: Verify cross-attempt logical byte identity and frozen hashes
+        shell: bash
+        run: |
+          set -euo pipefail
+          F="$RUNNER_TEMP/freeze"
+          files=(
+            E2_BLIND_58_ANCHOR_TRANSPORT_BUNDLE.json
+            E2_BLIND_58_ANCHOR_TRANSPORT_INDEPENDENT_AUDIT.json
+            E2_BLIND_58_SOURCE_ONLY_STAGING_AUDIT.json
+            E2_BLIND_58_ANCHOR_TRANSPORT_AUTHORITATIVE_RECEIPT.json
+          )
+          for f in "${files[@]}"; do cmp "$F/run1/$f" "$F/run2/$f"; done
+          echo "78c5f024c1af7a353844120879d3ec4487b5f56fb443bc6e063530f836a9f74c  $F/run2/E2_BLIND_58_ANCHOR_TRANSPORT_BUNDLE.json" | sha256sum -c -
+          echo "dcc72375fe1ec60023402d6d69afe4a5ff97d3c6d1e238b5e4a247ef7e1c74ad  $F/run2/E2_BLIND_58_ANCHOR_TRANSPORT_INDEPENDENT_AUDIT.json" | sha256sum -c -
+          echo "4ffe431d14e258343cdde94059325e9c6a038be2f91eb2f2bcc71ca3aac4ca4d  $F/run2/E2_BLIND_58_SOURCE_ONLY_STAGING_AUDIT.json" | sha256sum -c -
+          echo "d748d7f7e75affcf952df6335586404ee95edf064b6ae1829febd87620ee7595  $F/run2/E2_BLIND_58_ANCHOR_TRANSPORT_AUTHORITATIVE_RECEIPT.json" | sha256sum -c -
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          f=Path(os.environ['RUNNER_TEMP'])/'freeze/run2'
+          b=json.loads((f/'E2_BLIND_58_ANCHOR_TRANSPORT_BUNDLE.json').read_bytes())
+          a=json.loads((f/'E2_BLIND_58_ANCHOR_TRANSPORT_INDEPENDENT_AUDIT.json').read_bytes())
+          r=json.loads((f/'E2_BLIND_58_ANCHOR_TRANSPORT_AUTHORITATIVE_RECEIPT.json').read_bytes())
+          assert b['case_count']==58 and len(b['receipts'])==58
+          assert b['semantic_authority'] is False
+          assert b['aggregate_observations']['case_transport_status_counts']=={'COMPLETE':41,'TRANSPORT_INCOMPLETE':17}
+          assert b['aggregate_observations']['parser_status_counts']=={'PARSE_INVALID':2,'PARSE_OK':56}
+          assert a['status']=='PASS' and a['errors']==[] and a['aggregate_recomputed_independently'] is True
+          assert a['lineage_reimplementation_claimed'] is False
+          assert r['status']=='PASS' and r['claim_boundary']['a3_a4_verdict_logic_executed'] is False
+          assert r['claim_boundary']['truth_or_operator_unblinded'] is False
+          PY
+
+      - name: Materialize exact logical outputs and cross-run freeze receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          F="$RUNNER_TEMP/freeze"
+          D="experiments/risu-diff-e2/qualification/anchor-transport/blind58"
+          test ! -e "$D"
+          mkdir -p "$D"
+          cp "$F/run2/E2_BLIND_58_ANCHOR_TRANSPORT_BUNDLE.json" "$D/"
+          cp "$F/run2/E2_BLIND_58_ANCHOR_TRANSPORT_INDEPENDENT_AUDIT.json" "$D/"
+          cp "$F/run2/E2_BLIND_58_SOURCE_ONLY_STAGING_AUDIT.json" "$D/"
+          cp "$F/run2/E2_BLIND_58_ANCHOR_TRANSPORT_AUTHORITATIVE_RECEIPT.json" "$D/"
+          python - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+          d=Path('experiments/risu-diff-e2/qualification/anchor-transport/blind58')
+          bundle=json.loads((d/'E2_BLIND_58_ANCHOR_TRANSPORT_BUNDLE.json').read_bytes())
+          receipt={
+            'schema':'risu.e2-blind-58-anchor-transport-freeze/v0.1',
+            'status':'FROZEN_PASS',
+            'repository':'risu-research/risu-verify',
+            'branch':'e2-development',
+            'scientific_execution_commit':'c7b50bdef816aa29f658dfa7c3b5a617d7408500',
+            'scientific_authority':{
+              'admission_manifest_sha256':'847d85c2274cd6b94a83eefe0f6153a8fb183dbad758efa75118a4fd368623e4',
+              'admission_freeze_receipt_git_blob':'2c2ea8b9f6ca72c2262ffe6294287ee2e58fc00f',
+              'materialized_cells_tree_git_sha':'34a30574c7420728bff57958c815194979a622ab',
+              'canonical_anchor_bundle_git_blob':'ec8d8b287a80b87c815f0362be366be076d2b091',
+              'transport_protocol_git_blob':'7da7d3ac536d5edda56aa2c2636db1c8b02569b3',
+              'frozen_model_git_blob':'64baf95a4939f168881627830134b314a6ee6098',
+              'frozen_ir_git_blob':'d7edac40d4eeda86be74e5785bde3bfc28d4cf5e',
+              'transport_implementation_archive_sha256':'7e08347694e82210bdcf53a8cec3f0684dcda5089020ad0d33e21b144fb88278',
+              'transport_engine_sha256':'3b626fc83fe76a1dfafdcf896efc8a16440bbeec062cfb1dbb86badd23b7af4c',
+              'frozen_independent_checker_sha256':'a24d6350636098e6083629f31db142e8061525f0b0d6af3538bab9a2d96048c6',
+              'blind58_runner_git_blob':'9acd48e66a749c39ac0e648317e19336477b980b',
+              'blind58_auditor_git_blob':'dfb7c68147245cd190bf1dc0db5e398308df59fe',
+              'blind58_workflow_git_blob':'d74aebd6cf2d4a887c96d6c28c5901cff33265c8'
+            },
+            'pre_output_diagnostics':[
+              {
+                'run_id':34014302504,
+                'head_sha':'e218a5ad567164724c88f9b042f73dd31bb2194b',
+                'classification':'HARNESS_FORMAT_REQUIREMENT_FAILURE_BEFORE_TRANSPORT_CASE_EXECUTION',
+                'candidate_source_bytes_staged':True,
+                'transport_case_execution_started':False,
+                'scientific_transport_output_observed':False,
+                'truth_or_operator_metadata_read':False
+              },
+              {
+                'run_id':34014410651,
+                'head_sha':'03956d72e72326dbff642004059738957b8243c2',
+                'classification':'ANCHOR_CONTRACT_DIGEST_PREIMAGE_MISMATCH_BEFORE_TRANSPORT_CASE_EXECUTION',
+                'candidate_source_bytes_staged':True,
+                'transport_case_execution_started':False,
+                'scientific_transport_output_observed':False,
+                'truth_or_operator_metadata_read':False
+              }
+            ],
+            'authoritative_hosted_executions':[
+              {
+                'run_id':34014572885,'run_attempt':1,'job_id':101436026333,
+                'head_sha':'c7b50bdef816aa29f658dfa7c3b5a617d7408500',
+                'region':'westus2','runner_id':1000001319,'conclusion':'success',
+                'artifact_id':9983498736,
+                'artifact_zip_sha256':'485143bacc5f36b81f212ceace9939697de3979296268f24b9e7e9d0e68a6f10'
+              },
+              {
+                'run_id':34014572885,'run_attempt':2,'job_id':101436161998,
+                'head_sha':'c7b50bdef816aa29f658dfa7c3b5a617d7408500',
+                'region':'westcentralus','runner_id':1000001320,'conclusion':'success',
+                'artifact_id':9983513803,
+                'artifact_zip_sha256':'ed18602dc74b183e85b38a73e1d188f044f9679c9c4d247318f5b7b709852b88'
+              }
+            ],
+            'cross_hosted_replay':{
+              'hosted_attempts':2,
+              'engine_executions':4,
+              'independent_auditor_executions':4,
+              'artifact_zip_hashes_expected_to_differ':True,
+              'logical_outputs_byte_identical':True,
+              'logical_outputs':{
+                'E2_BLIND_58_ANCHOR_TRANSPORT_BUNDLE.json':{'bytes':278336,'sha256':'78c5f024c1af7a353844120879d3ec4487b5f56fb443bc6e063530f836a9f74c'},
+                'E2_BLIND_58_ANCHOR_TRANSPORT_INDEPENDENT_AUDIT.json':{'bytes':508,'sha256':'dcc72375fe1ec60023402d6d69afe4a5ff97d3c6d1e238b5e4a247ef7e1c74ad'},
+                'E2_BLIND_58_SOURCE_ONLY_STAGING_AUDIT.json':{'bytes':13496,'sha256':'4ffe431d14e258343cdde94059325e9c6a038be2f91eb2f2bcc71ca3aac4ca4d'},
+                'E2_BLIND_58_ANCHOR_TRANSPORT_AUTHORITATIVE_RECEIPT.json':{'bytes':1327,'sha256':'d748d7f7e75affcf952df6335586404ee95edf064b6ae1829febd87620ee7595'}
+              }
+            },
+            'blind_transport_observations':bundle['aggregate_observations'],
+            'qualification_boundary':{
+              'case_count':58,
+              'complete_cases':41,
+              'transport_incomplete_cases':17,
+              'parse_ok_cases':56,
+              'parse_invalid_cases':2,
+              'these_are_source_lineage_observations_not_regression_verdicts':True,
+              'independent_checker_validates_receipt_and_witness_integrity_not_an_independent_lineage_algorithm':True
+            },
+            'read_set_attestation':{
+              'candidate_source_bytes_read':True,
+              'cell_json_read':False,
+              'mutation_truth_read':False,
+              'expected_e2_predictions_read':False,
+              'mutation_operator_metadata_read':False,
+              'fresh_target_bytes_read':False
+            },
+            'claim_boundary':{
+              'transport_outputs_frozen':True,
+              'transport_output_modification_authorized':False,
+              'truth_or_operator_unblinded_during_transport':False,
+              'a3_a4_verdict_logic_executed':False,
+              'a3_a4_verdict_logic_authorized':False,
+              'fresh_target_selection_or_evaluation_authorized':False
+            },
+            'next_authorized_step':'UNBLIND_FROZEN_SYNTHETIC_TRUTH_AND_OPERATOR_METADATA_FOR_POST_FREEZE_TRANSPORT_QUALIFICATION_ONLY; TRANSPORT OUTPUTS ARE IMMUTABLE; DO NOT EXECUTE A3_A4 VERDICT LOGIC YET'
+          }
+          pre=json.dumps(receipt,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode()
+          receipt['freeze_receipt_digest_sha256']=hashlib.sha256(pre).hexdigest()
+          raw=json.dumps(receipt,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode()
+          (d/'E2_BLIND_58_ANCHOR_TRANSPORT_FREEZE_RECEIPT.json').write_bytes(raw)
+          print(json.dumps({'status':'FROZEN_PASS','freeze_receipt_sha256':hashlib.sha256(raw).hexdigest(),'freeze_receipt_digest_sha256':receipt['freeze_receipt_digest_sha256']},separators=(',',':')))
+          PY
+          sha256sum "$D"/*.json
+
+      - name: Commit only the five frozen artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          D="experiments/risu-diff-e2/qualification/anchor-transport/blind58"
+          git config user.name "moon10021017"
+          git config user.email "moon1002@hotmail.com"
+          git add "$D"
+          mapfile -t changed < <(git diff --cached --name-only)
+          test "${#changed[@]}" -eq 5
+          for p in "${changed[@]}"; do [[ "$p" == "$D/"* ]]; done
+          test "$(git diff --cached --diff-filter=A --name-only | wc -l)" -eq 5
+          test -z "$(git diff --cached --diff-filter=MDTR --name-only)"
+          git commit -m "Freeze blind 58 anchor transport observations" -m "Permanently freeze the exact logical outputs from two successful hosted executions of the same pre-frozen blind-58 transport harness, together with a cross-run receipt. The 58-case transport bundle remains source-lineage observation only: 41 COMPLETE and 17 TRANSPORT_INCOMPLETE, with truth/operator metadata still unopened and A3/A4 verdict logic still unauthorized."
+          git push origin HEAD:e2-development
