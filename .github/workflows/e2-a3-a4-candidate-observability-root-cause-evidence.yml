@@ -54,6 +54,8 @@ jobs:
         run: |
           set -euo pipefail
           S="$RUNNER_TEMP/root-cause-evidence"
+          restore_workspace() { chmod u+rwx "$GITHUB_WORKSPACE" 2>/dev/null || true; }
+          trap restore_workspace EXIT
           mkdir -p "$S/risu_e2" "$S/tools" "$S/input" "$S/output"
           cp risu_e2/*.py "$S/risu_e2/"
           cp tools/e2_go_ir_extract.go "$S/tools/"
@@ -79,10 +81,12 @@ jobs:
           assert len(replayed)+len(unresolved)==8
           assert all(all(x is True for x in r['digest_reproduction'].values() if isinstance(x,bool)) for r in replayed)
           raw=p.read_bytes()
+          assert hashlib.sha256(raw).hexdigest()=='76f2c895bf5a481e6fa7bf05d349a4e0bb5ac56cc6be2d81dd24a62bb8162da9'
           print(json.dumps({'status':'PASS','cases':8,'replayed':len(replayed),'unresolved_locators':len(unresolved),'byte_identical_two_extractions':True,'sha256':hashlib.sha256(raw).hexdigest(),'bytes':len(raw)},sort_keys=True,separators=(',',':')))
           PY
+          restore_workspace
           cp output/dossier-1.json "$GITHUB_WORKSPACE/E2_A3_A4_CANDIDATE_OBSERVABILITY_ROOT_CAUSE_EVIDENCE_DOSSIER_v0.1.json"
-          chmod u+rwx "$GITHUB_WORKSPACE"
+          trap - EXIT
       - name: Upload category-free diagnosis evidence
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
