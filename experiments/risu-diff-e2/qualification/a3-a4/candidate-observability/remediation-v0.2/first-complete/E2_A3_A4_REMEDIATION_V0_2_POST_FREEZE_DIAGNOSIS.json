@@ -1,0 +1,113 @@
+{
+  "schema": "risu.e2-a3-a4-candidate-observability-remediation-v0.2-post-freeze-diagnosis/v0.1",
+  "status": "DIAGNOSIS_COMPLETE_NO_SCIENTIFIC_MUTATION",
+  "authority": {
+    "repository": "risu-research/risu-verify",
+    "branch": "e2-development",
+    "first_complete_freeze_commit": "1013a91a516351d2f51a04e8ea51830f6e46be0b",
+    "qualification_head": "289518e150f7427856a394d689e5908a43394411",
+    "qualification_run_id": 34057391004,
+    "frontend_js_v2_git_blob": "2fdf90b8c35c6c62c7f47d6b64f281f50c0852ce",
+    "frontend_python_v2_git_blob": "8b7e4d0e2bb9ef6487ef2b90d2390b55ced55ea9",
+    "ir_v2_git_blob": "a0676f228562fbf73a91d6449ab3af3a6783aa21"
+  },
+  "frozen_observation": {
+    "case_count": 24,
+    "individual_case_pass_count_primary": 24,
+    "individual_case_pass_count_independent": 24,
+    "overall_status": "FAIL",
+    "failure_class": "METAMORPHIC_INVARIANCE",
+    "failed_pairs": [
+      ["V2B05_RETURN_EXPRESSION_COMPARE", "V2M02_R2_ALPHA_PARENTHESIS"],
+      ["V2B09_MULTILINE_NESTED_OBJECT_RETURN", "V2M05_R3_ALPHA_QUOTE_WHITESPACE"],
+      ["V2B16_EFFECT_CALL_RETURNED_REPRESENTATION_WRONG_BINDING", "V2M08_REPRESENTATION_ALPHA_QUOTE"]
+    ]
+  },
+  "diagnostic_conclusion": {
+    "root_cause_family_count": 2,
+    "gate_relaxation_supported": false,
+    "variant_expectation_error_supported": false,
+    "frontend_defect_supported": true,
+    "summary": "The three frozen metamorphic failures are explained by two deterministic JavaScript/TypeScript frontend extraction defects. Pair 1 is a reserved-keyword parenthesis false CALL. Pairs 2 and 3 are the same shorthand-field false-positive mechanism whose visible arity changes depend on identifier-name collisions in the signature's unique field-name set."
+  },
+  "diagnoses": [
+    {
+      "pair": ["V2B05_RETURN_EXPRESSION_COMPARE", "V2M02_R2_ALPHA_PARENTHESIS"],
+      "observed_abstract_signatures": {
+        "base": [0, 1, 1, 0, []],
+        "variant": [1, 1, 1, 0, []]
+      },
+      "root_cause_id": "JS_CALL_RESERVED_KEYWORD_PARENTHESIS_FALSE_POSITIVE",
+      "confidence": "DETERMINISTIC_CODE_PATH",
+      "source_delta_material_to_bug": {
+        "base_return": "return left === right;",
+        "variant_return": "return (alpha === beta);"
+      },
+      "mechanism": "CALL_RE accepts any MEMBER followed by an opening parenthesis. The extraction loop excludes only if/for/while/switch/function, not return. Therefore the variant's `return (` is emitted as a spurious CALL with callee `return`; the base has no corresponding parenthesis and emits no such CALL.",
+      "why_individual_case_still_passed": "The frozen R2 case expectation requires exactly one COMPARE and its semantic operands/operator, but does not assert CALL count zero. The metamorphic signature is what exposes the extra cross-kind fact."
+    },
+    {
+      "pair": ["V2B09_MULTILINE_NESTED_OBJECT_RETURN", "V2M05_R3_ALPHA_QUOTE_WHITESPACE"],
+      "observed_abstract_signatures": {
+        "base": [0, 0, 1, 1, [5]],
+        "variant": [0, 0, 1, 1, [4]]
+      },
+      "observed_field_bind_fact_counts": {
+        "base": 5,
+        "variant": 5
+      },
+      "root_cause_id": "JS_OBJECT_SHORTHAND_RHS_IDENTIFIER_FALSE_POSITIVE",
+      "confidence": "DETERMINISTIC_CODE_PATH",
+      "mechanism": "SHORTHAND_RE is applied across the whole object body instead of only to syntactic top-level property segments. An identifier on the RHS immediately before `,` or `}` can therefore be emitted as a shorthand FIELD_BIND. In the base nested `stamp: token }`, `token` becomes a false shorthand field in addition to the real fields. In the variant `stamp: stamp }`, the analogous false shorthand label is `stamp`, which collides with the real nested field name `stamp`. The signature deduplicates representation field names with a set, so five FIELD_BIND facts become five unique names in the base but four unique names in the variant.",
+      "why_individual_case_still_passed": "The frozen object-return expectation requires the intended fields as a subset and exact RETURN ownership, but does not require absence of extra FIELD_BIND labels. Metamorphic arity detects the instability."
+    },
+    {
+      "pair": ["V2B16_EFFECT_CALL_RETURNED_REPRESENTATION_WRONG_BINDING", "V2M08_REPRESENTATION_ALPHA_QUOTE"],
+      "observed_abstract_signatures": {
+        "base": [1, 0, 2, 1, [5]],
+        "variant": [1, 0, 2, 1, [6]]
+      },
+      "observed_field_bind_fact_counts": {
+        "base": 6,
+        "variant": 6
+      },
+      "root_cause_id": "JS_OBJECT_SHORTHAND_RHS_IDENTIFIER_FALSE_POSITIVE",
+      "confidence": "DETERMINISTIC_CODE_PATH",
+      "mechanism": "The same whole-body SHORTHAND_RE misclassification emits RHS identifiers as fields. In the base, false shorthand labels include `chosen` and `applied`; `applied` collides with the real property key `applied`, yielding five unique representation field names from six FIELD_BIND facts. In the variant, false labels `selected` and `stored` collide with neither real property key, yielding six unique names from the same six FIELD_BIND facts.",
+      "why_individual_case_still_passed": "The intended verdict/effect/guard/applied fields are present, so subset-based object-return validation passes even though extra field facts exist. The preregistered metamorphic signature correctly rejects the name-sensitive over-emission."
+    }
+  ],
+  "checker_scope_note": {
+    "primary_and_independent_checker_agreement": true,
+    "frontend_independence_claimed": false,
+    "reason": "Both qualification checkers independently compute expectations and signatures, but both consume the same versioned frontend_js_v2 extraction surface. Their agreement corroborates checker-level detection, not an independently implemented frontend parser."
+  },
+  "scientific_interpretation": {
+    "metamorphic_gate_is_valid_signal": true,
+    "do_not_reclassify_as_normalization_only": true,
+    "do_not_weaken_invariance_contract": true,
+    "interpretation": "The first complete FAIL should remain a scientific FAIL. The gate revealed real semantic over-emission that the per-case positive/subset obligations did not forbid. This strengthens rather than weakens the value of the prospective metamorphic gate."
+  },
+  "firewall": {
+    "v0_2_scientific_code_modified": false,
+    "v0_2_corpus_modified": false,
+    "v0_2_expectations_modified": false,
+    "failed_pair_removed": false,
+    "gate_relaxed": false,
+    "frozen_48_executed_or_read": false,
+    "candidate_58_executed_or_read": false,
+    "fresh_target_evaluated": false,
+    "a3_a4_semantic_verdicts_emitted": false
+  },
+  "recommended_next_boundary": {
+    "next_step": "PROSPECTIVELY_FREEZE_A_NEW_VERSIONED_REMEDIATION_DESIGN_BEFORE_ANY_SCIENTIFIC_IMPLEMENTATION",
+    "recommended_versioning": "Do not rewrite the frozen v0.2 implementation bytes. Introduce a new versioned remediation surface after preregistration.",
+    "generic_remediation_targets": [
+      "CALL recognition must reject standalone reserved-keyword pseudo-callees while preserving legal member calls such as obj.return().",
+      "Object FIELD_BIND extraction must parse structural property segments at the relevant brace depth. Shorthand emission must require an entire property segment to be a shorthand identifier, never merely an RHS identifier before comma/brace.",
+      "New remediation qualification should include regression checks for the now-known failure mechanisms plus newly frozen generic metamorphic cases that are not derived from frozen 48/58 target bytes."
+    ],
+    "frozen_48_requalification_authorized": false,
+    "candidate_58_execution_authorized": false
+  }
+}
