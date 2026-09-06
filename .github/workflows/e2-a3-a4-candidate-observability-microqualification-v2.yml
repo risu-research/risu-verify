@@ -1,0 +1,163 @@
+name: E2 A3 A4 Candidate Observability Microqualification v2
+
+on:
+  push:
+    branches: [e2-development]
+    paths:
+      - ".github/workflows/e2-a3-a4-candidate-observability-microqualification-v2.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  microqualification-v2:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout exact revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 2
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.13"
+      - name: Set up Go
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff
+        with:
+          go-version: "1.23.2"
+      - name: Verify exact frozen authorities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object protocols/RISU_DIFF_E2_A3_A4_CANDIDATE_OBSERVABILITY_QUALIFICATION_v0.1.json)" = "cdd6dd1329c5fb77318f2ecf7c04c53cb9797b33"
+          test "$(git hash-object experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROFIXTURES_v0.1.json)" = "f990130b782ab242e4e341b45d0d58d298f4f316"
+          test "$(git hash-object experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROQUALIFICATION_IMPLEMENTATION_FREEZE_v0.1.1.json)" = "ea51cb6dd9d10adc59a965c010b8d7bfe9681083"
+          test "$(git hash-object tools/e2_candidate_observability_microcorpus_digest_compat.py)" = "87b6437ac895c901847e4f43b32173585fd3c789"
+          test "$(git hash-object tools/e2_a3_a4_candidate_observability_microqualify.py)" = "204d45bab7395b545c736d83a3f4901b23febf3d"
+          test "$(git hash-object tools/e2_a3_a4_candidate_observability_microcheck.py)" = "867ac117f3396aee39f6756eb6b8e66f553c9096"
+          test "$(git hash-object risu_e2/path_observability.py)" = "6eae3403f53b86f85bac47a31e751d28508e7225"
+          test "$(git hash-object risu_e2/acquisition.py)" = "b81aec3803c22a7b74d47fe1cfec5fabe71a3492"
+          test "$(git hash-object risu_e2/model.py)" = "64baf95a4939f168881627830134b314a6ee6098"
+          test "$(git hash-object risu_e2/ir.py)" = "d7edac40d4eeda86be74e5785bde3bfc28d4cf5e"
+          test "$(git hash-object risu_e2/frontend_python.py)" = "e98cc7bbefa80d53b94fec3ef25845a3dbbedd93"
+          test "$(git hash-object risu_e2/frontend_js.py)" = "6f3b6535caf0dcebb3c3c3679d898a23fdd8e795"
+          test "$(git hash-object risu_e2/frontend_go.py)" = "4fc017fd65c8ede67cf11b5e27200c11bbac9d31"
+          test "$(git hash-object risu_e2/observability_overlay.py)" = "77be5ea1dad30aa6daa889e0753ce7d1aaa6f07a"
+          test "$(git hash-object risu_e2/overlay_common.py)" = "9975fe509fba30a2bbbbb8606f174faa5912a2f1"
+          test "$(git hash-object risu_e2/overlay_control.py)" = "00e06b85d91ce9f75676476c5dc47d15d51d2d35"
+          test "$(git hash-object risu_e2/overlay_source.py)" = "09f6e444cb20654cab1c7ac61ef45eaff44469d6"
+          test "$(git hash-object tools/e2_go_ir_extract.go)" = "26e752029d1b4a99b47f1c7024740b7b0ae14ef7"
+          echo "9eb55e2bd64f82f443a4765544f1d10e20166eb6a48076678a3e11835612d7ed  experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROFIXTURES_v0.1.json" | sha256sum -c -
+          ! grep -Eq 'from[[:space:]]+risu_e2\.path_observability|import[[:space:]]+risu_e2\.path_observability' tools/e2_a3_a4_candidate_observability_microcheck.py
+          ! grep -q 'e2_a3_a4_candidate_observability_microqualify' tools/e2_a3_a4_candidate_observability_microcheck.py
+      - name: Build sealed sandbox and digest-only compatibility view
+        shell: bash
+        run: |
+          set -euo pipefail
+          S="$RUNNER_TEMP/candidate-observability-micro-v2"
+          mkdir -p "$S/risu_e2" "$S/tools" "$S/input" "$S/output"
+          cp risu_e2/*.py "$S/risu_e2/"
+          cp tools/e2_go_ir_extract.go "$S/tools/"
+          cp tools/e2_a3_a4_candidate_observability_microqualify.py "$S/tools/"
+          cp tools/e2_a3_a4_candidate_observability_microcheck.py "$S/tools/"
+          cp tools/e2_candidate_observability_microcorpus_digest_compat.py "$S/tools/"
+          cp protocols/RISU_DIFF_E2_A3_A4_CANDIDATE_OBSERVABILITY_QUALIFICATION_v0.1.json "$S/input/protocol.json"
+          cp experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROFIXTURES_v0.1.json "$S/input/corpus.frozen.json"
+          cp experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROQUALIFICATION_IMPLEMENTATION_FREEZE_v0.1.1.json "$S/input/implementation-freeze.json"
+          python "$S/tools/e2_candidate_observability_microcorpus_digest_compat.py" --input "$S/input/corpus.frozen.json" --output "$S/input/corpus.compat.json" --attestation "$S/output/corpus-compat-attestation.json"
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          s=Path(os.environ['RUNNER_TEMP'])/'candidate-observability-micro-v2'
+          old=json.loads((s/'input/corpus.frozen.json').read_bytes()); new=json.loads((s/'input/corpus.compat.json').read_bytes())
+          od=old.pop('corpus_digest_sha256'); nd=new.pop('corpus_digest_sha256')
+          assert old==new
+          assert od=='720029930f003b3a0cc66691a3b3dd09c10617aedb603780f80bda1a7ac1ab04'
+          assert nd=='8d5c5cc3cac3603c8b2b4be8324d0803d8886380865046a55ef97fbaadf3771f'
+          assert old['fixture_count']==48 and old['family_count']==16 and old['claim_boundary']['candidate_58_bytes_included'] is False
+          files=[]
+          for p in sorted(x for x in s.rglob('*') if x.is_file()):
+              rel=p.relative_to(s).as_posix(); raw=p.read_bytes(); files.append({'path':rel,'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest()})
+          assert not any('materialized/cells' in x['path'] for x in files)
+          assert not any('SANITIZED_OPAQUE_58' in x['path'] or 'BLIND_58_ANCHOR_TRANSPORT' in x['path'] for x in files)
+          doc={'schema':'risu.e2-a3-a4-candidate-observability-micro-sandbox-inventory/v0.1.1','status':'PASS','candidate_58_bytes_staged':False,'file_count':len(files),'files':files}
+          raw=json.dumps(doc,sort_keys=True,separators=(',',':')).encode(); (s/'output/sandbox-inventory.json').write_bytes(raw)
+          print(json.dumps({'status':'PASS','candidate_58_bytes_staged':False,'files':len(files),'sha256':hashlib.sha256(raw).hexdigest()},sort_keys=True,separators=(',',':')))
+          PY
+          python -m py_compile "$S"/risu_e2/*.py "$S"/tools/*.py
+      - name: Run primary and independent checker twice with repository sealed
+        shell: bash
+        run: |
+          set -euo pipefail
+          S="$RUNNER_TEMP/candidate-observability-micro-v2"
+          restore_repo() { chmod u+rwx "$GITHUB_WORKSPACE" 2>/dev/null || true; }
+          trap restore_repo EXIT
+          chmod a-rwx "$GITHUB_WORKSPACE"
+          cd "$S"
+          export PYTHONPATH="$S"
+          set +e
+          python tools/e2_a3_a4_candidate_observability_microqualify.py --protocol input/protocol.json --corpus input/corpus.compat.json --go-helper tools/e2_go_ir_extract.go --output output/primary-1.json
+          P1=$?
+          python tools/e2_a3_a4_candidate_observability_microqualify.py --protocol input/protocol.json --corpus input/corpus.compat.json --go-helper tools/e2_go_ir_extract.go --output output/primary-2.json
+          P2=$?
+          A1=99; A2=99
+          if test -f output/primary-1.json; then
+            python tools/e2_a3_a4_candidate_observability_microcheck.py --protocol input/protocol.json --corpus input/corpus.compat.json --primary output/primary-1.json --go-helper tools/e2_go_ir_extract.go --output output/audit-1.json
+            A1=$?
+            python tools/e2_a3_a4_candidate_observability_microcheck.py --protocol input/protocol.json --corpus input/corpus.compat.json --primary output/primary-1.json --go-helper tools/e2_go_ir_extract.go --output output/audit-2.json
+            A2=$?
+          fi
+          set -e
+          D1=1; D2=1
+          test -f output/primary-1.json && test -f output/primary-2.json && cmp -s output/primary-1.json output/primary-2.json && D1=0 || true
+          test -f output/audit-1.json && test -f output/audit-2.json && cmp -s output/audit-1.json output/audit-2.json && D2=0 || true
+          python - "$P1" "$P2" "$A1" "$A2" "$D1" "$D2" <<'PY'
+          import hashlib,json,sys
+          from pathlib import Path
+          vals=list(map(int,sys.argv[1:])); out=Path('output')
+          def h(n):
+              p=out/n; return hashlib.sha256(p.read_bytes()).hexdigest() if p.exists() else None
+          doc={'schema':'risu.e2-a3-a4-candidate-observability-micro-run-diagnostic/v0.1.1','primary_return_codes':vals[:2],'independent_return_codes':vals[2:4],'primary_byte_identical':vals[4]==0,'independent_byte_identical':vals[5]==0,'primary_1_sha256':h('primary-1.json'),'primary_2_sha256':h('primary-2.json'),'audit_1_sha256':h('audit-1.json'),'audit_2_sha256':h('audit-2.json'),'candidate_58_bytes_read':False}
+          raw=json.dumps(doc,sort_keys=True,separators=(',',':')).encode(); (out/'run-diagnostic.json').write_bytes(raw); print(json.dumps(doc,sort_keys=True,separators=(',',':')))
+          PY
+          restore_repo
+          trap - EXIT
+          test "$P1" -eq 0 && test "$P2" -eq 0 && test "$A1" -eq 0 && test "$A2" -eq 0 && test "$D1" -eq 0 && test "$D2" -eq 0
+      - name: Assert PASS and emit hosted receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          S="$RUNNER_TEMP/candidate-observability-micro-v2"; O="$S/output"
+          python - <<'PY'
+          import hashlib,json,os,platform,subprocess
+          from pathlib import Path
+          o=Path(os.environ['RUNNER_TEMP'])/'candidate-observability-micro-v2/output'
+          primary=(o/'primary-1.json').read_bytes(); audit=(o/'audit-1.json').read_bytes(); inventory=(o/'sandbox-inventory.json').read_bytes(); diag=(o/'run-diagnostic.json').read_bytes(); compat=(o/'corpus-compat-attestation.json').read_bytes()
+          p=json.loads(primary); a=json.loads(audit); inv=json.loads(inventory); d=json.loads(diag); c=json.loads(compat)
+          assert p['status']=='PASS' and p['fixture_count']==48 and p['family_count']==16 and not p['failed_fixture_ids'] and all(x['pass'] for x in p['family_status'].values())
+          assert a['status']=='PASS' and not a['errors'] and len(a['rows'])==48 and all(x.get('pass') is True for x in a['rows'])
+          assert inv['candidate_58_bytes_staged'] is False and d['candidate_58_bytes_read'] is False and c['candidate_58_bytes_read'] is False
+          assert d['primary_byte_identical'] is True and d['independent_byte_identical'] is True
+          h=lambda x:hashlib.sha256(x).hexdigest()
+          r={'schema':'risu.e2-a3-a4-candidate-observability-microqualification-hosted-receipt/v0.1.1','status':'PASS','fixture_count':48,'family_count':16,'primary_sha256':h(primary),'independent_audit_sha256':h(audit),'sandbox_inventory_sha256':h(inventory),'run_diagnostic_sha256':h(diag),'corpus_compat_attestation_sha256':h(compat),'primary_byte_identical_within_host':True,'independent_byte_identical_within_host':True,'authorities':{'protocol_git_blob':'cdd6dd1329c5fb77318f2ecf7c04c53cb9797b33','microfixture_corpus_git_blob':'f990130b782ab242e4e341b45d0d58d298f4f316','implementation_freeze_git_blob':'ea51cb6dd9d10adc59a965c010b8d7bfe9681083','digest_compatibility_helper_git_blob':'87b6437ac895c901847e4f43b32173585fd3c789','path_observability_git_blob':'6eae3403f53b86f85bac47a31e751d28508e7225','primary_microqualifier_git_blob':'204d45bab7395b545c736d83a3f4901b23febf3d','independent_checker_git_blob':'867ac117f3396aee39f6756eb6b8e66f553c9096'},'environment':{'python':platform.python_version(),'go':subprocess.check_output(['go','version'],text=True).strip()},'read_set_attestation':{'candidate_58_bytes':False,'sanitized_58_manifest':False,'raw_blind_58_transport':False,'mutation_truth':False,'operator_metadata':False,'expected_e2_predictions':False,'fresh_target_bytes':False},'claim_boundary':{'microqualification_only':True,'a3_a4_semantic_verdicts_emitted':False,'mutant_58_observability_executed':False,'fresh_target_evaluation_executed':False},'next_authorized_step':'FREEZE_TWO_HOSTED_MICROQUALIFICATION_REPLAYS_AND_LOGICAL_OUTPUTS_BEFORE_FIRST_OPAQUE_58_OBSERVABILITY_MATRIX'}
+          r['receipt_digest_sha256']=h(json.dumps(r,sort_keys=True,separators=(',',':')).encode()); raw=json.dumps(r,sort_keys=True,separators=(',',':')).encode(); (o/'hosted-receipt.json').write_bytes(raw)
+          print(json.dumps({'status':'PASS','primary_sha256':h(primary),'audit_sha256':h(audit),'receipt_sha256':h(raw)},sort_keys=True,separators=(',',':')))
+          PY
+          cp "$O/primary-1.json" E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROQUALIFICATION.json
+          cp "$O/audit-1.json" E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROQUALIFICATION_INDEPENDENT_AUDIT.json
+          cp "$O/sandbox-inventory.json" E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROQUALIFICATION_SANDBOX_INVENTORY.json
+          cp "$O/corpus-compat-attestation.json" E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROQUALIFICATION_CORPUS_COMPAT_ATTESTATION.json
+          cp "$O/run-diagnostic.json" E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROQUALIFICATION_RUN_DIAGNOSTIC.json
+          cp "$O/hosted-receipt.json" E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROQUALIFICATION_HOSTED_RECEIPT.json
+          sha256sum E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROQUALIFICATION*.json
+      - name: Upload complete or diagnostic outputs
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-a3-a4-candidate-observability-microqualification-v2
+          path: |
+            E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROQUALIFICATION*.json
+            ${{ runner.temp }}/candidate-observability-micro-v2/output/*.json
+          if-no-files-found: warn
+          retention-days: 30
