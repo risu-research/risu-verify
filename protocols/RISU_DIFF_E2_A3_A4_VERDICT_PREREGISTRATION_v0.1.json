@@ -1,0 +1,403 @@
+{
+  "A3_coordinate_survival": {
+    "allowed_lineage_edges": [
+      "DERIVES",
+      "CARRIES",
+      "BINDS_TO"
+    ],
+    "anti_overclaim": [
+      "A second reaching definition in a may-set is not a regression witness unless path-sensitive control/definition reasoning proves a realizable violating path.",
+      "Anchor absence by edit lineage is not an A3 regression witness by itself.",
+      "Identifier inequality/equality, value spelling, or field-name coincidence is never sufficient."
+    ],
+    "constructive_regression_witnesses": {
+      "A3_R1_WRONG_BINDING_IDENTITY": "On a complete realizable consequential path, a required terminal/binding slot is explicitly fed by a value whose provenance is uniquely bound to a semantic source role different from the canonical allowed role, with exact slot/index/resource identity.",
+      "A3_R2_DEFINITE_OVERWRITE_TO_WRONG_CARRIER": "On a complete realizable path to the consequential terminal, a later definition definitely kills the required reaching definition and the terminal explicitly consumes the later wrong/unrelated definition.",
+      "A3_R3_EXPLICIT_CARRIER_SUBSTITUTION_OR_DROP": "The candidate consequential terminal has a complete explicit value/representation binding, but the required canonical source role is absent from that closed binding and an alternative source is constructively identified. Mere lack of a matching path is insufficient.",
+      "A3_R4_CLOSED_REPRESENTATION_OMISSION": "A required representation slot is absent from the exact representation instance consumed at the effect boundary only if a separately qualified representation-closure check proves that all material fields of that representation instance are enumerated. Without representation closure, omission is assurance-incomplete rather than regression."
+    },
+    "effect_binding_surface": "For A3, the consequential terminal is the uniquely resolved structural effect invocation inside the transported EFFECT_BOUNDARY plus its explicit carrier slots. A call name, API name, or repository identity is not semantic authority. If this surface is not unique, A3 effect-binding claims are assurance-incomplete.",
+    "preservation_obligations": {
+      "A3_P1_REQUIRED_ROLE_REACHABILITY": "For every canonical source-role -> terminal-role obligation, every terminal value instance admitted on every complete realizable consequential path must have a provenance-bearing lineage to an allowed source role. Intermediate wrappers/helpers may differ.",
+      "A3_P2_BINDING_IDENTITY": "Argument index, keyword/field key, receiver/resource role, representation_instance_id, and declared operand_index must match the canonical semantic role rather than merely a lexical name.",
+      "A3_P3_DEFINITION_SENSITIVITY": "Straight-line kills and branch joins must preserve distinct definition identities; preservation requires every reaching alternative at a required terminal to satisfy the same allowed semantic-source role.",
+      "A3_P4_REPRESENTATION_SURVIVAL": "Whenever the canonical signature requires passage through a representation slot, the candidate effect-bound representation instance must contain a provenance-bearing required slot value with allowed source-role lineage.",
+      "A3_P5_PATH_REALIZABILITY": "Dataflow preservation is evaluated jointly with a complete structured control path to the consequential terminal; may-flow union alone is never sufficient."
+    },
+    "semantic_question": "Do all consequence-relevant coordinate/value roles that the canonical consequence signature requires arrive at the corresponding candidate guard/effect/resource/representation binding roles with preserved identity, without a constructive wrong-carrier path?",
+    "semantic_role_identity": "Semantic role identity is relational and opaque: derive canonical SAME_ORIGIN/DISTINCT_ORIGIN/REACHES constraints among declared guard binding slots and effect carrier/representation slots. Candidate role preservation is established by graph lineage and exact slot identity, not identifier spelling."
+  },
+  "A4_guard_effect_outcome": {
+    "anti_overclaim": [
+      "Guard presence alone is not control dependence.",
+      "PRECEDES reachability without complete control scope is not a must-path proof.",
+      "A role-incompatible or deleted guard anchor alone is not regression.",
+      "A helper guard is not equivalent if predicate polarity may have been transformed."
+    ],
+    "constructive_regression_witnesses": {
+      "A4_R1_GUARD_BYPASS": "There exists a complete ENTRY -> EFFECT path that does not pass through the effective guard.",
+      "A4_R2_EFFECT_BEFORE_GUARD": "There exists a complete executable control path on which EFFECT is reached before the effective guard decision.",
+      "A4_R3_REJECTION_BRANCH_REACHES_EFFECT": "Starting from the branch entry for the canonical rejection polarity of the effective guard, a complete PRECEDES path reaches EFFECT before REJECTION_NO_EFFECT or exit.",
+      "A4_R4_EFFECT_ON_BOTH_POLARITIES": "Both branch polarities of the effective guard have complete paths to EFFECT, establishing that the guard does not exclude the effect on the rejection polarity.",
+      "A4_R5_POLARITY_INVERSION": "The candidate effective guard preserves the predicate value but the canonical rejection polarity uniquely reaches EFFECT/SUCCESS while the canonical effect polarity uniquely reaches REJECTION_NO_EFFECT.",
+      "A4_R6_REJECTION_COLLAPSED_TO_SUCCESS": "A complete path carrying the canonical rejection polarity reaches the SUCCESS_OUTCOME/effect-success continuation without a distinct rejection/no-effect terminal.",
+      "A4_R7_REQUIRED_EFFECT_PATH_REJECTED": "The canonical effect-authorizing polarity is proven, over a complete scope, to terminate only in REJECTION_NO_EFFECT/no-effect and has no effect path. This requires all-path closure; one missing effect match is insufficient."
+    },
+    "effective_guard_forms": {
+      "DIRECT_CONTROL": "The transported GUARD_COMPARISON realization is itself the branch-bearing guard with both true and false GUARDS edges.",
+      "HELPER_CONTROL": "The transported GUARD_COMPARISON predicate result reaches a distinct branch-bearing consumer guard only through the frozen polarity-preserving helper chain contract."
+    },
+    "preservation_obligations": {
+      "A4_P1_EFFECT_BOUNDARY": "The effect boundary and success/rejection outcome roles are uniquely materialized and provenance-bearing.",
+      "A4_P2_EFFECTIVE_GUARD": "Exactly one effective guard form is established for the consequence predicate; ambiguous multiple effective guards are incomplete unless they are proven semantically identical by a future separately preregistered mechanism.",
+      "A4_P3_GUARD_DOMINATES_EFFECT": "Every complete ENTRY -> EFFECT path contains the effective guard before the effect.",
+      "A4_P4_CANONICAL_POLARITY": "The branch polarity that canonically authorizes the effect reaches EFFECT then SUCCESS; the canonical rejection polarity reaches REJECTION_NO_EFFECT without reaching EFFECT first.",
+      "A4_P5_NO_BYPASS_OR_FALLBACK": "No complete entry-to-effect path bypasses the effective guard, and the rejection branch has no path to the effect before rejection/exit.",
+      "A4_P6_ORDERING": "Guard-before-effect and effect-before-success are established by PRECEDES/control reachability; source line order is evidence only.",
+      "A4_P7_OUTCOME_DISTINCTION": "Success/effect and rejection/no-effect remain distinct terminal consequence outcomes on their respective complete paths rather than collapsing into one unlabeled/success path."
+    },
+    "semantic_question": "Does the effective guard decision control every consequential effect path with the canonical branch polarity and ordering, while preserving a distinct rejection/no-effect path and success outcome?"
+  },
+  "authority": {
+    "branch": "e2-development",
+    "frozen_a2o_design_git_blob": "240dfe6071d6eb71d76303f92b81f1190036d76c",
+    "frozen_a3_a4_observability_gate_git_blob": "13ec79a17dd273e0cf6649feefa7c46d836b8275",
+    "frozen_control_extractor_git_blob": "00e06b85d91ce9f75676476c5dc47d15d51d2d35",
+    "frozen_e2_evaluation_contract_git_blob": "3968cd7dcc95290ec7343aa748ca0bc46a3545e6",
+    "frozen_ir_git_blob": "d7edac40d4eeda86be74e5785bde3bfc28d4cf5e",
+    "frozen_model_git_blob": "64baf95a4939f168881627830134b314a6ee6098",
+    "frozen_mutation_blind_anchor_transport_protocol_git_blob": "7da7d3ac536d5edda56aa2c2636db1c8b02569b3",
+    "frozen_overlay_implementation_git_blob": "77be5ea1dad30aa6daa889e0753ce7d1aaa6f07a",
+    "frozen_overlay_schema_git_blob": "05f627ec23191b9bb3a7fe86b95a5201c534a53f",
+    "frozen_postfreeze_joined_qualification_sha256": "bbc7d72fded307b23f6e0d20609b85662e63013cc06cd05b0c3c30269ba71749",
+    "frozen_postfreeze_transport_freeze_commit": "f63111ec91ccb737c5a64deae3a0174909127f07",
+    "frozen_postfreeze_transport_freeze_receipt_git_blob": "5ad86d4067f94e51301a90c79cf3cec521ae3446",
+    "frozen_seed_a2o_freeze_receipt_git_blob": "fb1b1968e0ff9866af2703e33e71450042ba4242",
+    "frozen_seed_overlay_bundle_sha256": "2d231b9eae523d7fb84925c302398c4913670b765cb10e2c4f76dc988cc5ea36",
+    "frozen_seed_overlay_internal_bundle_digest_sha256": "2d3f6559845323b6821f18920b727a90e5520514f00308af59e6f55a67d683cd",
+    "pre_preregistration_head": "f63111ec91ccb737c5a64deae3a0174909127f07",
+    "repository": "risu-research/risu-verify"
+  },
+  "candidate_overlay_qualification_before_verdict_execution": {
+    "gates": [
+      "Exact frozen A2 and D1/D2/D3 implementation identities are verified or any change is separately preregistered and requalified before use.",
+      "Every candidate overlay binds exact candidate source SHA, base IR digest, consequence-anchor/transport-derived contract digest, and overlay digest.",
+      "Control completeness is emitted for every scope material to an A3/A4 witness.",
+      "The implementation can distinguish direct control and helper control without target/operator/truth metadata.",
+      "A path-sensitive verifier can associate reaching-definition alternatives with complete structured control paths; if it cannot, may-set multiplicity cannot support regression.",
+      "Representation omission witnesses are disabled unless representation closure is separately qualified.",
+      "Two deterministic replays and an independent content-address/graph checker pass.",
+      "The qualifier and checker operate from the closed runtime read set and emit read-set receipts."
+    ],
+    "must_be_frozen_before_first_58_a3_a4_prediction": true,
+    "no_verdict_output_during_overlay_qualification": true,
+    "required": true
+  },
+  "canonical_consequence_signature": {
+    "direct_control_derivation": "The frozen GUARD_COMPARISON anchor itself has exactly one true and one false GUARDS branch entry in the complete canonical control scope.",
+    "effect_invocation_binding_surface_derivation": "Within the frozen EFFECT_BOUNDARY anchor, resolve exactly one provenance-bearing call/operation realization by structural span containment and operation_role, not by callee spelling. Its explicit CARRIES argument/keyword/receiver/resource slots, plus any representation instance feeding those slots, form the effect binding surface. Zero or multiple admissible structural invocations makes A3 effect-binding claims incomplete.",
+    "forbidden": [
+      "hard-coding a polarity from source line order",
+      "using identifier spelling as semantic role authority",
+      "making canonical intermediate wrapper depth normative",
+      "reading any 58-case candidate to choose the canonical signature"
+    ],
+    "helper_control_derivation": "A unique polarity-preserving predicate passthrough chain from the frozen GUARD_COMPARISON result reaches a branch-bearing consumer GUARD with exactly one true and one false GUARDS branch entry; all traversed calls are uniquely acquired and all traversed scopes are COMPLETE.",
+    "lineage_obligation_derivation": "Normalize canonical dataflow obligations by semantic source role, terminal anchor/binding role, and carrier slot identity. Intermediate helper/wrapper depth, concrete identifiers, line numbers, and node ids are not normative.",
+    "must_freeze_before_candidate_verdict_execution": true,
+    "opaque_lineage_role_derivation": "Canonical semantic-source roles are not identifier names. Build opaque lineage classes from provenance-bearing reverse/forward closure over DERIVES/CARRIES/BINDS_TO, anchored by declared binding-slot roles and effect carrier roles. Record only relational obligations such as SAME_ORIGIN(role_a, role_b), DISTINCT_ORIGIN(role_a, role_b), and REACHES(role_a, role_b) with exact slot identities. Candidate A3 compares these relational obligations; it never maps semantic roles from variable spelling.",
+    "polarity_derivation": "From the branch-bearing effective guard, use parser-derived GUARDS/PRECEDES reachability to identify which polarity reaches the frozen EFFECT_BOUNDARY then SUCCESS_OUTCOME and which reaches REJECTION_NO_EFFECT_OUTCOME without the effect. The mapping must be unique; otherwise this protocol cannot issue definitive verdicts for that seed family.",
+    "required_fields_per_seed": [
+      "seed_id",
+      "guard_anchor_role",
+      "effective_guard_form: DIRECT_CONTROL or HELPER_CONTROL",
+      "effect_polarity",
+      "rejection_polarity",
+      "required_binding_slot_roles and operand identities",
+      "required semantic-source-role to terminal-role lineage obligations",
+      "effect_invocation_binding_surface: unique structural effect invocation and its carrier slots, resolved without callee-name semantics",
+      "canonical opaque lineage-equivalence classes and required SAME_ORIGIN/DISTINCT_ORIGIN/REACHES relations among binding roles and effect carrier roles",
+      "effect_before_success ordering obligation",
+      "rejection/no-effect terminal obligation",
+      "canonical signature digest"
+    ],
+    "source": "Derive once per canonical seed only from the frozen canonical anchor declaration plus frozen canonical seed overlay bundle. No mutant/candidate bytes or truth metadata may participate."
+  },
+  "closed_runtime_read_set": {
+    "allowed": [
+      "frozen canonical six-seed consequence-anchor declarations",
+      "frozen canonical six-seed D1/D2/D3 overlay bundle or an exact deterministic regeneration with the frozen bundle SHA256",
+      "frozen sanitized opaque 58-case admission manifest",
+      "frozen per-case mutation-blind transport receipt",
+      "candidate source bytes addressed only by opaque transport_case_id/seed_id/language/candidate_source_sha256",
+      "candidate frozen A2 base IR produced by the already-frozen frontend/normalizer identity",
+      "candidate D1/D2/D3 observability overlay produced by the already-frozen overlay implementation identity or a separately frozen requalification if implementation identity changes",
+      "this preregistered canonical consequence signature artifact after it is derived solely from canonical seed overlays",
+      "language parser/structured control information already admitted by D1/D2/D3"
+    ],
+    "enforcement": "Primary engine and independent checker must each emit an auditable read-set receipt; opening a forbidden file invalidates that execution as a first prediction.",
+    "forbidden": [
+      "M_PLUS/M_ZERO/M_QUESTION class",
+      "expected_truth or gold class",
+      "expected E2 prediction",
+      "operator id/name/class/description/repair",
+      "postfreeze joined truth-transport qualification JSON",
+      "truth oracle output",
+      "mutation materializer metadata other than the already-admitted candidate bytes/hash",
+      "fresh-target bytes or gold evidence"
+    ]
+  },
+  "determinism_and_first_output_freeze": {
+    "canonical_json_required": true,
+    "first_complete_58_case_a3_a4_output_rule": "Once a complete joined 58-case A3/A4 first-prediction matrix is produced under this frozen protocol, no code, witness rule, metric, join, threshold, canonical signature, or checker logic may be changed before that output is archived. Results are frozen regardless of favorability.",
+    "no_outcome_driven_repair": true,
+    "truth_join_order": "Seal candidate A3/A4 predictions and independent-checker outputs first. Only then join to the already-frozen truth/operator matrix for descriptive development scoring.",
+    "two_replay_byte_identity_required": true
+  },
+  "epistemic_precedence": [
+    {
+      "condition": "Any authority digest/schema mismatch, malformed frozen receipt, candidate hash mismatch, overlay build exception, parser failure preventing stable code regions, or transport status TRANSPORT_PARSE_INVALID/TRANSPORT_UNSUPPORTED.",
+      "outcome": "INFRASTRUCTURE_INVALID_BEFORE_PREDICTION",
+      "rank": 1
+    },
+    {
+      "condition": "Transport whole-case status is TRANSPORT_INCOMPLETE because any required anchor is ambiguous or unresolved, including TRANSPORT_AMBIGUOUS_MULTIPLE_CANDIDATES, TRANSPORT_AMBIGUOUS_WITNESS_DISAGREEMENT, or TRANSPORT_UNRESOLVED.",
+      "hard_rule": "No A3/A4 definitive witness may override frozen transport incompleteness.",
+      "outcome": "E2_PREDICTED_ASSURANCE_INCOMPLETE",
+      "rank": 2
+    },
+    {
+      "condition": "Transport is COMPLETE, but a required anchor is TRANSPORT_ABSENT_BY_EDIT_LINEAGE, ROLE_INCOMPATIBLE, COMPOSITE_EDIT_REGION, a required binding slot is unavailable, a unique call binding is absent, or a required control scope is INCOMPLETE_FOR_MUST_PATH.",
+      "hard_rule": "Proven anchor deletion or role incompatibility is explicit evidence, but neither is by itself semantic regression. It always blocks preservation unless a future separately preregistered semantic-replacement mechanism proves the required role. Any resulting abstention must retain the exact explicit reason code; proven absence may not be collapsed into an unlabeled generic incomplete state.",
+      "outcome": "E2_PREDICTED_ASSURANCE_INCOMPLETE unless a separately sufficient constructive regression witness can be proved without relying on the missing/role-incompatible fact.",
+      "rank": 3
+    },
+    {
+      "condition": "All inputs required by at least one regression witness or by the full preservation proof are epistemically complete.",
+      "outcome": "Evaluate the frozen witness calculus below.",
+      "rank": 4
+    }
+  ],
+  "independent_checker_contract": {
+    "disagreement_rule": "Any material disagreement blocks definitive promotion for that case and is preserved as an explicit checker-disagreement diagnostic.",
+    "may_import_primary_verdict_aggregation_code": false,
+    "must_recompute": [
+      "authority/digest bindings",
+      "canonical consequence signature",
+      "transport eligibility and epistemic tier",
+      "direct/helper effective-guard witness",
+      "polarity-preserving helper lineage",
+      "path-sensitive reaching-definition witness",
+      "control reachability/dominance/bypass/order witnesses",
+      "outcome-path witnesses",
+      "all A3/A4 preservation obligations",
+      "all emitted regression witnesses",
+      "final verdict"
+    ],
+    "separate_implementation_required": true
+  },
+  "machine_outcomes": {
+    "E2_PREDICTED_ASSURANCE_INCOMPLETE": "Infrastructure is valid enough to run, but the proof obligations required for a definitive preservation or regression claim are not all established.",
+    "E2_PREDICTED_PRESERVATION_EVIDENCE": "All pre-registered A3 and A4 preservation obligations are established universally over the declared complete scope, no violating witness exists, and the independent checker agrees.",
+    "E2_PREDICTED_REGRESSION_WITNESS": "At least one pre-registered constructive A3 or A4 violating witness is established under all witness-local completeness conditions and independently reproduced.",
+    "INFRASTRUCTURE_INVALID_BEFORE_PREDICTION": "The frozen implementation cannot produce a valid semantic input artifact within its declared support boundary; this is reported separately from semantic abstention.",
+    "assurance_incomplete_reason_codes": [
+      "TRANSPORT_AMBIGUOUS",
+      "TRANSPORT_UNRESOLVED",
+      "ANCHOR_ABSENT_BY_EDIT_LINEAGE_NO_SEPARATE_VIOLATION_PROOF",
+      "ANCHOR_ROLE_INCOMPATIBLE",
+      "COMPOSITE_EDIT_REGION",
+      "BINDING_SLOT_UNAVAILABLE",
+      "EFFECT_INVOCATION_UNRESOLVED",
+      "CONTROL_INCOMPLETE",
+      "HELPER_PREDICATE_POLARITY_UNPROVEN",
+      "PATH_DATAFLOW_CORRELATION_UNPROVEN",
+      "REPRESENTATION_CLOSURE_UNPROVEN",
+      "MULTIPLE_EFFECTIVE_GUARDS",
+      "SEMANTIC_REPLACEMENT_UNPROVEN",
+      "INDEPENDENT_CHECKER_DISAGREEMENT"
+    ],
+    "infrastructure_invalid_reason_codes": [
+      "AUTHORITY_OR_DIGEST_MISMATCH",
+      "MALFORMED_FROZEN_RECEIPT_OR_SCHEMA",
+      "CANDIDATE_SOURCE_HASH_MISMATCH",
+      "TRANSPORT_PARSE_INVALID",
+      "TRANSPORT_UNSUPPORTED",
+      "BASE_IR_BUILD_FAILURE",
+      "OVERLAY_BUILD_FAILURE"
+    ]
+  },
+  "next_authorized_step": "DERIVE_AND_FREEZE_CANONICAL_CONSEQUENCE_SIGNATURES_FROM_THE_SIX_FROZEN_SEED_OVERLAYS_AND_IMPLEMENT_ONLY_THE_PREDECLARED_WITNESS_MICROQUALIFICATION_HARNESS; DO_NOT_RUN_A3_A4_ON_THE_58_CANDIDATES_UNTIL_CANONICAL_SIGNATURES, CANDIDATE_OVERLAY_QUALIFICATION, PRIMARY_ENGINE, AND_INDEPENDENT_CHECKER_ARE_FROZEN.",
+  "post_58_freeze_disclosure_and_non_adaptation_covenant": {
+    "forbidden_adaptation": [
+      "No rule, exception, threshold, score, witness priority, or operator-specific branch may be chosen to improve the already-observed M_PLUS, M_ZERO, M_QUESTION, expected-truth, language, operator-id, or per-cell outcome distribution.",
+      "No cell may be dropped, replaced, relabeled, or moved to a different denominator because of its frozen transport result or future A3/A4 result.",
+      "No numeric similarity threshold, majority vote, learned weight, empirical cutoff, or post-hoc witness ranking is permitted.",
+      "No mutation operator id/name/class, expected_truth, expected_e2_primary, or postfreeze joined aggregate may be a runtime detector feature.",
+      "The 58-case block may serve only as frozen development/qualification evidence after this protocol; claims of fresh performance remain governed by the separately frozen E2 evaluation contract."
+    ],
+    "joined_transport_truth_output_existed_and_was_human_accessible_before_this_preregistration": true,
+    "permitted_use_of_the_frozen_58_result_for_this_protocol": [
+      "Confirm that the protocol must define an explicit epistemic distinction between transport COMPLETE and TRANSPORT_INCOMPLETE rather than treating transport status as a semantic verdict.",
+      "Confirm that direct and helper-normalized guard consumption are both first-class witness forms because both forms were already defined and qualified before mutant truth unblinding.",
+      "Bind the exact frozen transport/result bytes that future A3/A4 development may not alter or selectively exclude."
+    ],
+    "rule_basis": "The verdict asymmetry below is proof-theoretic, not outcome-fit: preservation is a universal claim and requires all relevant obligations to be proved; regression is an existential counterexample claim and may be established by one independently complete constructive violating witness. Epistemic or infrastructure incompleteness never becomes positive evidence.",
+    "the_58_case_universe_is_not_a_future_pristine_blind_performance_block": true
+  },
+  "preimplementation_witness_microqualification": {
+    "forbidden": "No fixture may be selected or edited after comparing its behavior to any of the 58 frozen mutant outcomes.",
+    "language_rule": "Every fixture family whose syntax is representable must be instantiated in Python, Go, and TypeScript/JavaScript; unsupported language/construct combinations fail closed rather than being silently skipped.",
+    "purpose": "Qualify the verdict calculus on mutation-free or protocol-authored abstract microfixtures whose expected proof property is declared here before the engine exists. These are mechanics tests, not empirical performance estimates.",
+    "required_fixture_families": [
+      {
+        "expected": "PRESERVATION_EVIDENCE",
+        "id": "VQ_DIRECT_STABLE",
+        "shape": "direct branch-bearing canonical guard; canonical effect polarity -> effect/success; rejection polarity -> rejection/no-effect; correct coordinate bindings"
+      },
+      {
+        "expected": "PRESERVATION_EVIDENCE",
+        "id": "VQ_HELPER_STABLE_IDENTITY",
+        "shape": "canonical guard predicate passed only through identity return/call-result chain to branch-bearing consumer; canonical polarity preserved"
+      },
+      {
+        "expected": "ASSURANCE_INCOMPLETE",
+        "id": "VQ_HELPER_NEGATED",
+        "shape": "helper predicate passes through an unmodeled or explicitly non-identity negation before consumer guard; no definitive equivalence claim"
+      },
+      {
+        "expected": "REGRESSION_WITNESS",
+        "id": "VQ_WRONG_BINDING",
+        "shape": "complete effect path explicitly consumes the wrong semantic source role at a required exact binding slot"
+      },
+      {
+        "expected": "REGRESSION_WITNESS",
+        "id": "VQ_DEFINITE_OVERWRITE",
+        "shape": "required carrier definitely overwritten by wrong definition before effect and effect consumes the overwritten value"
+      },
+      {
+        "expected": "REGRESSION_WITNESS",
+        "id": "VQ_GUARD_BYPASS",
+        "shape": "complete entry-to-effect path bypasses effective guard"
+      },
+      {
+        "expected": "REGRESSION_WITNESS",
+        "id": "VQ_EFFECT_BEFORE_GUARD",
+        "shape": "complete path reaches effect before effective guard"
+      },
+      {
+        "expected": "REGRESSION_WITNESS",
+        "id": "VQ_REJECTION_FALLBACK",
+        "shape": "canonical rejection-polarity branch reaches effect before rejection/exit"
+      },
+      {
+        "expected": "REGRESSION_WITNESS",
+        "id": "VQ_POLARITY_INVERSION",
+        "shape": "polarity-preserving predicate chain but effect/rejection branch consequences are swapped"
+      },
+      {
+        "expected": "ASSURANCE_INCOMPLETE",
+        "id": "VQ_TRANSPORT_AMBIGUOUS",
+        "shape": "transport lineage ambiguous despite otherwise suggestive graph"
+      },
+      {
+        "expected": "ASSURANCE_INCOMPLETE",
+        "id": "VQ_CONTROL_INCOMPLETE",
+        "shape": "unsupported material control construct lies in required scope"
+      },
+      {
+        "expected": "ASSURANCE_INCOMPLETE",
+        "id": "VQ_ANCHOR_DELETED_NO_REPLACEMENT_PROOF",
+        "shape": "required anchor has proven edit-lineage deletion but no constructive semantic violation or replacement proof"
+      },
+      {
+        "expected": "PRESERVATION_EVIDENCE",
+        "id": "VQ_PRESERVING_WRAPPER_REFACTOR",
+        "shape": "helper/wrapper depth changes while semantic role lineage, control, ordering, and outcomes remain complete"
+      },
+      {
+        "expected": "ASSURANCE_INCOMPLETE",
+        "id": "VQ_CHECKER_DISAGREEMENT",
+        "shape": "inject independent checker disagreement on a material definitive witness"
+      }
+    ]
+  },
+  "protocol_id": "RISU_DIFF_E2_A3_A4_VERDICT_PREREGISTRATION_001",
+  "purpose": "Pre-register a proof-obligation verdict calculus for A3 coordinate survival and A4 guard/effect/outcome linkage. The calculus consumes only frozen consequence anchors, frozen mutation-blind transport observations, and qualified D1/D2/D3 observability overlays; it may issue a definitive machine verdict only from constructive graph/path witnesses whose required observability is complete.",
+  "reporting_and_interpretation": {
+    "58_case_status": "Development/qualification block, not fresh blind performance, because truth/operator information was already human-accessible before A3/A4 preregistration.",
+    "forbidden_claims_from_58_block": [
+      "unbiased fresh generalization performance",
+      "population accuracy/precision/recall",
+      "universal safety",
+      "semantic equivalence from transport completeness alone"
+    ],
+    "fresh_evaluation": "Any claim of fresh selective coverage, positive regression detection, stable resolution, or paired E1-vs-E2 improvement remains subject to RISU_DIFF_E2_EVALUATION_CONTRACT_v0.1 and a future pristine fresh block.",
+    "must_report": [
+      "all 58 cases",
+      "infrastructure-invalid count",
+      "assurance-incomplete count and exact reason taxonomy",
+      "regression-witness count by witness family",
+      "preservation-evidence count",
+      "primary/independent checker disagreements",
+      "exact numerators/denominators for any descriptive rates",
+      "all operator/truth/language strata only after first predictions are sealed"
+    ]
+  },
+  "schema": "risu.diff-e2-a3-a4-verdict-preregistration/v0.1",
+  "scientific_firewall": {
+    "fresh_target_selection_or_evaluation_authorized": false,
+    "frozen_transport_receipts_may_be_modified": false,
+    "frozen_truth_may_be_modified": false,
+    "runtime_may_infer_preservation_from_anchor_presence_alone": false,
+    "runtime_may_infer_regression_from_missing_match_alone": false,
+    "runtime_may_read_expected_e2_primary": false,
+    "runtime_may_read_expected_truth": false,
+    "runtime_may_read_operator_id_name_or_class": false,
+    "runtime_may_read_postfreeze_joined_truth_transport_output": false,
+    "runtime_may_tune_after_first_58_case_a3_a4_output": false,
+    "runtime_may_use_comments_or_docstrings_as_semantic_features": false,
+    "runtime_may_use_raw_source_line_order_as_execution_authority": false,
+    "runtime_may_use_target_or_repository_identity_as_semantic_features": false
+  },
+  "status": "PRE_IMPLEMENTATION_VERDICT_PROTOCOL_FROZEN_AFTER_58_TRANSPORT_FREEZE_BEFORE_A3_A4_EXECUTION",
+  "verdict_composition": {
+    "conflict_rule": "Every emitted regression witness must be independently reproduced on the same frozen inputs; disagreement on a graph/path fact that is material to that witness blocks that witness. A regression verdict is permitted if at least one regression witness is independently reproduced even when unrelated preservation obligations are incomplete. Preservation requires full primary/checker agreement on every applicable preservation obligation. If primary and checker final verdicts differ, emit E2_PREDICTED_ASSURANCE_INCOMPLETE and preserve both outputs.",
+    "infrastructure_precedence": "INFRASTRUCTURE_INVALID_BEFORE_PREDICTION takes precedence over semantic outcomes.",
+    "multiple_regression_witnesses": "Emit all independently valid witnesses in deterministic canonical order; do not select the most favorable or smallest one for scoring. A separately reported minimal witness may be derived only by a deterministic subset-minimization rule frozen before result inspection.",
+    "otherwise_rule": "E2_PREDICTED_ASSURANCE_INCOMPLETE.",
+    "preservation_rule": "E2_PREDICTED_PRESERVATION_EVIDENCE is issued only if every A3_P1-P5 and A4_P1-P7 obligation applicable to the canonical signature passes over the complete declared scope, no A3_R*/A4_R* witness is established, all required anchors/slots are semantically usable, and the independent checker agrees.",
+    "regression_rule": "After the preceding gates, E2_PREDICTED_REGRESSION_WITNESS is issued if one or more A3_R* or A4_R* witnesses are constructively established and independently reproduced. One proven violating path is sufficient; unrelated incomplete obligations do not negate an already complete counterexample unless the incompleteness could invalidate that witness itself.",
+    "transport_incomplete_precedence": "A frozen TRANSPORT_INCOMPLETE case cannot receive a definitive A3/A4 verdict."
+  },
+  "witness_local_completeness": {
+    "predicate_polarity_preserving_chain": {
+      "allowed_identity_or_passthrough_relations": [
+        "comparison_result_to_return",
+        "function_return_to_call_result",
+        "call_result_to_assignment",
+        "call_argument_to_parameter",
+        "CONTROL_PREDICATE_RESULT consumption of the exact passed-through predicate result"
+      ],
+      "forbidden_without_new_explicit_semantics": [
+        "logical negation",
+        "new comparison around the predicate",
+        "boolean AND/OR/XOR composition",
+        "truthiness coercion whose equivalence is not represented",
+        "arithmetic/string transform",
+        "multiple possible predicate producers"
+      ],
+      "rule": "If a helper chain contains or may contain a polarity-changing transform not explicitly represented as equivalence-preserving, helper control is not definitive and the relevant claim remains assurance-incomplete."
+    },
+    "required_for_every_definitive_witness": [
+      "Every transport fact cited by the witness is COMPLETE and non-ambiguous.",
+      "Every anchor cited by the witness has a unique candidate lineage region and a role realization allowed by that witness.",
+      "Every overlay node/edge cited by the witness exists, is content-addressed, and has EVIDENCED_BY provenance.",
+      "Every control scope traversed by the witness is control_completeness=COMPLETE; v0.1 does not infer path-local completeness inside an INCOMPLETE_FOR_MUST_PATH scope.",
+      "Every interprocedural edge traversed by the witness is a unique acquired call binding with explicit actual/formal and return/call-result lineage.",
+      "Every reaching-definition alternative material to the claim is retained. A must claim requires all admitted alternatives to satisfy the property.",
+      "Control reachability is derived only from GUARDS/PRECEDES and parser/structured control semantics, never raw source coordinates.",
+      "The independent checker recomputes the witness without importing primary verdict aggregation code."
+    ]
+  }
+}
