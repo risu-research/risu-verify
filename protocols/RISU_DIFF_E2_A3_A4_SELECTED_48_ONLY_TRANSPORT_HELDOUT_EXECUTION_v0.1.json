@@ -1,0 +1,162 @@
+{
+  "schema": "risu.e2-a3-a4-selected48-only-transport-heldout-execution-protocol/v0.1",
+  "protocol_id": "RISU_DIFF_E2_A3_A4_SELECTED_48_ONLY_TRANSPORT_HELDOUT_EXECUTION_001",
+  "status": "FROZEN_BEFORE_FIRST_SELECTED48_SOURCE_READ",
+  "purpose": "Prospectively freeze the exact transport/admission and heldout-execution boundary for the already-frozen selected 48 non-epistemic cells before any selected source blob is opened.",
+  "claim_boundary": {
+    "class": "NON_SCIENTIFIC_EXECUTION_ORCHESTRATION_ONLY",
+    "semantic_authority": false,
+    "does_not_authorize": [
+      "A3_A4_SEMANTIC_VERDICTS",
+      "CANDIDATE_58_READ_OR_EXECUTION",
+      "EPISTEMIC_10_SOURCE_READ_OR_EXECUTION",
+      "RAW_BLIND_58_TRANSPORT_READ",
+      "MUTATION_TRUTH_OR_OPERATOR_METADATA_READ",
+      "EXPECTED_E2_PREDICTION_READ",
+      "FRESH_TARGET_EVALUATION",
+      "SCIENTIFIC_CODE_CORPUS_EXPECTATION_OR_GATE_CHANGE"
+    ]
+  },
+  "authority": {
+    "repository": "risu-research/risu-verify",
+    "branch": "e2-development",
+    "pre_protocol_head": "4445732cc61f265b85dc8ce5ca5d78b777f99d62",
+    "frozen48_requalification_protocol_path": "protocols/RISU_DIFF_E2_A3_A4_FROZEN_48_REQUALIFICATION_v0.1.json",
+    "frozen48_requalification_protocol_git_blob": "2a10d6e648e7ca287469189c528ba48f9b8e7f32",
+    "selected48_manifest_path": "experiments/risu-diff-e2/qualification/a3-a4/frozen-48-requalification/selection/E2_A3_A4_FROZEN_48_SELECTION_MANIFEST.json",
+    "selected48_manifest_git_blob": "8336a8e33e189e373a8a59cca57c4cab20fdc5f7",
+    "selected48_manifest_digest_sha256": "1e044134302a52bc5c53f4028fc327bd495ba110e6e6d19546252e0e717bdd61",
+    "selected48_count": 48,
+    "excluded_epistemic_count": 10,
+    "cells_tree_git_sha": "34a30574c7420728bff57958c815194979a622ab",
+    "primary_adapter_path": "tools/e2_frozen48_requalification_primary.py",
+    "primary_adapter_git_blob": "56ad7ec667f59f962585c6d5ed81b5dc98a363e2",
+    "independent_adapter_path": "tools/e2_frozen48_requalification_independent.py",
+    "independent_adapter_git_blob": "8a68cd1b80e2abeac68a3ca7aed6ab7cfc28c105",
+    "canonical_anchor_bundle_path": "protocols/RISU_DIFF_E2_CANONICAL_SEED_CONSEQUENCE_ANCHORS_v0.1.json",
+    "canonical_anchor_bundle_git_blob": "ec8d8b287a80b87c815f0362be366be076d2b091",
+    "canonical_signature_bundle_path": "experiments/risu-diff-e2/qualification/a3-a4/E2_A3_A4_CANONICAL_SEED_CONSEQUENCE_SIGNATURES_v0.1.json",
+    "canonical_signature_bundle_git_blob": "cfa7d78707599177afe690c3aad7faaa22cb1930",
+    "frozen_transport_implementation": {
+      "archive_sha256": "7e08347694e82210bdcf53a8cec3f0684dcda5089020ad0d33e21b144fb88278",
+      "engine_member": "anchor_transport.py",
+      "engine_sha256": "3b626fc83fe76a1dfafdcf896efc8a16440bbeec062cfb1dbb86badd23b7af4c",
+      "independent_checker_member": "e2_anchor_transport_independent_check.py",
+      "independent_checker_sha256": "a24d6350636098e6083629f31db142e8061525f0b0d6af3538bab9a2d96048c6",
+      "archive_chunks": [
+        {"path": "experiments/risu-diff-e2/qualification/anchor-transport/implementation-candidate/chunk-00.b64", "git_blob": "d0a5ed7980d9ae0d2f2740624ac29a6e161ac9b9"},
+        {"path": "experiments/risu-diff-e2/qualification/anchor-transport/implementation-candidate/chunk-01.b64", "git_blob": "d196782d6dced42ac761e9cf923022ad45c79110"},
+        {"path": "experiments/risu-diff-e2/qualification/anchor-transport/implementation-candidate/chunk-02.b64", "git_blob": "a58cbdbf9fe5cb2cc03ca4f3e779f72c44632049"},
+        {"path": "experiments/risu-diff-e2/qualification/anchor-transport/implementation-candidate/chunk-03.b64", "git_blob": "0882b17589095ae526f1ed533a9d60a43609932d"}
+      ]
+    },
+    "scientific_surface": {
+      "frontend_js_v3_git_blob": "13ffb1b149150b7e730591de7acf47e9322bdf02",
+      "frontend_python_v2_git_blob": "8b7e4d0e2bb9ef6487ef2b90d2390b55ced55ea9",
+      "ir_v3_git_blob": "1d95cfcb2e76563aa5d3ceb65815043eb8b2884a"
+    }
+  },
+  "runtime_admission_contract": {
+    "source_manifest_projection_is_mandatory": true,
+    "exact_per_cell_fields": [
+      "cell_id",
+      "language",
+      "source_git_blob_identity",
+      "source_file_path_metadata"
+    ],
+    "all_other_selection_fields_discarded_before_source_read": true,
+    "frozen_mutation_class_must_not_reach_transport_or_heldout_adapters": true,
+    "cell_id_is_identity_only_and_must_not_drive_scientific_branching": true,
+    "language_derivation": {
+      ".py": "python",
+      ".go": "go",
+      ".mjs": "typescript_javascript"
+    },
+    "fail_closed_if": [
+      "selected count is not exactly 48",
+      "any selected cell binds other than exactly one path and one Git blob",
+      "duplicate cell identity, path, or source blob admission entry appears",
+      "unsupported source suffix appears",
+      "path is absolute, escapes its sealed root, or is not exactly the frozen metadata path",
+      "any non-allowlisted semantic selection field is copied into runtime admission"
+    ]
+  },
+  "selected_source_retrieval_contract": {
+    "authorization_phrase": "AUTHORIZE_EXACT_SELECTED48_FIRST_READ",
+    "repository_checkout_for_heldout_source": false,
+    "path_based_candidate_fetch": false,
+    "glob_or_tree_walk_candidate_fetch": false,
+    "exact_git_blob_fetch_only": true,
+    "fetch_allowlist_source": "runtime_admission_contract exact 48 source_git_blob_identity values",
+    "git_blob_identity_recomputed_after_fetch": true,
+    "raw_source_stdout_forbidden": true,
+    "raw_source_artifact_upload_forbidden": true,
+    "epistemic_10_are_structurally_unreachable": "Their blob identities are absent from the exact 48 runtime admission.",
+    "candidate58_is_structurally_unreachable": "No candidate-58 source or transport input is an execution dependency."
+  },
+  "transport_contract": {
+    "selected48_only": true,
+    "raw_blind58_transport_bundle_must_not_be_read": true,
+    "recompute_transport_from_selected_source": true,
+    "use_exact_frozen_transport_engine_bytes": true,
+    "use_exact_canonical_anchor_bundle": true,
+    "baseline_seed_sources_are_read_only_canonical_authorities_bound_by_the_anchor_bundle": true,
+    "transport_receipt_count_must_equal": 48,
+    "transport_receipts_must_bind_exact_cell_id_and_candidate_sha256": true,
+    "transport_output_semantic_authority": false
+  },
+  "heldout_execution_contract": {
+    "same_sealed_hosted_run_as_first_selected48_source_read": true,
+    "primary_runs": 2,
+    "independent_runs": 2,
+    "same_exact_48_runtime_admission_for_all_runs": true,
+    "same_exact_selected48_transport_receipt_bundle_for_all_runs": true,
+    "primary_repeat_outputs_must_be_byte_identical": true,
+    "independent_repeat_outputs_must_be_byte_identical": true,
+    "canonical_cross_check_required": true,
+    "cross_check_projection": [
+      "cell_id",
+      "qualification_status",
+      "sorted_reasons",
+      "base_ir_status",
+      "overlay_status",
+      "path_observability_status",
+      "anchor_usability",
+      "effective_guard_form",
+      "control_scope_completeness",
+      "path_dataflow_correlation",
+      "effect_surface_status",
+      "ordering_outcome_observability",
+      "representation_closure_status",
+      "witness_precondition_observability"
+    ],
+    "all_48_required": true,
+    "case_dropping_forbidden": true,
+    "posthoc_gate_relaxation_forbidden": true,
+    "a3_a4_semantic_verdicts_emitted": false
+  },
+  "workflow_contract": {
+    "trigger": "workflow_dispatch_only",
+    "push_trigger_forbidden": true,
+    "pull_request_trigger_forbidden": true,
+    "schedule_trigger_forbidden": true,
+    "automatic_execution_during_freeze_forbidden": true,
+    "explicit_authorization_phrase_required": "AUTHORIZE_EXACT_SELECTED48_FIRST_READ",
+    "no_actions_checkout": true,
+    "safe_support_bytes_may_be_materialized_only_from_frozen_exact_authorities": true,
+    "first_source_read_transport_primary_independent_crosscheck_and_output_upload_are_one_sealed_execution": true
+  },
+  "first_complete_output_rule": "The first hosted run that produces complete selected-48 transport plus complete Primary and Independent 48-row outputs and their canonical cross-check is immutable regardless of PASS or FAIL and must be archived exactly before any orchestration, adapter, workflow, gate, corpus, expectation, or scientific change.",
+  "pre_freeze_read_attestation": {
+    "selected48_source_bytes_read": false,
+    "epistemic10_source_bytes_read": false,
+    "candidate58_source_bytes_read": false,
+    "raw_blind58_transport_read": false,
+    "mutation_truth_read": false,
+    "mutation_operator_metadata_read": false,
+    "expected_e2_prediction_read": false,
+    "fresh_target_bytes_read": false,
+    "a3_a4_semantic_verdicts_executed": false
+  },
+  "next_step_after_this_protocol": "Create only non-scientific selected-48 admission/materialization/transport orchestration, bind it in a separate commit, then create a workflow_dispatch-only sealed workflow in a later commit; do not execute either before the final preregistration receipt is frozen."
+}
