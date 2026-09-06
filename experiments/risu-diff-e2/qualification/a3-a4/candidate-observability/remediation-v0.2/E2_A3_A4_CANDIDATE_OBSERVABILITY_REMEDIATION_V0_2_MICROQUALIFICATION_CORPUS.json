@@ -1,0 +1,415 @@
+{
+  "schema": "risu.e2-a3-a4-candidate-observability-remediation-v0.2-microqualification-corpus/v0.1",
+  "status": "PRE_IMPLEMENTATION_V0_2_MICROQUALIFICATION_CORPUS_FROZEN",
+  "authority": {
+    "repository": "risu-research/risu-verify",
+    "branch": "e2-development",
+    "pre_corpus_head": "949cb70a645a95dc9c4d64d6aa8dbbe9c313d9db",
+    "remediation_protocol_commit": "949cb70a645a95dc9c4d64d6aa8dbbe9c313d9db",
+    "remediation_protocol_git_blob": "28abd43d0a99fe747243f657961e278da2035784",
+    "root_cause_freeze_commit": "8ba9b8860188d00bbdb310d414f9f51baa8e686d"
+  },
+  "design": {
+    "base_case_count": 16,
+    "explicit_metamorphic_variant_count": 8,
+    "total_case_count": 24,
+    "negative_controls": [
+      "V2B01_DECLARATIONS_ARE_NOT_CALLS",
+      "V2B07_COMMENTS_AND_STRINGS_ARE_NOT_COMPARES",
+      "V2B11_SCALAR_RETURN_IS_NOT_REPRESENTATION",
+      "V2B12_PYTHON_SIMPLE_RETURN_CALL_EXACTLY_ONCE"
+    ],
+    "fixture_independence": "Fixture IDs, function names, and source layouts differ from the frozen eight failure fixtures. Acceptance is defined by generic fact cardinality, structural ownership, exact source-slice spans, and composability relations; no frozen failure ID or expected v0.1 status is a runtime input.",
+    "no_go_cases_reason": "No Go frontend mechanism was adjudicated among the frozen eight failures. Expanding Go remediation here would exceed the four-mechanism scope; unchanged Go behavior remains protected by the later all-48 regression gate."
+  },
+  "expectation_semantics": {
+    "unique_slice_rule": "Every source_slice named below must occur exactly once in its case. Primary and independent checkers derive expected line/column spans independently from the frozen source bytes.",
+    "calls": "expected_calls are exact CALL facts by callee, structurally containing scope, and source_slice. forbidden_call_slices have zero CALL facts.",
+    "compares": "expected_compares are exact COMPARE facts by operator, operands, scope, and source_slice. compare_count is exact and includes no duplicate IF emission.",
+    "returns": "expected_return_slices are exact complete RETURN structural spans, including a terminal semicolon when one is present.",
+    "representation": "representation_owner_relation=EQUAL requires the returned object representation owner and the RETURN fact to have identical structural spans. representation_owner_count=0 is a negative control.",
+    "python_calls": "Python CALL counts are exact per scope. AST-derived nested calls under a returned expression must each be emitted exactly once.",
+    "assignments": "expected_assignments are exact semantic assignment relations by lhs and required rhs labels."
+  },
+  "cases": [
+    {
+      "fixture_id": "V2B01_DECLARATIONS_ARE_NOT_CALLS",
+      "obligation_ids": ["R1"],
+      "language": "typescript_javascript",
+      "source": "function relay(value) {\n  return value;\n}\nconst arrowRelay = (value) => {\n  return value;\n};\n",
+      "expected": {
+        "function_names_exact": ["relay", "arrowRelay"],
+        "call_count": 0,
+        "forbidden_call_slices": ["relay(value)", "arrowRelay = (value)"]
+      }
+    },
+    {
+      "fixture_id": "V2B02_REAL_CALLS_AND_STRUCTURAL_SCOPE",
+      "obligation_ids": ["R1"],
+      "language": "typescript_javascript",
+      "source": "function transmit(value) { return value; }\nfunction left(token) {\n  return transmit(token);\n}\nfunction right(stamp) {\n  return transmit(stamp);\n}\n",
+      "expected": {
+        "call_count": 2,
+        "expected_calls": [
+          {"callee": "transmit", "scope": "left", "source_slice": "transmit(token)"},
+          {"callee": "transmit", "scope": "right", "source_slice": "transmit(stamp)"}
+        ],
+        "forbidden_call_slices": ["transmit(value)", "left(token)", "right(stamp)"]
+      }
+    },
+    {
+      "fixture_id": "V2B03_NESTED_REAL_CALLS",
+      "obligation_ids": ["R1"],
+      "language": "typescript_javascript",
+      "source": "function inner(v) { return v; }\nfunction middle(v) { return v; }\nfunction outer(v) { return v; }\nfunction execute(token) {\n  return outer(middle(inner(token)));\n}\n",
+      "expected": {
+        "call_count": 3,
+        "expected_calls": [
+          {"callee": "outer", "scope": "execute", "source_slice": "outer(middle(inner(token)))"},
+          {"callee": "middle", "scope": "execute", "source_slice": "middle(inner(token))"},
+          {"callee": "inner", "scope": "execute", "source_slice": "inner(token)"}
+        ],
+        "forbidden_call_slices": ["inner(v)", "middle(v)", "outer(v)", "execute(token)"]
+      }
+    },
+    {
+      "fixture_id": "V2B04_IF_COMPARE_EXACTLY_ONCE",
+      "obligation_ids": ["R2"],
+      "language": "typescript_javascript",
+      "source": "function decide(a, b) {\n  if (a !== b) {\n    return true;\n  }\n  return false;\n}\n",
+      "expected": {
+        "compare_count": 1,
+        "expected_compares": [
+          {"scope": "decide", "source_slice": "a !== b", "operator": "!==", "operands": [["a"], ["b"]]}
+        ]
+      }
+    },
+    {
+      "fixture_id": "V2B05_RETURN_EXPRESSION_COMPARE",
+      "obligation_ids": ["R2"],
+      "language": "typescript_javascript",
+      "source": "function same(left, right) {\n  return left === right;\n}\n",
+      "expected": {
+        "compare_count": 1,
+        "expected_compares": [
+          {"scope": "same", "source_slice": "left === right", "operator": "===", "operands": [["left"], ["right"]]}
+        ]
+      }
+    },
+    {
+      "fixture_id": "V2B06_ASSIGNMENT_AND_CALL_ARGUMENT_COMPARES",
+      "obligation_ids": ["R1", "R2"],
+      "language": "typescript_javascript",
+      "source": "function accept(flag) { return flag; }\nfunction inspect(left, right) {\n  const changed = left != right;\n  return accept(left < right);\n}\n",
+      "expected": {
+        "compare_count": 2,
+        "expected_compares": [
+          {"scope": "inspect", "source_slice": "left != right", "operator": "!=", "operands": [["left"], ["right"]]},
+          {"scope": "inspect", "source_slice": "left < right", "operator": "<", "operands": [["left"], ["right"]]}
+        ],
+        "call_count": 1,
+        "expected_calls": [
+          {"callee": "accept", "scope": "inspect", "source_slice": "accept(left < right)"}
+        ]
+      }
+    },
+    {
+      "fixture_id": "V2B07_COMMENTS_AND_STRINGS_ARE_NOT_COMPARES",
+      "obligation_ids": ["R2"],
+      "language": "typescript_javascript",
+      "source": "function inspect(value) {\n  const text = \"left == right\";\n  // alpha != beta\n  return value;\n}\n",
+      "expected": {
+        "compare_count": 0,
+        "forbidden_compare_slices": ["left == right", "alpha != beta"]
+      }
+    },
+    {
+      "fixture_id": "V2B08_SINGLE_LINE_OBJECT_RETURN",
+      "obligation_ids": ["R3"],
+      "language": "typescript_javascript",
+      "source": "function build(token) {\n  return { state: \"APPLIED\", stamp: token };\n}\n",
+      "expected": {
+        "expected_return_slices": ["return { state: \"APPLIED\", stamp: token };"],
+        "object_return_relations": [
+          {"return_slice": "return { state: \"APPLIED\", stamp: token };", "representation_owner_relation": "EQUAL", "fields": ["state", "stamp"]}
+        ]
+      }
+    },
+    {
+      "fixture_id": "V2B09_MULTILINE_NESTED_OBJECT_RETURN",
+      "obligation_ids": ["R3"],
+      "language": "typescript_javascript",
+      "source": "function build(token) {\n  return {\n    state: \"APPLIED\",\n    meta: { stamp: token },\n    trail: [token]\n  };\n}\n",
+      "expected": {
+        "expected_return_slices": ["return {\n    state: \"APPLIED\",\n    meta: { stamp: token },\n    trail: [token]\n  };"],
+        "object_return_relations": [
+          {"return_slice": "return {\n    state: \"APPLIED\",\n    meta: { stamp: token },\n    trail: [token]\n  };", "representation_owner_relation": "EQUAL", "fields": ["state", "meta", "trail"]}
+        ]
+      }
+    },
+    {
+      "fixture_id": "V2B10_OBJECT_RETURN_WITHOUT_SEMICOLON",
+      "obligation_ids": ["R3"],
+      "language": "typescript_javascript",
+      "source": "function build(token) {\n  return { state: \"APPLIED\", stamp: token }\n}\n",
+      "expected": {
+        "expected_return_slices": ["return { state: \"APPLIED\", stamp: token }"],
+        "object_return_relations": [
+          {"return_slice": "return { state: \"APPLIED\", stamp: token }", "representation_owner_relation": "EQUAL", "fields": ["state", "stamp"]}
+        ]
+      }
+    },
+    {
+      "fixture_id": "V2B11_SCALAR_RETURN_IS_NOT_REPRESENTATION",
+      "obligation_ids": ["R3"],
+      "language": "typescript_javascript",
+      "source": "function build(token) {\n  return token;\n}\n",
+      "expected": {
+        "expected_return_slices": ["return token;"],
+        "representation_owner_count": 0
+      }
+    },
+    {
+      "fixture_id": "V2B12_PYTHON_SIMPLE_RETURN_CALL_EXACTLY_ONCE",
+      "obligation_ids": ["R4"],
+      "language": "python",
+      "source": "def echo(x):\n    return x\n\ndef run(token):\n    return echo(token)\n",
+      "expected": {
+        "call_count_in_scope": {"run": 1},
+        "expected_calls": [
+          {"callee": "echo", "scope": "run", "source_slice": "echo(token)"}
+        ]
+      }
+    },
+    {
+      "fixture_id": "V2B13_PYTHON_SIBLING_NESTED_RETURN_CALLS",
+      "obligation_ids": ["R4"],
+      "language": "python",
+      "source": "def left(x):\n    return x\n\ndef right(x):\n    return x\n\ndef pair(a, b):\n    return (a, b)\n\ndef run(first, second):\n    return pair(left(first), right(second))\n",
+      "expected": {
+        "call_count_in_scope": {"run": 3},
+        "expected_calls": [
+          {"callee": "pair", "scope": "run", "source_slice": "pair(left(first), right(second))"},
+          {"callee": "left", "scope": "run", "source_slice": "left(first)"},
+          {"callee": "right", "scope": "run", "source_slice": "right(second)"}
+        ]
+      }
+    },
+    {
+      "fixture_id": "V2B14_PYTHON_THREE_LEVEL_RETURN_CALLS",
+      "obligation_ids": ["R4"],
+      "language": "python",
+      "source": "def inner(x):\n    return x\n\ndef middle(x):\n    return x\n\ndef outer(x):\n    return x\n\ndef run(token):\n    return outer(middle(inner(token)))\n",
+      "expected": {
+        "call_count_in_scope": {"run": 3},
+        "expected_calls": [
+          {"callee": "outer", "scope": "run", "source_slice": "outer(middle(inner(token)))"},
+          {"callee": "middle", "scope": "run", "source_slice": "middle(inner(token))"},
+          {"callee": "inner", "scope": "run", "source_slice": "inner(token)"}
+        ]
+      }
+    },
+    {
+      "fixture_id": "V2B15_HELPER_COMPARE_CONSUMED_BY_CONTROL",
+      "obligation_ids": ["R1", "R2"],
+      "language": "typescript_javascript",
+      "source": "function equivalent(lhs, rhs) {\n  return lhs == rhs;\n}\nfunction route(seen, token) {\n  if (equivalent(seen, token)) {\n    return \"MATCH\";\n  }\n  return \"MISS\";\n}\n",
+      "expected": {
+        "expected_compares": [
+          {"scope": "equivalent", "source_slice": "lhs == rhs", "operator": "==", "operands": [["lhs"], ["rhs"]]}
+        ],
+        "expected_calls": [
+          {"callee": "equivalent", "scope": "route", "source_slice": "equivalent(seen, token)"}
+        ],
+        "forbidden_call_slices": ["equivalent(lhs, rhs)", "route(seen, token)"],
+        "integration_properties": ["RETURNED_HELPER_COMPARE_VISIBLE", "REAL_CONSUMER_CALL_VISIBLE"]
+      }
+    },
+    {
+      "fixture_id": "V2B16_EFFECT_CALL_RETURNED_REPRESENTATION_WRONG_BINDING",
+      "obligation_ids": ["R1", "R3"],
+      "language": "typescript_javascript",
+      "source": "function commit(stamp) { return stamp; }\nfunction packageResult(token, alternate) {\n  const chosen = alternate;\n  const applied = commit(chosen);\n  return { verdict: \"APPLIED\", effect: true, guard: chosen, applied: applied };\n}\n",
+      "expected": {
+        "expected_calls": [
+          {"callee": "commit", "scope": "packageResult", "source_slice": "commit(chosen)"}
+        ],
+        "forbidden_call_slices": ["commit(stamp)", "packageResult(token, alternate)"],
+        "expected_assignments": [
+          {"lhs": ["chosen"], "rhs_contains": ["alternate"]}
+        ],
+        "expected_return_slices": ["return { verdict: \"APPLIED\", effect: true, guard: chosen, applied: applied };"],
+        "object_return_relations": [
+          {"return_slice": "return { verdict: \"APPLIED\", effect: true, guard: chosen, applied: applied };", "representation_owner_relation": "EQUAL", "fields": ["verdict", "effect", "guard", "applied"]}
+        ],
+        "integration_properties": ["DECLARATION_DOES_NOT_WIN_OVER_REAL_CALL", "RETURN_OWNER_AND_GUARD_FIELD_COMPOSABLE", "WRONG_BINDING_PROVENANCE_VISIBLE"]
+      }
+    },
+    {
+      "fixture_id": "V2M01_R1_ALPHA_WHITESPACE",
+      "variant_of": "V2B02_REAL_CALLS_AND_STRUCTURAL_SCOPE",
+      "transformations": ["alpha renaming", "whitespace/newline perturbation"],
+      "obligation_ids": ["R1"],
+      "language": "typescript_javascript",
+      "source": "function ferry(payload) { return payload; }\n\nfunction west(stamp) {\n    return ferry(stamp);\n}\nfunction east(token) {\n    return ferry(token);\n}\n",
+      "expected": {
+        "call_count": 2,
+        "expected_calls": [
+          {"callee": "ferry", "scope": "west", "source_slice": "ferry(stamp)"},
+          {"callee": "ferry", "scope": "east", "source_slice": "ferry(token)"}
+        ],
+        "forbidden_call_slices": ["ferry(payload)", "west(stamp)", "east(token)"]
+      }
+    },
+    {
+      "fixture_id": "V2M02_R2_ALPHA_PARENTHESIS",
+      "variant_of": "V2B05_RETURN_EXPRESSION_COMPARE",
+      "transformations": ["alpha renaming", "harmless parenthesization"],
+      "obligation_ids": ["R2"],
+      "language": "typescript_javascript",
+      "source": "function equalish(alpha, beta) {\n  return (alpha === beta);\n}\n",
+      "expected": {
+        "compare_count": 1,
+        "expected_compares": [
+          {"scope": "equalish", "source_slice": "alpha === beta", "operator": "===", "operands": [["alpha"], ["beta"]]}
+        ]
+      }
+    },
+    {
+      "fixture_id": "V2M03_R2_QUOTE_STYLE_NEGATIVE",
+      "variant_of": "V2B07_COMMENTS_AND_STRINGS_ARE_NOT_COMPARES",
+      "transformations": ["quote-style perturbation"],
+      "obligation_ids": ["R2"],
+      "language": "typescript_javascript",
+      "source": "function inspect(value) {\n  const text = 'left == right';\n  return value;\n}\n",
+      "expected": {
+        "compare_count": 0,
+        "forbidden_compare_slices": ["left == right"]
+      }
+    },
+    {
+      "fixture_id": "V2M04_R3_SEMICOLON_TOGGLE",
+      "variant_of": "V2B10_OBJECT_RETURN_WITHOUT_SEMICOLON",
+      "transformations": ["optional semicolon perturbation"],
+      "obligation_ids": ["R3"],
+      "language": "typescript_javascript",
+      "source": "function build(token) {\n  return { state: \"APPLIED\", stamp: token };\n}\n",
+      "expected": {
+        "expected_return_slices": ["return { state: \"APPLIED\", stamp: token };"],
+        "object_return_relations": [
+          {"return_slice": "return { state: \"APPLIED\", stamp: token };", "representation_owner_relation": "EQUAL", "fields": ["state", "stamp"]}
+        ]
+      }
+    },
+    {
+      "fixture_id": "V2M05_R3_ALPHA_QUOTE_WHITESPACE",
+      "variant_of": "V2B09_MULTILINE_NESTED_OBJECT_RETURN",
+      "transformations": ["alpha renaming", "quote-style perturbation", "whitespace/newline perturbation"],
+      "obligation_ids": ["R3"],
+      "language": "typescript_javascript",
+      "source": "function assemble(stamp) {\n    return {\n      state: 'APPLIED',\n      meta: { stamp: stamp },\n      trail: [stamp]\n    };\n}\n",
+      "expected": {
+        "expected_return_slices": ["return {\n      state: 'APPLIED',\n      meta: { stamp: stamp },\n      trail: [stamp]\n    };"],
+        "object_return_relations": [
+          {"return_slice": "return {\n      state: 'APPLIED',\n      meta: { stamp: stamp },\n      trail: [stamp]\n    };", "representation_owner_relation": "EQUAL", "fields": ["state", "meta", "trail"]}
+        ]
+      }
+    },
+    {
+      "fixture_id": "V2M06_R4_ALPHA_RENAME",
+      "variant_of": "V2B13_PYTHON_SIBLING_NESTED_RETURN_CALLS",
+      "transformations": ["alpha renaming"],
+      "obligation_ids": ["R4"],
+      "language": "python",
+      "source": "def east(x):\n    return x\n\ndef west(x):\n    return x\n\ndef join(a, b):\n    return (a, b)\n\ndef run(alpha, beta):\n    return join(east(alpha), west(beta))\n",
+      "expected": {
+        "call_count_in_scope": {"run": 3},
+        "expected_calls": [
+          {"callee": "join", "scope": "run", "source_slice": "join(east(alpha), west(beta))"},
+          {"callee": "east", "scope": "run", "source_slice": "east(alpha)"},
+          {"callee": "west", "scope": "run", "source_slice": "west(beta)"}
+        ]
+      }
+    },
+    {
+      "fixture_id": "V2M07_HELPER_COMPARE_ALPHA_WHITESPACE",
+      "variant_of": "V2B15_HELPER_COMPARE_CONSUMED_BY_CONTROL",
+      "transformations": ["alpha renaming", "whitespace/newline perturbation"],
+      "obligation_ids": ["R1", "R2"],
+      "language": "typescript_javascript",
+      "source": "function matches(a,b){ return a == b; }\n\nfunction dispatch(oldValue,newValue) {\n  if (matches(oldValue,newValue)) { return \"SAME\"; }\n  return \"DIFFERENT\";\n}\n",
+      "expected": {
+        "expected_compares": [
+          {"scope": "matches", "source_slice": "a == b", "operator": "==", "operands": [["a"], ["b"]]}
+        ],
+        "expected_calls": [
+          {"callee": "matches", "scope": "dispatch", "source_slice": "matches(oldValue,newValue)"}
+        ],
+        "integration_properties": ["RETURNED_HELPER_COMPARE_VISIBLE", "REAL_CONSUMER_CALL_VISIBLE"]
+      }
+    },
+    {
+      "fixture_id": "V2M08_REPRESENTATION_ALPHA_QUOTE",
+      "variant_of": "V2B16_EFFECT_CALL_RETURNED_REPRESENTATION_WRONG_BINDING",
+      "transformations": ["alpha renaming", "quote-style perturbation"],
+      "obligation_ids": ["R1", "R3"],
+      "language": "typescript_javascript",
+      "source": "function persist(tag) { return tag; }\nfunction wrap(stamp, fallback) {\n  const selected = fallback;\n  const stored = persist(selected);\n  return { verdict: 'APPLIED', effect: true, guard: selected, applied: stored };\n}\n",
+      "expected": {
+        "expected_calls": [
+          {"callee": "persist", "scope": "wrap", "source_slice": "persist(selected)"}
+        ],
+        "forbidden_call_slices": ["persist(tag)", "wrap(stamp, fallback)"],
+        "expected_assignments": [
+          {"lhs": ["selected"], "rhs_contains": ["fallback"]}
+        ],
+        "expected_return_slices": ["return { verdict: 'APPLIED', effect: true, guard: selected, applied: stored };"],
+        "object_return_relations": [
+          {"return_slice": "return { verdict: 'APPLIED', effect: true, guard: selected, applied: stored };", "representation_owner_relation": "EQUAL", "fields": ["verdict", "effect", "guard", "applied"]}
+        ],
+        "integration_properties": ["DECLARATION_DOES_NOT_WIN_OVER_REAL_CALL", "RETURN_OWNER_AND_GUARD_FIELD_COMPOSABLE", "WRONG_BINDING_PROVENANCE_VISIBLE"]
+      }
+    }
+  ],
+  "metamorphic_contract": {
+    "explicit_variant_pairs": [
+      ["V2B02_REAL_CALLS_AND_STRUCTURAL_SCOPE", "V2M01_R1_ALPHA_WHITESPACE"],
+      ["V2B05_RETURN_EXPRESSION_COMPARE", "V2M02_R2_ALPHA_PARENTHESIS"],
+      ["V2B07_COMMENTS_AND_STRINGS_ARE_NOT_COMPARES", "V2M03_R2_QUOTE_STYLE_NEGATIVE"],
+      ["V2B10_OBJECT_RETURN_WITHOUT_SEMICOLON", "V2M04_R3_SEMICOLON_TOGGLE"],
+      ["V2B09_MULTILINE_NESTED_OBJECT_RETURN", "V2M05_R3_ALPHA_QUOTE_WHITESPACE"],
+      ["V2B13_PYTHON_SIBLING_NESTED_RETURN_CALLS", "V2M06_R4_ALPHA_RENAME"],
+      ["V2B15_HELPER_COMPARE_CONSUMED_BY_CONTROL", "V2M07_HELPER_COMPARE_ALPHA_WHITESPACE"],
+      ["V2B16_EFFECT_CALL_RETURNED_REPRESENTATION_WRONG_BINDING", "V2M08_REPRESENTATION_ALPHA_QUOTE"]
+    ],
+    "invariance_rule": "Each base and variant must independently satisfy its frozen expectations. Semantic cardinality, ownership, operand/argument indexing, and representation composability must survive the declared semantics-preserving transformation even though source bytes and spans may differ."
+  },
+  "checker_contract": {
+    "primary_and_independent_required": true,
+    "independent_must_not_import_primary_checker": true,
+    "independent_must_compute_expected_spans_from_source_slices": true,
+    "independent_must_recompute_fact_multisets_and_relations_from_raw_v0_2_facts_and_ir": true,
+    "all_24_cases_required": true,
+    "no_case_dropping": true,
+    "implementation_specialization_scan_required": true,
+    "specialization_scan_rejects": [
+      "any of these V2 fixture IDs embedded in scientific implementation",
+      "any of the frozen eight CQ failure IDs embedded in scientific implementation",
+      "source SHA comparisons in scientific implementation",
+      "expected observation or diagnosis category reads in scientific implementation"
+    ]
+  },
+  "firewall": {
+    "candidate_58_bytes": false,
+    "sanitized_58_manifest": false,
+    "raw_blind_58_transport": false,
+    "mutation_truth": false,
+    "operator_metadata": false,
+    "expected_e2_predictions": false,
+    "fresh_target_bytes": false,
+    "a3_a4_semantic_verdicts": false,
+    "v0_2_scientific_implementation_exists_at_corpus_freeze": false
+  },
+  "first_complete_output_rule": "Once a complete 24-case primary or independent v0.2 microqualification output exists, scientific code, corpus, expectations, checker semantics, or gates may not change before exact archival, regardless of pass/fail.",
+  "next_authorized_step": "IMPLEMENT ONLY risu_e2/frontend_js_v2.py, risu_e2/frontend_python_v2.py, risu_e2/ir_v2.py AND THE QUALIFICATION HARNESSES. DO NOT READ OR EXECUTE THE 58 CANDIDATE BYTES."
+}
