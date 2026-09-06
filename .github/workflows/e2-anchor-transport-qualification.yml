@@ -1,3 +1,4 @@
+# Trigger-only second hosted replay; scientific implementation, fixtures, protocol, gates, anchors, and seeds unchanged.
 name: E2 Anchor Transport Mutation-Free Qualification
 
 on:
