@@ -88,9 +88,9 @@ jobs:
           S="$RUNNER_TEMP/transport-sandbox"
           OUT="$RUNNER_TEMP/transport-output"
           mkdir -p "$OUT/p1" "$OUT/p2"
-          restore() { chmod -R u+rX "$GITHUB_WORKSPACE" 2>/dev/null || true; }
+          restore() { chmod u+rwx "$GITHUB_WORKSPACE" 2>/dev/null || true; }
           trap restore EXIT
-          chmod -R a-rwx "$GITHUB_WORKSPACE"
+          chmod a-rwx "$GITHUB_WORKSPACE"
           cd "$S"
           export RISU_TRANSPORT_SANDBOX=1 PYTHONPATH="$S"
           python tools/e2_anchor_transport_qualify.py --root "$S" --fixture-output "$OUT/p1/fixtures.json" --seed-output "$OUT/p1/seeds.json" --receipt-output "$OUT/p1/primary.json"
@@ -108,9 +108,9 @@ jobs:
           S="$RUNNER_TEMP/transport-sandbox"
           OUT="$RUNNER_TEMP/transport-output"
           mkdir -p "$OUT/i1" "$OUT/i2"
-          restore() { chmod -R u+rX "$GITHUB_WORKSPACE" 2>/dev/null || true; }
+          restore() { chmod u+rwx "$GITHUB_WORKSPACE" 2>/dev/null || true; }
           trap restore EXIT
-          chmod -R a-rwx "$GITHUB_WORKSPACE"
+          chmod a-rwx "$GITHUB_WORKSPACE"
           cd "$S"
           export RISU_TRANSPORT_SANDBOX=1 PYTHONPATH="$S"
           for d in i1 i2; do
