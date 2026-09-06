@@ -1,0 +1,163 @@
+name: E2 Post-Freeze Transport Qualification
+
+on:
+  push:
+    branches: [e2-development]
+    paths:
+      - "tools/e2_postfreeze_transport_qualify.py"
+      - "tools/e2_postfreeze_transport_audit.py"
+      - ".github/workflows/e2-postfreeze-transport-qualification.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 3
+
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.13"
+
+      - name: Verify preregistration and all frozen authorities before semantic unblinding
+        shell: bash
+        run: |
+          set -euo pipefail
+          PROTOCOL="protocols/RISU_DIFF_E2_POST_FREEZE_TRANSPORT_QUALIFICATION_v0.1.json"
+          BUNDLE="experiments/risu-diff-e2/qualification/anchor-transport/blind58/E2_BLIND_58_ANCHOR_TRANSPORT_BUNDLE.json"
+          FREEZE="experiments/risu-diff-e2/qualification/anchor-transport/blind58/E2_BLIND_58_ANCHOR_TRANSPORT_FREEZE_RECEIPT.json"
+          MATRIX="experiments/risu-diff-e2/qualification/MUTATION_QUALIFICATION_MATRIX_EXPANDED.jsonl"
+          CELLS="experiments/risu-diff-e2/qualification/materialized/cells"
+
+          test "$(git hash-object "$PROTOCOL")" = "8d1860312d259e628e86070416a4757c570ba05f"
+          test "$(git hash-object "$BUNDLE")" = "02a095158f0b51d840b6051804ab45b68003c099"
+          echo "78c5f024c1af7a353844120879d3ec4487b5f56fb443bc6e063530f836a9f74c  $BUNDLE" | sha256sum -c -
+          test "$(git hash-object "$FREEZE")" = "1c97eb8df5bafcfd8523ee6aba0c5a2b981b5df0"
+          test "$(git rev-parse HEAD:"$CELLS")" = "34a30574c7420728bff57958c815194979a622ab"
+          echo "afd681d308a6f4ec8c183edd9b139c6b914fe501936cf84e5845a6a1c0d6b7cb  $MATRIX" | sha256sum -c -
+          test "$(git hash-object tools/e2_mutation_materializer.py)" = "72605d23f207aa15e5dd2461923bd87d1e095d77"
+          test "$(git hash-object tools/e2_mutation_truth_oracle.py)" = "1e5fe69f302df6fdd367797649b17eb3c4ea5950"
+          test "$(git hash-object risu_e2/model.py)" = "64baf95a4939f168881627830134b314a6ee6098"
+          test "$(git hash-object risu_e2/ir.py)" = "d7edac40d4eeda86be74e5785bde3bfc28d4cf5e"
+          test "$(git hash-object tools/e2_postfreeze_transport_qualify.py)" = "3b5cbe1bac55503e135426ccaab5ed73b65e5480"
+          test "$(git hash-object tools/e2_postfreeze_transport_audit.py)" = "9bae752a306c762576c2b10f8cafbf400674566b"
+          python -m py_compile tools/e2_postfreeze_transport_qualify.py tools/e2_postfreeze_transport_audit.py
+          test "$(find "$CELLS" -mindepth 1 -maxdepth 1 -type d -name 'Q[0-9][0-9][0-9]' | wc -l)" -eq 58
+
+      - name: Execute first truth-operator unblinding twice under frozen protocol
+        shell: bash
+        run: |
+          set -euo pipefail
+          PROTOCOL="protocols/RISU_DIFF_E2_POST_FREEZE_TRANSPORT_QUALIFICATION_v0.1.json"
+          BUNDLE="experiments/risu-diff-e2/qualification/anchor-transport/blind58/E2_BLIND_58_ANCHOR_TRANSPORT_BUNDLE.json"
+          MATRIX="experiments/risu-diff-e2/qualification/MUTATION_QUALIFICATION_MATRIX_EXPANDED.jsonl"
+          CELLS="experiments/risu-diff-e2/qualification/materialized/cells"
+          OUT="$RUNNER_TEMP/e2-postfreeze-qualification"
+          mkdir -p "$OUT/q1" "$OUT/q2" "$OUT/a1" "$OUT/a2"
+
+          for d in q1 q2; do
+            python tools/e2_postfreeze_transport_qualify.py \
+              --root "$GITHUB_WORKSPACE" \
+              --protocol "$PROTOCOL" \
+              --transport-bundle "$BUNDLE" \
+              --matrix "$MATRIX" \
+              --cells "$CELLS" \
+              --output "$OUT/$d/qualification.json"
+          done
+          cmp "$OUT/q1/qualification.json" "$OUT/q2/qualification.json"
+
+          for d in a1 a2; do
+            python tools/e2_postfreeze_transport_audit.py \
+              --protocol "$PROTOCOL" \
+              --transport-bundle "$BUNDLE" \
+              --matrix "$MATRIX" \
+              --cells "$CELLS" \
+              --qualification "$OUT/q1/qualification.json" \
+              --output "$OUT/$d/audit.json"
+          done
+          cmp "$OUT/a1/audit.json" "$OUT/a2/audit.json"
+
+      - name: Assert integrity-only PASS and emit authoritative execution receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/e2-postfreeze-qualification"
+          python - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          out = Path(os.environ["RUNNER_TEMP"]) / "e2-postfreeze-qualification"
+          qraw = (out / "q1/qualification.json").read_bytes()
+          araw = (out / "a1/audit.json").read_bytes()
+          q = json.loads(qraw)
+          a = json.loads(araw)
+          h = lambda b: hashlib.sha256(b).hexdigest()
+          assert q["status"] == "PASS"
+          assert q["qualification_pass_meaning"] == "PROVENANCE_AND_AGGREGATION_INTEGRITY_ONLY"
+          assert q["execution_head_sha"] == os.environ["GITHUB_SHA"]
+          assert q["integrity"]["cell_count"] == 58
+          assert q["integrity"]["bijective_join_count"] == 58
+          assert q["integrity"]["excluded_cells"] == 0
+          assert q["integrity"]["class_counts"] == {
+              "M_PLUS_SEMANTIC_LOSS": 24,
+              "M_QUESTION_EPISTEMIC_ADVERSARIAL": 10,
+              "M_ZERO_SEMANTIC_PRESERVING": 24,
+          }
+          assert a["status"] == "PASS" and not a["errors"] and a["case_count"] == 58
+          assert a["qualification_sha256"] == h(qraw)
+          assert a["bijective_join_recomputed_independently"] is True
+          assert a["all_predeclared_aggregates_recomputed_independently"] is True
+          assert q["claim_boundary"] == {
+              "a3_a4_verdict_logic_executed": False,
+              "fresh_target_selection_or_evaluation_executed": False,
+              "post_unblinding_cell_exclusion_performed": False,
+              "post_unblinding_metric_redefinition_performed": False,
+              "transport_outputs_modified": False,
+          }
+          receipt = {
+              "schema": "risu.e2-post-freeze-transport-qualification-authoritative-execution/v0.1",
+              "status": "PASS",
+              "qualification_pass_meaning": "PROVENANCE_AND_AGGREGATION_INTEGRITY_ONLY",
+              "head_sha": os.environ["GITHUB_SHA"],
+              "case_count": 58,
+              "class_counts": q["integrity"]["class_counts"],
+              "qualification_sha256": h(qraw),
+              "independent_audit_sha256": h(araw),
+              "protocol_git_blob": "8d1860312d259e628e86070416a4757c570ba05f",
+              "frozen_transport_bundle_sha256": "78c5f024c1af7a353844120879d3ec4487b5f56fb443bc6e063530f836a9f74c",
+              "expanded_truth_matrix_sha256": "afd681d308a6f4ec8c183edd9b139c6b914fe501936cf84e5845a6a1c0d6b7cb",
+              "materialized_cells_tree_git_sha": "34a30574c7420728bff57958c815194979a622ab",
+              "truth_operator_unblinding_executed": True,
+              "transport_outputs_modified": False,
+              "a3_a4_verdict_logic_executed": False,
+              "fresh_target_selection_or_evaluation_executed": False,
+              "second_hosted_replay_required_before_final_freeze": True,
+              "next_authorized_step": "RERUN_THIS_EXACT_HOSTED_JOB_WITHOUT_CODE_OR_METRIC_CHANGES; IF LOGICAL OUTPUTS MATCH, FREEZE BOTH HOSTED REPLAYS BEFORE SCIENTIFIC INTERPRETATION",
+          }
+          pre = json.dumps(receipt, sort_keys=True, separators=(",", ":")).encode()
+          receipt["receipt_digest_sha256"] = h(pre)
+          raw = json.dumps(receipt, sort_keys=True, separators=(",", ":")).encode()
+          (out / "authoritative.json").write_bytes(raw)
+          print(json.dumps({"status":"PASS","case_count":58,"qualification_sha256":h(qraw),"audit_sha256":h(araw),"receipt_sha256":h(raw)}, sort_keys=True, separators=(",", ":")))
+          PY
+          cp "$OUT/q1/qualification.json" E2_POSTFREEZE_TRANSPORT_QUALIFICATION.json
+          cp "$OUT/a1/audit.json" E2_POSTFREEZE_TRANSPORT_QUALIFICATION_INDEPENDENT_AUDIT.json
+          cp "$OUT/authoritative.json" E2_POSTFREEZE_TRANSPORT_QUALIFICATION_AUTHORITATIVE_RECEIPT.json
+          sha256sum E2_POSTFREEZE_TRANSPORT_QUALIFICATION*.json
+
+      - name: Upload post-freeze qualification artifacts
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-postfreeze-transport-qualification
+          path: |
+            E2_POSTFREEZE_TRANSPORT_QUALIFICATION.json
+            E2_POSTFREEZE_TRANSPORT_QUALIFICATION_INDEPENDENT_AUDIT.json
+            E2_POSTFREEZE_TRANSPORT_QUALIFICATION_AUTHORITATIVE_RECEIPT.json
+          if-no-files-found: error
+          retention-days: 30
