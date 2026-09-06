@@ -1,0 +1,74 @@
+name: E2 A3 A4 Candidate Observability Root Cause Independent Second Pass
+
+on:
+  push:
+    paths:
+      - '.github/workflows/e2-a3-a4-candidate-observability-root-cause-independent.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  independent:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout exact diagnosis revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 8
+      - name: Verify frozen evidence and independent surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object protocols/RISU_DIFF_E2_A3_A4_CANDIDATE_OBSERVABILITY_POSTFREEZE_ROOT_CAUSE_ADJUDICATION_v0.1.json)" = "d25dc14d20fdca4712fe91a6323e9f4f2d9734f9"
+          test "$(git hash-object experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/root-cause/E2_A3_A4_CANDIDATE_OBSERVABILITY_ROOT_CAUSE_EVIDENCE_DOSSIER_v0.1.json)" = "7c3af882cbb3f684e82570e66839b46e887b698d"
+          test "$(git hash-object tools/e2_a3_a4_candidate_observability_root_cause_independent.py)" = "a03403c642a510bda7d8fd334c4d63bc455b2f70"
+          ! grep -q 'ROOT_CAUSE_ADJUDICATION_v0.1.json' tools/e2_a3_a4_candidate_observability_root_cause_independent.py
+          ! grep -q '13bd7aba5cba2ac0dbd720bbaa79cef7a0781bae' tools/e2_a3_a4_candidate_observability_root_cause_independent.py
+      - name: Run independent second pass twice in primary-label-free sandbox
+        shell: bash
+        run: |
+          set -euo pipefail
+          S="$RUNNER_TEMP/root-cause-independent"
+          mkdir -p "$S/input" "$S/tools" "$S/output"
+          cp protocols/RISU_DIFF_E2_A3_A4_CANDIDATE_OBSERVABILITY_POSTFREEZE_ROOT_CAUSE_ADJUDICATION_v0.1.json "$S/input/protocol.json"
+          cp experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/root-cause/E2_A3_A4_CANDIDATE_OBSERVABILITY_ROOT_CAUSE_EVIDENCE_DOSSIER_v0.1.json "$S/input/dossier.json"
+          cp tools/e2_a3_a4_candidate_observability_root_cause_independent.py "$S/tools/independent.py"
+          test "$(find "$S" -type f | wc -l)" -eq 3
+          ! find "$S" -type f -print | grep -q 'ADJUDICATION'
+          python "$S/tools/independent.py" --protocol "$S/input/protocol.json" --dossier "$S/input/dossier.json" --output "$S/output/independent-1.json"
+          python "$S/tools/independent.py" --protocol "$S/input/protocol.json" --dossier "$S/input/dossier.json" --output "$S/output/independent-2.json"
+          cmp "$S/output/independent-1.json" "$S/output/independent-2.json"
+          python - "$S/output/independent-1.json" <<'PY'
+          import hashlib,json,sys
+          p=sys.argv[1]; raw=open(p,'rb').read(); d=json.loads(raw)
+          assert d['status']=='PASS' and d['case_count']==8 and not d['unresolved_fixture_ids']
+          assert d['independence_attestation']['primary_adjudication_file_read'] is False
+          assert d['independence_attestation']['primary_category_labels_read'] is False
+          print(json.dumps({'status':'PASS','category_counts':d['category_counts'],'mechanism_counts':d['mechanism_counts'],'sha256':hashlib.sha256(raw).hexdigest(),'bytes':len(raw),'two_runs_byte_identical':True},sort_keys=True,separators=(',',':')))
+          PY
+          cp "$S/output/independent-1.json" E2_A3_A4_CANDIDATE_OBSERVABILITY_ROOT_CAUSE_INDEPENDENT_SECOND_PASS_v0.1.json
+      - name: Compare independent result with frozen primary only after independent output exists
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib,json
+          p=json.load(open('experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/root-cause/E2_A3_A4_CANDIDATE_OBSERVABILITY_ROOT_CAUSE_ADJUDICATION_v0.1.json'))
+          i=json.load(open('E2_A3_A4_CANDIDATE_OBSERVABILITY_ROOT_CAUSE_INDEPENDENT_SECOND_PASS_v0.1.json'))
+          pm={r['fixture_id']:(r['primary_cause'],r['mechanism']) for r in p['rows']}
+          im={r['fixture_id']:(r['primary_cause'],r['mechanism']) for r in i['rows']}
+          assert pm==im
+          doc={'schema':'risu.e2-a3-a4-candidate-observability-root-cause-cross-adjudication-check/v0.1','status':'PASS','case_count':8,'exact_primary_independent_category_and_mechanism_agreement':True,'primary_category_counts':p['category_counts'],'independent_category_counts':i['category_counts'],'primary_mechanism_counts':p['mechanism_counts'],'independent_mechanism_counts':i['mechanism_counts'],'primary_adjudication_git_blob':'13bd7aba5cba2ac0dbd720bbaa79cef7a0781bae','independent_output_sha256':hashlib.sha256(open('E2_A3_A4_CANDIDATE_OBSERVABILITY_ROOT_CAUSE_INDEPENDENT_SECOND_PASS_v0.1.json','rb').read()).hexdigest(),'candidate_58_bytes_read':False,'remediation_design_emitted':False}
+          raw=(json.dumps(doc,sort_keys=True,separators=(',',':'))+'\n').encode(); open('E2_A3_A4_CANDIDATE_OBSERVABILITY_ROOT_CAUSE_CROSS_CHECK_v0.1.json','wb').write(raw)
+          print(json.dumps(doc,sort_keys=True,separators=(',',':')))
+          PY
+      - name: Upload independent diagnosis artifacts
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-a3-a4-candidate-observability-root-cause-independent
+          path: |
+            E2_A3_A4_CANDIDATE_OBSERVABILITY_ROOT_CAUSE_INDEPENDENT_SECOND_PASS_v0.1.json
+            E2_A3_A4_CANDIDATE_OBSERVABILITY_ROOT_CAUSE_CROSS_CHECK_v0.1.json
+          retention-days: 30
