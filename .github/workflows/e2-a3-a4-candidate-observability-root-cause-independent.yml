@@ -22,7 +22,7 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git hash-object protocols/RISU_DIFF_E2_A3_A4_CANDIDATE_OBSERVABILITY_POSTFREEZE_ROOT_CAUSE_ADJUDICATION_v0.1.json)" = "d25dc14d20fdca4712fe91a6323e9f4f2d9734f9"
-          test "$(git hash-object experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/root-cause/E2_A3_A4_CANDIDATE_OBSERVABILITY_ROOT_CAUSE_EVIDENCE_DOSSIER_v0.1.json)" = "7c3af882cbb3f684e82570e66839b46e887b698d"
+          test "$(git hash-object experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/root-cause/E2_A3_A4_CANDIDATE_OBSERVABILITY_ROOT_CAUSE_EVIDENCE_DOSSIER_v0.1.json)" = "f6d7b1fdb8ab632b2dd65e900267bd599070f972"
           test "$(git hash-object tools/e2_a3_a4_candidate_observability_root_cause_independent.py)" = "a03403c642a510bda7d8fd334c4d63bc455b2f70"
           ! grep -q 'ROOT_CAUSE_ADJUDICATION_v0.1.json' tools/e2_a3_a4_candidate_observability_root_cause_independent.py
           ! grep -q '13bd7aba5cba2ac0dbd720bbaa79cef7a0781bae' tools/e2_a3_a4_candidate_observability_root_cause_independent.py
