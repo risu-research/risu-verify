@@ -1,0 +1,130 @@
+{
+  "claim_boundary": "This receipt establishes deterministic structural qualification of E2 A1 carrier-neutral acquisition and A2 normalized semantic-flow IR on the frozen synthetic universe. It does not establish A3/A4/A5 consequence reasoning, E2 verdict correctness, repair effectiveness, fresh real-target performance, or population accuracy.",
+  "frozen_input_authority": {
+    "development_universe_blob": "32f5e7bc53b343e1add941cb68f7d05a535b740d",
+    "expanded_matrix_blob": "0ab0c31377d7e03bc279943af151c687f51ffc93",
+    "materialized_cells_tree": "34a30574c7420728bff57958c815194979a622ab",
+    "mutation_materialization_audit_commit": "29faa0b9086eb9687028a4100f04e7ca88a15f6d",
+    "synthetic_seed_catalog_blob": "2a0c01ad5850d3a701fb243d307ff441e9cae358",
+    "truth_oracle_blob": "1e5fe69f302df6fdd367797649b17eb3c4ea5950"
+  },
+  "github_actions": {
+    "attempts": [
+      {
+        "artifact_id": 9981019805,
+        "artifact_zip_sha256": "e21dbe024d3343413b9c89461781fc5e61ce6befa09aede0c3a9aebf24594ef6",
+        "artifact_zip_size_bytes": 4889,
+        "attempt": 1,
+        "conclusion": "success",
+        "job_id": 101413882053
+      },
+      {
+        "artifact_id": 9981039079,
+        "artifact_zip_sha256": "fdfae4f0198ee34fd87b7796c67c398cd1a3bfb97c2de5800ba6392db6517300",
+        "artifact_zip_size_bytes": 4889,
+        "attempt": 2,
+        "conclusion": "success",
+        "job_id": 101414067582
+      }
+    ],
+    "canonical_internal_receipt": {
+      "attempt_1_equals_attempt_2_byte_for_byte": true,
+      "bytes": 19815,
+      "filename": "E2_A1_A2_QUALIFICATION.json",
+      "sha256": "4f9ef1938332c6cee11b20a85bab212e9716a547f5cd802f79a20eb7ca8fad55"
+    },
+    "event": "push",
+    "head_sha": "a4154f70f6733b1aafc4baf2a66e56e3b733e23b",
+    "observed_environment_attempt_2": {
+      "action_runtime_note": "GitHub forced pinned actions that target Node 20 to execute on Node 24; this observed platform behavior is recorded but is not part of E2 semantic authority.",
+      "git": "2.55.0",
+      "go": "go1.23.2 linux/amd64",
+      "os": "Ubuntu 24.04.4 LTS",
+      "python": "CPython 3.13.15",
+      "runner_image": "ubuntu-24.04",
+      "runner_image_version": "20260831.293.1",
+      "runner_version": "2.337.0"
+    },
+    "run_id": 34006252898,
+    "workflow_id": 351283922,
+    "workflow_name": "E2 A1-A2 Qualification"
+  },
+  "qualification_results": {
+    "acquisition_microcases": {
+      "count": 7,
+      "errors": [],
+      "status": "PASS"
+    },
+    "deterministic_replay_pairs": 71,
+    "failed_sections": [],
+    "frozen_seeds": {
+      "count": 6,
+      "errors": [],
+      "ir_digests": {
+        "SYN-GO-01": "4a47473d33551549d7fc0459adeb083d6e1ba6348645ee7e9d50a1f218bc4bea",
+        "SYN-GO-02": "d925302929b5aa220c5b9072146f4c28fd79b6082155ec01d9d23900d5b236ca",
+        "SYN-PY-01": "b9226e5d8a5e9e058da5d28dec4bef6306881e0191215f1d2b1b2e10b4869c39",
+        "SYN-PY-02": "b06394520f9bfd085f06a0c8e18051dd7db8be7db9d910cdfa66279ba1418ed8",
+        "SYN-TS-01": "5f5b4d1d17b7e976e899f4b21bc140c2aa7a2360c9b127535e54c7e63fba0a11",
+        "SYN-TS-02": "6f6df8ef378dc9f3093309bc6b29ae64e5817fc419488359d71a72001767454b"
+      },
+      "status": "PASS"
+    },
+    "materialized_cells": {
+      "count": 58,
+      "errors": [],
+      "expected_equals_observed_for_all_cells": true,
+      "expected_status_counts": {
+        "E2_PREDICTED_ASSURANCE_INCOMPLETE": 1,
+        "INFRASTRUCTURE_INVALID_BEFORE_PREDICTION": 2,
+        "PASS": 55
+      },
+      "observed_status_counts": {
+        "E2_PREDICTED_ASSURANCE_INCOMPLETE": 1,
+        "INFRASTRUCTURE_INVALID_BEFORE_PREDICTION": 2,
+        "PASS": 55
+      },
+      "status": "PASS"
+    },
+    "overall": "PASS",
+    "specialization_lexical_audit": {
+      "hits": [],
+      "repository_literals_scanned": 9,
+      "status": "PASS"
+    },
+    "structural_execution_count": 142
+  },
+  "qualified_implementation": {
+    "branch": "e2-development",
+    "commit": "a4154f70f6733b1aafc4baf2a66e56e3b733e23b",
+    "objects": {
+      "acquisition_blob": "b81aec3803c22a7b74d47fe1cfec5fabe71a3492",
+      "cli_blob": "06a526c0ff3ec3a500e714dbb43b8156fc1ccfea",
+      "frontend_go_blob": "4fc017fd65c8ede67cf11b5e27200c11bbac9d31",
+      "frontend_js_ts_blob": "6f3b6535caf0dcebb3c3c3679d898a23fdd8e795",
+      "frontend_python_blob": "e98cc7bbefa80d53b94fec3ef25845a3dbbedd93",
+      "go_ast_helper_blob": "26e752029d1b4a99b47f1c7024740b7b0ae14ef7",
+      "implementation_contract_blob": "ca5207ca4341ab0b522fd6b51019bdbe9e41a7c9",
+      "ir_blob": "d7edac40d4eeda86be74e5785bde3bfc28d4cf5e",
+      "model_blob": "64baf95a4939f168881627830134b314a6ee6098",
+      "qualifier_blob": "474cccb015ebdec8116c64440385d791f784f0d3",
+      "risu_e2_init_blob": "90422cd39eead48484f1007859968b2e670e5ca1",
+      "workflow_blob": "99180c0dbfcf49a6543440f90092fb6042a76307"
+    },
+    "sole_parent": "29faa0b9086eb9687028a4100f04e7ca88a15f6d",
+    "tree": "721ea373200ac124b1a996844f2d27be63b3e375"
+  },
+  "receipt_id": "RISU_DIFF_E2_A1_A2_QUALIFICATION_RECEIPT_001",
+  "schema": "risu.diff-e2-a1-a2-qualification-receipt/v0.1",
+  "scientific_firewall": {
+    "a1_a2_output_used_to_modify_frozen_truth": false,
+    "a3_a4_a5_verdict_logic_included": false,
+    "fresh_e2_evaluation_authorized": false,
+    "fresh_gold_consumed": false,
+    "fresh_target_bytes_consumed": false,
+    "fresh_target_selected": false,
+    "real_target_gold_used_for_a1_a2_qualification": false
+  },
+  "semantic_authority": false,
+  "status": "PASS"
+}
