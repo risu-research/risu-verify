@@ -22,11 +22,11 @@ jobs:
           python3 - <<'PY'
           import hashlib, os, pathlib, urllib.request
           repo = "risu-research/risu-verify"
-          adapter_ref = "8bdd1295f037a518b40c8682f73c9ac158485988"
+          adapter_ref = "17c7294fcdc52b4467e5a967b2589149b98b46ae"
           science_ref = "5292ba5a0b833eb76211d4728142cfae87c23318"
           files = [
-            (adapter_ref,"tools/e2_frozen48_requalification_primary.py","4ed84c46d826fee243f0f2d1f201ca2d9f847d80"),
-            (adapter_ref,"tools/e2_frozen48_requalification_independent.py","b2069af4c3ba461274e26e06b55092cfd1fff85c"),
+            (adapter_ref,"tools/e2_frozen48_requalification_primary.py","56ad7ec667f59f962585c6d5ed81b5dc98a363e2"),
+            (adapter_ref,"tools/e2_frozen48_requalification_independent.py","8a68cd1b80e2abeac68a3ca7aed6ab7cfc28c105"),
             (science_ref,"risu_e2/__init__.py","90422cd39eead48484f1007859968b2e670e5ca1"),
             (science_ref,"risu_e2/model.py","64baf95a4939f168881627830134b314a6ee6098"),
             (science_ref,"risu_e2/acquisition.py","b81aec3803c22a7b74d47fe1cfec5fabe71a3492"),
@@ -57,7 +57,6 @@ jobs:
               actual=git_blob(data)
               if actual != expected: raise SystemExit(f"BLOB_MISMATCH:{path}:{actual}")
               dst=root/path; dst.parent.mkdir(parents=True,exist_ok=True); dst.write_bytes(data)
-          # Structural firewall: no held-out tree, transport bundle, selection source copy, or candidate-58 material exists.
           forbidden=[root/'experiments/risu-diff-e2/qualification/materialized/cells',root/'candidate58',root/'transport']
           if any(p.exists() for p in forbidden): raise SystemExit('HELDOUT_MATERIAL_PRESENT')
           print(f"sealed_file_count={len(files)}")
