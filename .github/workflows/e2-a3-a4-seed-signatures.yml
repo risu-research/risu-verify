@@ -1,0 +1,75 @@
+name: E2 A3 A4 Canonical Seed Consequence Signatures
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'tools/e2_a3_a4_derive_seed_signatures.py'
+      - 'tools/e2_a3_a4_check_seed_signatures.py'
+      - '.github/workflows/e2-a3-a4-seed-signatures.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  derive-and-check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.2'
+      - name: Compile frozen and new surfaces
+        run: |
+          python -m py_compile \
+            tools/e2_a2o_seed_qualify.py \
+            tools/e2_a3_a4_derive_seed_signatures.py \
+            tools/e2_a3_a4_check_seed_signatures.py
+      - name: Regenerate exact frozen six-seed overlay twice
+        run: |
+          mkdir -p out/a2o1 out/a2o2 out/sig1 out/sig2 out/check1 out/check2
+          python tools/e2_a2o_seed_qualify.py --overlay-output out/a2o1/E2_A2O_SEED_OVERLAY_BUNDLE.json --receipt-output out/a2o1/E2_A2O_SEED_QUALIFICATION_RECEIPT.json
+          python tools/e2_a2o_seed_qualify.py --overlay-output out/a2o2/E2_A2O_SEED_OVERLAY_BUNDLE.json --receipt-output out/a2o2/E2_A2O_SEED_QUALIFICATION_RECEIPT.json
+          test "$(sha256sum out/a2o1/E2_A2O_SEED_OVERLAY_BUNDLE.json | cut -d' ' -f1)" = "2d231b9eae523d7fb84925c302398c4913670b765cb10e2c4f76dc988cc5ea36"
+          cmp out/a2o1/E2_A2O_SEED_OVERLAY_BUNDLE.json out/a2o2/E2_A2O_SEED_OVERLAY_BUNDLE.json
+      - name: Derive canonical consequence signatures twice
+        run: |
+          python tools/e2_a3_a4_derive_seed_signatures.py --overlay-bundle out/a2o1/E2_A2O_SEED_OVERLAY_BUNDLE.json --anchor-bundle protocols/RISU_DIFF_E2_CANONICAL_SEED_CONSEQUENCE_ANCHORS_v0.1.json --output out/sig1/E2_A3_A4_CANONICAL_SEED_CONSEQUENCE_SIGNATURES_v0.1.json --receipt out/sig1/E2_A3_A4_CANONICAL_SEED_CONSEQUENCE_SIGNATURE_DERIVATION_RECEIPT_v0.1.json
+          python tools/e2_a3_a4_derive_seed_signatures.py --overlay-bundle out/a2o2/E2_A2O_SEED_OVERLAY_BUNDLE.json --anchor-bundle protocols/RISU_DIFF_E2_CANONICAL_SEED_CONSEQUENCE_ANCHORS_v0.1.json --output out/sig2/E2_A3_A4_CANONICAL_SEED_CONSEQUENCE_SIGNATURES_v0.1.json --receipt out/sig2/E2_A3_A4_CANONICAL_SEED_CONSEQUENCE_SIGNATURE_DERIVATION_RECEIPT_v0.1.json
+          cmp out/sig1/E2_A3_A4_CANONICAL_SEED_CONSEQUENCE_SIGNATURES_v0.1.json out/sig2/E2_A3_A4_CANONICAL_SEED_CONSEQUENCE_SIGNATURES_v0.1.json
+          cmp out/sig1/E2_A3_A4_CANONICAL_SEED_CONSEQUENCE_SIGNATURE_DERIVATION_RECEIPT_v0.1.json out/sig2/E2_A3_A4_CANONICAL_SEED_CONSEQUENCE_SIGNATURE_DERIVATION_RECEIPT_v0.1.json
+      - name: Independent re-derivation twice
+        run: |
+          python tools/e2_a3_a4_check_seed_signatures.py --overlay-bundle out/a2o1/E2_A2O_SEED_OVERLAY_BUNDLE.json --anchor-bundle protocols/RISU_DIFF_E2_CANONICAL_SEED_CONSEQUENCE_ANCHORS_v0.1.json --signatures out/sig1/E2_A3_A4_CANONICAL_SEED_CONSEQUENCE_SIGNATURES_v0.1.json --receipt out/check1/E2_A3_A4_CANONICAL_SEED_CONSEQUENCE_SIGNATURE_INDEPENDENT_CHECK_v0.1.json
+          python tools/e2_a3_a4_check_seed_signatures.py --overlay-bundle out/a2o1/E2_A2O_SEED_OVERLAY_BUNDLE.json --anchor-bundle protocols/RISU_DIFF_E2_CANONICAL_SEED_CONSEQUENCE_ANCHORS_v0.1.json --signatures out/sig1/E2_A3_A4_CANONICAL_SEED_CONSEQUENCE_SIGNATURES_v0.1.json --receipt out/check2/E2_A3_A4_CANONICAL_SEED_CONSEQUENCE_SIGNATURE_INDEPENDENT_CHECK_v0.1.json
+          cmp out/check1/E2_A3_A4_CANONICAL_SEED_CONSEQUENCE_SIGNATURE_INDEPENDENT_CHECK_v0.1.json out/check2/E2_A3_A4_CANONICAL_SEED_CONSEQUENCE_SIGNATURE_INDEPENDENT_CHECK_v0.1.json
+      - name: Emit hashes and firewalls
+        run: |
+          sha256sum out/sig1/* out/check1/*
+          python - <<'PY'
+          import json
+          s=json.load(open('out/sig1/E2_A3_A4_CANONICAL_SEED_CONSEQUENCE_SIGNATURES_v0.1.json'))
+          r=json.load(open('out/check1/E2_A3_A4_CANONICAL_SEED_CONSEQUENCE_SIGNATURE_INDEPENDENT_CHECK_v0.1.json'))
+          assert s['seed_count']==6 and r['status']=='PASS'
+          assert sum(x['effective_guard_form']=='DIRECT_CONTROL' for x in s['signatures'])==5
+          assert sum(x['effective_guard_form']=='HELPER_CONTROL' for x in s['signatures'])==1
+          assert all(x['effect_polarity'] is False and x['rejection_polarity'] is True for x in s['signatures'])
+          assert all(v is False for v in s['firewall'].values())
+          print(json.dumps({'status':'PASS','bundle_digest_sha256':s['bundle_digest_sha256'],'seed_count':6},sort_keys=True,separators=(',',':')))
+          PY
+      - name: Upload signature qualification artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2-a3-a4-canonical-seed-signatures
+          path: |
+            out/sig1/E2_A3_A4_CANONICAL_SEED_CONSEQUENCE_SIGNATURES_v0.1.json
+            out/sig1/E2_A3_A4_CANONICAL_SEED_CONSEQUENCE_SIGNATURE_DERIVATION_RECEIPT_v0.1.json
+            out/check1/E2_A3_A4_CANONICAL_SEED_CONSEQUENCE_SIGNATURE_INDEPENDENT_CHECK_v0.1.json
+          if-no-files-found: error
+          retention-days: 30
