@@ -1,0 +1,101 @@
+name: E2 A3 A4 Candidate Observability Root Cause Evidence Freeze
+
+on:
+  push:
+    paths:
+      - '.github/workflows/e2-a3-a4-candidate-observability-root-cause-evidence-freeze.yml'
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  freeze:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout archival revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 8
+      - name: Assert diagnosis-only history and immutable authorities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object protocols/RISU_DIFF_E2_A3_A4_CANDIDATE_OBSERVABILITY_POSTFREEZE_ROOT_CAUSE_ADJUDICATION_v0.1.json)" = "d25dc14d20fdca4712fe91a6323e9f4f2d9734f9"
+          test "$(git hash-object tools/e2_a3_a4_candidate_observability_root_cause_evidence.py)" = "5df61780a5bc0901d2d84e03e359dfbcb497ffbc"
+          test "$(git hash-object experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/freeze/E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROQUALIFICATION_PRIMARY.json)" = "dcdd2e8badf8261d47ed966bd6f17e8eb4477852"
+          test "$(git hash-object risu_e2/path_observability.py)" = "6eae3403f53b86f85bac47a31e751d28508e7225"
+          mapfile -t delta < <(git diff --name-only 50079131e9d0ffa35bfa72e290cf3bec60ddd14e HEAD)
+          for p in "${delta[@]}"; do
+            case "$p" in
+              protocols/RISU_DIFF_E2_A3_A4_CANDIDATE_OBSERVABILITY_POSTFREEZE_ROOT_CAUSE_ADJUDICATION_v0.1.json|tools/e2_a3_a4_candidate_observability_root_cause_evidence.py|.github/workflows/e2-a3-a4-candidate-observability-root-cause-evidence.yml|.github/workflows/e2-a3-a4-candidate-observability-root-cause-evidence-freeze.yml) ;;
+              *) echo "non-diagnosis delta from frozen scientific head: $p"; exit 1 ;;
+            esac
+          done
+      - name: Download and verify category-free evidence artifact
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          T="$RUNNER_TEMP/root-cause-evidence-freeze"
+          mkdir -p "$T/unzip"
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/risu-research/risu-verify/actions/artifacts/9995082867/zip" -o "$T/evidence.zip"
+          echo "4b3ae2c7ff346dcf6f4a2c5a208165b6c04228d9c9a0803a581234bfad1daf69  $T/evidence.zip" | sha256sum -c -
+          unzip -q "$T/evidence.zip" -d "$T/unzip"
+          P="$T/unzip/E2_A3_A4_CANDIDATE_OBSERVABILITY_ROOT_CAUSE_EVIDENCE_DOSSIER_v0.1.json"
+          echo "76f2c895bf5a481e6fa7bf05d349a4e0bb5ac56cc6be2d81dd24a62bb8162da9  $P" | sha256sum -c -
+          test "$(wc -c < "$P")" -eq 39181
+          python - "$P" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1]))
+          assert d['status']=='PASS' and d['case_count']==8 and d['category_labels_present'] is False
+          assert d['read_set_attestation']['candidate_58_bytes'] is False
+          assert sum(r['pipeline_replay_status']=='REPLAYED_EXACT_FROZEN_PIPELINE' for r in d['rows'])==6
+          assert sum(r['pipeline_replay_status']=='NOT_ATTEMPTED_LOCATOR_UNRESOLVED' for r in d['rows'])==2
+          PY
+      - name: Construct category-free evidence freeze receipt and commit exact bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          T="$RUNNER_TEMP/root-cause-evidence-freeze"
+          D="experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/root-cause"
+          mkdir -p "$D"
+          cp "$T/unzip/E2_A3_A4_CANDIDATE_OBSERVABILITY_ROOT_CAUSE_EVIDENCE_DOSSIER_v0.1.json" "$D/E2_A3_A4_CANDIDATE_OBSERVABILITY_ROOT_CAUSE_EVIDENCE_DOSSIER_v0.1.json"
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          D=Path('experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/root-cause')
+          dossier=(D/'E2_A3_A4_CANDIDATE_OBSERVABILITY_ROOT_CAUSE_EVIDENCE_DOSSIER_v0.1.json').read_bytes()
+          receipt={
+            'schema':'risu.e2-a3-a4-candidate-observability-root-cause-evidence-freeze-receipt/v0.1',
+            'status':'CATEGORY_FREE_EVIDENCE_FROZEN',
+            'category_labels_present':False,
+            'authorities':{
+              'frozen_candidate_observability_commit':'50079131e9d0ffa35bfa72e290cf3bec60ddd14e',
+              'root_cause_adjudication_protocol_commit':'4de0b662a3b00bacb0406d4c0d797053423b4de3',
+              'root_cause_adjudication_protocol_git_blob':'d25dc14d20fdca4712fe91a6323e9f4f2d9734f9',
+              'evidence_extractor_commit':'83e5794c7ef5a45e8c534d2778e539c931fb89e2',
+              'evidence_extractor_git_blob':'5df61780a5bc0901d2d84e03e359dfbcb497ffbc',
+              'successful_evidence_workflow_head':'31707625b52bd16579bc1e7a4519f890a07db234',
+              'successful_evidence_workflow_git_blob':'38f4c5feb10f10bf9f39c80eb291d6e3d28040fa'},
+            'hosted_execution':{'github_run_id':34052885643,'job_id':101539525566,'artifact_id':9995082867,'artifact_zip_sha256':'4b3ae2c7ff346dcf6f4a2c5a208165b6c04228d9c9a0803a581234bfad1daf69','dossier_sha256':hashlib.sha256(dossier).hexdigest(),'dossier_bytes':len(dossier),'two_extractions_byte_identical':True,'cases':8,'exact_frozen_pipeline_replays':6,'unresolved_anchor_locators':2},
+            'pre_success_plumbing_runs':[
+              {'run_id':34052684980,'classification':'PRE_EVIDENCE_AUTHORITY_ASSERTION_BLOB_TYPO','evidence_extraction_executed':False},
+              {'run_id':34052767801,'classification':'POST_EXTRACTION_WORKSPACE_PERMISSION_UPLOAD_FAILURE','evidence_extraction_executed':True,'dossier_sha256':'76f2c895bf5a481e6fa7bf05d349a4e0bb5ac56cc6be2d81dd24a62bb8162da9','artifact_uploaded':False}],
+            'firewall':{'candidate_58_bytes':False,'sanitized_58_manifest':False,'raw_blind_58_transport':False,'mutation_truth':False,'operator_metadata':False,'expected_e2_predictions':False,'fresh_target_bytes':False,'scientific_implementation_changes':False,'remediation_code_changes':False,'remediation_design_emitted':False,'a3_a4_58_verdict_execution':False},
+            'next_authorized_step':'ADJUDICATE THE EXACT EIGHT FROZEN FAILURES FROM THIS CATEGORY-FREE DOSSIER UNDER THE FROZEN TAXONOMY, THEN RUN THE REQUIRED INDEPENDENT SECOND PASS WITHOUT READING PRIMARY CATEGORY LABELS.'}
+          pre=(json.dumps(receipt,sort_keys=True,separators=(',',':'))+'\n').encode(); receipt['receipt_preimage_sha256']=hashlib.sha256(pre).hexdigest()
+          out=(json.dumps(receipt,sort_keys=True,separators=(',',':'))+'\n').encode()
+          (D/'E2_A3_A4_CANDIDATE_OBSERVABILITY_ROOT_CAUSE_EVIDENCE_FREEZE_RECEIPT_v0.1.json').write_bytes(out)
+          print(json.dumps({'dossier_sha256':hashlib.sha256(dossier).hexdigest(),'receipt_sha256':hashlib.sha256(out).hexdigest(),'receipt_bytes':len(out)},sort_keys=True,separators=(',',':')))
+          PY
+          git config user.name "RISU Scientific Freeze"
+          git config user.email "actions@users.noreply.github.com"
+          git add "$D"
+          mapfile -t staged < <(git diff --cached --name-only)
+          test "${#staged[@]}" -eq 2
+          git commit -m "Freeze category-free root-cause evidence"
+          git push origin HEAD:e2-development
