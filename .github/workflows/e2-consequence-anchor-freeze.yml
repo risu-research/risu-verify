@@ -1,0 +1,78 @@
+name: E2 Consequence Anchor Freeze
+
+on:
+  push:
+    branches:
+      - e2-development
+    paths:
+      - "schemas/RISU_E2_CONSEQUENCE_ANCHOR_CONTRACT_v0.1.schema.json"
+      - "protocols/RISU_DIFF_E2_CANONICAL_SEED_CONSEQUENCE_ANCHORS_v0.1.json"
+      - "tools/e2_validate_consequence_anchors.py"
+      - ".github/workflows/e2-consequence-anchor-freeze.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exact branch revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.13"
+
+      - name: Compile validator
+        run: |
+          set -euo pipefail
+          python -m py_compile tools/e2_validate_consequence_anchors.py
+          python -m json.tool schemas/RISU_E2_CONSEQUENCE_ANCHOR_CONTRACT_v0.1.schema.json >/dev/null
+          python -m json.tool protocols/RISU_DIFF_E2_CANONICAL_SEED_CONSEQUENCE_ANCHORS_v0.1.json >/dev/null
+
+      - name: Validate frozen seed anchors twice
+        run: |
+          set -euo pipefail
+          python tools/e2_validate_consequence_anchors.py > E2_CONSEQUENCE_ANCHOR_VALIDATION_ATTEMPT_1.json
+          python tools/e2_validate_consequence_anchors.py > E2_CONSEQUENCE_ANCHOR_VALIDATION_ATTEMPT_2.json
+          cmp E2_CONSEQUENCE_ANCHOR_VALIDATION_ATTEMPT_1.json E2_CONSEQUENCE_ANCHOR_VALIDATION_ATTEMPT_2.json
+          cp E2_CONSEQUENCE_ANCHOR_VALIDATION_ATTEMPT_1.json E2_CONSEQUENCE_ANCHOR_VALIDATION_RECEIPT.json
+          sha256sum E2_CONSEQUENCE_ANCHOR_VALIDATION_RECEIPT.json
+
+      - name: Assert validation boundary
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          doc = json.loads(Path("E2_CONSEQUENCE_ANCHOR_VALIDATION_RECEIPT.json").read_text(encoding="utf-8"))
+          assert doc["status"] == "PASS"
+          assert doc["seed_count"] == 6
+          assert doc["contract_count"] == 6
+          assert doc["anchor_count"] == 18
+          assert doc["binding_slot_count"] == 12
+          assert doc["unique_anchor_resolution_count"] == 18
+          assert doc["materialized_mutant_cell_paths_read"] is False
+          assert doc["mutation_truth_read"] is False
+          assert doc["mutation_operator_metadata_read"] is False
+          assert doc["expected_e2_predictions_read"] is False
+          assert doc["mutant_anchor_transport_authorized"] is False
+          PY
+
+      - name: Upload validation receipt
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-consequence-anchor-freeze
+          path: |
+            E2_CONSEQUENCE_ANCHOR_VALIDATION_RECEIPT.json
+            E2_CONSEQUENCE_ANCHOR_VALIDATION_ATTEMPT_1.json
+            E2_CONSEQUENCE_ANCHOR_VALIDATION_ATTEMPT_2.json
+          if-no-files-found: error
+          retention-days: 30
