@@ -31,8 +31,8 @@ jobs:
           set -euo pipefail
           test "$(git hash-object experiments/risu-diff-e2/qualification/anchor-transport/E2_ANCHOR_TRANSPORT_MUTATION_FREE_QUALIFICATION_FREEZE_RECEIPT.json)" = "18d925a63858f4ddece79feb15a0cdc7b8e09a58"
           test "$(git rev-parse HEAD:experiments/risu-diff-e2/qualification/materialized/cells)" = "34a30574c7420728bff57958c815194979a622ab"
-          echo "df481fcb396bd323e282960d057a9495b987b6d98ea37d92ec45bc3b7d42067e  tools/e2_anchor_transport_build_admission.py" | sha256sum -c -
-          echo "92298e30649b92028a0b2442c66a72f2bba69870fecdebf8bee283a967e5c2ef  tools/e2_anchor_transport_audit_admission.py" | sha256sum -c -
+          test "$(git hash-object tools/e2_anchor_transport_build_admission.py)" = "3f266d2fbce015fdbc70aeb3c7a57dd9d0540acd"
+          test "$(git hash-object tools/e2_anchor_transport_audit_admission.py)" = "2408edbbc11649710bba307de8b7d6da9350d249"
           test "$(git hash-object protocols/RISU_DIFF_E2_MUTATION_BLIND_ANCHOR_TRANSPORT_v0.1.json)" = "7da7d3ac536d5edda56aa2c2636db1c8b02569b3"
 
       - name: Seal forbidden metadata and build manifest twice
@@ -93,8 +93,8 @@ jobs:
             "case_count":58,
             "materialized_cells_tree_git_sha":"34a30574c7420728bff57958c815194979a622ab",
             "prior_transport_qualification_freeze_blob":"18d925a63858f4ddece79feb15a0cdc7b8e09a58",
-            "builder_sha256":"df481fcb396bd323e282960d057a9495b987b6d98ea37d92ec45bc3b7d42067e",
-            "independent_checker_sha256":"92298e30649b92028a0b2442c66a72f2bba69870fecdebf8bee283a967e5c2ef",
+            "builder_git_blob":"3f266d2fbce015fdbc70aeb3c7a57dd9d0540acd",
+            "independent_checker_git_blob":"2408edbbc11649710bba307de8b7d6da9350d249",
             "manifest_sha256":h(manifest),
             "build_audit_sha256":h(build),
             "independent_audit_sha256":h(indep),
