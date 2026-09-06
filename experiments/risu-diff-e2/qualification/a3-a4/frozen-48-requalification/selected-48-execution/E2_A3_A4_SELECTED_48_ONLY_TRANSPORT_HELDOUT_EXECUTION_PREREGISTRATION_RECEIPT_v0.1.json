@@ -1,0 +1,164 @@
+{
+  "schema": "risu.e2-a3-a4-selected48-only-transport-heldout-execution-preregistration-receipt/v0.1",
+  "status": "PREREGISTERED_SELECTED48_EXECUTION_READY_BUT_NOT_EXECUTED",
+  "authority_chain": {
+    "repository": "risu-research/risu-verify",
+    "branch": "e2-development",
+    "pre_protocol_head": "4445732cc61f265b85dc8ce5ca5d78b777f99d62",
+    "protocol_first_commit": "d0e39eec55721f235c9c136c4da9f99fa723e4b0",
+    "orchestration_commit": "e4d995ed5869b9f6dcfa176f0d940d461adbda2b",
+    "workflow_freeze_commit": "84bdfdd385e247c2cab7642e9b608683a7ff39a8",
+    "receipt_commit_binding_rule": "The exact commit that adds only this preregistration receipt is the preregistration_authority_commit required by the frozen workflow. Its SHA is necessarily external to this receipt's own bytes and must be recorded without amending this file."
+  },
+  "new_frozen_files": {
+    "protocol": {
+      "path": "protocols/RISU_DIFF_E2_A3_A4_SELECTED_48_ONLY_TRANSPORT_HELDOUT_EXECUTION_v0.1.json",
+      "git_blob": "513f468352a4d29e8a1bdb1fbde0349d95921370"
+    },
+    "non_scientific_orchestrator": {
+      "path": "tools/e2_a3_a4_selected48_transport_heldout_orchestrator.py",
+      "git_blob": "189e51b80aa7630064fc0164efe0ada30c324963",
+      "role": "STRICT_ADMISSION_PROJECTION_EXACT_BLOB_STAGING_FROZEN_TRANSPORT_CALLING_IDENTITY_ONLY_BINDING_AND_CANONICAL_CROSS_CHECK"
+    },
+    "dispatch_only_workflow": {
+      "path": ".github/workflows/e2-a3-a4-selected48-only-transport-heldout.yml",
+      "git_blob": "af7a8e2a70bcd7cb7000335512530ce9b9886666",
+      "trigger": "workflow_dispatch_only",
+      "actions_checkout_present": false,
+      "automatic_push_pull_request_schedule_trigger_present": false
+    }
+  },
+  "frozen_input_authorities": {
+    "frozen48_requalification_protocol": {
+      "path": "protocols/RISU_DIFF_E2_A3_A4_FROZEN_48_REQUALIFICATION_v0.1.json",
+      "git_blob": "2a10d6e648e7ca287469189c528ba48f9b8e7f32"
+    },
+    "selected48_manifest": {
+      "path": "experiments/risu-diff-e2/qualification/a3-a4/frozen-48-requalification/selection/E2_A3_A4_FROZEN_48_SELECTION_MANIFEST.json",
+      "git_blob": "8336a8e33e189e373a8a59cca57c4cab20fdc5f7",
+      "manifest_digest_sha256": "1e044134302a52bc5c53f4028fc327bd495ba110e6e6d19546252e0e717bdd61",
+      "selected_count": 48,
+      "excluded_epistemic_count": 10
+    },
+    "cells_tree_git_sha": "34a30574c7420728bff57958c815194979a622ab",
+    "primary_adapter": {
+      "path": "tools/e2_frozen48_requalification_primary.py",
+      "git_blob": "56ad7ec667f59f962585c6d5ed81b5dc98a363e2"
+    },
+    "independent_adapter": {
+      "path": "tools/e2_frozen48_requalification_independent.py",
+      "git_blob": "8a68cd1b80e2abeac68a3ca7aed6ab7cfc28c105"
+    },
+    "canonical_anchor_bundle": {
+      "path": "protocols/RISU_DIFF_E2_CANONICAL_SEED_CONSEQUENCE_ANCHORS_v0.1.json",
+      "git_blob": "ec8d8b287a80b87c815f0362be366be076d2b091"
+    },
+    "canonical_signature_bundle": {
+      "path": "experiments/risu-diff-e2/qualification/a3-a4/E2_A3_A4_CANONICAL_SEED_CONSEQUENCE_SIGNATURES_v0.1.json",
+      "git_blob": "cfa7d78707599177afe690c3aad7faaa22cb1930",
+      "bundle_digest_sha256": "ce4502a3f8bb2cf9e2d16138b44e4165b7884737e74e8289883c81e6a7e89a1e"
+    }
+  },
+  "scientific_and_support_byte_pins": {
+    "frontend_js_v3": "13ffb1b149150b7e730591de7acf47e9322bdf02",
+    "frontend_python_v2": "8b7e4d0e2bb9ef6487ef2b90d2390b55ced55ea9",
+    "ir_v3": "1d95cfcb2e76563aa5d3ceb65815043eb8b2884a",
+    "support_files": {
+      "risu_e2/__init__.py": "90422cd39eead48484f1007859968b2e670e5ca1",
+      "risu_e2/model.py": "64baf95a4939f168881627830134b314a6ee6098",
+      "risu_e2/acquisition.py": "b81aec3803c22a7b74d47fe1cfec5fabe71a3492",
+      "risu_e2/frontend_python.py": "e98cc7bbefa80d53b94fec3ef25845a3dbbedd93",
+      "risu_e2/frontend_js.py": "6f3b6535caf0dcebb3c3c3679d898a23fdd8e795",
+      "risu_e2/frontend_go.py": "4fc017fd65c8ede67cf11b5e27200c11bbac9d31",
+      "risu_e2/ir.py": "d7edac40d4eeda86be74e5785bde3bfc28d4cf5e",
+      "risu_e2/overlay_common.py": "9975fe509fba30a2bbbbb8606f174faa5912a2f1",
+      "risu_e2/overlay_control.py": "00e06b85d91ce9f75676476c5dc47d15d51d2d35",
+      "risu_e2/overlay_source.py": "09f6e444cb20654cab1c7ac61ef45eaff44469d6",
+      "risu_e2/observability_overlay.py": "77be5ea1dad30aa6daa889e0753ce7d1aaa6f07a",
+      "risu_e2/path_observability.py": "6eae3403f53b86f85bac47a31e751d28508e7225",
+      "tools/e2_go_ir_extract.go": "26e752029d1b4a99b47f1c7024740b7b0ae14ef7"
+    }
+  },
+  "frozen_transport_authority": {
+    "archive_sha256": "7e08347694e82210bdcf53a8cec3f0684dcda5089020ad0d33e21b144fb88278",
+    "engine_sha256": "3b626fc83fe76a1dfafdcf896efc8a16440bbeec062cfb1dbb86badd23b7af4c",
+    "independent_checker_sha256": "a24d6350636098e6083629f31db142e8061525f0b0d6af3538bab9a2d96048c6",
+    "archive_chunk_git_blobs": [
+      "d0a5ed7980d9ae0d2f2740624ac29a6e161ac9b9",
+      "d196782d6dced42ac761e9cf923022ad45c79110",
+      "a58cbdbf9fe5cb2cc03ca4f3e779f72c44632049",
+      "0882b17589095ae526f1ed533a9d60a43609932d"
+    ],
+    "raw_blind58_transport_bundle_is_not_an_input": true,
+    "selected48_transport_is_recomputed_from_exact_selected_source_bytes": true
+  },
+  "runtime_admission_freeze": {
+    "exact_per_cell_fields": [
+      "cell_id",
+      "language",
+      "source_git_blob_identity",
+      "source_file_path_metadata"
+    ],
+    "frozen_mutation_class_propagated_to_transport_or_heldout": false,
+    "truth_operator_expected_prediction_fields_propagated": false,
+    "language_is_derived_only_from_frozen_source_suffix": true,
+    "selected_source_fetch_mode": "EXACT_GIT_BLOB_ENDPOINT_ALLOWLIST_ONLY",
+    "selected_source_tree_walk": false,
+    "selected_source_path_fetch": false,
+    "selected_source_checkout": false,
+    "source_blob_identity_reverified_after_fetch": true
+  },
+  "sealed_execution_freeze": {
+    "first_selected48_source_read_and_transport_and_heldout_share_one_hosted_run": true,
+    "primary_run_count": 2,
+    "independent_run_count": 2,
+    "repeat_byte_identity_required": true,
+    "canonical_named_field_cross_check_required": true,
+    "all_48_required": true,
+    "case_dropping_forbidden": true,
+    "first_complete_output_uploaded_before_final_pass_assertion": true,
+    "first_complete_pass_or_fail_must_be_archived_before_any_change": true,
+    "raw_selected_source_artifact_upload_forbidden": true,
+    "artifact_source_leak_scan_required": true
+  },
+  "hosted_toolchain_and_action_pins": {
+    "runner": "ubuntu-24.04",
+    "python": "3.13",
+    "setup_python_action_commit": "a26af69be951a213d495a4c3e4e4022e16d87065",
+    "go": "1.23.2",
+    "setup_go_action_commit": "40f1582b2485089dde7abd97c1529aa768e1baff",
+    "upload_artifact_action_commit": "ea165f8d65b6e75b540449e92b4886f43607fa02"
+  },
+  "pre_receipt_execution_audit": {
+    "workflow_freeze_head_run_count_observed": 0,
+    "workflow_freeze_head_checked": "84bdfdd385e247c2cab7642e9b608683a7ff39a8",
+    "workflow_dispatched_by_this_freeze_process": false,
+    "selected48_source_bytes_read": false,
+    "epistemic10_source_bytes_read": false,
+    "candidate58_source_bytes_read": false,
+    "raw_blind58_transport_read": false,
+    "mutation_truth_read": false,
+    "mutation_operator_metadata_read": false,
+    "expected_e2_prediction_read": false,
+    "fresh_target_bytes_read": false,
+    "a3_a4_semantic_verdicts_executed": false
+  },
+  "scientific_firewall": {
+    "scientific_code_changed_by_this_four_stage_freeze": false,
+    "frozen_cells_changed": false,
+    "selection_changed": false,
+    "corpus_or_expectation_changed": false,
+    "admission_gate_relaxed": false,
+    "posthoc_case_exclusion_authorized": false,
+    "candidate58_authorized": false,
+    "epistemic10_authorized": false,
+    "a3_a4_semantic_verdict_execution_authorized": false
+  },
+  "future_dispatch_contract": {
+    "authorization_phrase": "AUTHORIZE_EXACT_SELECTED48_FIRST_READ",
+    "launch_authority_commit": "84bdfdd385e247c2cab7642e9b608683a7ff39a8",
+    "preregistration_authority_commit": "USE_THE_EXACT_COMMIT_SHA_THAT_ADDS_ONLY_THIS_RECEIPT",
+    "execution_is_not_automatic": true,
+    "next_authorized_step": "Only an explicit workflow_dispatch satisfying all three exact inputs may perform the first selected-48 source read. Until that dispatch, all heldout source and semantic-execution boundaries remain sealed."
+  }
+}
