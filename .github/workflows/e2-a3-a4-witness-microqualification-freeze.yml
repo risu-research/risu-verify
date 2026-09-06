@@ -1,5 +1,6 @@
 name: E2 A3 A4 Witness Microqualification Freeze
 
+# Archival-plumbing-only correction: git status collapses a new directory to one line.
 on:
   push:
     paths:
@@ -29,7 +30,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "a0fd5f0b587654ebd08f5a8144d3ef270a32ea30"
+          test "$(git rev-parse HEAD^)" = "fca1438c9a411def01169c33d203689a66a527c8"
+          git merge-base --is-ancestor a0fd5f0b587654ebd08f5a8144d3ef270a32ea30 HEAD
+          test "$(git diff --name-only a0fd5f0b587654ebd08f5a8144d3ef270a32ea30..HEAD | grep -v '^.github/workflows/e2-a3-a4-witness-microqualification-freeze.yml$' | wc -l)" = "0"
           test "$(git hash-object tools/e2_a3_a4_witness_microqualify.py)" = "cf000fe11aeca95cae61c858cf4cc01d34f5c9af"
           test "$(git hash-object tools/e2_a3_a4_witness_microcheck.py)" = "88c009c09397c7fefe734c431d88663f14de63d7"
           test "$(git hash-object protocols/RISU_DIFF_E2_A3_A4_VERDICT_PREREGISTRATION_v0.1.json)" = "8926d0b32a1c48addb5e341c3b8bdeb258fc7f85"
@@ -105,6 +108,7 @@ jobs:
               {'commit':'059c265118fae8b898df62eaf3f5f67040d66203','classification':'NONSCIENTIFIC_ACCIDENTAL_SENTINEL_ADD','scientific_execution_started':False},
               {'commit':'bba13b5b2c3008462bc73f7ceddeb4e9a3df830b','classification':'SENTINEL_CLEANUP','result':'SCIENTIFIC_TREE_RETURNED_BYTE_IDENTICAL_TO_STAGE1_BEFORE_IMPLEMENTATION'},
               {'git_blob':'c0d065236881ab6492c2e91487a9a3d7ea12073d','classification':'UNATTACHED_CORRUPTED_STAGING_BLOB','referenced_by_scientific_tree_or_execution_authority':False}],
+            'archival_plumbing_incidents':[{'trigger_commit':'fca1438c9a411def01169c33d203689a66a527c8','run_id':34041915602,'job_id':101510106916,'classification':'UNTRACKED_DIRECTORY_STATUS_COLLAPSE_BEFORE_GIT_ADD','scientific_artifact_checks_passed':True,'freeze_commit_created':False}],
             'qualification':{'family_count':14,'language_instantiation_count':3,'case_count':42,'family_expectations':family_expectations,'composed_outcome_counts':{'PRESERVATION_EVIDENCE':9,'REGRESSION_WITNESS':18,'ASSURANCE_INCOMPLETE':15},'checker_disagreement_cases':3,'primary_status':'PASS','independent_status':'PASS','scope_note':'Protocol-authored abstract proof-mechanics fixtures instantiated under Python/Go/TypeScript-JavaScript labels; this qualifies verdict-calculus mechanics, not frontend/parser end-to-end performance.'},
             'canonical_outputs':{
               'E2_A3_A4_WITNESS_MICROFIXTURE_BUNDLE_v0.1.json':{'bytes':64000,'sha256':os.environ['BUNDLE_SHA']},
@@ -129,12 +133,13 @@ jobs:
           set -euo pipefail
           D=experiments/risu-diff-e2/qualification/a3-a4/microqualification
           git status --short
-          test "$(git status --short | wc -l)" = "4"
-          test "$(git status --short | grep '^?? ' | wc -l)" = "4"
           git config user.name 'RISU E2 Freeze Bot'
           git config user.email 'actions@users.noreply.github.com'
           git add "$D"
           git diff --cached --name-only > /tmp/names
           test "$(wc -l < /tmp/names)" = "4"
+          test "$(git diff --cached --diff-filter=A --name-only | wc -l)" = "4"
+          test "$(git diff --cached --diff-filter=MD --name-only | wc -l)" = "0"
+          test "$(grep -c '^experiments/risu-diff-e2/qualification/a3-a4/microqualification/' /tmp/names)" = "4"
           git commit -m 'Freeze preregistered A3/A4 witness microqualification'
           git push origin HEAD:e2-development
