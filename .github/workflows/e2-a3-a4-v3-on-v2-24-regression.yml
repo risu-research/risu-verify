@@ -38,7 +38,7 @@ jobs:
           test "$(git hash-object risu_e2/frontend_js_v3.py)" = "13ffb1b149150b7e730591de7acf47e9322bdf02"
           test "$(git hash-object risu_e2/frontend_python_v2.py)" = "8b7e4d0e2bb9ef6487ef2b90d2390b55ced55ea9"
           test "$(git hash-object risu_e2/ir_v3.py)" = "1d95cfcb2e76563aa5d3ceb65815043eb8b2884a"
-          test "$(git hash-object tools/e2_a3_a4_v3_on_v2_24_regression_primary.py)" = "80a29b6f305496e624928e9d6ecb25a77e146561"
+          test "$(git hash-object tools/e2_a3_a4_v3_on_v2_24_regression_primary.py)" = "b91c1d3a62ff93e50380e29113e5ef0b20fb51c4"
           test "$(git hash-object tools/e2_a3_a4_v3_on_v2_24_regression_independent.py)" = "cc2290599861664750ba1bdd06f6a066acc1cbf5"
 
           mapfile -t delta < <(git diff --name-only cfbfc549d7ce56ea48383483b135dee7ec3255aa HEAD)
