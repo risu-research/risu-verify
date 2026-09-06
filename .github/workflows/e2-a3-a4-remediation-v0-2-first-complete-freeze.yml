@@ -1,0 +1,172 @@
+name: E2 A3 A4 Remediation v0.2 First Complete Freeze
+
+on:
+  push:
+    paths:
+      - '.github/workflows/e2-a3-a4-remediation-v0-2-first-complete-freeze.yml'
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  freeze:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout archival trigger revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 8
+
+      - name: Verify archival-only trigger boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "289518e150f7427856a394d689e5908a43394411"
+          mapfile -t delta < <(git diff --name-only HEAD^ HEAD)
+          test "${#delta[@]}" -eq 1
+          test "${delta[0]}" = ".github/workflows/e2-a3-a4-remediation-v0-2-first-complete-freeze.yml"
+          test "$(git hash-object risu_e2/frontend_js_v2.py)" = "2fdf90b8c35c6c62c7f47d6b64f281f50c0852ce"
+          test "$(git hash-object risu_e2/frontend_python_v2.py)" = "8b7e4d0e2bb9ef6487ef2b90d2390b55ced55ea9"
+          test "$(git hash-object risu_e2/ir_v2.py)" = "a0676f228562fbf73a91d6449ab3af3a6783aa21"
+
+      - name: Reacquire exact first complete artifact
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/first-complete"
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/risu-research/risu-verify/actions/artifacts/9996372487/zip" \
+            -o "$RUNNER_TEMP/first-complete.zip"
+          echo "bb2e8cbc8890ce4e4acc106ed72013cf4b8aa02b9176ba5638c68f6f2fa4ac9c  $RUNNER_TEMP/first-complete.zip" | sha256sum -c -
+          unzip -q "$RUNNER_TEMP/first-complete.zip" -d "$RUNNER_TEMP/first-complete"
+          test "$(find "$RUNNER_TEMP/first-complete" -maxdepth 1 -type f | wc -l)" -eq 3
+          echo "a8f771184f72649395662caea67ed73c462ee696c3a0fbfc3d8a5475ec58ab0f  $RUNNER_TEMP/first-complete/E2_A3_A4_REMEDIATION_V0_2_PRIMARY.json" | sha256sum -c -
+          echo "1b4a7f0afb16093e6c0e1971f8780a29d25b5ecb7bfe3dbfbf5e7cca7f62a27b  $RUNNER_TEMP/first-complete/E2_A3_A4_REMEDIATION_V0_2_INDEPENDENT.json" | sha256sum -c -
+          echo "298feb118e7c7b7f10a7bddbffd76a0009b282ee75664eca3852ecbd87daa1aa  $RUNNER_TEMP/first-complete/E2_A3_A4_REMEDIATION_V0_2_CROSS_CHECK.json" | sha256sum -c -
+
+      - name: Independently re-audit frozen observation
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('${{ runner.temp }}')/'first-complete'
+          p=json.loads((root/'E2_A3_A4_REMEDIATION_V0_2_PRIMARY.json').read_bytes())
+          i=json.loads((root/'E2_A3_A4_REMEDIATION_V0_2_INDEPENDENT.json').read_bytes())
+          c=json.loads((root/'E2_A3_A4_REMEDIATION_V0_2_CROSS_CHECK.json').read_bytes())
+          expected=[
+            ['V2B05_RETURN_EXPRESSION_COMPARE','V2M02_R2_ALPHA_PARENTHESIS'],
+            ['V2B09_MULTILINE_NESTED_OBJECT_RETURN','V2M05_R3_ALPHA_QUOTE_WHITESPACE'],
+            ['V2B16_EFFECT_CALL_RETURNED_REPRESENTATION_WRONG_BINDING','V2M08_REPRESENTATION_ALPHA_QUOTE'],
+          ]
+          assert p['case_count']==i['case_count']==24
+          assert p['passed_case_count']==i['passed_case_count']==24
+          assert p['failed_fixture_ids']==i['failed_fixture_ids']==[]
+          assert p['specialization_scan']['status']==i['specialization_scan']['status']=='PASS'
+          assert p['status']==i['status']=='FAIL'
+          assert p['variant_invariance_status']=='FAIL'
+          assert i['variant_pair_failures']==expected
+          assert c['status']=='PASS' and c['same_fixture_set'] is True and c['exact_per_case_pass_agreement'] is True
+          assert c['primary_status']==c['independent_status']=='FAIL'
+          assert p['read_set_attestation']['candidate_58_bytes'] is False
+          assert i['read_set_attestation']['candidate_58_bytes'] is False
+          assert p['read_set_attestation']['frozen_48_corpus'] is False
+          assert i['read_set_attestation']['frozen_48_corpus'] is False
+          assert p['semantic_verdicts_emitted'] is False and i['semantic_verdicts_emitted'] is False
+          print('FIRST_COMPLETE_OBSERVATION_REAUDIT_PASS')
+          PY
+
+      - name: Materialize exact archival files and deterministic receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          DEST="experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/remediation-v0.2/first-complete"
+          mkdir -p "$DEST"
+          cp "$RUNNER_TEMP/first-complete/E2_A3_A4_REMEDIATION_V0_2_PRIMARY.json" "$DEST/"
+          cp "$RUNNER_TEMP/first-complete/E2_A3_A4_REMEDIATION_V0_2_INDEPENDENT.json" "$DEST/"
+          cp "$RUNNER_TEMP/first-complete/E2_A3_A4_REMEDIATION_V0_2_CROSS_CHECK.json" "$DEST/"
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          dest=Path('experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/remediation-v0.2/first-complete')
+          doc={
+            'schema':'risu.e2-a3-a4-candidate-observability-remediation-v0.2-first-complete-freeze-receipt/v0.1',
+            'status':'FIRST_COMPLETE_PROSPECTIVE_MICROQUALIFICATION_FROZEN_FAIL',
+            'scientific_status':'FAIL',
+            'execution_integrity':'PASS',
+            'authority':{
+              'repository':'risu-research/risu-verify','branch':'e2-development',
+              'qualification_head':'289518e150f7427856a394d689e5908a43394411',
+              'qualification_tree':'9270cdf98cc7032215b2491496e35a4861e03376',
+              'scientific_implementation_commit':'634961f325c107a750de39f9d80ae3c6a6d971d6',
+              'preregistration_freeze_commit':'cb1e2886e68e842b8edc7131150d11e08b4ae997',
+              'corpus_freeze_commit':'0f50649b630f1db2ccf61b3916b4b305fb7fb927',
+              'protocol_freeze_commit':'949cb70a645a95dc9c4d64d6aa8dbbe9c313d9db',
+              'root_cause_freeze_commit':'8ba9b8860188d00bbdb310d414f9f51baa8e686d',
+              'protocol_git_blob':'28abd43d0a99fe747243f657961e278da2035784',
+              'corpus_git_blob':'a0036c02826d54ac9ac22501b7eb341a600d1607',
+              'frontend_js_v2_git_blob':'2fdf90b8c35c6c62c7f47d6b64f281f50c0852ce',
+              'frontend_python_v2_git_blob':'8b7e4d0e2bb9ef6487ef2b90d2390b55ced55ea9',
+              'ir_v2_git_blob':'a0676f228562fbf73a91d6449ab3af3a6783aa21'},
+            'hosted_execution':{
+              'github_run_id':34057391004,'job_id':101551662182,'run_attempt':1,
+              'worker_id':'4b5021b8-18b5-4382-a7f0-6a70a714d1d0','azure_region':'westus2',
+              'runner_version':'2.337.0','runner_image':'ubuntu-24.04','runner_image_version':'20260831.293.1',
+              'python_version':'3.13.15','artifact_id':9996372487,
+              'artifact_zip_sha256':'bb2e8cbc8890ce4e4acc106ed72013cf4b8aa02b9176ba5638c68f6f2fa4ac9c','artifact_zip_bytes':7378},
+            'logical_artifacts':{
+              'E2_A3_A4_REMEDIATION_V0_2_PRIMARY.json':{'bytes':17743,'git_blob_expected':'1b23d0b0159241e8a27a4a06ead7a77379c0d7a4','sha256':'a8f771184f72649395662caea67ed73c462ee696c3a0fbfc3d8a5475ec58ab0f'},
+              'E2_A3_A4_REMEDIATION_V0_2_INDEPENDENT.json':{'bytes':8801,'git_blob_expected':'43fd03625a3596ef892c84658e9a9b7836ffb538','sha256':'1b4a7f0afb16093e6c0e1971f8780a29d25b5ecb7bfe3dbfbf5e7cca7f62a27b'},
+              'E2_A3_A4_REMEDIATION_V0_2_CROSS_CHECK.json':{'bytes':498,'git_blob_expected':'ba7d7d49d7659c6b8d82fa6f6a522d078fcde625','sha256':'298feb118e7c7b7f10a7bddbffd76a0009b282ee75664eca3852ecbd87daa1aa'}},
+            'qualification_observation':{
+              'case_count':24,'primary_passed_case_count':24,'independent_passed_case_count':24,
+              'primary_failed_fixture_ids':[],'independent_failed_fixture_ids':[],
+              'primary_specialization_scan_status':'PASS','independent_specialization_scan_status':'PASS',
+              'primary_variant_invariance_status':'FAIL',
+              'primary_variant_errors':[
+                'abstract_signature_mismatch:V2B05_RETURN_EXPRESSION_COMPARE:V2M02_R2_ALPHA_PARENTHESIS',
+                'abstract_signature_mismatch:V2B09_MULTILINE_NESTED_OBJECT_RETURN:V2M05_R3_ALPHA_QUOTE_WHITESPACE',
+                'abstract_signature_mismatch:V2B16_EFFECT_CALL_RETURNED_REPRESENTATION_WRONG_BINDING:V2M08_REPRESENTATION_ALPHA_QUOTE'],
+              'independent_variant_pair_failures':[
+                ['V2B05_RETURN_EXPRESSION_COMPARE','V2M02_R2_ALPHA_PARENTHESIS'],
+                ['V2B09_MULTILINE_NESTED_OBJECT_RETURN','V2M05_R3_ALPHA_QUOTE_WHITESPACE'],
+                ['V2B16_EFFECT_CALL_RETURNED_REPRESENTATION_WRONG_BINDING','V2M08_REPRESENTATION_ALPHA_QUOTE']],
+              'cross_check_status':'PASS','primary_independent_exact_per_case_pass_agreement':True,'same_fixture_set':True,
+              'interpretation':'All 24 individual prospective cases satisfied their case expectations in both implementations, but the preregistered metamorphic-invariance gate failed for three frozen base/variant pairs. This result is frozen before any scientific remediation.'},
+            'firewall':{
+              'candidate_58_bytes_read':False,'sanitized_58_manifest_read':False,'raw_blind_58_transport_read':False,
+              'frozen_48_corpus_read':False,'mutation_truth_read':False,'operator_metadata_read':False,
+              'expected_e2_predictions_read':False,'fresh_target_bytes_read':False,'semantic_verdicts_emitted':False,
+              'scientific_code_changed_after_first_complete_output':False,'corpus_or_expectations_changed_after_first_complete_output':False},
+            'authorization_boundary':{
+              'frozen_48_requalification_authorized_next':False,'candidate_58_observability_execution_authorized':False,
+              'a3_a4_58_verdict_execution_authorized':False,'fresh_target_evaluation_authorized':False,
+              'next_required_step':'POST_FREEZE DIAGNOSE THE THREE METAMORPHIC-INVARIANCE FAILURES OR FORMALLY ACCEPT THE LIMITATION. DO NOT MODIFY V0.2 SCIENTIFIC CODE OR EXECUTE THE FROZEN 48/58 BEFORE THAT CHOICE IS PROSPECTIVELY FROZEN.'}}
+          out=(json.dumps(doc,sort_keys=True,separators=(',',':'),ensure_ascii=False)+'\n').encode()
+          (dest/'E2_A3_A4_REMEDIATION_V0_2_FIRST_COMPLETE_FREEZE_RECEIPT.json').write_bytes(out)
+          PY
+          echo "582a9c276c93d3e2b35dd016403ed035328f4053908e301e13ccad3e1396ce69  $DEST/E2_A3_A4_REMEDIATION_V0_2_FIRST_COMPLETE_FREEZE_RECEIPT.json" | sha256sum -c -
+          test "$(git hash-object "$DEST/E2_A3_A4_REMEDIATION_V0_2_PRIMARY.json")" = "1b23d0b0159241e8a27a4a06ead7a77379c0d7a4"
+          test "$(git hash-object "$DEST/E2_A3_A4_REMEDIATION_V0_2_INDEPENDENT.json")" = "43fd03625a3596ef892c84658e9a9b7836ffb538"
+          test "$(git hash-object "$DEST/E2_A3_A4_REMEDIATION_V0_2_CROSS_CHECK.json")" = "ba7d7d49d7659c6b8d82fa6f6a522d078fcde625"
+          test "$(git hash-object "$DEST/E2_A3_A4_REMEDIATION_V0_2_FIRST_COMPLETE_FREEZE_RECEIPT.json")" = "d0c2821d7f1ac302bae233c8f7a34338b5df6b07"
+
+      - name: Commit exact first complete result only
+        shell: bash
+        run: |
+          set -euo pipefail
+          DEST="experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/remediation-v0.2/first-complete"
+          git config user.name "RISU Scientific Freeze"
+          git config user.email "actions@users.noreply.github.com"
+          git add "$DEST/E2_A3_A4_REMEDIATION_V0_2_PRIMARY.json" \
+                  "$DEST/E2_A3_A4_REMEDIATION_V0_2_INDEPENDENT.json" \
+                  "$DEST/E2_A3_A4_REMEDIATION_V0_2_CROSS_CHECK.json" \
+                  "$DEST/E2_A3_A4_REMEDIATION_V0_2_FIRST_COMPLETE_FREEZE_RECEIPT.json"
+          mapfile -t staged < <(git diff --cached --name-only)
+          test "${#staged[@]}" -eq 4
+          git commit -m "Freeze first complete v0.2 prospective microqualification"
+          git push origin HEAD:e2-development
