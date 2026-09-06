@@ -1,0 +1,146 @@
+{
+  "acquisition_contract": {
+    "default_budgets": {
+      "max_file_bytes": 512000,
+      "max_files": 64,
+      "max_index_bytes": 16000000,
+      "max_index_files": 2048,
+      "max_rounds": 4,
+      "max_total_bytes": 4000000
+    },
+    "deterministic": true,
+    "expansion": [
+      "resolved local import/export/require edges",
+      "unique acquired-repository callee definition edges"
+    ],
+    "extensions": [
+      ".py",
+      ".go",
+      ".js",
+      ".jsx",
+      ".mjs",
+      ".cjs",
+      ".ts",
+      ".tsx"
+    ],
+    "fail_closed": [
+      "ENTRYPOINT_MISSING=>INFRASTRUCTURE_INVALID_BEFORE_PREDICTION",
+      "UNSUPPORTED_MATERIAL_LANGUAGE=>E2_PREDICTED_ASSURANCE_INCOMPLETE",
+      "NON_UTF8_MATERIAL_FILE=>E2_PREDICTED_ASSURANCE_INCOMPLETE",
+      "ACQUISITION_BUDGET_EXHAUSTED=>E2_PREDICTED_ASSURANCE_INCOMPLETE",
+      "UNRESOLVED_LOCAL_DEPENDENCY=>E2_PREDICTED_ASSURANCE_INCOMPLETE"
+    ],
+    "initial_selection": [
+      "explicit entrypoint when supplied",
+      "otherwise deterministic operation/surface path rank"
+    ],
+    "supported_material_code": [
+      "python",
+      "go",
+      "typescript_javascript"
+    ]
+  },
+  "authority": {
+    "contamination_firewall_blob": "1a0651514d7c77b82296d3617332b8024947cdcf",
+    "development_charter_blob": "06a9ad06367cae83281fffd10474cd7d4348111d",
+    "mutation_materialization_audit_head": "29faa0b9086eb9687028a4100f04e7ca88a15f6d",
+    "specialization_baseline_blob": "16ed006effdc93981cc9a5799059d9b5e9ee4d7f"
+  },
+  "claim_boundary": "Passing this contract establishes only deterministic bounded acquisition and a provenance-bearing normalized structural IR on the frozen synthetic qualification universe. It does not establish consequence detection, preservation, regression recall, fresh-target performance, or safety.",
+  "contract_id": "RISU_DIFF_E2_A1_A2_IMPLEMENTATION_CONTRACT_001",
+  "frontend_contract": {
+    "go": "go/parser + go/ast helper with exact token positions",
+    "material_parse_failure": "INFRASTRUCTURE_INVALID_BEFORE_PREDICTION",
+    "python": "stdlib ast with exact source spans",
+    "typescript_javascript": "deterministic bounded structural tokenizer/extractor; never semantic authority; delimiter/material ambiguity fails closed when detected"
+  },
+  "ir_contract": {
+    "content_addressed_node_edge_ids": true,
+    "edge_kinds": [
+      "CARRIES",
+      "DERIVES",
+      "BINDS_TO",
+      "COMPARES",
+      "GUARDS",
+      "PRECEDES",
+      "MUTATES",
+      "REJECTS_AS",
+      "INTERPRETS_AS",
+      "EVIDENCED_BY"
+    ],
+    "every_non_evidence_node_requires_evidenced_by": true,
+    "interprocedural_binding": "only unique acquired function definitions; ambiguous definitions remain unlinked",
+    "no_dangling_edges": true,
+    "node_kinds": [
+      "OPERATION",
+      "RESOURCE",
+      "INPUT",
+      "SEMANTIC_COORDINATE",
+      "GUARD",
+      "EFFECT",
+      "OUTCOME",
+      "FAILURE",
+      "INTERPRETER",
+      "EVIDENCE"
+    ],
+    "required_provenance": [
+      "path",
+      "source_sha256",
+      "start_line",
+      "start_col",
+      "end_line",
+      "end_col"
+    ],
+    "semantic_authority": false
+  },
+  "qualification_gates": {
+    "A01_material_parse_failure_expected": "INFRASTRUCTURE_INVALID_BEFORE_PREDICTION",
+    "A04_budget_ceiling_expected": "E2_PREDICTED_ASSURANCE_INCOMPLETE",
+    "canonical_seed_count": 6,
+    "canonical_seed_required_relations": [
+      "DERIVES",
+      "CARRIES",
+      "BINDS_TO",
+      "COMPARES",
+      "EVIDENCED_BY"
+    ],
+    "canonical_seeds_must_pass_a1_a2": true,
+    "graph_invariants_required": true,
+    "materialized_cell_count": 58,
+    "microcases": [
+      "python import closure",
+      "go unique-callee closure",
+      "js relative-import closure",
+      "typescript structural parsing",
+      "unsupported material language fail-closed",
+      "material parse failure fail-closed",
+      "explicit budget ceiling fail-closed"
+    ],
+    "other_cells_a1_a2_expected": "PASS",
+    "production_repository_literal_specialization_hits_allowed": 0,
+    "two_replay_byte_determinism_required": true
+  },
+  "schema": "risu.diff-e2-a1-a2-implementation-contract/v0.1",
+  "scientific_firewall": {
+    "a1_a2_outputs_are_not_consequence_verdicts": true,
+    "fresh_gold_consumed": false,
+    "fresh_target_bytes_consumed": false,
+    "fresh_target_selected": false,
+    "mutation_truth_modified": false
+  },
+  "scope": {
+    "excluded": [
+      "A3_COORDINATE_SURVIVAL_VERDICT",
+      "A4_GUARD_EFFECT_LINKAGE_VERDICT",
+      "A5_EXPLANATION_CERTIFICATE",
+      "E2_CONSEQUENCE_VERDICT",
+      "FRESH_TARGET_SELECTION"
+    ],
+    "included": [
+      "A1_CARRIER_NEUTRAL_ACQUISITION",
+      "A2_NORMALIZED_SEMANTIC_FLOW_IR"
+    ],
+    "semantic_authority": false
+  },
+  "status": "FROZEN_WITH_FIRST_REPOSITORY_IMPLEMENTATION_COMMIT_BEFORE_FIRST_REPOSITORY_QUALIFICATION_RUN"
+}
