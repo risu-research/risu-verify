@@ -1,0 +1,130 @@
+{
+  "audit_conclusion": {
+    "a1_a2_freeze_integrity": "PASS",
+    "a3_a4_a5_development_authorized_after_this_audit_commit": true,
+    "collateral_drift": "ZERO_DETECTED",
+    "fresh_e2_evaluation_authorized": false,
+    "fresh_target_selection_authorized": false,
+    "qualified_implementation_bound": true
+  },
+  "audit_id": "RISU_DIFF_E2_A1_A2_FREEZE_AUDIT_001",
+  "branch_ref_audit": {
+    "branch": "e2-development",
+    "fast_forward_only": true,
+    "force_used": false,
+    "observed_after_normative_freeze": "e99af2fd27bbbc51f6d16e41e4459910d412feb4"
+  },
+  "claim_boundary": "This audit closes the A1 carrier-neutral acquisition and A2 normalized semantic-flow IR implementation/qualification freeze. It does not establish A3/A4/A5 consequence reasoning, A6/A7 verdict safety, repair effectiveness, fresh-target performance, or population-level accuracy.",
+  "e1_lineage_audit": {
+    "branch": "e1-gold-close-006-008",
+    "expected_sha": "078d73c1f0bf1975edf3063e40c20de066c94676",
+    "observed_sha": "078d73c1f0bf1975edf3063e40c20de066c94676",
+    "unchanged": true
+  },
+  "implementation_commit_audit": {
+    "added_files": 12,
+    "additive_only": true,
+    "commit": "a4154f70f6733b1aafc4baf2a66e56e3b733e23b",
+    "deleted_preexisting_files": 0,
+    "modified_preexisting_files": 0,
+    "sole_parent": "29faa0b9086eb9687028a4100f04e7ca88a15f6d",
+    "tree": "721ea373200ac124b1a996844f2d27be63b3e375"
+  },
+  "normative_freeze_commit_audit": {
+    "added_files": 2,
+    "additive_only": true,
+    "commit": "e99af2fd27bbbc51f6d16e41e4459910d412feb4",
+    "deleted_preexisting_files": 0,
+    "freeze_manifest_blob": "40c00fa07ebaba868d2624e5af9626ece3d97946",
+    "modified_engine_or_qualifier_files": 0,
+    "qualification_receipt_blob": "b96b75938fe67ba4dfe0f181a7dba52255b387c7",
+    "sole_parent": "a4154f70f6733b1aafc4baf2a66e56e3b733e23b",
+    "tree": "836ca96279572fe72ebbe78a46c339a471f8418a"
+  },
+  "qualification_audit": {
+    "acquisition_microcase_pass": "7/7",
+    "attempt_1": {
+      "artifact_id": 9981019805,
+      "artifact_zip_sha256": "e21dbe024d3343413b9c89461781fc5e61ce6befa09aede0c3a9aebf24594ef6",
+      "conclusion": "success",
+      "job_id": 101413882053
+    },
+    "attempt_2": {
+      "artifact_id": 9981039079,
+      "artifact_zip_sha256": "fdfae4f0198ee34fd87b7796c67c398cd1a3bfb97c2de5800ba6392db6517300",
+      "conclusion": "success",
+      "job_id": 101414067582
+    },
+    "attempt_receipts_byte_identical": true,
+    "branch_workflow_run_attempt_count_for_canonical_run": 2,
+    "branch_workflow_run_count_after_normative_freeze": 1,
+    "deterministic_replay_pairs": 71,
+    "expected_observed_status_match": "58/58",
+    "failed_sections": [],
+    "freeze_commit_triggered_additional_qualification_run": false,
+    "frozen_seed_pass": "6/6",
+    "head_sha": "a4154f70f6733b1aafc4baf2a66e56e3b733e23b",
+    "internal_receipt_bytes": 19815,
+    "internal_receipt_sha256": "4f9ef1938332c6cee11b20a85bab212e9716a547f5cd802f79a20eb7ca8fad55",
+    "materialized_cell_status_distribution": {
+      "E2_PREDICTED_ASSURANCE_INCOMPLETE": 1,
+      "INFRASTRUCTURE_INVALID_BEFORE_PREDICTION": 2,
+      "PASS": 55
+    },
+    "materialized_cell_structural_pass": "58/58",
+    "observed_runner_environment": {
+      "git": "2.55.0",
+      "go": "go1.23.2 linux/amd64",
+      "os": "Ubuntu 24.04.4 LTS",
+      "python": "CPython 3.13.15",
+      "runner_image": "ubuntu-24.04",
+      "runner_image_version": "20260831.293.1",
+      "runner_version": "2.337.0"
+    },
+    "overall_status": "PASS",
+    "specialization_lexical_audit": {
+      "hits": [],
+      "repository_literals_scanned": 9,
+      "status": "PASS"
+    },
+    "structural_execution_count": 142,
+    "workflow_run_id": 34006252898
+  },
+  "repository_hygiene_incidents": [
+    {
+      "cleanup_status": "PENDING_REF_DELETION_OUTSIDE_AVAILABLE_CONNECTOR_ACTIONS",
+      "contains_unique_commit": false,
+      "previously_disclosed": true,
+      "ref": "refs/heads/__noop_should_not_create",
+      "scientific_lineage_effect": "NONE",
+      "target_sha": "b76899d4796e9c1628782e8da4920230b22b30f8"
+    },
+    {
+      "cleanup_status": "PENDING_REF_DELETION_OUTSIDE_AVAILABLE_CONNECTOR_ACTIONS",
+      "contains_unique_commit": false,
+      "previously_disclosed": false,
+      "ref": "refs/heads/__noop_should_not_create_2",
+      "scientific_lineage_effect": "NONE",
+      "target_sha": "a4154f70f6733b1aafc4baf2a66e56e3b733e23b"
+    },
+    {
+      "cleanup_status": "PENDING_REF_DELETION_OUTSIDE_AVAILABLE_CONNECTOR_ACTIONS",
+      "contains_unique_commit": false,
+      "previously_disclosed": false,
+      "ref": "refs/heads/__noop_should_not_create_3",
+      "scientific_lineage_effect": "NONE",
+      "target_sha": "a4154f70f6733b1aafc4baf2a66e56e3b733e23b"
+    }
+  ],
+  "schema": "risu.diff-e2-a1-a2-freeze-audit/v0.1",
+  "scientific_firewall": {
+    "a1_a2_output_used_to_modify_frozen_truth": false,
+    "a3_a4_a5_verdict_logic_included": false,
+    "fresh_e2_evaluation_authorized": false,
+    "fresh_gold_consumed": false,
+    "fresh_target_bytes_consumed": false,
+    "fresh_target_selected": false,
+    "real_target_gold_used_for_a1_a2_qualification": false
+  },
+  "status": "PASS"
+}
