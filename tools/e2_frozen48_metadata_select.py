@@ -83,56 +83,86 @@ def api_get(path: str) -> dict[str, Any]:
         return json.loads(r.read().decode("utf-8"))
 
 
-def locate_rows(doc: Any) -> list[dict[str, Any]]:
-    candidates: list[list[dict[str, Any]]] = []
-
-    def visit(value: Any) -> None:
-        if isinstance(value, list) and len(value) == 58 and all(isinstance(x, dict) for x in value):
-            if all("cell_id" in x for x in value):
-                candidates.append(value)
-        if isinstance(value, dict):
-            for child in value.values():
-                if isinstance(child, (dict, list)):
-                    visit(child)
-        elif isinstance(value, list):
-            for child in value:
-                if isinstance(child, (dict, list)):
-                    visit(child)
-
-    visit(doc)
-    if len(candidates) != 1:
-        key_union = sorted({k for rows in candidates for row in rows for k in row.keys()})
-        raise RuntimeError("ROW_LOCATOR_FAIL:" + json.dumps({"candidate_lists": len(candidates), "candidate_row_keys": key_union}, sort_keys=True))
-    return candidates[0]
+def normalize_token(raw: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "_", raw.strip().lower()).strip("_")
 
 
 def normalize_class(raw: Any) -> str | None:
     if not isinstance(raw, str):
         return None
-    token = re.sub(r"[^a-z0-9]+", "_", raw.strip().lower()).strip("_")
-    return CLASS_ALIASES.get(token)
+    return CLASS_ALIASES.get(normalize_token(raw))
 
 
-def select_class_key(rows: list[dict[str, Any]]) -> tuple[str, list[str]]:
-    valid: list[tuple[str, list[str]]] = []
-    for key in ALLOWED_CLASS_KEYS:
-        if not all(key in row for row in rows):
-            continue
-        normalized = [normalize_class(row[key]) for row in rows]
-        if any(x is None for x in normalized):
-            continue
-        counts = Counter(normalized)
-        if dict(counts) == EXPECTED_COUNTS:
-            valid.append((key, [str(x) for x in normalized]))
-    if len(valid) != 1:
-        row_keys = sorted(set().union(*(row.keys() for row in rows)))
-        safe = {
-            "recognized_allowed_classification_keys": [k for k in ALLOWED_CLASS_KEYS if all(k in r for r in rows)],
-            "row_keys_only": row_keys,
-            "valid_allowed_classification_key_count": len(valid),
-        }
-        raise RuntimeError("CLASSIFICATION_KEY_FAIL:" + json.dumps(safe, sort_keys=True))
-    return valid[0]
+def safe_shape(doc: Any, *, depth: int = 0, path: str = "$", out: list[dict[str, Any]] | None = None) -> list[dict[str, Any]]:
+    if out is None:
+        out = []
+    if depth > 3 or len(out) >= 80:
+        return out
+    if isinstance(doc, dict):
+        keys = sorted(map(str, doc.keys()))
+        out.append({"path": path, "type": "dict", "keys": keys})
+        for key in keys:
+            child = doc[key]
+            if isinstance(child, (dict, list)):
+                safe_shape(child, depth=depth + 1, path=f"{path}.{key}", out=out)
+    elif isinstance(doc, list):
+        element_types = sorted({type(x).__name__ for x in doc})
+        entry: dict[str, Any] = {"path": path, "type": "list", "length": len(doc), "element_types": element_types}
+        dict_items = [x for x in doc if isinstance(x, dict)]
+        if dict_items:
+            entry["dict_element_keys"] = sorted(set().union(*(x.keys() for x in dict_items)))
+        out.append(entry)
+        for i, child in enumerate(doc[:4]):
+            if isinstance(child, (dict, list)):
+                safe_shape(child, depth=depth + 1, path=f"{path}[{i}]", out=out)
+    return out
+
+
+def project_cells(doc: Any) -> list[dict[str, str]]:
+    projected: list[dict[str, str]] = []
+
+    def visit(value: Any, inherited_class: str | None = None) -> None:
+        if isinstance(value, dict):
+            local_class = inherited_class
+            class_sources: list[str] = []
+            for key in ALLOWED_CLASS_KEYS:
+                if key in value:
+                    cls = normalize_class(value[key])
+                    if cls is not None:
+                        class_sources.append(cls)
+            if len(set(class_sources)) > 1:
+                raise RuntimeError("AMBIGUOUS_ALLOWED_CLASSIFICATION_CONTEXT")
+            if class_sources:
+                local_class = class_sources[0]
+
+            cid = value.get("cell_id")
+            if isinstance(cid, str) and CELL_RE.fullmatch(cid):
+                if local_class is None:
+                    raise RuntimeError("CELL_WITHOUT_ALLOWED_CLASSIFICATION:" + cid)
+                projected.append({"cell_id": cid, "frozen_mutation_class": local_class})
+
+            for key, child in value.items():
+                if not isinstance(child, (dict, list)):
+                    continue
+                child_class = local_class
+                key_class = normalize_class(str(key))
+                if key_class is not None:
+                    child_class = key_class
+                visit(child, child_class)
+        elif isinstance(value, list):
+            for child in value:
+                if isinstance(child, (dict, list)):
+                    visit(child, inherited_class)
+
+    visit(doc)
+    dedup: dict[str, str] = {}
+    for row in projected:
+        cid = row["cell_id"]
+        cls = row["frozen_mutation_class"]
+        if cid in dedup and dedup[cid] != cls:
+            raise RuntimeError("CONFLICTING_CELL_CLASSIFICATION:" + cid)
+        dedup[cid] = cls
+    return [{"cell_id": cid, "frozen_mutation_class": dedup[cid]} for cid in sorted(dedup)]
 
 
 def cell_tree_map(tree_doc: dict[str, Any]) -> dict[str, list[dict[str, Any]]]:
@@ -164,21 +194,25 @@ def main() -> int:
     if blob_doc.get("sha") != MATRIX_BLOB or git_blob_sha(matrix_raw) != MATRIX_BLOB:
         raise SystemExit("MATRIX_BLOB_IDENTITY_MISMATCH")
     matrix_doc = json.loads(matrix_raw.decode("utf-8"))
-    rows = locate_rows(matrix_doc)
-    if len(rows) != 58:
-        raise SystemExit("MATRIX_ROW_COUNT_NOT_58")
 
-    ids = [row.get("cell_id") for row in rows]
-    if any(not isinstance(x, str) or not CELL_RE.fullmatch(x) for x in ids):
-        raise SystemExit("INVALID_CELL_IDENTITY")
+    try:
+        projected = project_cells(matrix_doc)
+    except RuntimeError as exc:
+        diagnostic = {"error": str(exc), "structure_only": safe_shape(matrix_doc)}
+        print("SAFE_MATRIX_STRUCTURE_DIAGNOSTIC:" + json.dumps(diagnostic, sort_keys=True), file=sys.stderr)
+        raise SystemExit(2)
+
+    if len(projected) != 58:
+        diagnostic = {"projected_cell_count": len(projected), "structure_only": safe_shape(matrix_doc)}
+        print("SAFE_MATRIX_STRUCTURE_DIAGNOSTIC:" + json.dumps(diagnostic, sort_keys=True), file=sys.stderr)
+        raise SystemExit(2)
+
+    ids = [row["cell_id"] for row in projected]
     if len(set(ids)) != 58:
         raise SystemExit("DUPLICATE_CELL_IDENTITY")
-
-    class_key, classes = select_class_key(rows)
-    classified = sorted(zip(ids, classes), key=lambda x: x[0])
-    counts = Counter(cls for _, cls in classified)
+    counts = Counter(row["frozen_mutation_class"] for row in projected)
     if dict(counts) != EXPECTED_COUNTS:
-        raise SystemExit("CLASS_PARTITION_MISMATCH")
+        raise SystemExit("CLASS_PARTITION_MISMATCH:" + json.dumps(dict(sorted(counts.items())), sort_keys=True))
 
     tree_doc = api_get(f"/repos/{REPOSITORY}/git/trees/{CELLS_TREE}?recursive=1")
     material = cell_tree_map(tree_doc)
@@ -187,7 +221,9 @@ def main() -> int:
 
     selected_rows: list[dict[str, Any]] = []
     excluded_count = 0
-    for cell_id, frozen_class in classified:
+    for projected_row in projected:
+        cell_id = projected_row["cell_id"]
+        frozen_class = projected_row["frozen_mutation_class"]
         if frozen_class == "epistemic_adversarial":
             excluded_count += 1
             continue
@@ -215,11 +251,11 @@ def main() -> int:
             "repository": REPOSITORY,
             "matrix_git_blob": MATRIX_BLOB,
             "cells_tree_git_sha": CELLS_TREE,
-            "selector_classification_field": class_key,
+            "classification_source": "ALLOWED_PREEXISTING_MATRIX_CLASSIFICATION_ONLY",
         },
         "read_set_attestation": {
             "matrix_bytes_read_by_selector": True,
-            "matrix_semantic_fields_consumed": ["cell_id", class_key],
+            "matrix_semantic_fields_consumed": ["cell_id", "allowed_preexisting_mutation_classification"],
             "cell_source_blob_contents_read": False,
             "cell_json_contents_read": False,
             "mutation_truth_semantically_consumed": False,
@@ -261,7 +297,6 @@ def main() -> int:
         "status": "PASS",
         "selected_count": 48,
         "excluded_epistemic_count": 10,
-        "classification_field": class_key,
         "selected_identity_sha256": body["selected_identity_sha256"],
         "manifest_digest_sha256": body["manifest_digest_sha256"],
         "source_blob_contents_read": False,
@@ -270,8 +305,4 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    try:
-        raise SystemExit(main())
-    except RuntimeError as exc:
-        print(str(exc), file=sys.stderr)
-        raise SystemExit(2)
+    raise SystemExit(main())
