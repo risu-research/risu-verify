@@ -1,0 +1,96 @@
+{
+  "actions_audit": {
+    "unintended_experiment_execution_detected": false,
+    "workflow_run_count_on_e2_development_after_freeze": 0
+  },
+  "audit_conclusion": {
+    "collateral_drift_in_normative_commit_tree": "ZERO_DETECTED",
+    "e2_engine_implementation_authorized_to_begin_after_this_audit_commit": true,
+    "fresh_e2_evaluation_authorized": false,
+    "mutation_materialization_freeze_integrity": "PASS",
+    "scientific_lineage_unchanged_outside_e2_development": true
+  },
+  "audit_id": "RISU_DIFF_E2_MUTATION_MATERIALIZATION_FREEZE_AUDIT_001",
+  "branch_ref_audit": {
+    "branch": "e2-development",
+    "branch_sha_after_normative_freeze": "cb43041cc9fa3bffc6c1317115d27620af310e4a",
+    "fast_forward_only": true,
+    "force_used": false
+  },
+  "claim_boundary": "This audit closes deterministic synthetic mutation materialization and its independent verification. It does not establish E2 engine qualification success or fresh real-target performance.",
+  "e1_lineage_audit": {
+    "branch": "e1-gold-close-006-008",
+    "expected_sha": "078d73c1f0bf1975edf3063e40c20de066c94676",
+    "observed_sha": "078d73c1f0bf1975edf3063e40c20de066c94676",
+    "unchanged": true
+  },
+  "frozen_object_audit": {
+    "cells_tree": "34a30574c7420728bff57958c815194979a622ab",
+    "freeze_manifest_blob": "2444235c31ea6821a9a5ff5b93f465646f772619",
+    "materialization_contract_blob": "4bd3e92796e6e7f8ec69ed6805e22ee8942e01e6",
+    "materialization_manifest_blob": "d4253e71e5cdca6089cb0c5adbe8ae616fe93b71",
+    "materializer_blob": "72605d23f207aa15e5dd2461923bd87d1e095d77",
+    "recipe_tree": "3a74ad2783590f32f151aff9af6801d579811f9d",
+    "verification_receipt_blob": "0d35fbb6515c0de2f99b6ec1b8d5fe05ba412679",
+    "verifier_common_blob": "247f1f9c384ab6afb02a43ff5e8a8a9e96f82957",
+    "verifier_engine_blob": "db3c939071993afa10a46940914a6a3f4dcf21e2",
+    "verifier_entrypoint_blob": "583990b057adb16dedcde5a4c6bfd3b87b29e3d1"
+  },
+  "non_scientific_ref_incident": {
+    "audit_disposition": "DISCLOSED_NONSCIENTIFIC_REPOSITORY_HYGIENE_INCIDENT",
+    "cleanup_status": "PENDING_REF_DELETION_OUTSIDE_AVAILABLE_CONNECTOR_ACTIONS",
+    "contains_new_commit": false,
+    "contains_unique_artifact": false,
+    "description": "An auxiliary branch ref was accidentally created during closure while probing connector branch capabilities.",
+    "incident_id": "REF_INCIDENT_001",
+    "is_parent_or_ancestor_unique_to_normative_freeze": false,
+    "ref": "refs/heads/__noop_should_not_create",
+    "scientific_lineage_effect": "NONE",
+    "target_sha": "b76899d4796e9c1628782e8da4920230b22b30f8",
+    "used_by_e2_development": false
+  },
+  "normative_freeze_commit": {
+    "parent_count": 1,
+    "sha": "cb43041cc9fa3bffc6c1317115d27620af310e4a",
+    "sole_parent": "b76899d4796e9c1628782e8da4920230b22b30f8",
+    "tree": "e95ed5ad37aaa832003d1294b84521a98e4754c5"
+  },
+  "qualification_materialization_audit": {
+    "cell_count": 58,
+    "deterministic_replay": "PASS",
+    "emitted_tree_digest_sha256": "e4702e642a6907894442dc8c317f6cdd3d814c296532fac5af6b2456c8b318f2",
+    "epistemic_adversarial_cells": 10,
+    "git_cells_tree_reconciliation": "PASS",
+    "locality_pass": "58/58",
+    "logical_corpus_sha256": "e7612adb012eadb744066b3ae0a9421a3c17970730e556ec1c564f075e859746",
+    "positive_semantic_loss_cells": 24,
+    "runtime_relation_pass": "58/58",
+    "semantic_preserving_cells": 24,
+    "verifier_errors": [],
+    "world_input_invariance_pass": "58/58"
+  },
+  "schema": "risu.diff-e2-mutation-materialization-freeze-audit/v0.1",
+  "scientific_firewall": {
+    "e2_engine_runtime_implementation_included": false,
+    "e2_prediction_used_to_define_truth": false,
+    "fresh_e2_evaluation_authorized": false,
+    "fresh_gold_consumed": false,
+    "fresh_target_bytes_consumed": false,
+    "fresh_target_selected": false
+  },
+  "status": "PASS",
+  "tree_diff_audit": {
+    "added_files": 184,
+    "all_changes_additive_only": true,
+    "breakdown": {
+      "direct_materialized_cell_files": 117,
+      "materialized_manifest_and_receipt": 2,
+      "protocol_files": 2,
+      "recipe_shards_and_index": 59,
+      "tool_files": 4
+    },
+    "deleted_preexisting_files": 0,
+    "modified_preexisting_files": 0,
+    "unexpected_files": 0
+  }
+}
