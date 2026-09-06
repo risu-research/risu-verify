@@ -1,0 +1,163 @@
+name: E2 Anchor Transport Mutation-Free Qualification
+
+on:
+  push:
+    branches: [e2-development]
+    paths:
+      - ".github/workflows/e2-anchor-transport-qualification.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Checkout exact revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 4
+
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.13"
+
+      - name: Set up Go
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff
+        with:
+          go-version: "1.23.2"
+
+      - name: Verify frozen authorities and reconstruct candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$GITHUB_WORKSPACE"
+          CAND="$ROOT/experiments/risu-diff-e2/qualification/anchor-transport/implementation-candidate"
+          test "$(git hash-object protocols/RISU_DIFF_E2_MUTATION_BLIND_ANCHOR_TRANSPORT_v0.1.json)" = "7da7d3ac536d5edda56aa2c2636db1c8b02569b3"
+          test "$(git hash-object protocols/RISU_DIFF_E2_MUTATION_BLIND_ANCHOR_TRANSPORT_QUALIFICATION_v0.1.json)" = "b15de9fb465efc52adc57fe2a5f00236a398c313"
+          test "$(git hash-object schemas/RISU_E2_MUTATION_BLIND_ANCHOR_TRANSPORT_RECEIPT_v0.1.schema.json)" = "09a35d3c505b7ceaa0ecdefc682945fd61adfe37"
+          test "$(git hash-object protocols/RISU_DIFF_E2_CANONICAL_SEED_CONSEQUENCE_ANCHORS_v0.1.json)" = "ec8d8b287a80b87c815f0362be366be076d2b091"
+          test "$(git hash-object risu_e2/model.py)" = "64baf95a4939f168881627830134b314a6ee6098"
+          test "$(git hash-object risu_e2/ir.py)" = "d7edac40d4eeda86be74e5785bde3bfc28d4cf5e"
+          test "$(git hash-object "$CAND/chunk-00.b64")" = "d0a5ed7980d9ae0d2f2740624ac29a6e161ac9b9"
+          test "$(git hash-object "$CAND/chunk-01.b64")" = "d196782d6dced42ac761e9cf923022ad45c79110"
+          test "$(git hash-object "$CAND/chunk-02.b64")" = "a58cbdbf9fe5cb2cc03ca4f3e779f72c44632049"
+          test "$(git hash-object "$CAND/chunk-03.b64")" = "0882b17589095ae526f1ed533a9d60a43609932d"
+          cat "$CAND"/chunk-*.b64 | base64 -d > "$RUNNER_TEMP/transport_impl.tgz"
+          echo "7e08347694e82210bdcf53a8cec3f0684dcda5089020ad0d33e21b144fb88278  $RUNNER_TEMP/transport_impl.tgz" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/extracted"
+          tar -xzf "$RUNNER_TEMP/transport_impl.tgz" -C "$RUNNER_TEMP/extracted"
+          echo "3b626fc83fe76a1dfafdcf896efc8a16440bbeec062cfb1dbb86badd23b7af4c  $RUNNER_TEMP/extracted/anchor_transport.py" | sha256sum -c -
+          echo "ef2e797e46eddc257f522d21e7b8fd9f6935bcb93287f56aa5614aa5d3d2f5ea  $RUNNER_TEMP/extracted/anchor_transport_fixtures.py" | sha256sum -c -
+          echo "a3620a374b9b33fee9f065fe07e36ce6760bbd2b271409f7822e487c38dfa1a4  $RUNNER_TEMP/extracted/e2_anchor_transport_qualify.py" | sha256sum -c -
+          echo "a24d6350636098e6083629f31db142e8061525f0b0d6af3538bab9a2d96048c6  $RUNNER_TEMP/extracted/e2_anchor_transport_independent_check.py" | sha256sum -c -
+
+      - name: Build closed-read-set sandbox
+        shell: bash
+        run: |
+          set -euo pipefail
+          S="$RUNNER_TEMP/transport-sandbox"
+          mkdir -p "$S/risu_e2" "$S/tools" "$S/protocols" "$S/schemas"
+          cp "$RUNNER_TEMP/extracted/anchor_transport.py" "$S/risu_e2/anchor_transport.py"
+          cp "$RUNNER_TEMP/extracted/anchor_transport_fixtures.py" "$S/risu_e2/anchor_transport_fixtures.py"
+          : > "$S/risu_e2/__init__.py"
+          cp "$RUNNER_TEMP/extracted/e2_anchor_transport_qualify.py" "$S/tools/e2_anchor_transport_qualify.py"
+          cp "$RUNNER_TEMP/extracted/e2_anchor_transport_independent_check.py" "$S/tools/e2_anchor_transport_independent_check.py"
+          cp protocols/RISU_DIFF_E2_MUTATION_BLIND_ANCHOR_TRANSPORT_v0.1.json "$S/protocols/"
+          cp protocols/RISU_DIFF_E2_MUTATION_BLIND_ANCHOR_TRANSPORT_QUALIFICATION_v0.1.json "$S/protocols/"
+          cp protocols/RISU_DIFF_E2_CANONICAL_SEED_CONSEQUENCE_ANCHORS_v0.1.json "$S/protocols/"
+          cp schemas/RISU_E2_MUTATION_BLIND_ANCHOR_TRANSPORT_RECEIPT_v0.1.schema.json "$S/schemas/"
+          while IFS= read -r p; do mkdir -p "$S/$(dirname "$p")"; cp "$p" "$S/$p"; done <<'PATHS'
+          experiments/risu-diff-e2/qualification/seeds/python/SYN-PY-01.py
+          experiments/risu-diff-e2/qualification/seeds/python/SYN-PY-02.py
+          experiments/risu-diff-e2/qualification/seeds/go/SYN-GO-01.go
+          experiments/risu-diff-e2/qualification/seeds/go/SYN-GO-02.go
+          experiments/risu-diff-e2/qualification/seeds/typescript-javascript/SYN-TS-01.mjs
+          experiments/risu-diff-e2/qualification/seeds/typescript-javascript/SYN-TS-02.mjs
+          PATHS
+          python -m py_compile "$S/risu_e2/anchor_transport.py" "$S/risu_e2/anchor_transport_fixtures.py" "$S/tools/e2_anchor_transport_qualify.py" "$S/tools/e2_anchor_transport_independent_check.py"
+          test "$(find "$S/experiments/risu-diff-e2/qualification/seeds" -type f | wc -l)" -eq 6
+
+      - name: Run primary qualification twice in sealed sandbox
+        shell: bash
+        run: |
+          set -euo pipefail
+          S="$RUNNER_TEMP/transport-sandbox"
+          OUT="$RUNNER_TEMP/transport-output"
+          mkdir -p "$OUT/p1" "$OUT/p2"
+          restore() { chmod -R u+rX "$GITHUB_WORKSPACE" 2>/dev/null || true; }
+          trap restore EXIT
+          chmod -R a-rwx "$GITHUB_WORKSPACE"
+          cd "$S"
+          export RISU_TRANSPORT_SANDBOX=1 PYTHONPATH="$S"
+          python tools/e2_anchor_transport_qualify.py --root "$S" --fixture-output "$OUT/p1/fixtures.json" --seed-output "$OUT/p1/seeds.json" --receipt-output "$OUT/p1/primary.json"
+          python tools/e2_anchor_transport_qualify.py --root "$S" --fixture-output "$OUT/p2/fixtures.json" --seed-output "$OUT/p2/seeds.json" --receipt-output "$OUT/p2/primary.json"
+          cmp "$OUT/p1/fixtures.json" "$OUT/p2/fixtures.json"
+          cmp "$OUT/p1/seeds.json" "$OUT/p2/seeds.json"
+          cmp "$OUT/p1/primary.json" "$OUT/p2/primary.json"
+          restore
+          trap - EXIT
+
+      - name: Run independent checker twice in sealed sandbox
+        shell: bash
+        run: |
+          set -euo pipefail
+          S="$RUNNER_TEMP/transport-sandbox"
+          OUT="$RUNNER_TEMP/transport-output"
+          mkdir -p "$OUT/i1" "$OUT/i2"
+          restore() { chmod -R u+rX "$GITHUB_WORKSPACE" 2>/dev/null || true; }
+          trap restore EXIT
+          chmod -R a-rwx "$GITHUB_WORKSPACE"
+          cd "$S"
+          export RISU_TRANSPORT_SANDBOX=1 PYTHONPATH="$S"
+          for d in i1 i2; do
+            python tools/e2_anchor_transport_independent_check.py --root "$S" --fixture-bundle "$OUT/p1/fixtures.json" --seed-bundle "$OUT/p1/seeds.json" --primary-receipt "$OUT/p1/primary.json" --output "$OUT/$d/independent.json"
+          done
+          cmp "$OUT/i1/independent.json" "$OUT/i2/independent.json"
+          restore
+          trap - EXIT
+
+      - name: Assert Q0-Q11 and emit authoritative receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/transport-output"
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          out=Path(os.environ['RUNNER_TEMP'])/'transport-output'
+          p=json.loads((out/'p1/primary.json').read_text())
+          i=json.loads((out/'i1/independent.json').read_text())
+          assert p['status']=='PRIMARY_PASS_AWAITING_INDEPENDENT_Q9_Q10'
+          assert i['status']=='PASS' and not i['errors']
+          assert all(p['primary_gates'].values()) and i['q9_content_addressing']
+          assert p['fixture_case_count']==36 and p['seed_count']==6 and p['anchor_count']==18 and p['binding_slot_count']==12
+          assert i['fixture_case_count']==36 and i['seed_count']==6
+          gates={f'Q{x}':True for x in range(12)}
+          r={'schema':'risu.e2-anchor-transport-authoritative-qualification/v0.1','status':'PASS','gates':gates,'fixture_case_count':36,'seed_count':6,'anchor_count':18,'binding_slot_count':12,'primary_receipt_sha256':hashlib.sha256((out/'p1/primary.json').read_bytes()).hexdigest(),'independent_receipt_sha256':hashlib.sha256((out/'i1/independent.json').read_bytes()).hexdigest(),'fixture_bundle_sha256':hashlib.sha256((out/'p1/fixtures.json').read_bytes()).hexdigest(),'seed_bundle_sha256':hashlib.sha256((out/'p1/seeds.json').read_bytes()).hexdigest(),'read_set':{'materialized_58_candidate_revision_bytes':False,'mutation_truth':False,'expected_e2_predictions':False,'mutation_operator_metadata':False,'fresh_target_bytes':False},'claim_boundary':{'candidate_58_transport_authorized':False,'a3_a4_verdict_logic_authorized':False,'fresh_target_selection_authorized':False},'next_authorized_step':'FREEZE_SANITIZED_58_CASE_TRANSPORT_ADMISSION_MANIFEST_BEFORE_ANY_58_CASE_TRANSPORT_OUTPUT'}
+          b=json.dumps(r,sort_keys=True,separators=(',',':')).encode(); r['receipt_digest_sha256']=hashlib.sha256(b).hexdigest(); b=json.dumps(r,sort_keys=True,separators=(',',':')).encode()
+          (out/'authoritative.json').write_bytes(b)
+          print(json.dumps({'status':'PASS','receipt_sha256':hashlib.sha256(b).hexdigest()},separators=(',',':')))
+          PY
+          cp "$OUT/p1/fixtures.json" E2_ANCHOR_TRANSPORT_FIXTURE_BUNDLE.json
+          cp "$OUT/p1/seeds.json" E2_ANCHOR_TRANSPORT_SEED_IDENTITY_BUNDLE.json
+          cp "$OUT/p1/primary.json" E2_ANCHOR_TRANSPORT_PRIMARY_QUALIFICATION_RECEIPT.json
+          cp "$OUT/i1/independent.json" E2_ANCHOR_TRANSPORT_INDEPENDENT_QUALIFICATION_RECEIPT.json
+          cp "$OUT/authoritative.json" E2_ANCHOR_TRANSPORT_AUTHORITATIVE_QUALIFICATION_RECEIPT.json
+          sha256sum E2_ANCHOR_TRANSPORT_*.json
+
+      - name: Upload authoritative artifacts
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-anchor-transport-mutation-free-qualification
+          path: |
+            E2_ANCHOR_TRANSPORT_FIXTURE_BUNDLE.json
+            E2_ANCHOR_TRANSPORT_SEED_IDENTITY_BUNDLE.json
+            E2_ANCHOR_TRANSPORT_PRIMARY_QUALIFICATION_RECEIPT.json
+            E2_ANCHOR_TRANSPORT_INDEPENDENT_QUALIFICATION_RECEIPT.json
+            E2_ANCHOR_TRANSPORT_AUTHORITATIVE_QUALIFICATION_RECEIPT.json
+          if-no-files-found: error
+          retention-days: 30
