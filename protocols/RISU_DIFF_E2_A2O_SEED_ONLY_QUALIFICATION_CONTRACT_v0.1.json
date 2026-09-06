@@ -1,0 +1,103 @@
+{
+  "schema": "risu.diff-e2-a2o-seed-only-qualification-contract/v0.1",
+  "contract_id": "RISU_DIFF_E2_A2O_SEED_ONLY_QUALIFICATION_001",
+  "status": "PRE_IMPLEMENTATION_QUALIFICATION_FROZEN",
+  "authority": {
+    "repository": "risu-research/risu-verify",
+    "branch": "e2-development",
+    "pre_registration_parent": "771c50d124c2dea519dd62dac72d3ae7e2335834",
+    "minimal_observability_design_commit": "98987f5bf999bc7f31738c5ad95440d0863a6088",
+    "canonical_anchor_contract_commit": "467e7794b0b5229c655c07ea025deb9af5ee7465",
+    "canonical_anchor_freeze_commit": "771c50d124c2dea519dd62dac72d3ae7e2335834",
+    "frozen_base_ir_schema": "risu.e2-normalized-semantic-flow-ir/v0.1",
+    "overlay_schema_under_qualification": "risu.e2-observability-overlay/v0.1"
+  },
+  "scope": {
+    "canonical_seed_count": 6,
+    "canonical_seed_ids": [
+      "SYN-GO-01",
+      "SYN-GO-02",
+      "SYN-PY-01",
+      "SYN-PY-02",
+      "SYN-TS-01",
+      "SYN-TS-02"
+    ],
+    "allowed_input_classes": [
+      "frozen canonical seed source bytes",
+      "frozen consequence-anchor bundle",
+      "frozen A2 v0.1 acquisition and base-IR implementation",
+      "language parser or conservative structured syntax for the canonical seed language subset"
+    ],
+    "forbidden_input_classes": [
+      "materialized mutant cell bytes",
+      "mutation truth",
+      "expected E2 predictions",
+      "mutation operator ids/classes",
+      "fresh target bytes",
+      "target/repository names as semantic features",
+      "comments/docstrings as semantic features"
+    ],
+    "mutant_anchor_transport_authorized": false,
+    "fresh_target_selection_authorized": false,
+    "a3_a4_verdict_logic_authorized": false
+  },
+  "implementation_boundary": {
+    "base_a2_v0_1_must_remain_unmodified": true,
+    "architecture": "DIGEST_BOUND_SIDECAR_OVERLAY",
+    "new_ctv_node_kinds_allowed": [],
+    "new_ctv_edge_kinds_allowed": [],
+    "allowed_delta_ids": [
+      "D1_VERSIONED_VALUE_AND_REPRESENTATION_IDENTITY",
+      "D2_COMPLETE_CONTROL_SKELETON_FOR_CLAIMED_SCOPE",
+      "D3_DECLARED_CONSEQUENCE_ANCHORS"
+    ],
+    "no_regression_or_preservation_verdicts": true
+  },
+  "qualification_gates": {
+    "Q0_CLOSED_READ_SET": {
+      "requirement": "The qualification executable must enumerate its read-set classes and assert that no materialized mutant path, truth label, expected E2 prediction, operator metadata, fresh target bytes, comments/docstrings, or target/repository semantic specialization is consumed."
+    },
+    "Q1_BASE_BINDING": {
+      "requirement": "For every seed, build the frozen A2 v0.1 base IR through the existing acquisition/build_ir path and bind the overlay to its exact base_ir_digest_sha256 and exact acquired source sha256. The overlay must not mutate or reinterpret base nodes or edges."
+    },
+    "Q2_D1_DEFINITION_IDENTITY": {
+      "requirement": "Every parameter, assignment/definition, field/representation write, call result, and required cross-boundary temporary admitted by the supported subset receives a content-addressed definition/value-instance identity containing exact provenance and role. Distinct definition sites may not collapse to one value identity."
+    },
+    "Q3_D1_REACHING_DEFINITIONS": {
+      "requirement": "Reads bind only to parser/structured-syntax-derived reaching definitions. Definite straight-line writes replace prior reaching state on that successor path; control joins preserve an explicit set of alternatives. Multiplicity must never be erased into a synthetic single value. Unsupported or ambiguous state is explicit and cannot be marked COMPLETE."
+    },
+    "Q4_D1_REPRESENTATION_AND_CALL_BINDING": {
+      "requirement": "Representation fields are qualified by representation-instance identity; binding slots preserve argument index/field key/receiver role. Uniquely resolved acquired calls expose actual-to-formal and return-to-call-result lineage; ambiguous resolution remains incomplete."
+    },
+    "Q5_D3_EXACT_ANCHOR_MATERIALIZATION": {
+      "requirement": "All 18 frozen seed anchors must uniquely resolve against the exact frozen source bytes and materialize only their declared roles using existing CTV vocabulary: GUARD for GUARD_COMPARISON, EFFECT for EFFECT_BOUNDARY, OUTCOME for SUCCESS_OUTCOME and REJECTION_NO_EFFECT_OUTCOME. The 12 frozen operand binding slots must resolve to explicit versioned value instances."
+    },
+    "Q6_D2_CONTROL_COMPLETENESS": {
+      "requirement": "The function/control scope containing each frozen guard/effect/outcome anchor must have parser-derived or validated structured-syntax ENTRY and EXIT control points, explicit true/false branch polarity, PRECEDES succession, GUARDS immediate control relations, return/exit termination, and explicit join representation when paths reconverge. It may be COMPLETE only when every material control transfer in the anchored scope belongs to the supported subset."
+    },
+    "Q7_NO_LINE_ORDER_SEMANTICS": {
+      "requirement": "Source line/column positions may establish provenance and deterministic ordering of output bytes, but must not by themselves establish execution order, control dependence, dominance, or must-path semantics."
+    },
+    "Q8_PROVENANCE_AND_CONTENT_ADDRESSING": {
+      "requirement": "Every overlay semantic node and edge must be content-addressed and carry exact source provenance or an explicit frozen-anchor provenance reference that itself resolves to exact source bytes. No dangling relation is allowed."
+    },
+    "Q9_SEED_ONLY_OBSERVABILITY": {
+      "requirement": "Qualification establishes only that the six canonical seeds expose the D1/D2/D3 observability surface. It must not score consequence regression, consequence stability, safety, mutation recall, or fresh-target performance."
+    },
+    "Q10_DETERMINISM": {
+      "requirement": "Two independent executions in one qualification run must produce byte-identical canonical overlay bundle and qualification receipt."
+    }
+  },
+  "success_condition": "PASS only if all Q0-Q10 gates pass for all six canonical seeds without consulting forbidden inputs. Failure or unsupported structure must fail closed rather than be approximated.",
+  "post_success_authorization": {
+    "authorized": [
+      "freeze the seed-only overlay implementation and qualification receipts",
+      "design a separate mutation-blind anchor-transport protocol"
+    ],
+    "still_not_authorized": [
+      "A3/A4 consequence verdict logic",
+      "mutation-result-guided transport",
+      "fresh target selection/evaluation"
+    ]
+  }
+}
