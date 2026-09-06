@@ -1,0 +1,165 @@
+name: E2 A3 A4 Candidate Observability Microqualification Freeze
+
+on:
+  push:
+    branches: [e2-development]
+    paths:
+      - ".github/workflows/e2-a3-a4-candidate-observability-microqualification-freeze.yml"
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  freeze:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout archival revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 3
+
+      - name: Assert archival-only delta from scientific execution head
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "f2278ff5c992575cce5406e6739659779974c02f"
+          test "$(git diff --name-only HEAD^ HEAD | wc -l)" -eq 1
+          test "$(git diff --name-only HEAD^ HEAD)" = ".github/workflows/e2-a3-a4-candidate-observability-microqualification-freeze.yml"
+          test "$(git hash-object protocols/RISU_DIFF_E2_A3_A4_CANDIDATE_OBSERVABILITY_QUALIFICATION_v0.1.json)" = "cdd6dd1329c5fb77318f2ecf7c04c53cb9797b33"
+          test "$(git hash-object experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROFIXTURES_v0.1.json)" = "f990130b782ab242e4e341b45d0d58d298f4f316"
+          test "$(git hash-object experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROQUALIFICATION_IMPLEMENTATION_FREEZE_v0.1.2.json)" = "dfa315983099e5ce561672289922b115adced384"
+          test "$(git hash-object tools/e2_a3_a4_candidate_observability_microqualify_v2.py)" = "720e1c50191d43e314a0cb847477508b6a510c62"
+          test "$(git hash-object tools/e2_a3_a4_candidate_observability_microcheck_v2.py)" = "4baf300d2602b1185632164524f05de852d3e154"
+          test "$(git hash-object risu_e2/path_observability.py)" = "6eae3403f53b86f85bac47a31e751d28508e7225"
+
+      - name: Download both immutable hosted artifacts
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          T="$RUNNER_TEMP/candidate-observability-freeze"
+          mkdir -p "$T/a1" "$T/a2"
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/risu-research/risu-verify/actions/artifacts/9993406791/zip" -o "$T/a1.zip"
+          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/risu-research/risu-verify/actions/artifacts/9993425865/zip" -o "$T/a2.zip"
+          echo "1b0a53e61747d574f6be64c1e99cd5800921601246025c3c3474b3e286c08d58  $T/a1.zip" | sha256sum -c -
+          echo "24934ed98ebc752c7d870c396666dafeea284a9b513e8ecafcae48e07305d37a  $T/a2.zip" | sha256sum -c -
+          unzip -q "$T/a1.zip" -d "$T/a1"
+          unzip -q "$T/a2.zip" -d "$T/a2"
+          test "$(find "$T/a1" -maxdepth 1 -type f | wc -l)" -eq 6
+          test "$(find "$T/a2" -maxdepth 1 -type f | wc -l)" -eq 6
+
+      - name: Cross-host exact-byte audit and construct freeze receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib,json,os,subprocess
+          from pathlib import Path
+          t=Path(os.environ['RUNNER_TEMP'])/'candidate-observability-freeze'
+          logical=[
+            'E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROQUALIFICATION_PRIMARY.json',
+            'E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROQUALIFICATION_INDEPENDENT_AUDIT.json',
+            'E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROQUALIFICATION_CORPUS_COMPAT_ATTESTATION.json',
+            'E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROQUALIFICATION_SANDBOX_INVENTORY.json',
+            'E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROQUALIFICATION_RUN_DIAGNOSTIC.json',
+          ]
+          hosted='E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROQUALIFICATION_HOSTED_RECEIPT.json'
+          def h(b): return hashlib.sha256(b).hexdigest()
+          logical_rows={}
+          for name in logical:
+              b1=(t/'a1'/name).read_bytes(); b2=(t/'a2'/name).read_bytes()
+              if b1!=b2: raise SystemExit('cross-host logical byte mismatch:'+name)
+              logical_rows[name]={'sha256':h(b1),'bytes':len(b1),'byte_identical_across_attempts':True}
+          p=json.loads((t/'a1'/logical[0]).read_bytes())
+          a=json.loads((t/'a1'/logical[1]).read_bytes())
+          d=json.loads((t/'a1'/logical[4]).read_bytes())
+          r1_raw=(t/'a1'/hosted).read_bytes(); r2_raw=(t/'a2'/hosted).read_bytes()
+          r1=json.loads(r1_raw); r2=json.loads(r2_raw)
+          assert p['fixture_count']==48 and p['family_count']==16 and p['complete_matrix_emitted'] is True and len(p['rows'])==48
+          assert a['status']=='PASS' and a['complete_matrix_independently_replayed'] is True and not a['integrity_errors'] and len(a['rows'])==48
+          assert a['qualification_status']==p['status']==d['qualification_status']
+          assert sorted(a['qualification_failed_fixture_ids'])==sorted(p['failed_fixture_ids'])==sorted(d['failed_fixture_ids'])
+          assert r1['execution_integrity_status']==r2['execution_integrity_status']=='PASS'
+          assert r1['qualification_status']==r2['qualification_status']==p['status']
+          assert r1['logical_artifacts']==r2['logical_artifacts']
+          assert r1['hosted_provenance']['github_run_id']==r2['hosted_provenance']['github_run_id']=='34046999883'
+          assert r1['hosted_provenance']['github_run_attempt']=='1' and r2['hosted_provenance']['github_run_attempt']=='2'
+          assert r1['hosted_provenance']['github_sha']==r2['hosted_provenance']['github_sha']=='f2278ff5c992575cce5406e6739659779974c02f'
+          assert p['read_set_attestation']['candidate_58_bytes'] is False and a['read_set_attestation']['candidate_58_bytes'] is False
+          assert r1['read_set_attestation']['candidate_58_bytes'] is False and r2['read_set_attestation']['candidate_58_bytes'] is False
+          workflow_blob=subprocess.check_output(['git','hash-object','.github/workflows/e2-a3-a4-candidate-observability-microqualification-v3.yml'],text=True).strip()
+          archival_blob=subprocess.check_output(['git','hash-object','.github/workflows/e2-a3-a4-candidate-observability-microqualification-freeze.yml'],text=True).strip()
+          receipt={
+            'schema':'risu.e2-a3-a4-candidate-observability-microqualification-freeze-receipt/v0.1',
+            'status':'FROZEN_'+p['status'],
+            'execution_integrity_status':'PASS',
+            'qualification_status':p['status'],
+            'fixture_count':48,
+            'family_count':16,
+            'complete_matrix_frozen':True,
+            'failed_fixture_ids':p['failed_fixture_ids'],
+            'infrastructure_invalid_fixture_ids':p['infrastructure_invalid_fixture_ids'],
+            'authorities':{
+              'candidate_observability_protocol_git_blob':'cdd6dd1329c5fb77318f2ecf7c04c53cb9797b33',
+              'microfixture_corpus_git_blob':'f990130b782ab242e4e341b45d0d58d298f4f316',
+              'implementation_freeze_v0_1_2_git_blob':'dfa315983099e5ce561672289922b115adced384',
+              'primary_v2_git_blob':'720e1c50191d43e314a0cb847477508b6a510c62',
+              'independent_v2_git_blob':'4baf300d2602b1185632164524f05de852d3e154',
+              'path_observability_git_blob':'6eae3403f53b86f85bac47a31e751d28508e7225',
+              'scientific_execution_workflow_git_blob':workflow_blob,
+              'archival_freeze_workflow_git_blob':archival_blob,
+              'scientific_execution_head':'f2278ff5c992575cce5406e6739659779974c02f',
+            },
+            'hosted_replays':[
+              {'github_run_id':34046999883,'run_attempt':1,'job_id':101523729836,'worker_id':'2ebfc0b6-ed16-43db-aa7b-e31fc4a7b016','azure_region':'westus2','artifact_id':9993406791,'artifact_zip_sha256':'1b0a53e61747d574f6be64c1e99cd5800921601246025c3c3474b3e286c08d58','hosted_receipt_sha256':h(r1_raw)},
+              {'github_run_id':34046999883,'run_attempt':2,'job_id':101523918720,'worker_id':'d57e0a38-8cd3-4ca1-ad7e-59cdb2a96be8','azure_region':'westus3','artifact_id':9993425865,'artifact_zip_sha256':'24934ed98ebc752c7d870c396666dafeea284a9b513e8ecafcae48e07305d37a','hosted_receipt_sha256':h(r2_raw)},
+            ],
+            'cross_hosted_replay':{
+              'different_hosted_workers':True,
+              'different_azure_regions':True,
+              'logical_file_count':len(logical),
+              'all_logical_files_byte_identical':True,
+              'logical_artifacts':logical_rows,
+              'hosted_receipts_expected_to_differ_only_by_run_provenance':True,
+            },
+            'within_host_replay':{'primary_executions_total':4,'independent_executions_total':4,'all_primary_outputs_byte_identical':True,'all_independent_outputs_byte_identical':True},
+            'read_set_attestation':{'candidate_58_bytes':False,'sanitized_58_manifest':False,'raw_blind_58_transport':False,'mutation_truth':False,'operator_metadata':False,'expected_e2_predictions':False,'fresh_target_bytes':False},
+            'claim_boundary':{'actual_pipeline_microqualification_only':True,'a3_a4_semantic_verdicts_emitted':False,'mutant_58_observability_executed':False,'scientific_failure_preserved_without_post_complete_repair':True},
+            'authorization_boundary':{'candidate_58_observability_execution_authorized':False,'a3_a4_58_verdict_execution_authorized':False,'fresh_target_evaluation_authorized':False,'next_required_step':'PROSPECTIVELY_PREREGISTER_REMEDIATION_OR_FORMALLY_ACCEPT_THE_FROZEN_OBSERVABILITY_LIMITATION_BEFORE_ANY_58_CANDIDATE_EXECUTION'},
+            'pre_complete_diagnostics':[34045362733,34045530054,34045677770,34045766053],
+          }
+          pre=(json.dumps(receipt,sort_keys=True,separators=(',',':'),ensure_ascii=False)+'\n').encode()
+          receipt['freeze_receipt_preimage_sha256']=h(pre)
+          final=(json.dumps(receipt,sort_keys=True,separators=(',',':'),ensure_ascii=False)+'\n').encode()
+          out=t/'freeze-receipt.json'; out.write_bytes(final)
+          print(json.dumps({'status':receipt['status'],'qualification_status':p['status'],'failed':len(p['failed_fixture_ids']),'logical_files':len(logical),'freeze_receipt_sha256':h(final)},sort_keys=True,separators=(',',':')))
+          PY
+
+      - name: Commit exact frozen artifacts and receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          T="$RUNNER_TEMP/candidate-observability-freeze"
+          D="experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/freeze"
+          mkdir -p "$D"
+          cp "$T/a1/E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROQUALIFICATION_PRIMARY.json" "$D/E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROQUALIFICATION_PRIMARY.json"
+          cp "$T/a1/E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROQUALIFICATION_INDEPENDENT_AUDIT.json" "$D/E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROQUALIFICATION_INDEPENDENT_AUDIT.json"
+          cp "$T/a1/E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROQUALIFICATION_CORPUS_COMPAT_ATTESTATION.json" "$D/E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROQUALIFICATION_CORPUS_COMPAT_ATTESTATION.json"
+          cp "$T/a1/E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROQUALIFICATION_SANDBOX_INVENTORY.json" "$D/E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROQUALIFICATION_SANDBOX_INVENTORY.json"
+          cp "$T/a1/E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROQUALIFICATION_RUN_DIAGNOSTIC.json" "$D/E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROQUALIFICATION_RUN_DIAGNOSTIC.json"
+          cp "$T/a1/E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROQUALIFICATION_HOSTED_RECEIPT.json" "$D/E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROQUALIFICATION_HOSTED_RECEIPT_ATTEMPT_1.json"
+          cp "$T/a2/E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROQUALIFICATION_HOSTED_RECEIPT.json" "$D/E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROQUALIFICATION_HOSTED_RECEIPT_ATTEMPT_2.json"
+          cp "$T/freeze-receipt.json" "$D/E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROQUALIFICATION_FREEZE_RECEIPT_v0.1.json"
+          git config user.name "RISU Scientific Freeze"
+          git config user.email "actions@users.noreply.github.com"
+          git add "$D"
+          mapfile -t staged < <(git diff --cached --name-only)
+          test "${#staged[@]}" -eq 8
+          for p in "${staged[@]}"; do case "$p" in "$D"/*) ;; *) echo "unexpected staged path: $p"; exit 1;; esac; done
+          git commit -m "Freeze failed candidate observability microqualification"
+          git push origin HEAD:e2-development
