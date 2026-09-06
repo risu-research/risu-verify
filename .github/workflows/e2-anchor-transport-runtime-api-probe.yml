@@ -36,7 +36,7 @@ jobs:
           echo "3b626fc83fe76a1dfafdcf896efc8a16440bbeec062cfb1dbb86badd23b7af4c  $RUNNER_TEMP/extracted/anchor_transport.py" | sha256sum -c -
           echo "a24d6350636098e6083629f31db142e8061525f0b0d6af3538bab9a2d96048c6  $RUNNER_TEMP/extracted/e2_anchor_transport_independent_check.py" | sha256sum -c -
 
-      - name: Emit AST-only runtime API inventory
+      - name: Emit transport engine AST-only API inventory
         shell: bash
         run: |
           set -euo pipefail
@@ -61,16 +61,41 @@ jobs:
                       if isinstance(m,(ast.FunctionDef,ast.AsyncFunctionDef)):
                           methods.append({'name':m.name,'args':sig(m),'line':m.lineno})
                   classes.append({'name':n.name,'line':n.lineno,'methods':methods})
-          print('API_INVENTORY='+json.dumps({'functions':functions,'classes':classes},sort_keys=True,separators=(',',':')))
+          print('ENGINE_API_INVENTORY='+json.dumps({'functions':functions,'classes':classes},sort_keys=True,separators=(',',':')))
           source=p.read_text().splitlines()
-          interesting=('transport','candidate','receipt','anchor','binding','analyze','resolve','run_case')
-          names=[x['name'] for x in functions if any(k in x['name'].lower() for k in interesting)]
-          print('INTERESTING_FUNCTIONS='+json.dumps(names,separators=(',',':')))
-          for name in names:
+          interesting=('transport_case','verify_receipt_digest')
+          for name in interesting:
               n=next(x for x in tree.body if isinstance(x,(ast.FunctionDef,ast.AsyncFunctionDef)) and x.name==name)
               start=n.lineno; end=getattr(n,'end_lineno',start)
-              print(f'---SOURCE:{name}:{start}-{end}---')
+              print(f'---ENGINE_SOURCE:{name}:{start}-{end}---')
               print('\n'.join(source[start-1:end]))
+          PY
+
+      - name: Emit independent checker AST-only inventory and main source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import ast, json, os
+          from pathlib import Path
+          p=Path(os.environ['RUNNER_TEMP'])/'extracted/e2_anchor_transport_independent_check.py'
+          tree=ast.parse(p.read_text())
+          def sig(a):
+              args=[x.arg for x in a.args.args]
+              if a.args.vararg: args.append('*'+a.args.vararg.arg)
+              args += [x.arg for x in a.args.kwonlyargs]
+              if a.args.kwarg: args.append('**'+a.args.kwarg.arg)
+              return args
+          functions=[]
+          source=p.read_text().splitlines()
+          for n in tree.body:
+              if isinstance(n,(ast.FunctionDef,ast.AsyncFunctionDef)):
+                  functions.append({'name':n.name,'args':sig(n),'line':n.lineno,'end_line':getattr(n,'end_lineno',n.lineno)})
+          print('CHECKER_API_INVENTORY='+json.dumps(functions,sort_keys=True,separators=(',',':')))
+          for row in functions:
+              if row['name'] in {'main','verify_receipt','independent_transport','check_receipt'} or 'receipt' in row['name'].lower() or 'transport' in row['name'].lower():
+                  print(f"---CHECKER_SOURCE:{row['name']}:{row['line']}-{row['end_line']}---")
+                  print('\n'.join(source[row['line']-1:row['end_line']]))
           PY
 
       - name: Assert no candidate source read
