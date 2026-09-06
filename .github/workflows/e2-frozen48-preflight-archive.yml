@@ -1,0 +1,224 @@
+name: E2 Frozen 48 Preflight Exact Archive
+
+on:
+  push:
+    branches: [e2-development]
+    paths:
+      - .github/workflows/e2-frozen48-preflight-archive.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  archive-exact-first-complete:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Download, verify, and Git-data archive exact hosted artifact without checkout
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          ARCHIVAL_RUN_ID: ${{ github.run_id }}
+        run: |
+          python3 - <<'PY'
+          import base64, hashlib, io, json, os, urllib.request, zipfile
+
+          repo = os.environ['REPO']
+          token = os.environ['GH_TOKEN']
+          branch = 'e2-development'
+          experiment_head = '1f2a7862deac98703ba4b0a7c9e75c8b44e7e5e9'
+          experiment_run = 34066178237
+          experiment_job = 101575213977
+          artifact_id = 9998999501
+          expected_zip_sha256 = '986515b3f803e857de8e7a9c4cbe25f2a185a67d76d44a8b165ac472e250449b'
+          base_dir = 'experiments/risu-diff-e2/qualification/a3-a4/frozen-48-requalification/preflight/first-complete'
+          expected = {
+            'primary_run1.json': (22891, 'b498665dfe6d986a47f3f48cad5be37802e9492e61ebb96e555a974a266c2012', 'ec4ec0619b36d56afe74947de884d7d2d35fa984'),
+            'primary_run2.json': (22891, 'b498665dfe6d986a47f3f48cad5be37802e9492e61ebb96e555a974a266c2012', 'ec4ec0619b36d56afe74947de884d7d2d35fa984'),
+            'independent_run1.json': (22895, 'dd9e4ba821968e3626e9876c0d1a076f26dec5d318cbccfeb4fb835def8c72ab', 'f04c6620a398adb0d018c2ddefccfc6b4e344471'),
+            'independent_run2.json': (22895, 'dd9e4ba821968e3626e9876c0d1a076f26dec5d318cbccfeb4fb835def8c72ab', 'f04c6620a398adb0d018c2ddefccfc6b4e344471'),
+            'cross_check.json': (1018, '7303be0a38a18b777493f72e41ecdd6a47da27600c6fb4a8ffddad06289abe92', '20361e200364297f7d8649faf4dff4f33e8be257'),
+            'exit_codes.txt': (8, 'c5bea6d5172950ed3fc3f0433afd51fc1913e545f5dd34c849c65dc166209a00', '6a20ce40185dafa35c4d98aac2146e34a448c546'),
+          }
+
+          def api(path, method='GET', body=None, accept='application/vnd.github+json'):
+              url = 'https://api.github.com' + path
+              headers = {
+                  'Authorization': f'Bearer {token}',
+                  'Accept': accept,
+                  'X-GitHub-Api-Version': '2022-11-28',
+                  'User-Agent': 'risu-e2-exact-archive',
+              }
+              data = None if body is None else json.dumps(body, sort_keys=True, separators=(',', ':')).encode()
+              req = urllib.request.Request(url, data=data, headers=headers, method=method)
+              with urllib.request.urlopen(req, timeout=60) as r:
+                  raw = r.read()
+                  return (json.loads(raw.decode()) if raw else None), raw
+
+          # Download only the already-produced Actions artifact. No repository checkout or held-out source fetch occurs.
+          req = urllib.request.Request(
+              f'https://api.github.com/repos/{repo}/actions/artifacts/{artifact_id}/zip',
+              headers={'Authorization': f'Bearer {token}', 'Accept': 'application/vnd.github+json', 'User-Agent': 'risu-e2-exact-archive'},
+          )
+          with urllib.request.urlopen(req, timeout=60) as r:
+              zip_bytes = r.read()
+          if hashlib.sha256(zip_bytes).hexdigest() != expected_zip_sha256:
+              raise SystemExit('ARTIFACT_ZIP_SHA256_MISMATCH')
+
+          with zipfile.ZipFile(io.BytesIO(zip_bytes)) as zf:
+              names = sorted(zf.namelist())
+              if names != sorted(expected):
+                  raise SystemExit('ARTIFACT_FILE_SET_MISMATCH:' + repr(names))
+              files = {name: zf.read(name) for name in names}
+
+          def git_blob_sha(data):
+              return hashlib.sha1(b'blob ' + str(len(data)).encode() + b'\0' + data).hexdigest()
+
+          for name, (nbytes, sha256_expected, git_expected) in expected.items():
+              data = files[name]
+              if len(data) != nbytes:
+                  raise SystemExit('BYTE_COUNT_MISMATCH:' + name)
+              if hashlib.sha256(data).hexdigest() != sha256_expected:
+                  raise SystemExit('LOGICAL_SHA256_MISMATCH:' + name)
+              if git_blob_sha(data) != git_expected:
+                  raise SystemExit('GIT_BLOB_SHA_MISMATCH:' + name)
+
+          p1 = json.loads(files['primary_run1.json'])
+          p2 = json.loads(files['primary_run2.json'])
+          i1 = json.loads(files['independent_run1.json'])
+          i2 = json.loads(files['independent_run2.json'])
+          cross = json.loads(files['cross_check.json'])
+          if files['primary_run1.json'] != files['primary_run2.json'] or files['independent_run1.json'] != files['independent_run2.json']:
+              raise SystemExit('DETERMINISM_BYTES_MISMATCH')
+          if files['exit_codes.txt'] != b'0 0 0 0\n':
+              raise SystemExit('EXIT_CODES_NOT_ZERO')
+          for doc in (p1, p2, i1, i2):
+              if doc.get('status') != 'PASS' or doc.get('public_case_count') != 48:
+                  raise SystemExit('ADAPTER_PREFLIGHT_NOT_PASS')
+              if doc.get('gate_and_canonicalizer_selftest_pass_count') != 9 or doc.get('gate_and_canonicalizer_selftest_count') != 9:
+                  raise SystemExit('SELFTEST_NOT_9_OF_9')
+              if doc.get('heldout_anchor_path_pipeline_executed') is not False:
+                  raise SystemExit('HELDOUT_PIPELINE_WAS_EXECUTED')
+              if doc.get('frozen_48_source_bytes_read') is not False or doc.get('candidate_58_bytes_read') is not False or doc.get('raw_blind_58_transport_read') is not False or doc.get('a3_a4_semantic_verdicts_emitted') is not False:
+                  raise SystemExit('FIREWALL_FLAG_NOT_CLEAN')
+              if len(doc.get('public_cases', [])) != 48 or any(row.get('ir_status') != 'PASS' or row.get('frontend_statuses') != ['PASS'] for row in doc['public_cases']):
+                  raise SystemExit('PUBLIC_CASE_ROUTING_NOT_48_PASS')
+          if cross.get('status') != 'PASS' or cross.get('complete_outputs_present') is not True or cross.get('deterministic_primary_byte_identical') is not True or cross.get('deterministic_independent_byte_identical') is not True or cross.get('exact_named_core_agreement') is not True or cross.get('all_firewall_flags_clean') is not True:
+              raise SystemExit('CROSS_CHECK_NOT_PASS')
+
+          receipt = {
+              'schema': 'risu.e2-a3-a4-frozen48-adapter-preflight-first-complete-freeze-receipt/v0.1',
+              'status': 'FROZEN_PASS',
+              'claim_boundary': {
+                  'class': 'NO_HELDOUT_ADAPTER_PREFLIGHT_ONLY',
+                  'establishes': 'The frozen Primary and Independent adapter plumbing, v0.3 routing, frozen admission predicate, fail-closed canonicalization, deterministic execution, and checker-level named-core agreement pass on the two already-unsealed 24-case microqualification corpora.',
+                  'does_not_establish': ['frozen-48 observability requalification', 'heldout transported-anchor execution', 'A3/A4 semantic correctness', 'candidate-58 performance', 'fresh-target performance'],
+              },
+              'authority': {
+                  'repository': repo,
+                  'branch': branch,
+                  'experiment_head': experiment_head,
+                  'run_id': experiment_run,
+                  'job_id': experiment_job,
+                  'artifact_id': artifact_id,
+                  'artifact_zip_bytes': len(zip_bytes),
+                  'artifact_zip_sha256': expected_zip_sha256,
+                  'workflow_git_blob': 'e84655eb00c105b4c25db4926bd811bb00464562',
+                  'primary_adapter_git_blob': '56ad7ec667f59f962585c6d5ed81b5dc98a363e2',
+                  'independent_adapter_git_blob': '8a68cd1b80e2abeac68a3ca7aed6ab7cfc28c105',
+                  'selection_freeze_commit': '5292ba5a0b833eb76211d4728142cfae87c23318',
+                  'adapter_preregistration_amendment_commit': '17c7294fcdc52b4467e5a967b2589149b98b46ae',
+              },
+              'hosted_provenance': {
+                  'runner_version': '2.337.0',
+                  'os': 'Ubuntu 24.04.4 LTS',
+                  'runner_image': 'ubuntu-24.04',
+                  'runner_image_version': '20260831.293.1',
+                  'worker_id': '8118c6fa-1a67-4306-96ab-c20f51a7c995',
+                  'azure_region': 'westus3',
+              },
+              'logical_artifacts': {
+                  name: {'bytes': vals[0], 'sha256': vals[1], 'git_blob': vals[2]} for name, vals in sorted(expected.items())
+              },
+              'result': {
+                  'primary_status': 'PASS',
+                  'independent_status': 'PASS',
+                  'public_case_count_each': 48,
+                  'all_public_ir_status_pass_each': True,
+                  'selftests_each': '9/9 PASS',
+                  'primary_run1_run2_byte_identical': True,
+                  'independent_run1_run2_byte_identical': True,
+                  'exact_named_core_agreement': True,
+                  'exit_codes': [0, 0, 0, 0],
+                  'specialization_scan': 'PASS',
+              },
+              'public_inputs': {
+                  'v0_3_prospective_24_git_blob': '0a930443990366a09671ddaa4e1fa63dbd658381',
+                  'v0_3_prospective_24_sha256': '5e235196cb2674e837a8250cd08670ca848e1790ada5e6a460dc2bbf191a4b05',
+                  'v0_2_frozen_24_git_blob': 'a0036c02826d54ac9ac22501b7eb341a600d1607',
+                  'v0_2_frozen_24_sha256': '7cc4215dba46830987a9a2f7d0fa1ae70b40ee7dcb6b488b4abd1f1c841a2764',
+              },
+              'firewall': {
+                  'repository_checkout_in_experiment_run': False,
+                  'heldout_anchor_path_pipeline_executed': False,
+                  'frozen_48_source_bytes_read': False,
+                  'cell_json_contents_read': False,
+                  'candidate_58_bytes_read': False,
+                  'raw_blind_58_transport_read': False,
+                  'mutation_truth_read': False,
+                  'operator_metadata_read': False,
+                  'expected_e2_prediction_read': False,
+                  'a3_a4_semantic_verdicts_emitted': False,
+              },
+              'preserved_precomplete_history': {
+                  'run_id': 34065958775,
+                  'classification': 'PRE_COMPLETE_EXECUTION_PLUMBING_FAILURE',
+                  'reason': 'public corpus case schema did not contain assumed source_sha256 field; no four complete adapter outputs existed',
+                  'record_commit': '666fcd24f1b3a0a216c37e3ac6d402213a02df8f',
+              },
+              'archival_transcription_history': {
+                  'manual_archive_attempt_commit': 'eb18401fbb786a0d162bb80be4e4c976c86d9e0f',
+                  'manual_primary_run1_blob': 'ed4c2610bec7d5bf23ee8ec7f67e38d2a74222e9',
+                  'manual_primary_run1_bytes': 22685,
+                  'expected_primary_run1_blob': 'ec4ec0619b36d56afe74947de884d7d2d35fa984',
+                  'expected_primary_run1_bytes': 22891,
+                  'classification': 'ARCHIVAL_TRANSCRIPTION_ERROR_NONSCIENTIFIC',
+                  'resolution': 'This archival-only no-checkout workflow replaced the incorrect manual archive entry with the exact hosted artifact bytes and created all remaining exact archival entries after verifying ZIP, logical SHA-256, byte counts, and Git blob identities.',
+              },
+              'archive_method': {
+                  'repository_checkout': False,
+                  'heldout_source_fetch': False,
+                  'artifact_download_only': True,
+                  'git_data_api_commit_only': True,
+                  'archival_workflow_run_id': int(os.environ['ARCHIVAL_RUN_ID']),
+              },
+              'next_authorized_boundary': 'DO NOT READ FROZEN-48 SOURCE YET IN THIS ARCHIVAL STEP. AFTER THIS EXACT FREEZE IS VERIFIED, PREPARE AND FREEZE A SELECTED-48-ONLY TRANSPORT/HELDOUT EXECUTION CONTRACT THAT CANNOT FETCH THE 10 EPISTEMIC CELLS OR RAW BLIND-58 TRANSPORT; ONLY THEN MAY THE ALREADY-FROZEN REQUALIFICATION PROTOCOL AUTHORIZE FIRST SELECTED-48 SOURCE READ IN A SEALED HOSTED RUN.',
+          }
+          receipt_bytes = (json.dumps(receipt, sort_keys=True, separators=(',', ':'), ensure_ascii=False) + '\n').encode()
+
+          # Build exact blobs directly through Git data API. No repository checkout occurs.
+          ref, _ = api(f'/repos/{repo}/git/ref/heads/{branch}')
+          parent_sha = ref['object']['sha']
+          commit_obj, _ = api(f'/repos/{repo}/git/commits/{parent_sha}')
+          base_tree = commit_obj['tree']['sha']
+
+          tree_entries = []
+          archive_files = dict(files)
+          archive_files['E2_A3_A4_FROZEN_48_ADAPTER_PREFLIGHT_FIRST_COMPLETE_FREEZE_RECEIPT.json'] = receipt_bytes
+          for name, data in sorted(archive_files.items()):
+              blob_obj, _ = api(f'/repos/{repo}/git/blobs', 'POST', {'content': base64.b64encode(data).decode(), 'encoding': 'base64'})
+              tree_entries.append({'path': f'{base_dir}/{name}', 'mode': '100644', 'type': 'blob', 'sha': blob_obj['sha']})
+              if name in expected and blob_obj['sha'] != expected[name][2]:
+                  raise SystemExit('SERVER_GIT_BLOB_IDENTITY_MISMATCH:' + name)
+
+          tree_obj, _ = api(f'/repos/{repo}/git/trees', 'POST', {'base_tree': base_tree, 'tree': tree_entries})
+          new_commit, _ = api(f'/repos/{repo}/git/commits', 'POST', {
+              'message': 'Freeze exact frozen-48 adapter preflight first-complete PASS',
+              'tree': tree_obj['sha'],
+              'parents': [parent_sha],
+          })
+          api(f'/repos/{repo}/git/refs/heads/{branch}', 'PATCH', {'sha': new_commit['sha'], 'force': False})
+          print(json.dumps({'status':'PASS','parent':parent_sha,'commit':new_commit['sha'],'tree':tree_obj['sha'],'archived_file_count':len(archive_files)}, sort_keys=True))
+          PY
