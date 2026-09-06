@@ -15,34 +15,13 @@ from typing import Any
 REPOSITORY = "risu-research/risu-verify"
 MATRIX_BLOB = "b6d7d9c4d172a6e38ab59e93ae9748fafefc9fd0"
 CELLS_TREE = "34a30574c7420728bff57958c815194979a622ab"
+IDENTITY_EXPANSION_REFERENCE_BLOB = "1e5fe69f302df6fdd367797649b17eb3c4ea5950"
 EXPECTED_COUNTS = {
     "positive_semantic_loss": 24,
     "semantic_preserving": 24,
     "epistemic_adversarial": 10,
 }
-ALLOWED_CLASS_KEYS = (
-    "mutation_classification",
-    "frozen_mutation_class",
-    "semantic_classification",
-    "semantic_class",
-    "case_classification",
-    "case_class",
-    "qualification_class",
-    "classification",
-)
-CLASS_ALIASES = {
-    "positive_semantic_loss": "positive_semantic_loss",
-    "semantic_loss": "positive_semantic_loss",
-    "positive_loss": "positive_semantic_loss",
-    "semantic_loss_positive": "positive_semantic_loss",
-    "semantic_preserving": "semantic_preserving",
-    "semantic_preservation": "semantic_preserving",
-    "preserving": "semantic_preserving",
-    "no_semantic_loss": "semantic_preserving",
-    "epistemic_adversarial": "epistemic_adversarial",
-    "adversarial_epistemic": "epistemic_adversarial",
-    "epistemic": "epistemic_adversarial",
-}
+CELL_RE = re.compile(r"^Q[0-9]{3}$")
 FORBIDDEN_OUTPUT_KEYS = {
     "source_bytes",
     "source_text",
@@ -53,7 +32,6 @@ FORBIDDEN_OUTPUT_KEYS = {
     "expected_e2_prediction",
     "candidate_58_content",
 }
-CELL_RE = re.compile(r"^Q[0-9]{3}$")
 
 
 def canonical_bytes(value: Any) -> bytes:
@@ -83,86 +61,69 @@ def api_get(path: str) -> dict[str, Any]:
         return json.loads(r.read().decode("utf-8"))
 
 
-def normalize_token(raw: str) -> str:
-    return re.sub(r"[^a-z0-9]+", "_", raw.strip().lower()).strip("_")
-
-
-def normalize_class(raw: Any) -> str | None:
-    if not isinstance(raw, str):
+def classify_group_key(key: Any) -> str | None:
+    if not isinstance(key, str):
         return None
-    return CLASS_ALIASES.get(normalize_token(raw))
+    normalized = re.sub(r"[^A-Z0-9]+", "_", key.strip().upper()).strip("_")
+    if normalized.endswith("_EPISTEMIC_ADVERSARIAL"):
+        return "epistemic_adversarial"
+    if normalized.endswith("_SEMANTIC_PRESERVING"):
+        return "semantic_preserving"
+    if normalized.endswith("_SEMANTIC_LOSS"):
+        return "positive_semantic_loss"
+    return None
 
 
-def safe_shape(doc: Any, *, depth: int = 0, path: str = "$", out: list[dict[str, Any]] | None = None) -> list[dict[str, Any]]:
-    if out is None:
-        out = []
-    if depth > 3 or len(out) >= 80:
-        return out
-    if isinstance(doc, dict):
-        keys = sorted(map(str, doc.keys()))
-        out.append({"path": path, "type": "dict", "keys": keys})
-        for key in keys:
-            child = doc[key]
-            if isinstance(child, (dict, list)):
-                safe_shape(child, depth=depth + 1, path=f"{path}.{key}", out=out)
-    elif isinstance(doc, list):
-        element_types = sorted({type(x).__name__ for x in doc})
-        entry: dict[str, Any] = {"path": path, "type": "list", "length": len(doc), "element_types": element_types}
-        dict_items = [x for x in doc if isinstance(x, dict)]
-        if dict_items:
-            entry["dict_element_keys"] = sorted(set().union(*(x.keys() for x in dict_items)))
-        out.append(entry)
-        for i, child in enumerate(doc[:4]):
-            if isinstance(child, (dict, list)):
-                safe_shape(child, depth=depth + 1, path=f"{path}[{i}]", out=out)
+def derive_projected_cells(matrix: dict[str, Any]) -> list[dict[str, str]]:
+    # Identity derivation is the pre-existing frozen expansion algorithm:
+    # seed_order -> class_order -> assignment-list position -> monotonically
+    # increasing Q%03d. Assignment element VALUES are deliberately never read.
+    contract = matrix.get("expansion_contract")
+    assignments = matrix.get("assignments")
+    if not isinstance(contract, dict) or not isinstance(assignments, dict):
+        raise RuntimeError("MATRIX_IDENTITY_CONTRACT_MISSING")
+    seed_order = contract.get("seed_order")
+    class_order = contract.get("class_order")
+    expanded_count = contract.get("expanded_row_count")
+    if not isinstance(seed_order, list) or not all(isinstance(x, str) for x in seed_order):
+        raise RuntimeError("SEED_ORDER_INVALID")
+    if not isinstance(class_order, list) or not all(isinstance(x, str) for x in class_order):
+        raise RuntimeError("CLASS_ORDER_INVALID")
+    if expanded_count != 58:
+        raise RuntimeError("EXPANDED_ROW_COUNT_NOT_58")
+
+    class_map: dict[str, str] = {}
+    for cls_key in class_order:
+        cls = classify_group_key(cls_key)
+        if cls is None:
+            raise RuntimeError("UNRECOGNIZED_CLASSIFICATION_GROUP")
+        if cls in class_map.values():
+            raise RuntimeError("DUPLICATE_CLASSIFICATION_GROUP")
+        class_map[cls_key] = cls
+    if set(class_map.values()) != set(EXPECTED_COUNTS):
+        raise RuntimeError("CLASSIFICATION_GROUP_SET_MISMATCH")
+
+    out: list[dict[str, str]] = []
+    index = 1
+    for seed_id in seed_order:
+        seed_assignments = assignments.get(seed_id)
+        if not isinstance(seed_assignments, dict):
+            raise RuntimeError("SEED_ASSIGNMENT_GROUP_MISSING")
+        for cls_key in class_order:
+            entries = seed_assignments.get(cls_key)
+            if not isinstance(entries, list):
+                raise RuntimeError("ASSIGNMENT_LIST_MISSING")
+            # Critical firewall: only cardinality is consumed. No assignment
+            # element value is accessed, compared, emitted, logged, or hashed.
+            for _ in range(len(entries)):
+                out.append({
+                    "cell_id": f"Q{index:03d}",
+                    "frozen_mutation_class": class_map[cls_key],
+                })
+                index += 1
+    if len(out) != 58 or index != 59:
+        raise RuntimeError("DERIVED_IDENTITY_COUNT_MISMATCH")
     return out
-
-
-def project_cells(doc: Any) -> list[dict[str, str]]:
-    projected: list[dict[str, str]] = []
-
-    def visit(value: Any, inherited_class: str | None = None) -> None:
-        if isinstance(value, dict):
-            local_class = inherited_class
-            class_sources: list[str] = []
-            for key in ALLOWED_CLASS_KEYS:
-                if key in value:
-                    cls = normalize_class(value[key])
-                    if cls is not None:
-                        class_sources.append(cls)
-            if len(set(class_sources)) > 1:
-                raise RuntimeError("AMBIGUOUS_ALLOWED_CLASSIFICATION_CONTEXT")
-            if class_sources:
-                local_class = class_sources[0]
-
-            cid = value.get("cell_id")
-            if isinstance(cid, str) and CELL_RE.fullmatch(cid):
-                if local_class is None:
-                    raise RuntimeError("CELL_WITHOUT_ALLOWED_CLASSIFICATION:" + cid)
-                projected.append({"cell_id": cid, "frozen_mutation_class": local_class})
-
-            for key, child in value.items():
-                if not isinstance(child, (dict, list)):
-                    continue
-                child_class = local_class
-                key_class = normalize_class(str(key))
-                if key_class is not None:
-                    child_class = key_class
-                visit(child, child_class)
-        elif isinstance(value, list):
-            for child in value:
-                if isinstance(child, (dict, list)):
-                    visit(child, inherited_class)
-
-    visit(doc)
-    dedup: dict[str, str] = {}
-    for row in projected:
-        cid = row["cell_id"]
-        cls = row["frozen_mutation_class"]
-        if cid in dedup and dedup[cid] != cls:
-            raise RuntimeError("CONFLICTING_CELL_CLASSIFICATION:" + cid)
-        dedup[cid] = cls
-    return [{"cell_id": cid, "frozen_mutation_class": dedup[cid]} for cid in sorted(dedup)]
 
 
 def cell_tree_map(tree_doc: dict[str, Any]) -> dict[str, list[dict[str, Any]]]:
@@ -195,21 +156,10 @@ def main() -> int:
         raise SystemExit("MATRIX_BLOB_IDENTITY_MISMATCH")
     matrix_doc = json.loads(matrix_raw.decode("utf-8"))
 
-    try:
-        projected = project_cells(matrix_doc)
-    except RuntimeError as exc:
-        diagnostic = {"error": str(exc), "structure_only": safe_shape(matrix_doc)}
-        print("SAFE_MATRIX_STRUCTURE_DIAGNOSTIC:" + json.dumps(diagnostic, sort_keys=True), file=sys.stderr)
-        raise SystemExit(2)
-
-    if len(projected) != 58:
-        diagnostic = {"projected_cell_count": len(projected), "structure_only": safe_shape(matrix_doc)}
-        print("SAFE_MATRIX_STRUCTURE_DIAGNOSTIC:" + json.dumps(diagnostic, sort_keys=True), file=sys.stderr)
-        raise SystemExit(2)
-
+    projected = derive_projected_cells(matrix_doc)
     ids = [row["cell_id"] for row in projected]
-    if len(set(ids)) != 58:
-        raise SystemExit("DUPLICATE_CELL_IDENTITY")
+    if len(set(ids)) != 58 or any(not CELL_RE.fullmatch(x) for x in ids):
+        raise SystemExit("DERIVED_CELL_IDENTITY_INVALID")
     counts = Counter(row["frozen_mutation_class"] for row in projected)
     if dict(counts) != EXPECTED_COUNTS:
         raise SystemExit("CLASS_PARTITION_MISMATCH:" + json.dumps(dict(sorted(counts.items())), sort_keys=True))
@@ -251,11 +201,24 @@ def main() -> int:
             "repository": REPOSITORY,
             "matrix_git_blob": MATRIX_BLOB,
             "cells_tree_git_sha": CELLS_TREE,
-            "classification_source": "ALLOWED_PREEXISTING_MATRIX_CLASSIFICATION_ONLY",
+            "identity_expansion_reference_git_blob": IDENTITY_EXPANSION_REFERENCE_BLOB,
+            "classification_source": "FROZEN_ASSIGNMENT_GROUP_SUFFIX_ONLY",
+        },
+        "identity_derivation": {
+            "algorithm": "FROZEN_SEED_ORDER_THEN_CLASS_ORDER_THEN_ASSIGNMENT_CARDINALITY_TO_Q_PERCENT_03D",
+            "assignment_element_values_consumed": False,
+            "cell_id_numeric_range_assumed": False,
+            "cell_ids_derived_from_frozen_expansion_order": True,
         },
         "read_set_attestation": {
             "matrix_bytes_read_by_selector": True,
-            "matrix_semantic_fields_consumed": ["cell_id", "allowed_preexisting_mutation_classification"],
+            "matrix_semantic_fields_consumed": [
+                "expansion_contract.seed_order",
+                "expansion_contract.class_order",
+                "expansion_contract.expanded_row_count",
+                "assignments.<seed>.<classification>.length",
+            ],
+            "assignment_element_values_consumed": False,
             "cell_source_blob_contents_read": False,
             "cell_json_contents_read": False,
             "mutation_truth_semantically_consumed": False,
@@ -299,6 +262,7 @@ def main() -> int:
         "excluded_epistemic_count": 10,
         "selected_identity_sha256": body["selected_identity_sha256"],
         "manifest_digest_sha256": body["manifest_digest_sha256"],
+        "assignment_element_values_consumed": False,
         "source_blob_contents_read": False,
     }, sort_keys=True, separators=(",", ":")))
     return 0
