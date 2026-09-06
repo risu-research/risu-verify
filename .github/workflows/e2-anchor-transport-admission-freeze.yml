@@ -1,0 +1,146 @@
+name: E2 Sanitized Opaque 58 Admission Freeze
+
+on:
+  push:
+    branches: [e2-development]
+    paths:
+      - "tools/e2_anchor_transport_build_admission.py"
+      - "tools/e2_anchor_transport_audit_admission.py"
+      - ".github/workflows/e2-anchor-transport-admission-freeze.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  admission:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout exact revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 3
+
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.13"
+
+      - name: Verify frozen authorities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object experiments/risu-diff-e2/qualification/anchor-transport/E2_ANCHOR_TRANSPORT_MUTATION_FREE_QUALIFICATION_FREEZE_RECEIPT.json)" = "18d925a63858f4ddece79feb15a0cdc7b8e09a58"
+          test "$(git rev-parse HEAD:experiments/risu-diff-e2/qualification/materialized/cells)" = "34a30574c7420728bff57958c815194979a622ab"
+          echo "df481fcb396bd323e282960d057a9495b987b6d98ea37d92ec45bc3b7d42067e  tools/e2_anchor_transport_build_admission.py" | sha256sum -c -
+          echo "92298e30649b92028a0b2442c66a72f2bba69870fecdebf8bee283a967e5c2ef  tools/e2_anchor_transport_audit_admission.py" | sha256sum -c -
+          test "$(git hash-object protocols/RISU_DIFF_E2_MUTATION_BLIND_ANCHOR_TRANSPORT_v0.1.json)" = "7da7d3ac536d5edda56aa2c2636db1c8b02569b3"
+
+      - name: Seal forbidden metadata and build manifest twice
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/admission"
+          mkdir -p "$OUT/b1" "$OUT/b2" "$OUT/i1" "$OUT/i2"
+          restore() {
+            find experiments/risu-diff-e2/qualification/materialized/cells -name 'CELL.json' -exec chmod u+r {} + 2>/dev/null || true
+            chmod u+r experiments/risu-diff-e2/qualification/MUTATION_QUALIFICATION_MATRIX.json 2>/dev/null || true
+            chmod u+r experiments/risu-diff-e2/qualification/MUTATION_QUALIFICATION_MATRIX_EXPANDED.jsonl 2>/dev/null || true
+            chmod u+r experiments/risu-diff-e2/qualification/SYNTHETIC_QUALIFICATION_TRUTH_FREEZE_AUDIT.json 2>/dev/null || true
+            chmod u+r experiments/risu-diff-e2/qualification/TRUTH_ORACLE_CONTRACT.json 2>/dev/null || true
+          }
+          trap restore EXIT
+          find experiments/risu-diff-e2/qualification/materialized/cells -name 'CELL.json' -exec chmod 000 {} +
+          chmod 000 experiments/risu-diff-e2/qualification/MUTATION_QUALIFICATION_MATRIX.json
+          chmod 000 experiments/risu-diff-e2/qualification/MUTATION_QUALIFICATION_MATRIX_EXPANDED.jsonl
+          chmod 000 experiments/risu-diff-e2/qualification/SYNTHETIC_QUALIFICATION_TRUTH_FREEZE_AUDIT.json
+          chmod 000 experiments/risu-diff-e2/qualification/TRUTH_ORACLE_CONTRACT.json
+
+          python tools/e2_anchor_transport_build_admission.py --root "$GITHUB_WORKSPACE" --output "$OUT/b1/manifest.json" --audit-output "$OUT/b1/build-audit.json"
+          python tools/e2_anchor_transport_build_admission.py --root "$GITHUB_WORKSPACE" --output "$OUT/b2/manifest.json" --audit-output "$OUT/b2/build-audit.json"
+          cmp "$OUT/b1/manifest.json" "$OUT/b2/manifest.json"
+          cmp "$OUT/b1/build-audit.json" "$OUT/b2/build-audit.json"
+
+          python tools/e2_anchor_transport_audit_admission.py --root "$GITHUB_WORKSPACE" --manifest "$OUT/b1/manifest.json" --output "$OUT/i1/independent.json"
+          python tools/e2_anchor_transport_audit_admission.py --root "$GITHUB_WORKSPACE" --manifest "$OUT/b1/manifest.json" --output "$OUT/i2/independent.json"
+          cmp "$OUT/i1/independent.json" "$OUT/i2/independent.json"
+          restore
+          trap - EXIT
+
+      - name: Assert admission boundary and emit authoritative receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/admission"
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          out=Path(os.environ["RUNNER_TEMP"])/"admission"
+          manifest=(out/"b1/manifest.json").read_bytes()
+          build=(out/"b1/build-audit.json").read_bytes()
+          indep=(out/"i1/independent.json").read_bytes()
+          m=json.loads(manifest); b=json.loads(build); i=json.loads(indep)
+          assert m["case_count"]==58 and len(m["cases"])==58
+          assert b["status"]=="PASS" and i["status"]=="PASS" and not i["errors"]
+          assert b["truth_matrix_json_opened"] is False and b["forbidden_metadata_files_opened"] is False
+          assert i["metadata_json_opened"] is False
+          assert len({x["transport_case_id"] for x in m["cases"]})==58
+          allowed={"transport_case_id","seed_id","language","candidate_source_sha256"}
+          assert all(set(x)==allowed for x in m["cases"])
+          h=lambda x: hashlib.sha256(x).hexdigest()
+          r={
+            "schema":"risu.e2-sanitized-opaque-58-admission-authoritative-receipt/v0.1",
+            "status":"PASS",
+            "case_count":58,
+            "materialized_cells_tree_git_sha":"34a30574c7420728bff57958c815194979a622ab",
+            "prior_transport_qualification_freeze_blob":"18d925a63858f4ddece79feb15a0cdc7b8e09a58",
+            "builder_sha256":"df481fcb396bd323e282960d057a9495b987b6d98ea37d92ec45bc3b7d42067e",
+            "independent_checker_sha256":"92298e30649b92028a0b2442c66a72f2bba69870fecdebf8bee283a967e5c2ef",
+            "manifest_sha256":h(manifest),
+            "build_audit_sha256":h(build),
+            "independent_audit_sha256":h(indep),
+            "read_set":{
+              "candidate_source_bytes_hashed":True,
+              "cell_json_opened":False,
+              "mutation_truth_read":False,
+              "expected_e2_predictions_read":False,
+              "mutation_operator_metadata_read":False,
+              "truth_or_matrix_json_opened":False,
+              "fresh_target_bytes_read":False
+            },
+            "projection_boundary":{
+              "emitted_case_fields":["candidate_source_sha256","language","seed_id","transport_case_id"],
+              "original_cell_id_emitted":False,
+              "original_path_emitted":False,
+              "candidate_source_bytes_emitted":False
+            },
+            "claim_boundary":{
+              "58_case_transport_output_exists":False,
+              "a3_a4_verdict_logic_authorized":False,
+              "truth_unblinding_authorized":False,
+              "fresh_target_evaluation_authorized":False
+            },
+            "next_authorized_step":"RUN_TWO_DETERMINISTIC_BLIND_58_CASE_TRANSPORT_REPLAYS_FROM_THIS_FROZEN_ADMISSION_SET_AND_FREEZE_TRANSPORT_RECEIPTS_BEFORE_ANY_TRUTH_OR_OPERATOR_UNBLINDING"
+          }
+          pre=json.dumps(r,sort_keys=True,separators=(",",":")).encode()
+          r["receipt_digest_sha256"]=h(pre)
+          data=json.dumps(r,sort_keys=True,separators=(",",":")).encode()
+          (out/"authoritative.json").write_bytes(data)
+          print(json.dumps({"status":"PASS","case_count":58,"manifest_sha256":h(manifest),"receipt_sha256":h(data)},separators=(",",":")))
+          PY
+          cp "$OUT/b1/manifest.json" E2_SANITIZED_OPAQUE_58_ADMISSION_MANIFEST.json
+          cp "$OUT/b1/build-audit.json" E2_SANITIZED_OPAQUE_58_ADMISSION_BUILD_AUDIT.json
+          cp "$OUT/i1/independent.json" E2_SANITIZED_OPAQUE_58_ADMISSION_INDEPENDENT_AUDIT.json
+          cp "$OUT/authoritative.json" E2_SANITIZED_OPAQUE_58_ADMISSION_AUTHORITATIVE_RECEIPT.json
+          sha256sum E2_SANITIZED_OPAQUE_58_ADMISSION_*.json
+
+      - name: Upload admission artifacts
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-sanitized-opaque-58-admission
+          path: |
+            E2_SANITIZED_OPAQUE_58_ADMISSION_MANIFEST.json
+            E2_SANITIZED_OPAQUE_58_ADMISSION_BUILD_AUDIT.json
+            E2_SANITIZED_OPAQUE_58_ADMISSION_INDEPENDENT_AUDIT.json
+            E2_SANITIZED_OPAQUE_58_ADMISSION_AUTHORITATIVE_RECEIPT.json
+          if-no-files-found: error
+          retention-days: 30
