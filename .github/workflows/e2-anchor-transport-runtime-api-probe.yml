@@ -1,0 +1,82 @@
+name: E2 Anchor Transport Runtime API Probe
+
+on:
+  push:
+    branches: [e2-development]
+    paths:
+      - ".github/workflows/e2-anchor-transport-runtime-api-probe.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 2
+
+      - name: Verify admission freeze and reconstruct frozen transport archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object experiments/risu-diff-e2/qualification/anchor-transport/admission/E2_SANITIZED_OPAQUE_58_ADMISSION_FREEZE_RECEIPT.json)" = "2c2ea8b9f6ca72c2262ffe6294287ee2e58fc00f"
+          CAND="experiments/risu-diff-e2/qualification/anchor-transport/implementation-candidate"
+          test "$(git hash-object "$CAND/chunk-00.b64")" = "d0a5ed7980d9ae0d2f2740624ac29a6e161ac9b9"
+          test "$(git hash-object "$CAND/chunk-01.b64")" = "d196782d6dced42ac761e9cf923022ad45c79110"
+          test "$(git hash-object "$CAND/chunk-02.b64")" = "a58cbdbf9fe5cb2cc03ca4f3e779f72c44632049"
+          test "$(git hash-object "$CAND/chunk-03.b64")" = "0882b17589095ae526f1ed533a9d60a43609932d"
+          cat "$CAND"/chunk-*.b64 | base64 -d > "$RUNNER_TEMP/transport_impl.tgz"
+          echo "7e08347694e82210bdcf53a8cec3f0684dcda5089020ad0d33e21b144fb88278  $RUNNER_TEMP/transport_impl.tgz" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/extracted"
+          tar -xzf "$RUNNER_TEMP/transport_impl.tgz" -C "$RUNNER_TEMP/extracted"
+          echo "3b626fc83fe76a1dfafdcf896efc8a16440bbeec062cfb1dbb86badd23b7af4c  $RUNNER_TEMP/extracted/anchor_transport.py" | sha256sum -c -
+          echo "a24d6350636098e6083629f31db142e8061525f0b0d6af3538bab9a2d96048c6  $RUNNER_TEMP/extracted/e2_anchor_transport_independent_check.py" | sha256sum -c -
+
+      - name: Emit AST-only runtime API inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import ast, json, os
+          from pathlib import Path
+          p=Path(os.environ['RUNNER_TEMP'])/'extracted/anchor_transport.py'
+          tree=ast.parse(p.read_text())
+          def sig(a):
+              args=[x.arg for x in a.args.args]
+              if a.args.vararg: args.append('*'+a.args.vararg.arg)
+              args += [x.arg for x in a.args.kwonlyargs]
+              if a.args.kwarg: args.append('**'+a.args.kwarg.arg)
+              return args
+          functions=[]; classes=[]
+          for n in tree.body:
+              if isinstance(n,(ast.FunctionDef,ast.AsyncFunctionDef)):
+                  functions.append({'name':n.name,'args':sig(n),'line':n.lineno})
+              elif isinstance(n,ast.ClassDef):
+                  methods=[]
+                  for m in n.body:
+                      if isinstance(m,(ast.FunctionDef,ast.AsyncFunctionDef)):
+                          methods.append({'name':m.name,'args':sig(m),'line':m.lineno})
+                  classes.append({'name':n.name,'line':n.lineno,'methods':methods})
+          print('API_INVENTORY='+json.dumps({'functions':functions,'classes':classes},sort_keys=True,separators=(',',':')))
+          source=p.read_text().splitlines()
+          interesting=('transport','candidate','receipt','anchor','binding','analyze','resolve','run_case')
+          names=[x['name'] for x in functions if any(k in x['name'].lower() for k in interesting)]
+          print('INTERESTING_FUNCTIONS='+json.dumps(names,separators=(',',':')))
+          for name in names:
+              n=next(x for x in tree.body if isinstance(x,(ast.FunctionDef,ast.AsyncFunctionDef)) and x.name==name)
+              start=n.lineno; end=getattr(n,'end_lineno',start)
+              print(f'---SOURCE:{name}:{start}-{end}---')
+              print('\n'.join(source[start-1:end]))
+          PY
+
+      - name: Assert no candidate source read
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo 'candidate_source_bytes_read=false'
+          echo 'truth_or_operator_metadata_read=false'
+          echo 'scientific_transport_output_emitted=false'
