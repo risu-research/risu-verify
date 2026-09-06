@@ -5,6 +5,7 @@ on:
     branches: [e2-development]
     paths:
       - "tools/e2_postfreeze_transport_qualify.py"
+      - "tools/e2_postfreeze_transport_qualify_erratum001.py"
       - "tools/e2_postfreeze_transport_audit.py"
       - ".github/workflows/e2-postfreeze-transport-qualification.yml"
 
@@ -19,24 +20,26 @@ jobs:
       - name: Checkout exact revision
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          fetch-depth: 3
+          fetch-depth: 6
 
       - name: Set up Python
         uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: "3.13"
 
-      - name: Verify preregistration and all frozen authorities before semantic unblinding
+      - name: Verify preregistration erratum and all frozen authorities before joined qualification
         shell: bash
         run: |
           set -euo pipefail
           PROTOCOL="protocols/RISU_DIFF_E2_POST_FREEZE_TRANSPORT_QUALIFICATION_v0.1.json"
+          ERRATUM="protocols/RISU_DIFF_E2_POST_FREEZE_TRANSPORT_QUALIFICATION_v0.1_ERRATUM_001.json"
           BUNDLE="experiments/risu-diff-e2/qualification/anchor-transport/blind58/E2_BLIND_58_ANCHOR_TRANSPORT_BUNDLE.json"
           FREEZE="experiments/risu-diff-e2/qualification/anchor-transport/blind58/E2_BLIND_58_ANCHOR_TRANSPORT_FREEZE_RECEIPT.json"
           MATRIX="experiments/risu-diff-e2/qualification/MUTATION_QUALIFICATION_MATRIX_EXPANDED.jsonl"
           CELLS="experiments/risu-diff-e2/qualification/materialized/cells"
 
           test "$(git hash-object "$PROTOCOL")" = "8d1860312d259e628e86070416a4757c570ba05f"
+          test "$(git hash-object "$ERRATUM")" = "a226d19994b55e7668658a94604db2d1ce07cb05"
           test "$(git hash-object "$BUNDLE")" = "95f7338e6f21bc3e0a8fc3209296d2e98c1c6f12"
           echo "78c5f024c1af7a353844120879d3ec4487b5f56fb443bc6e063530f836a9f74c  $BUNDLE" | sha256sum -c -
           test "$(git hash-object "$FREEZE")" = "1c97eb8df5bafcfd8523ee6aba0c5a2b981b5df0"
@@ -47,15 +50,17 @@ jobs:
           test "$(git hash-object risu_e2/model.py)" = "64baf95a4939f168881627830134b314a6ee6098"
           test "$(git hash-object risu_e2/ir.py)" = "d7edac40d4eeda86be74e5785bde3bfc28d4cf5e"
           test "$(git hash-object tools/e2_postfreeze_transport_qualify.py)" = "3b5cbe1bac55503e135426ccaab5ed73b65e5480"
+          test "$(git hash-object tools/e2_postfreeze_transport_qualify_erratum001.py)" = "e8fa82b3282253b33c4930c5d885a44db588909c"
           test "$(git hash-object tools/e2_postfreeze_transport_audit.py)" = "9bae752a306c762576c2b10f8cafbf400674566b"
-          python -m py_compile tools/e2_postfreeze_transport_qualify.py tools/e2_postfreeze_transport_audit.py
+          python -m py_compile tools/e2_postfreeze_transport_qualify.py tools/e2_postfreeze_transport_qualify_erratum001.py tools/e2_postfreeze_transport_audit.py
           test "$(find "$CELLS" -mindepth 1 -maxdepth 1 -type d -name 'Q[0-9][0-9][0-9]' | wc -l)" -eq 58
 
-      - name: Execute first truth-operator unblinding twice under frozen protocol
+      - name: Execute joined truth-operator qualification twice under frozen protocol plus erratum
         shell: bash
         run: |
           set -euo pipefail
           PROTOCOL="protocols/RISU_DIFF_E2_POST_FREEZE_TRANSPORT_QUALIFICATION_v0.1.json"
+          ERRATUM="protocols/RISU_DIFF_E2_POST_FREEZE_TRANSPORT_QUALIFICATION_v0.1_ERRATUM_001.json"
           BUNDLE="experiments/risu-diff-e2/qualification/anchor-transport/blind58/E2_BLIND_58_ANCHOR_TRANSPORT_BUNDLE.json"
           MATRIX="experiments/risu-diff-e2/qualification/MUTATION_QUALIFICATION_MATRIX_EXPANDED.jsonl"
           CELLS="experiments/risu-diff-e2/qualification/materialized/cells"
@@ -63,9 +68,11 @@ jobs:
           mkdir -p "$OUT/q1" "$OUT/q2" "$OUT/a1" "$OUT/a2"
 
           for d in q1 q2; do
-            python tools/e2_postfreeze_transport_qualify.py \
+            python tools/e2_postfreeze_transport_qualify_erratum001.py \
+              --qualifier tools/e2_postfreeze_transport_qualify.py \
               --root "$GITHUB_WORKSPACE" \
               --protocol "$PROTOCOL" \
+              --erratum "$ERRATUM" \
               --transport-bundle "$BUNDLE" \
               --matrix "$MATRIX" \
               --cells "$CELLS" \
@@ -109,6 +116,14 @@ jobs:
               "M_QUESTION_EPISTEMIC_ADVERSARIAL": 10,
               "M_ZERO_SEMANTIC_PRESERVING": 24,
           }
+          er = q["representation_erratum"]
+          assert er["erratum_id"] == "ERRATUM_001_OPERATOR_ID_REPRESENTATION"
+          assert er["erratum_git_blob"] == "a226d19994b55e7668658a94604db2d1ce07cb05"
+          assert er["frozen_qualifier_git_blob"] == "3b5cbe1bac55503e135426ccaab5ed73b65e5480"
+          assert er["matrix_operator_ids_retained_verbatim"] is True
+          assert er["operator_code_validation_only"] is True
+          assert er["join_metrics_strata_changed"] is False
+          assert er["truth_transport_association_observed_before_erratum_freeze"] is False
           assert a["status"] == "PASS" and not a["errors"] and a["case_count"] == 58
           assert a["qualification_sha256"] == h(qraw)
           assert a["bijective_join_recomputed_independently"] is True
@@ -129,11 +144,17 @@ jobs:
               "class_counts": q["integrity"]["class_counts"],
               "qualification_sha256": h(qraw),
               "independent_audit_sha256": h(araw),
-              "protocol_git_blob": "8d1860312d259e628e86070416a4757c570ba05f",
+              "parent_protocol_git_blob": "8d1860312d259e628e86070416a4757c570ba05f",
+              "representation_erratum_git_blob": "a226d19994b55e7668658a94604db2d1ce07cb05",
+              "erratum_wrapper_git_blob": "e8fa82b3282253b33c4930c5d885a44db588909c",
+              "frozen_qualifier_git_blob": "3b5cbe1bac55503e135426ccaab5ed73b65e5480",
+              "frozen_independent_auditor_git_blob": "9bae752a306c762576c2b10f8cafbf400674566b",
+              "effective_protocol_sha256": er["effective_protocol_sha256"],
               "frozen_transport_bundle_sha256": "78c5f024c1af7a353844120879d3ec4487b5f56fb443bc6e063530f836a9f74c",
               "expanded_truth_matrix_sha256": "afd681d308a6f4ec8c183edd9b139c6b914fe501936cf84e5845a6a1c0d6b7cb",
               "materialized_cells_tree_git_sha": "34a30574c7420728bff57958c815194979a622ab",
-              "truth_operator_unblinding_executed": True,
+              "label_schema_unblinding_incident_run_id": 34032454347,
+              "truth_operator_transport_join_executed": True,
               "transport_outputs_modified": False,
               "a3_a4_verdict_logic_executed": False,
               "fresh_target_selection_or_evaluation_executed": False,
