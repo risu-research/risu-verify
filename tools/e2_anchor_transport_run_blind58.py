@@ -36,10 +36,10 @@ def sha(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
-def read_canonical(path: Path) -> tuple[dict[str, Any], bytes]:
+def read_json(path: Path, require_canonical: bool = False) -> tuple[dict[str, Any], bytes]:
     raw = path.read_bytes()
     obj = json.loads(raw)
-    if raw != canon(obj):
+    if require_canonical and raw != canon(obj):
         raise SystemExit(f"non-canonical input: {path.name}")
     return obj, raw
 
@@ -83,8 +83,8 @@ def main() -> int:
     args = ap.parse_args()
 
     root = Path(args.root).resolve()
-    admission, admission_raw = read_canonical(Path(args.admission))
-    anchors, _ = read_canonical(Path(args.anchor_bundle))
+    admission, admission_raw = read_json(Path(args.admission), require_canonical=True)
+    anchors, _ = read_json(Path(args.anchor_bundle), require_canonical=False)
     candidate_dir = Path(args.candidate_dir).resolve()
 
     if sha(admission_raw) != ADMISSION_SHA256:

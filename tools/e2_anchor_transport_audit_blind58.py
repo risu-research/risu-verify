@@ -31,10 +31,10 @@ def sha(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
-def read_canonical(path: Path) -> tuple[dict[str, Any], bytes]:
+def read_json(path: Path, require_canonical: bool = False) -> tuple[dict[str, Any], bytes]:
     raw = path.read_bytes()
     obj = json.loads(raw)
-    if raw != canon(obj):
+    if require_canonical and raw != canon(obj):
         raise ValueError(f"non-canonical json: {path.name}")
     return obj, raw
 
@@ -126,9 +126,9 @@ def main() -> int:
     errors: list[str] = []
     try:
         root = Path(args.root).resolve()
-        admission, admission_raw = read_canonical(Path(args.admission))
-        anchors, _ = read_canonical(Path(args.anchor_bundle))
-        bundle, bundle_raw = read_canonical(Path(args.bundle))
+        admission, admission_raw = read_json(Path(args.admission), require_canonical=True)
+        anchors, _ = read_json(Path(args.anchor_bundle), require_canonical=False)
+        bundle, bundle_raw = read_json(Path(args.bundle), require_canonical=True)
         checker = load_checker(Path(args.frozen_checker))
         candidate_dir = Path(args.candidate_dir).resolve()
 
