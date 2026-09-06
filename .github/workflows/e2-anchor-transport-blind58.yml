@@ -1,0 +1,225 @@
+name: E2 Blind 58 Anchor Transport
+
+on:
+  push:
+    branches: [e2-development]
+    paths:
+      - "tools/e2_anchor_transport_run_blind58.py"
+      - "tools/e2_anchor_transport_audit_blind58.py"
+      - ".github/workflows/e2-anchor-transport-blind58.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  blind58:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout exact revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 3
+
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.13"
+
+      - name: Set up Go
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff
+        with:
+          go-version: "1.23.2"
+
+      - name: Verify all frozen authorities before candidate read
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object experiments/risu-diff-e2/qualification/anchor-transport/admission/E2_SANITIZED_OPAQUE_58_ADMISSION_FREEZE_RECEIPT.json)" = "2c2ea8b9f6ca72c2262ffe6294287ee2e58fc00f"
+          test "$(git hash-object experiments/risu-diff-e2/qualification/anchor-transport/admission/E2_SANITIZED_OPAQUE_58_ADMISSION_MANIFEST.json)" = "f2fc78439d4bfadce5941bf71aadd15ec292bcb1"
+          echo "847d85c2274cd6b94a83eefe0f6153a8fb183dbad758efa75118a4fd368623e4  experiments/risu-diff-e2/qualification/anchor-transport/admission/E2_SANITIZED_OPAQUE_58_ADMISSION_MANIFEST.json" | sha256sum -c -
+          test "$(git rev-parse HEAD:experiments/risu-diff-e2/qualification/materialized/cells)" = "34a30574c7420728bff57958c815194979a622ab"
+          test "$(git hash-object protocols/RISU_DIFF_E2_CANONICAL_SEED_CONSEQUENCE_ANCHORS_v0.1.json)" = "ec8d8b287a80b87c815f0362be366be076d2b091"
+          test "$(git hash-object protocols/RISU_DIFF_E2_MUTATION_BLIND_ANCHOR_TRANSPORT_v0.1.json)" = "7da7d3ac536d5edda56aa2c2636db1c8b02569b3"
+          test "$(git hash-object risu_e2/model.py)" = "64baf95a4939f168881627830134b314a6ee6098"
+          test "$(git hash-object risu_e2/ir.py)" = "d7edac40d4eeda86be74e5785bde3bfc28d4cf5e"
+          test "$(git hash-object tools/e2_anchor_transport_run_blind58.py)" = "89c7a406bdf814f2fff1d5c2f514cb45b92e1c79"
+          test "$(git hash-object tools/e2_anchor_transport_audit_blind58.py)" = "581e1f041fb1400ce67ab4dd0e34e583bf9aefc9"
+          CAND="experiments/risu-diff-e2/qualification/anchor-transport/implementation-candidate"
+          test "$(git hash-object "$CAND/chunk-00.b64")" = "d0a5ed7980d9ae0d2f2740624ac29a6e161ac9b9"
+          test "$(git hash-object "$CAND/chunk-01.b64")" = "d196782d6dced42ac761e9cf923022ad45c79110"
+          test "$(git hash-object "$CAND/chunk-02.b64")" = "a58cbdbf9fe5cb2cc03ca4f3e779f72c44632049"
+          test "$(git hash-object "$CAND/chunk-03.b64")" = "0882b17589095ae526f1ed533a9d60a43609932d"
+          cat "$CAND"/chunk-*.b64 | base64 -d > "$RUNNER_TEMP/transport_impl.tgz"
+          echo "7e08347694e82210bdcf53a8cec3f0684dcda5089020ad0d33e21b144fb88278  $RUNNER_TEMP/transport_impl.tgz" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/extracted"
+          tar -xzf "$RUNNER_TEMP/transport_impl.tgz" -C "$RUNNER_TEMP/extracted"
+          echo "3b626fc83fe76a1dfafdcf896efc8a16440bbeec062cfb1dbb86badd23b7af4c  $RUNNER_TEMP/extracted/anchor_transport.py" | sha256sum -c -
+          echo "a24d6350636098e6083629f31db142e8061525f0b0d6af3538bab9a2d96048c6  $RUNNER_TEMP/extracted/e2_anchor_transport_independent_check.py" | sha256sum -c -
+
+      - name: Build source-only opaque sandbox with metadata sealed
+        shell: bash
+        run: |
+          set -euo pipefail
+          S="$RUNNER_TEMP/blind58-sandbox"
+          mkdir -p "$S/risu_e2" "$S/tools" "$S/protocols" "$S/input" "$S/candidates"
+          cp "$RUNNER_TEMP/extracted/anchor_transport.py" "$S/risu_e2/anchor_transport.py"
+          : > "$S/risu_e2/__init__.py"
+          cp "$RUNNER_TEMP/extracted/e2_anchor_transport_independent_check.py" "$S/tools/e2_anchor_transport_independent_check.py"
+          cp tools/e2_anchor_transport_run_blind58.py "$S/tools/"
+          cp tools/e2_anchor_transport_audit_blind58.py "$S/tools/"
+          cp protocols/RISU_DIFF_E2_CANONICAL_SEED_CONSEQUENCE_ANCHORS_v0.1.json "$S/protocols/"
+          cp experiments/risu-diff-e2/qualification/anchor-transport/admission/E2_SANITIZED_OPAQUE_58_ADMISSION_MANIFEST.json "$S/input/admission.json"
+          while IFS= read -r p; do mkdir -p "$S/$(dirname "$p")"; cp "$p" "$S/$p"; done <<'PATHS'
+          experiments/risu-diff-e2/qualification/seeds/python/SYN-PY-01.py
+          experiments/risu-diff-e2/qualification/seeds/python/SYN-PY-02.py
+          experiments/risu-diff-e2/qualification/seeds/go/SYN-GO-01.go
+          experiments/risu-diff-e2/qualification/seeds/go/SYN-GO-02.go
+          experiments/risu-diff-e2/qualification/seeds/typescript-javascript/SYN-TS-01.mjs
+          experiments/risu-diff-e2/qualification/seeds/typescript-javascript/SYN-TS-02.mjs
+          PATHS
+
+          restore_metadata() {
+            find experiments/risu-diff-e2/qualification -type f \( -name '*.json' -o -name '*.jsonl' \) -exec chmod u+r {} + 2>/dev/null || true
+          }
+          trap restore_metadata EXIT
+          find experiments/risu-diff-e2/qualification -type f \( -name '*.json' -o -name '*.jsonl' \) -exec chmod 000 {} +
+
+          python - <<'PY'
+          import hashlib,json,os,re
+          from pathlib import Path
+          s=Path(os.environ['RUNNER_TEMP'])/'blind58-sandbox'
+          admission=json.loads((s/'input/admission.json').read_text())
+          cells=Path(os.environ['GITHUB_WORKSPACE'])/'experiments/risu-diff-e2/qualification/materialized/cells'
+          pat=re.compile(r'^(SYN-(?:PY|GO|TS)-0[12])\.(py|go|mjs|js|ts)$')
+          lang={'py':'python','go':'go','mjs':'typescript_javascript','js':'typescript_javascript','ts':'typescript_javascript'}
+          suffix={'python':'.py','go':'.go','typescript_javascript':'.mjs'}
+          lookup={}; source_count=0
+          for p in cells.rglob('*'):
+              m=pat.fullmatch(p.name)
+              if not m or not p.is_file():
+                  continue
+              data=p.read_bytes(); source_count += 1
+              h=hashlib.sha256(data).hexdigest(); key=(m.group(1),lang[m.group(2)],h)
+              lookup.setdefault(key,[]).append(data)
+          if source_count != 58:
+              raise SystemExit(f'expected 58 source files, got {source_count}')
+          rows=[]
+          for row in admission['cases']:
+              key=(row['seed_id'],row['language'],row['candidate_source_sha256'])
+              vals=lookup.get(key,[])
+              if len(vals)!=1:
+                  raise SystemExit('admission source resolution not unique')
+              out=s/'candidates'/(row['transport_case_id']+suffix[row['language']])
+              out.write_bytes(vals[0])
+              rows.append({'transport_case_id':row['transport_case_id'],'candidate_source_sha256':row['candidate_source_sha256'],'language':row['language'],'seed_id':row['seed_id']})
+          rows.sort(key=lambda x:x['transport_case_id'])
+          inv={'schema':'risu.e2-blind-58-source-only-staging-audit/v0.1','status':'PASS','case_count':58,'original_cell_path_emitted':False,'metadata_json_read':False,'candidate_source_bytes_emitted':False,'rows':rows}
+          raw=json.dumps(inv,sort_keys=True,separators=(',',':')).encode()
+          inv['inventory_digest_sha256']=hashlib.sha256(raw).hexdigest()
+          raw=json.dumps(inv,sort_keys=True,separators=(',',':')).encode()
+          (s/'input/staging-audit.json').write_bytes(raw)
+          print(json.dumps({'status':'PASS','case_count':58,'staging_audit_sha256':hashlib.sha256(raw).hexdigest()},separators=(',',':')))
+          PY
+          test "$(find "$S/candidates" -type f | wc -l)" -eq 58
+          restore_metadata
+          trap - EXIT
+          python -m py_compile "$S/risu_e2/anchor_transport.py" "$S/tools/e2_anchor_transport_run_blind58.py" "$S/tools/e2_anchor_transport_audit_blind58.py"
+
+      - name: Run blind 58 transport twice in sealed sandbox
+        shell: bash
+        run: |
+          set -euo pipefail
+          S="$RUNNER_TEMP/blind58-sandbox"
+          OUT="$RUNNER_TEMP/blind58-output"
+          mkdir -p "$OUT/p1" "$OUT/p2" "$OUT/a1" "$OUT/a2"
+          restore_repo() { chmod u+rwx "$GITHUB_WORKSPACE" 2>/dev/null || true; }
+          trap restore_repo EXIT
+          chmod a-rwx "$GITHUB_WORKSPACE"
+          cd "$S"
+          export PYTHONPATH="$S"
+          for d in p1 p2; do
+            python tools/e2_anchor_transport_run_blind58.py \
+              --root "$S" \
+              --admission "$S/input/admission.json" \
+              --anchor-bundle "$S/protocols/RISU_DIFF_E2_CANONICAL_SEED_CONSEQUENCE_ANCHORS_v0.1.json" \
+              --candidate-dir "$S/candidates" \
+              --output "$OUT/$d/bundle.json"
+          done
+          cmp "$OUT/p1/bundle.json" "$OUT/p2/bundle.json"
+          for d in a1 a2; do
+            python tools/e2_anchor_transport_audit_blind58.py \
+              --root "$S" \
+              --admission "$S/input/admission.json" \
+              --anchor-bundle "$S/protocols/RISU_DIFF_E2_CANONICAL_SEED_CONSEQUENCE_ANCHORS_v0.1.json" \
+              --candidate-dir "$S/candidates" \
+              --bundle "$OUT/p1/bundle.json" \
+              --frozen-checker "$S/tools/e2_anchor_transport_independent_check.py" \
+              --output "$OUT/$d/audit.json"
+          done
+          cmp "$OUT/a1/audit.json" "$OUT/a2/audit.json"
+          restore_repo
+          trap - EXIT
+
+      - name: Assert blind boundary and emit authoritative receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          S="$RUNNER_TEMP/blind58-sandbox"
+          OUT="$RUNNER_TEMP/blind58-output"
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          temp=Path(os.environ['RUNNER_TEMP'])
+          out=temp/'blind58-output'; s=temp/'blind58-sandbox'
+          bundle=(out/'p1/bundle.json').read_bytes(); audit=(out/'a1/audit.json').read_bytes(); staging=(s/'input/staging-audit.json').read_bytes()
+          b=json.loads(bundle); a=json.loads(audit); st=json.loads(staging)
+          assert b['case_count']==58 and len(b['receipts'])==58
+          assert a['status']=='PASS' and not a['errors'] and a['case_count']==58
+          assert st['status']=='PASS' and st['case_count']==58 and st['metadata_json_read'] is False
+          assert b['semantic_authority'] is False
+          assert b['admission_manifest_sha256']=='847d85c2274cd6b94a83eefe0f6153a8fb183dbad758efa75118a4fd368623e4'
+          assert b['authorities']['admission_freeze_receipt_git_blob']=='2c2ea8b9f6ca72c2262ffe6294287ee2e58fc00f'
+          assert b['authorities']['materialized_cells_tree_git_sha']=='34a30574c7420728bff57958c815194979a622ab'
+          assert b['authorities']['canonical_anchor_bundle_git_blob']=='ec8d8b287a80b87c815f0362be366be076d2b091'
+          assert b['authorities']['transport_protocol_git_blob']=='7da7d3ac536d5edda56aa2c2636db1c8b02569b3'
+          assert b['authorities']['transport_engine_sha256']=='3b626fc83fe76a1dfafdcf896efc8a16440bbeec062cfb1dbb86badd23b7af4c'
+          assert b['forbidden_input_attestation']=={'cell_json_read':False,'mutation_truth_read':False,'expected_e2_predictions_read':False,'mutation_operator_metadata_read':False,'fresh_target_bytes_read':False}
+          assert b['claim_boundary']['a3_a4_verdict_logic_executed'] is False and b['claim_boundary']['truth_or_operator_unblinded'] is False
+          h=lambda x:hashlib.sha256(x).hexdigest()
+          r={
+            'schema':'risu.e2-blind-58-anchor-transport-authoritative-receipt/v0.1',
+            'status':'PASS',
+            'case_count':58,
+            'bundle_sha256':h(bundle),
+            'independent_audit_sha256':h(audit),
+            'source_only_staging_audit_sha256':h(staging),
+            'admission_manifest_sha256':'847d85c2274cd6b94a83eefe0f6153a8fb183dbad758efa75118a4fd368623e4',
+            'admission_freeze_receipt_git_blob':'2c2ea8b9f6ca72c2262ffe6294287ee2e58fc00f',
+            'transport_engine_sha256':'3b626fc83fe76a1dfafdcf896efc8a16440bbeec062cfb1dbb86badd23b7af4c',
+            'frozen_independent_checker_sha256':'a24d6350636098e6083629f31db142e8061525f0b0d6af3538bab9a2d96048c6',
+            'read_set':{'candidate_source_bytes':True,'cell_json':False,'mutation_truth':False,'expected_e2_predictions':False,'mutation_operator_metadata':False,'fresh_target_bytes':False},
+            'claim_boundary':{'transport_observations_only':True,'a3_a4_verdict_logic_executed':False,'truth_or_operator_unblinded':False,'fresh_target_evaluation_executed':False},
+            'next_authorized_step':'FREEZE_TWO_HOSTED_BLIND_58_TRANSPORT_REPLAYS_AND_THEIR_LOGICAL_OUTPUTS_BEFORE_ANY_TRUTH_OR_OPERATOR_UNBLINDING'
+          }
+          pre=json.dumps(r,sort_keys=True,separators=(',',':')).encode(); r['receipt_digest_sha256']=h(pre)
+          raw=json.dumps(r,sort_keys=True,separators=(',',':')).encode(); (out/'authoritative.json').write_bytes(raw)
+          print(json.dumps({'status':'PASS','case_count':58,'bundle_sha256':h(bundle),'audit_sha256':h(audit),'receipt_sha256':h(raw)},separators=(',',':')))
+          PY
+          cp "$OUT/p1/bundle.json" E2_BLIND_58_ANCHOR_TRANSPORT_BUNDLE.json
+          cp "$OUT/a1/audit.json" E2_BLIND_58_ANCHOR_TRANSPORT_INDEPENDENT_AUDIT.json
+          cp "$S/input/staging-audit.json" E2_BLIND_58_SOURCE_ONLY_STAGING_AUDIT.json
+          cp "$OUT/authoritative.json" E2_BLIND_58_ANCHOR_TRANSPORT_AUTHORITATIVE_RECEIPT.json
+          sha256sum E2_BLIND_58_*.json
+
+      - name: Upload blind transport artifacts
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-blind-58-anchor-transport
+          path: |
+            E2_BLIND_58_ANCHOR_TRANSPORT_BUNDLE.json
+            E2_BLIND_58_ANCHOR_TRANSPORT_INDEPENDENT_AUDIT.json
+            E2_BLIND_58_SOURCE_ONLY_STAGING_AUDIT.json
+            E2_BLIND_58_ANCHOR_TRANSPORT_AUTHORITATIVE_RECEIPT.json
+          if-no-files-found: error
+          retention-days: 30
