@@ -1,0 +1,52 @@
+name: E2 Candidate Observability Corpus Digest Diagnostic
+
+on:
+  push:
+    branches: [e2-development]
+    paths:
+      - ".github/workflows/e2-a3-a4-candidate-observability-corpus-digest-diagnostic.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  digest-only:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout exact revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Recompute exact corpus preimages without scientific execution
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROFIXTURES_v0.1.json)" = "f990130b782ab242e4e341b45d0d58d298f4f316"
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path('experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROFIXTURES_v0.1.json')
+          raw_file=p.read_bytes(); obj=json.loads(raw_file); declared=obj.pop('corpus_digest_sha256')
+          compact=json.dumps(obj,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode('utf-8')
+          with_lf=compact+b'\n'
+          result={
+            'schema':'risu.e2-candidate-observability-corpus-digest-diagnostic/v0.1',
+            'status':'DIAGNOSTIC_ONLY',
+            'corpus_git_blob':'f990130b782ab242e4e341b45d0d58d298f4f316',
+            'file_sha256':hashlib.sha256(raw_file).hexdigest(),
+            'declared_internal_digest_sha256':declared,
+            'compact_no_lf_sha256':hashlib.sha256(compact).hexdigest(),
+            'risu_canonical_with_lf_sha256':hashlib.sha256(with_lf).hexdigest(),
+            'fixture_count':obj['fixture_count'],
+            'family_count':obj['family_count'],
+            'candidate_58_bytes_read':False,
+            'microfixture_pipeline_executed':False,
+          }
+          print(json.dumps(result,sort_keys=True,separators=(',',':')))
+          Path('E2_CANDIDATE_OBSERVABILITY_CORPUS_DIGEST_DIAGNOSTIC.json').write_text(json.dumps(result,sort_keys=True,separators=(',',':')),encoding='utf-8')
+          PY
+      - name: Upload diagnostic
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-candidate-observability-corpus-digest-diagnostic
+          path: E2_CANDIDATE_OBSERVABILITY_CORPUS_DIGEST_DIAGNOSTIC.json
+          if-no-files-found: error
+          retention-days: 30
