@@ -1,0 +1,184 @@
+{
+  "schema": "risu.diff-e2-post-freeze-transport-qualification/v0.1",
+  "title": "E2 Post-Freeze Blind-Transport Qualification Protocol",
+  "status": "PREREGISTERED_BEFORE_TRUTH_OPERATOR_UNBLINDING",
+  "semantic_authority": false,
+  "purpose": "Qualify the already-frozen 58-case source-lineage transport observations against frozen synthetic truth and operator metadata only after the transport outputs have become immutable.",
+  "scientific_boundary": {
+    "transport_outputs_immutable": true,
+    "transport_engine_modification_authorized": false,
+    "anchor_transport_reranking_or_repair_authorized": false,
+    "a3_a4_verdict_logic_authorized": false,
+    "a3_a4_verdict_logic_executed": false,
+    "fresh_target_selection_or_evaluation_authorized": false,
+    "post_unblinding_cell_exclusion_authorized": false,
+    "post_unblinding_metric_redefinition_authorized": false,
+    "truth_or_operator_metadata_read_before_this_protocol_freeze": false
+  },
+  "frozen_authorities": {
+    "blind_transport_freeze_commit": "0ba095cd190e255395cc9d4a33bcfedbfbdb9ade",
+    "blind_transport_freeze_receipt_git_blob": "1c97eb8df5bafcfd8523ee6aba0c5a2b981b5df0",
+    "blind_transport_freeze_receipt_digest_sha256": "0d1a2b1486df99bf2e1a4f868ed18efa72ae052c3ac7ef7a4066908cdeee7fc2",
+    "blind_transport_bundle_sha256": "78c5f024c1af7a353844120879d3ec4487b5f56fb443bc6e063530f836a9f74c",
+    "blind_transport_independent_audit_sha256": "dcc72375fe1ec60023402d6d69afe4a5ff97d3c6d1e238b5e4a247ef7e1c74ad",
+    "blind_transport_source_staging_audit_sha256": "4ffe431d14e258343cdde94059325e9c6a038be2f91eb2f2bcc71ca3aac4ca4d",
+    "blind_transport_authoritative_receipt_sha256": "d748d7f7e75affcf952df6335586404ee95edf064b6ae1829febd87620ee7595",
+    "materialized_cells_tree_git_sha": "34a30574c7420728bff57958c815194979a622ab",
+    "expanded_truth_matrix_sha256": "afd681d308a6f4ec8c183edd9b139c6b914fe501936cf84e5845a6a1c0d6b7cb",
+    "truth_freeze_commit": "5738a2025457afeb408a44b446019347c1289a80",
+    "mutation_materializer_git_blob": "72605d23f207aa15e5dd2461923bd87d1e095d77",
+    "truth_oracle_git_blob": "1e5fe69f302df6fdd367797649b17eb3c4ea5950"
+  },
+  "permitted_post_freeze_read_set": [
+    "the four already-frozen blind58 logical output JSON files",
+    "experiments/risu-diff-e2/qualification/MUTATION_QUALIFICATION_MATRIX_EXPANDED.jsonl",
+    "exactly 58 experiments/risu-diff-e2/qualification/materialized/cells/QNNN/CELL.json files",
+    "the primary candidate source file for each of the same 58 frozen cells",
+    "this preregistered protocol"
+  ],
+  "forbidden_post_freeze_inputs": [
+    "fresh target bytes",
+    "new mutation cells",
+    "new anchor contracts",
+    "A3/A4 predictions or verdicts generated after unblinding",
+    "manual relabeling of any transport receipt",
+    "operator-specific transport repair or heuristic tuning",
+    "dropping or replacing a cell because of its observed transport result"
+  ],
+  "truth_contract": {
+    "required_cell_fields": [
+      "cell_id",
+      "seed_id",
+      "operator_class",
+      "operator_id",
+      "expected_truth",
+      "expected_e2_primary",
+      "truth_source"
+    ],
+    "required_truth_source": "FROZEN_MUTATION_MATRIX_NOT_E2_OUTPUT",
+    "expanded_matrix_required_fields": [
+      "cell_id",
+      "seed_id",
+      "operator_class",
+      "operator_id",
+      "expected_truth",
+      "expected_e2_primary"
+    ],
+    "required_cell_count": 58,
+    "required_class_counts": {
+      "M_PLUS_SEMANTIC_LOSS": 24,
+      "M_ZERO_SEMANTIC_PRESERVING": 24,
+      "M_QUESTION_EPISTEMIC_ADVERSARIAL": 10
+    },
+    "allowed_operator_ids": {
+      "M_PLUS_SEMANTIC_LOSS": ["P01", "P02", "P03", "P04", "P05", "P06", "P07", "P08", "P09", "P10"],
+      "M_ZERO_SEMANTIC_PRESERVING": ["N01", "N02", "N03", "N04", "N05", "N06", "N07", "N08", "N09", "N10"],
+      "M_QUESTION_EPISTEMIC_ADVERSARIAL": ["A01", "A02", "A03", "A04", "A05", "A06", "A07"]
+    },
+    "cell_metadata_must_equal_expanded_matrix_on_required_fields": true,
+    "expected_e2_primary_is_report_only_not_executed_or_used_to_score_transport": true
+  },
+  "primary_source_contract": {
+    "SYN-PY-01": {"language": "python", "filename": "SYN-PY-01.py"},
+    "SYN-PY-02": {"language": "python", "filename": "SYN-PY-02.py"},
+    "SYN-GO-01": {"language": "go", "filename": "SYN-GO-01.go"},
+    "SYN-GO-02": {"language": "go", "filename": "SYN-GO-02.go"},
+    "SYN-TS-01": {"language": "typescript_javascript", "filename": "SYN-TS-01.mjs"},
+    "SYN-TS-02": {"language": "typescript_javascript", "filename": "SYN-TS-02.mjs"}
+  },
+  "join_contract": {
+    "transport_join_key": ["seed_id", "language", "candidate_source_sha256"],
+    "cell_side_candidate_source_sha256": "SHA256 of the exact frozen primary candidate source bytes in that cell directory",
+    "transport_side_candidate_source_sha256": "the frozen receipt candidate_source_sha256",
+    "required_properties": [
+      "58 unique frozen transport receipts",
+      "58 unique frozen matrix rows",
+      "58 unique materialized cell_ids",
+      "each CELL.json agrees with exactly one matrix row",
+      "each materialized cell resolves to exactly one transport receipt",
+      "each transport receipt resolves to exactly one materialized cell",
+      "no duplicate join key on either side",
+      "all 58 cells retained regardless of transport status"
+    ],
+    "cell_id_and_operator_metadata_are_not_join_features": true,
+    "join_failure_policy": "FAIL_QUALIFICATION_WITHOUT_PARTIAL_SCIENTIFIC_SUMMARY"
+  },
+  "predeclared_strata": [
+    "overall",
+    "operator_class",
+    "expected_truth",
+    "operator_id",
+    "language",
+    "seed_id",
+    "operator_class_x_language"
+  ],
+  "predeclared_metrics": {
+    "case_transport": [
+      "count by case_transport_status",
+      "COMPLETE fraction with exact numerator and denominator",
+      "TRANSPORT_INCOMPLETE fraction with exact numerator and denominator"
+    ],
+    "parser": [
+      "count by parser_status",
+      "PARSE_OK fraction with exact numerator and denominator"
+    ],
+    "anchors": {
+      "anchor_keys": ["guard_comparison", "rejection_no_effect", "effect_applied"],
+      "metrics": [
+        "count by lineage_status",
+        "count by realization_status",
+        "present fraction where lineage_status is TRANSPORT_PRESENT_EXACT or TRANSPORT_PRESENT_EDIT_DESCENDANT",
+        "conclusive-absence count where lineage_status is TRANSPORT_ABSENT_BY_EDIT_LINEAGE",
+        "ambiguous-or-unresolved count without collapsing its underlying status"
+      ]
+    },
+    "binding_slots": {
+      "slot_keys": ["expected_coordinate", "current_coordinate"],
+      "metrics": ["count by status", "AVAILABLE fraction with exact numerator and denominator"]
+    }
+  },
+  "interpretation_rules": {
+    "transport_is_not_a_regression_classifier": true,
+    "forbid_tp_fp_fn_tn_labels": true,
+    "forbid_detection_accuracy_sensitivity_specificity_claims": true,
+    "COMPLETE_means_lineage_transport_is_decisive_under_the_frozen_transport_contract_not_that_semantics_are_preserved": true,
+    "TRANSPORT_INCOMPLETE_is_fail_closed_observability_not_automatic_semantic_loss_or_preservation": true,
+    "M_QUESTION_incompleteness_is_not_automatically_counted_as_scientific_success": true,
+    "M_PLUS_or_M_ZERO_completeness_is_not_automatically_counted_as_scientific_success": true,
+    "ROLE_INCOMPATIBLE_is_reported_as_observed_and_not_repaired_post_hoc": true,
+    "all_rates_are_descriptive_with_no_post_hoc_acceptance_threshold": true
+  },
+  "qualification_pass_definition": {
+    "meaning": "PROVENANCE_AND_AGGREGATION_INTEGRITY_ONLY",
+    "requires": [
+      "all frozen hashes and Git authorities match",
+      "expanded truth matrix SHA256 matches",
+      "materialized cells tree Git SHA matches",
+      "truth class cardinalities are exactly 24/24/10",
+      "58-of-58 bijective join succeeds",
+      "all predeclared metrics and strata are emitted",
+      "two local executions of the qualifier are byte-identical",
+      "independent auditor recomputes the join and aggregates without importing qualifier aggregation code",
+      "two local auditor executions are byte-identical",
+      "no A3/A4 logic or fresh-target evaluation executes"
+    ],
+    "does_not_require": [
+      "a favorable COMPLETE rate",
+      "a favorable operator-specific result",
+      "agreement with any desired research narrative"
+    ]
+  },
+  "output_contract": {
+    "canonical_json": "UTF-8 JSON sorted keys separators comma/colon no trailing whitespace",
+    "must_include": [
+      "authority hashes",
+      "58 joined per-cell records including cell_id and frozen transport_case_id",
+      "all predeclared aggregate strata",
+      "integrity qualification status",
+      "explicit claim-boundary attestation"
+    ],
+    "scientific_outputs_must_be_frozen_before_interpretive_tuning": true,
+    "second_hosted_replay_required_before_final_freeze": true
+  },
+  "next_step_if_integrity_passes": "FREEZE_TWO_HOSTED_POST_FREEZE_QUALIFICATION_REPLAYS_AND_EXACT_LOGICAL_OUTPUTS; THEN INTERPRET THE PREDECLARED STRATA. DO NOT IMPLEMENT OR EXECUTE A3/A4 VERDICT LOGIC IN THIS STEP."
+}
