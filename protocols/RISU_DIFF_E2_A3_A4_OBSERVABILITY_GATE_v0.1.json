@@ -1,0 +1,72 @@
+{
+  "schema": "risu.diff-e2-a3-a4-observability-gate/v0.1",
+  "gate_id": "RISU_DIFF_E2_A3_A4_OBSERVABILITY_GATE_001",
+  "purpose": "Pre-register the minimum information that the frozen A2 IR must expose before A3 coordinate-survival or A4 guard-effect linkage may issue definitive graph/path-semantic claims.",
+  "authority": {
+    "repository": "risu-research/risu-verify",
+    "branch": "e2-development",
+    "pre_gate_head": "23ae400ee00431f9cd1882c76b534fe26792a27b",
+    "input_ir_schema": "risu.e2-normalized-semantic-flow-ir/v0.1",
+    "frozen_truth_may_be_modified": false,
+    "fresh_target_selection_authorized": false,
+    "fresh_target_evaluation_authorized": false
+  },
+  "scientific_firewall": {
+    "expected_truth_may_be_read_for_sufficiency_judgment": false,
+    "expected_e2_primary_may_be_read_for_sufficiency_judgment": false,
+    "mutation_operator_name_may_be_used_as_detector_feature": false,
+    "source_comment_or_docstring_may_be_used_as_detector_feature": false,
+    "target_or_repository_name_may_be_used_as_detector_feature": false,
+    "source_line_order_alone_may_establish_control_dependence": false,
+    "absence_of_evidence_may_be_promoted_to_regression": false
+  },
+  "required_observables": {
+    "A3_coordinate_survival": [
+      {
+        "id": "A3_DATAFLOW",
+        "requirement": "Consequence-relevant values must be traceable through explicit dataflow/binding relations rather than name coincidence.",
+        "acceptable_ir_surface": ["DERIVES", "CARRIES", "BINDS_TO"]
+      },
+      {
+        "id": "A3_DEFINITION_SENSITIVITY",
+        "requirement": "Distinct writes/redefinitions that can overwrite a carrier must remain distinguishable strongly enough to support kill/replacement reasoning; a may-flow union is not sufficient for a definitive overwrite claim."
+      },
+      {
+        "id": "A3_REPRESENTATION_SURVIVAL",
+        "requirement": "Serialization or representation boundaries must expose explicit source-to-representation lineage."
+      },
+      {
+        "id": "A3_BINDING_IDENTITY",
+        "requirement": "When correctness depends on coordinate or resource identity, the relevant binding identity must be explicit enough to distinguish right-coordinate/right-resource from wrong-coordinate/wrong-resource flow."
+      }
+    ],
+    "A4_guard_effect_linkage": [
+      {
+        "id": "A4_EFFECT_BOUNDARY",
+        "requirement": "The consequential effect boundary must be explicit in the IR; an arbitrary call or return may not be guessed to be the effect by name."
+      },
+      {
+        "id": "A4_CONTROL_DEPENDENCE",
+        "requirement": "The IR must expose an explicit guard-to-effect control relation or equivalent CFG structure sufficient to prove whether the guard controls the effect."
+      },
+      {
+        "id": "A4_MUST_PATH",
+        "requirement": "The representation must support all-path reasoning so bypass/unconditional-fallback cases are distinguished from guarded execution."
+      },
+      {
+        "id": "A4_ORDERING",
+        "requirement": "Guard-before-effect versus effect-before-guard must be established by explicit execution-order/control structure, not raw source line order alone."
+      },
+      {
+        "id": "A4_OUTCOME_DISTINCTION",
+        "requirement": "Where stale rejection versus success matters, rejection/failure and success/effect outcomes must remain distinguishable rather than being collapsed into unlabeled returns."
+      }
+    ]
+  },
+  "decision_rule": {
+    "definitive_a3_allowed_only_if": "All A3 observability obligations needed by the claimed witness are explicitly supported; otherwise assurance must remain incomplete.",
+    "definitive_a4_allowed_only_if": "Effect boundary plus control dependence plus must-path/order information are explicit enough to prove the claimed relation; otherwise assurance must remain incomplete.",
+    "if_frozen_a2_is_insufficient": "Do not smuggle source-name, comment, target-name, or line-order heuristics into A3/A4. Preserve v0.1 as frozen evidence and require an explicit, versioned, requalified observability extension before definitive A3/A4 claims.",
+    "a5_rule": "A5 certificates may only cite relations that passed this observability gate; the certificate cannot repair missing semantics."
+  }
+}
