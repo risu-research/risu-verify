@@ -29,6 +29,12 @@ def build_path_observability(
     facts: Sequence[Mapping[str, Any]], overlay: Mapping[str, Any],
     canonical_signature: Mapping[str, Any],
 ) -> dict[str, Any]:
+    """Build an additive path-state sidecar over a frozen A2O overlay.
+
+    This routine deliberately does not emit an A3/A4 verdict.  Its only job is
+    to preserve mutually exclusive structured-control states long enough to
+    correlate reaching definitions with terminal consequence observations.
+    """
     nodes = {n["id"]: n for n in overlay["nodes"]}
     edges = list(overlay["edges"])
     incoming: dict[str, list[Mapping[str, Any]]] = {}
@@ -52,10 +58,11 @@ def build_path_observability(
     for node in overlay["nodes"]:
         attrs = node.get("attrs", {})
         role = attrs.get("definition_role")
+        scope = str(attrs.get("scope"))
         if role == "function_parameter":
-            params_by_scope.setdefault(str(attrs.get("scope")), {}).setdefault(_root_label(node["label"]), set()).add(node["id"])
+            params_by_scope.setdefault(scope, {}).setdefault(_root_label(node["label"]), set()).add(node["id"])
         if role in {"assignment", "representation_field_write", "call_result"}:
-            definitions_by_scope_span.setdefault((str(attrs.get("scope")), _sp(node)), []).append(node)
+            definitions_by_scope_span.setdefault((scope, _sp(node)), []).append(node)
         anchor_role = attrs.get("anchor_role")
         if anchor_role:
             anchors[str(anchor_role)] = node["id"]
@@ -98,26 +105,33 @@ def build_path_observability(
     rejection_id = anchors.get("REJECTION_NO_EFFECT_OUTCOME")
     success_id = anchors.get("SUCCESS_OUTCOME")
     state_rows: dict[str, dict[str, Any]] = {}
+    predecessor_edges: dict[str, dict[str, Any]] = {}
     terminal_events: list[dict[str, Any]] = []
 
-    def state_id(scope: str, defs: Mapping[str, set[str]], decisions: list[dict[str, Any]], events: list[str]) -> str:
+    def snapshot(
+        scope: str,
+        defs: Mapping[str, set[str]],
+        decisions: list[dict[str, Any]],
+        events: list[str],
+        predecessors: Sequence[str],
+        transition: Mapping[str, Any],
+        terminal: str | None = None,
+    ) -> str:
+        pred = sorted(set(predecessors))
         body = {
             "scope": scope,
-            "defs": {k: sorted(v) for k, v in sorted(defs.items())},
-            "decisions": decisions,
-            "events": events,
-        }
-        return "ps_" + _sha(body)[:24]
-
-    def record(scope: str, defs: Mapping[str, set[str]], decisions: list[dict[str, Any]], events: list[str], terminal: str | None = None) -> str:
-        pid = state_id(scope, defs, decisions, events)
-        state_rows[pid] = {
-            "path_state_id": pid,
-            "scope": scope,
+            "predecessor_path_state_ids": pred,
+            "transition": dict(transition),
             "reaching_definitions": {k: sorted(v) for k, v in sorted(defs.items())},
             "guard_decisions": list(decisions),
             "events": list(events),
         }
+        pid = "ps_" + _sha(body)[:24]
+        state_rows[pid] = {"path_state_id": pid, **body}
+        for parent in pred:
+            edge_body = {"source": parent, "target": pid, "transition": dict(transition)}
+            eid = "pt_" + _sha(edge_body)[:24]
+            predecessor_edges[eid] = {"id": eid, **edge_body}
         if terminal:
             terminal_events.append({
                 "terminal_role": terminal,
@@ -133,17 +147,17 @@ def build_path_observability(
             span = _span_tuple(fact)
             if _contains(stmt.span, span) and _smallest_stmt([stmt], span) is stmt:
                 rows.append(fact)
-        return rows
+        return sorted(rows, key=lambda f: (_span_tuple(f), str(f.get("kind")), repr(sorted(f.items()))))
 
-    State = tuple[dict[str, set[str]], list[dict[str, Any]], list[str], bool]
+    State = tuple[dict[str, set[str]], list[dict[str, Any]], list[str], bool, str]
 
     def process(scope: str, stmts: Sequence[CStmt], states: list[State]) -> list[State]:
         current = states
         for stmt in stmts:
             next_states: list[State] = []
-            for state_defs, state_decisions, state_events, alive in current:
+            for state_defs, state_decisions, state_events, alive, parent_id in current:
                 if not alive:
-                    next_states.append((state_defs, state_decisions, state_events, alive))
+                    next_states.append((state_defs, state_decisions, state_events, alive, parent_id))
                     continue
                 defs = {k: set(v) for k, v in state_defs.items()}
                 decisions = list(state_decisions)
@@ -154,9 +168,19 @@ def build_path_observability(
                         branch_decisions = list(decisions)
                         if guard_id:
                             branch_decisions.append({"guard_id": guard_id, "polarity": polarity})
-                        next_states.extend(process(scope, body, [({k: set(v) for k, v in defs.items()}, branch_decisions, list(events), True)]))
+                        branch_id = snapshot(
+                            scope, defs, branch_decisions, events, [parent_id],
+                            {"kind": "STRUCTURED_BRANCH", "guard_id": guard_id, "polarity": polarity,
+                             "statement_span": list(stmt.span)},
+                        )
+                        branch_state: State = ({k: set(v) for k, v in defs.items()}, branch_decisions, list(events), True, branch_id)
+                        if body:
+                            next_states.extend(process(scope, body, [branch_state]))
+                        else:
+                            next_states.append(branch_state)
                     continue
 
+                changed = False
                 for fact in statement_facts(scope, stmt):
                     if fact.get("kind") != "ASSIGN":
                         continue
@@ -166,6 +190,7 @@ def build_path_observability(
                         exact = [n for n in candidates if n["label"] == label and n.get("attrs", {}).get("definition_role") == "assignment"]
                         if exact:
                             defs[_root_label(label)] = {exact[0]["id"]}
+                            changed = True
 
                 local_events: list[tuple[str, str]] = []
                 for role, node_id in (
@@ -176,11 +201,28 @@ def build_path_observability(
                     if node_id and _contains(stmt.span, _sp(nodes[node_id])):
                         local_events.append((role, node_id))
                 local_events.sort(key=lambda row: ({"EFFECT_BOUNDARY": 0, "SUCCESS_OUTCOME": 1, "REJECTION_NO_EFFECT_OUTCOME": 0}[row[0]], _sp(nodes[row[1]])))
-                for role, _ in local_events:
+
+                current_parent = parent_id
+                if changed and not local_events:
+                    current_parent = snapshot(
+                        scope, defs, decisions, events, [current_parent],
+                        {"kind": "DEFINITION_TRANSFER", "statement_span": list(stmt.span)},
+                    )
+                for role, node_id in local_events:
                     events.append(role)
-                    record(scope, defs, decisions, events, role)
-                record(scope, defs, decisions, events)
-                next_states.append((defs, decisions, events, stmt.kind != "RETURN"))
+                    current_parent = snapshot(
+                        scope, defs, decisions, events, [current_parent],
+                        {"kind": "TERMINAL_EVENT", "terminal_role": role, "anchor_node_id": node_id,
+                         "statement_span": list(stmt.span)},
+                        role,
+                    )
+                if not changed and not local_events:
+                    current_parent = snapshot(
+                        scope, defs, decisions, events, [current_parent],
+                        {"kind": "STRUCTURED_STATEMENT", "statement_kind": stmt.kind, "statement_span": list(stmt.span)},
+                    )
+                alive_after = stmt.kind != "RETURN"
+                next_states.append((defs, decisions, events, alive_after, current_parent))
             current = next_states
         return current
 
@@ -191,7 +233,8 @@ def build_path_observability(
             anchored_scopes.add(scope)
     for scope in sorted(anchored_scopes):
         initial = {k: set(v) for k, v in params_by_scope.get(scope, {}).items()}
-        process(scope, controls[scope]["stmts"], [(initial, [], [], True)])
+        entry_id = snapshot(scope, initial, [], [], [], {"kind": "ENTRY"})
+        process(scope, controls[scope]["stmts"], [(initial, [], [], True, entry_id)])
 
     transported_guard = anchors.get("GUARD_COMPARISON")
     effective_guard: str | None = None
@@ -301,6 +344,8 @@ def build_path_observability(
         "material_control_complete": material_control_complete,
         "effective_guard_observability": {"form": effective_form, "guard_id": effective_guard, "reason": helper_reason},
         "path_states": sorted(state_rows.values(), key=lambda row: row["path_state_id"]),
+        "path_state_predecessor_edges": sorted(predecessor_edges.values(), key=lambda row: row["id"]),
+        "path_state_separation_policy": "NO_JOIN_UNION_FOR_WITNESS_CORRELATION",
         "terminal_reaching_facts": sorted(terminal_reaching, key=lambda row: (row["path_state_id"], row["terminal_operation_id"], row["carrier_edge_id"])),
         "entry_effect_paths": entry_effect_paths,
         "rejection_paths": rejection_paths,
