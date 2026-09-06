@@ -76,6 +76,11 @@ jobs:
           cp risu_e2/model.py "$S/risu_e2/"
           cp risu_e2/acquisition.py "$S/risu_e2/"
           cp risu_e2/frontend_go.py "$S/risu_e2/"
+          # Pre-complete plumbing repair after run 34059236674: ir.py imports these
+          # legacy modules at import time to expose Normalizer. Their scientific
+          # bytes are not used as the v0.3 JS/Python extraction authorities.
+          cp risu_e2/frontend_python.py "$S/risu_e2/"
+          cp risu_e2/frontend_js.py "$S/risu_e2/"
           cp risu_e2/frontend_python_v2.py "$S/risu_e2/"
           cp risu_e2/frontend_js_v3.py "$S/risu_e2/"
           cp risu_e2/ir.py "$S/risu_e2/"
@@ -88,7 +93,7 @@ jobs:
           cp protocols/RISU_DIFF_E2_A3_A4_CANDIDATE_OBSERVABILITY_REMEDIATION_v0.3.json "$S/input/protocol.json"
           cp experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/remediation-v0.3/E2_A3_A4_CANDIDATE_OBSERVABILITY_REMEDIATION_V0_3_PROSPECTIVE_CORPUS.json "$S/input/corpus.json"
 
-          test "$(find "$S" -type f | wc -l)" -eq 15
+          test "$(find "$S" -type f | wc -l)" -eq 17
           ! find "$S" -type f -print | grep -E 'candidate.*58|blind.*58|frozen.*48|truth|operator|prediction'
 
           trap 'chmod u+rwx "$GITHUB_WORKSPACE" || true' EXIT
