@@ -37,7 +37,7 @@ jobs:
           CELLS="experiments/risu-diff-e2/qualification/materialized/cells"
 
           test "$(git hash-object "$PROTOCOL")" = "8d1860312d259e628e86070416a4757c570ba05f"
-          test "$(git hash-object "$BUNDLE")" = "31850e58ba780cefc6ebd626c2d10bc45a239bef"
+          test "$(git hash-object "$BUNDLE")" = "95f7338e6f21bc3e0a8fc3209296d2e98c1c6f12"
           echo "78c5f024c1af7a353844120879d3ec4487b5f56fb443bc6e063530f836a9f74c  $BUNDLE" | sha256sum -c -
           test "$(git hash-object "$FREEZE")" = "1c97eb8df5bafcfd8523ee6aba0c5a2b981b5df0"
           test "$(git rev-parse HEAD:"$CELLS")" = "34a30574c7420728bff57958c815194979a622ab"
@@ -138,7 +138,7 @@ jobs:
               "a3_a4_verdict_logic_executed": False,
               "fresh_target_selection_or_evaluation_executed": False,
               "second_hosted_replay_required_before_final_freeze": True,
-              "next_authorized_step": "RERUN_THIS_EXACT_HOSTED_JOB_WITHOUT_CODE_OR_METRIC_CHANGES; IF LOGICAL OUTPUTS MATCH, FREEZE BOTH_HOSTED_REPLAYS_BEFORE_SCIENTIFIC_INTERPRETATION",
+              "next_authorized_step": "RERUN_THIS_EXACT_HOSTED_JOB_WITHOUT_CODE_OR_METRIC_CHANGES; IF LOGICAL OUTPUTS MATCH, FREEZE BOTH HOSTED REPLAYS BEFORE SCIENTIFIC INTERPRETATION",
           }
           pre = json.dumps(receipt, sort_keys=True, separators=(",", ":")).encode()
           receipt["receipt_digest_sha256"] = h(pre)
