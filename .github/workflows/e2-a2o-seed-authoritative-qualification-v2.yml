@@ -1,3 +1,4 @@
+# Trigger-only cross-run replay; no overlay, checker, protocol, anchor, seed, or scientific logic changed.
 name: E2 A2O Seed Authoritative Qualification v2.1
 
 on:
