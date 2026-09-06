@@ -1,0 +1,153 @@
+name: E2 Frozen 48 Adapter No-Heldout Preflight
+
+on:
+  push:
+    branches: [e2-development]
+    paths:
+      - .github/workflows/e2-frozen48-adapter-preflight.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  no-heldout-preflight:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Build sealed sandbox from exact pinned bytes without checkout
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import hashlib, os, pathlib, urllib.request
+          repo = "risu-research/risu-verify"
+          adapter_ref = "8bdd1295f037a518b40c8682f73c9ac158485988"
+          science_ref = "5292ba5a0b833eb76211d4728142cfae87c23318"
+          files = [
+            (adapter_ref,"tools/e2_frozen48_requalification_primary.py","4ed84c46d826fee243f0f2d1f201ca2d9f847d80"),
+            (adapter_ref,"tools/e2_frozen48_requalification_independent.py","b2069af4c3ba461274e26e06b55092cfd1fff85c"),
+            (science_ref,"risu_e2/__init__.py","90422cd39eead48484f1007859968b2e670e5ca1"),
+            (science_ref,"risu_e2/model.py","64baf95a4939f168881627830134b314a6ee6098"),
+            (science_ref,"risu_e2/acquisition.py","b81aec3803c22a7b74d47fe1cfec5fabe71a3492"),
+            (science_ref,"risu_e2/frontend_python.py","e98cc7bbefa80d53b94fec3ef25845a3dbbedd93"),
+            (science_ref,"risu_e2/frontend_js.py","6f3b6535caf0dcebb3c3c3679d898a23fdd8e795"),
+            (science_ref,"risu_e2/frontend_python_v2.py","8b7e4d0e2bb9ef6487ef2b90d2390b55ced55ea9"),
+            (science_ref,"risu_e2/frontend_js_v3.py","13ffb1b149150b7e730591de7acf47e9322bdf02"),
+            (science_ref,"risu_e2/frontend_go.py","4fc017fd65c8ede67cf11b5e27200c11bbac9d31"),
+            (science_ref,"risu_e2/ir.py","d7edac40d4eeda86be74e5785bde3bfc28d4cf5e"),
+            (science_ref,"risu_e2/ir_v3.py","1d95cfcb2e76563aa5d3ceb65815043eb8b2884a"),
+            (science_ref,"risu_e2/overlay_common.py","9975fe509fba30a2bbbbb8606f174faa5912a2f1"),
+            (science_ref,"risu_e2/overlay_control.py","00e06b85d91ce9f75676476c5dc47d15d51d2d35"),
+            (science_ref,"risu_e2/overlay_source.py","09f6e444cb20654cab1c7ac61ef45eaff44469d6"),
+            (science_ref,"risu_e2/observability_overlay.py","77be5ea1dad30aa6daa889e0753ce7d1aaa6f07a"),
+            (science_ref,"risu_e2/path_observability.py","6eae3403f53b86f85bac47a31e751d28508e7225"),
+            (science_ref,"tools/e2_go_ir_extract.go","26e752029d1b4a99b47f1c7024740b7b0ae14ef7"),
+            (science_ref,"experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/remediation-v0.3/E2_A3_A4_CANDIDATE_OBSERVABILITY_REMEDIATION_V0_3_PROSPECTIVE_CORPUS.json","0a930443990366a09671ddaa4e1fa63dbd658381"),
+            (science_ref,"experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/remediation-v0.2/E2_A3_A4_CANDIDATE_OBSERVABILITY_REMEDIATION_V0_2_MICROQUALIFICATION_CORPUS.json","a0036c02826d54ac9ac22501b7eb341a600d1607"),
+          ]
+          root = pathlib.Path('/tmp/preflight')
+          token = os.environ['GH_TOKEN']
+          def git_blob(data):
+              return hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
+          for ref,path,expected in files:
+              url=f"https://raw.githubusercontent.com/{repo}/{ref}/{path}"
+              req=urllib.request.Request(url,headers={"Authorization":f"Bearer {token}","User-Agent":"risu-frozen48-no-heldout-preflight"})
+              with urllib.request.urlopen(req,timeout=30) as r: data=r.read()
+              actual=git_blob(data)
+              if actual != expected: raise SystemExit(f"BLOB_MISMATCH:{path}:{actual}")
+              dst=root/path; dst.parent.mkdir(parents=True,exist_ok=True); dst.write_bytes(data)
+          # Structural firewall: no held-out tree, transport bundle, selection source copy, or candidate-58 material exists.
+          forbidden=[root/'experiments/risu-diff-e2/qualification/materialized/cells',root/'candidate58',root/'transport']
+          if any(p.exists() for p in forbidden): raise SystemExit('HELDOUT_MATERIAL_PRESENT')
+          print(f"sealed_file_count={len(files)}")
+          PY
+
+      - name: Compile and specialization-scan frozen adapters
+        run: |
+          cd /tmp/preflight
+          PYTHONPATH=. python3 -m py_compile tools/e2_frozen48_requalification_primary.py tools/e2_frozen48_requalification_independent.py
+          python3 - <<'PY'
+          import pathlib,re
+          paths=[pathlib.Path('/tmp/preflight/tools/e2_frozen48_requalification_primary.py'),pathlib.Path('/tmp/preflight/tools/e2_frozen48_requalification_independent.py')]
+          forbidden=[r'Q[0-9]{3}',r'V[23][A-Z][0-9]{2}',r'M_PLUS',r'M_ZERO',r'M_QUESTION',r'expected_truth',r'expected_e2',r'operator_id',r'operator_name',r'operator_class']
+          for p in paths:
+              text=p.read_text()
+              for pat in forbidden:
+                  if re.search(pat,text): raise SystemExit(f'SPECIALIZATION_TOKEN:{p.name}:{pat}')
+              if re.search(r'(?<![0-9a-f])[0-9a-f]{40}(?![0-9a-f])',text):
+                  raise SystemExit(f'SOURCE_HASH_SPECIALIZATION_LITERAL:{p.name}')
+          print('specialization_scan=PASS')
+          PY
+
+      - name: Execute primary and independent twice on public 48 only
+        id: execute
+        shell: bash
+        run: |
+          mkdir -p /tmp/out
+          cd /tmp/preflight
+          V3='experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/remediation-v0.3/E2_A3_A4_CANDIDATE_OBSERVABILITY_REMEDIATION_V0_3_PROSPECTIVE_CORPUS.json'
+          V2='experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/remediation-v0.2/E2_A3_A4_CANDIDATE_OBSERVABILITY_REMEDIATION_V0_2_MICROQUALIFICATION_CORPUS.json'
+          GO='tools/e2_go_ir_extract.go'
+          set +e
+          PYTHONPATH=. python3 tools/e2_frozen48_requalification_primary.py preflight --v3-corpus "$V3" --v2-corpus "$V2" --go-helper "$GO" --output /tmp/out/primary_run1.json
+          P1=$?
+          PYTHONPATH=. python3 tools/e2_frozen48_requalification_primary.py preflight --v3-corpus "$V3" --v2-corpus "$V2" --go-helper "$GO" --output /tmp/out/primary_run2.json
+          P2=$?
+          PYTHONPATH=. python3 tools/e2_frozen48_requalification_independent.py preflight --v3-corpus "$V3" --v2-corpus "$V2" --go-helper "$GO" --output /tmp/out/independent_run1.json
+          I1=$?
+          PYTHONPATH=. python3 tools/e2_frozen48_requalification_independent.py preflight --v3-corpus "$V3" --v2-corpus "$V2" --go-helper "$GO" --output /tmp/out/independent_run2.json
+          I2=$?
+          set -e
+          printf '%s\n' "$P1 $P2 $I1 $I2" > /tmp/out/exit_codes.txt
+          echo "primary1=$P1 primary2=$P2 independent1=$I1 independent2=$I2"
+
+      - name: Canonical checker-level cross-check
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import hashlib,json,pathlib
+          root=pathlib.Path('/tmp/out')
+          names=['primary_run1.json','primary_run2.json','independent_run1.json','independent_run2.json']
+          exists={n:(root/n).is_file() for n in names}
+          out={'schema':'risu.e2-a3-a4-frozen48-adapter-preflight-cross-check/v0.1','semantic_authority':False,'complete_outputs_present':all(exists.values()),'outputs_present':exists,'frozen_48_source_bytes_read':False,'candidate_58_bytes_read':False,'raw_blind_58_transport_read':False,'a3_a4_semantic_verdicts_emitted':False}
+          if all(exists.values()):
+              raw={n:(root/n).read_bytes() for n in names}
+              docs={n:json.loads(raw[n]) for n in names}
+              deterministic_primary=raw['primary_run1.json']==raw['primary_run2.json']
+              deterministic_independent=raw['independent_run1.json']==raw['independent_run2.json']
+              p=docs['primary_run1.json']; i=docs['independent_run1.json']
+              keys=['status','preflight_scope','public_case_count','public_cases','gate_and_canonicalizer_selftests','gate_and_canonicalizer_selftest_pass_count','gate_and_canonicalizer_selftest_count','heldout_anchor_path_pipeline_executed','frozen_48_source_bytes_read','candidate_58_bytes_read','raw_blind_58_transport_read','a3_a4_semantic_verdicts_emitted','corpora']
+              primary_core={k:p[k] for k in keys}; independent_core={k:i[k] for k in keys}
+              exact_named_core_agreement=primary_core==independent_core
+              all_flags_clean=all(doc.get('frozen_48_source_bytes_read') is False and doc.get('candidate_58_bytes_read') is False and doc.get('raw_blind_58_transport_read') is False and doc.get('a3_a4_semantic_verdicts_emitted') is False for doc in (p,i))
+              status='PASS' if deterministic_primary and deterministic_independent and exact_named_core_agreement and all_flags_clean and p.get('status')=='PASS' and i.get('status')=='PASS' else 'FAIL'
+              out.update({'status':status,'deterministic_primary_byte_identical':deterministic_primary,'deterministic_independent_byte_identical':deterministic_independent,'exact_named_core_agreement':exact_named_core_agreement,'primary_status':p.get('status'),'independent_status':i.get('status'),'public_case_count':p.get('public_case_count'),'all_firewall_flags_clean':all_flags_clean,'sha256':{n:hashlib.sha256(raw[n]).hexdigest() for n in names}})
+          else:
+              out['status']='INCOMPLETE_EXECUTION_PLUMBING_FAILURE'
+          data=(json.dumps(out,sort_keys=True,separators=(',',':'))+'\n').encode()
+          (root/'cross_check.json').write_bytes(data)
+          print(data.decode(),end='')
+          PY
+
+      - name: Upload first-complete preflight evidence before gate assertion
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2-frozen48-adapter-preflight-first-complete
+          path: /tmp/out/
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Assert first-complete preflight gate
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json,pathlib
+          root=pathlib.Path('/tmp/out')
+          cross=json.loads((root/'cross_check.json').read_text())
+          codes=(root/'exit_codes.txt').read_text().strip().split()
+          if cross.get('status')!='PASS': raise SystemExit('CROSS_CHECK_NOT_PASS:'+str(cross.get('status')))
+          if codes != ['0','0','0','0']: raise SystemExit('ADAPTER_EXIT_CODES_NOT_ZERO:'+repr(codes))
+          print('FIRST_COMPLETE_PREFLIGHT_GATE=PASS')
+          PY
