@@ -1,3 +1,4 @@
+# Trigger-only second hosted admission replay; builder, checker, frozen cells, projection, and acceptance criteria unchanged.
 name: E2 Sanitized Opaque 58 Admission Freeze
 
 on:
