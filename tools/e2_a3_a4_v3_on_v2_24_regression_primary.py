@@ -89,7 +89,7 @@ def evaluate(case: Mapping[str,Any], go_helper: Path)->Dict[str,Any]:
         if got!=int(count): bad.append(f"call_count_in_scope:{scope}:{got}")
     for e in exp.get("expected_assignments",[]):
         lhs=sorted(map(str,e["lhs"])); req=set(map(str,e.get("rhs_contains",[])))
-        if not any(sorted(map(str,f.get("lhs",[])))==lhs and req.issubset(set(map(str,f.get("rhs",[]))) for f in assigns): bad.append(f"assignment_missing:{e}")
+        if not any(sorted(map(str,f.get("lhs",[])))==lhs and req.issubset(set(map(str,f.get("rhs",[])))) for f in assigns): bad.append(f"assignment_missing:{e}")
     rr=reps(src,lang,facts)
     if "representation_owner_count" in exp and len(rr)!=int(exp["representation_owner_count"]): bad.append(f"representation_owner_count:{len(rr)}")
     for e in exp.get("object_return_relations",[]):
