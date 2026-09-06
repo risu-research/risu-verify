@@ -1,0 +1,122 @@
+name: E2 A3 A4 v0.3 Frozen Regression Cross-Check Adjudication
+
+on:
+  push:
+    paths:
+      - 'tools/e2_a3_a4_v3_on_v2_24_cross_check_adjudicate.py'
+      - 'experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/remediation-v0.3/regression-v0.2-24/adjudication/E2_A3_A4_V3_ON_V2_24_CROSS_CHECK_ADJUDICATION_PROTOCOL.json'
+      - '.github/workflows/e2-a3-a4-v3-on-v2-24-cross-check-adjudication.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  adjudicate:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout exact adjudication revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 16
+
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.13'
+
+      - name: Verify immutable inputs and checker-only delta
+        shell: bash
+        run: |
+          set -euo pipefail
+          P='experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/remediation-v0.3/regression-v0.2-24/first-complete/E2_A3_A4_V3_ON_V2_24_PRIMARY.json'
+          I='experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/remediation-v0.3/regression-v0.2-24/first-complete/E2_A3_A4_V3_ON_V2_24_INDEPENDENT.json'
+          C='experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/remediation-v0.3/regression-v0.2-24/first-complete/E2_A3_A4_V3_ON_V2_24_CROSS_CHECK.json'
+          R='experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/remediation-v0.3/regression-v0.2-24/first-complete/E2_A3_A4_V3_ON_V2_24_FIRST_COMPLETE_REGRESSION_FREEZE_RECEIPT.json'
+          D='experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/remediation-v0.3/regression-v0.2-24/first-complete/E2_A3_A4_V3_ON_V2_24_POST_FREEZE_CROSS_CHECK_DIAGNOSIS.json'
+          A='experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/remediation-v0.3/regression-v0.2-24/adjudication/E2_A3_A4_V3_ON_V2_24_CROSS_CHECK_ADJUDICATION_PROTOCOL.json'
+          T='tools/e2_a3_a4_v3_on_v2_24_cross_check_adjudicate.py'
+
+          test "$(git hash-object "$P")" = 'a2731ba7b763fe8b07e43a37bc08cc1359dccb50'
+          test "$(git hash-object "$I")" = '4c31d90c7adbfdd1751a576c18acb01a75882638'
+          test "$(git hash-object "$C")" = '368d5459a0d1dbad3352de37d68ceb80aa800d0c'
+          test "$(git hash-object "$R")" = '09d0a4f97793ad1fb7d654f80f15cd3e5e180086'
+          test "$(git hash-object "$D")" = 'd3c52d4d7f02aa1152c047ee549f1c7efaad9cd6'
+          test "$(git hash-object "$A")" = '558ebaf3e8cd3e71d8def7cb87c940ba780a7396'
+          test "$(git hash-object "$T")" = '013900eb4a40e43829e53920350ba64555d9c145'
+
+          test "$(sha256sum "$P" | cut -d' ' -f1)" = 'b1b4d70e773058264c2d0e810f3a0ce6e66d3f7f0bf9091fabca70bd4d9b3f9f'
+          test "$(sha256sum "$I" | cut -d' ' -f1)" = '0a62f4eb71d3e036b838f4385eb9dcd944a03f8f2cd5d90da81f9fa592f42005'
+
+          mapfile -t delta < <(git diff --name-only f046e0866509868a862551656a2e78081aff8195 HEAD)
+          test "${#delta[@]}" -eq 2
+          for p in "${delta[@]}"; do
+            case "$p" in
+              tools/e2_a3_a4_v3_on_v2_24_cross_check_adjudicate.py|.github/workflows/e2-a3-a4-v3-on-v2-24-cross-check-adjudication.yml) ;;
+              *) echo "unauthorized post-protocol adjudication delta: $p"; exit 1 ;;
+            esac
+          done
+
+          ! grep -qE '(^|[[:space:]])(from|import)[[:space:]]+risu_e2' "$T"
+
+      - name: Compile and run fail-closed canonicalizer self-tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile tools/e2_a3_a4_v3_on_v2_24_cross_check_adjudicate.py
+          python tools/e2_a3_a4_v3_on_v2_24_cross_check_adjudicate.py \
+            --protocol experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/remediation-v0.3/regression-v0.2-24/adjudication/E2_A3_A4_V3_ON_V2_24_CROSS_CHECK_ADJUDICATION_PROTOCOL.json \
+            --self-test-only
+
+      - name: Adjudicate immutable first-complete outputs only
+        shell: bash
+        run: |
+          set -euo pipefail
+          S="$RUNNER_TEMP/v3-v2-24-cross-check-adjudication"
+          mkdir -p "$S/input" "$S/tool" "$S/output"
+          cp experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/remediation-v0.3/regression-v0.2-24/first-complete/E2_A3_A4_V3_ON_V2_24_PRIMARY.json "$S/input/primary.json"
+          cp experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/remediation-v0.3/regression-v0.2-24/first-complete/E2_A3_A4_V3_ON_V2_24_INDEPENDENT.json "$S/input/independent.json"
+          cp experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/remediation-v0.3/regression-v0.2-24/adjudication/E2_A3_A4_V3_ON_V2_24_CROSS_CHECK_ADJUDICATION_PROTOCOL.json "$S/input/protocol.json"
+          cp tools/e2_a3_a4_v3_on_v2_24_cross_check_adjudicate.py "$S/tool/adjudicate.py"
+
+          test "$(find "$S" -type f | wc -l)" -eq 4
+          ! find "$S" -type f -print | grep -E 'corpus|frozen.*48|candidate.*58|frontend|ir_v3|prediction|truth|operator'
+
+          trap 'chmod u+rwx "$GITHUB_WORKSPACE" || true' EXIT
+          chmod a-rwx "$GITHUB_WORKSPACE"
+          cd "$S"
+
+          python tool/adjudicate.py --protocol input/protocol.json --primary input/primary.json --independent input/independent.json --output output/adjudication-1.json
+          python tool/adjudicate.py --protocol input/protocol.json --primary input/primary.json --independent input/independent.json --output output/adjudication-2.json
+          cmp output/adjudication-1.json output/adjudication-2.json
+
+          chmod u+rwx "$GITHUB_WORKSPACE"
+          cp output/adjudication-1.json "$GITHUB_WORKSPACE/E2_A3_A4_V3_ON_V2_24_CROSS_CHECK_ADJUDICATION.json"
+
+      - name: Upload first complete checker-only adjudication
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-a3-a4-v3-on-v2-24-first-complete-cross-check-adjudication
+          path: E2_A3_A4_V3_ON_V2_24_CROSS_CHECK_ADJUDICATION.json
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Assert adjudication gate only after artifact upload
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          d=json.load(open('E2_A3_A4_V3_ON_V2_24_CROSS_CHECK_ADJUDICATION.json'))
+          assert d['status']=='PASS'
+          assert d['case_count']==24 and d['agreed_case_count']==24
+          assert d['same_fixture_set'] is True and d['canonical_per_case_agreement'] is True
+          assert d['failure_count']==0 and d['failures']==[]
+          assert d['primary_status']==d['independent_status']=='PASS'
+          assert d['self_tests']['status']=='PASS' and d['self_tests']['count']==9
+          assert d['original_first_complete_bundle_status_preserved']=='FROZEN_FAIL'
+          assert d['scientific_regression_rerun'] is False
+          assert d['frozen_48_bytes_read'] is False and d['candidate_58_bytes_read'] is False
+          assert d['semantic_verdicts_emitted'] is False
+          PY
