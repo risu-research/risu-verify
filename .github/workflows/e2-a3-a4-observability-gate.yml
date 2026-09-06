@@ -1,3 +1,4 @@
+# Trigger-only refresh after initial workflow registration; no scientific logic changed.
 name: E2 A3-A4 Observability Gate
 
 on:
