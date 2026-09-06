@@ -1,0 +1,140 @@
+name: E2 A3 A4 Witness Microqualification Freeze
+
+on:
+  push:
+    paths:
+      - '.github/workflows/e2-a3-a4-witness-microqualification-freeze.yml'
+
+permissions:
+  contents: write
+
+env:
+  RUN_ID: '34041608879'
+  ARTIFACT_1: '9991833886'
+  ARTIFACT_2: '9991841462'
+  ZIP_1_SHA: '4edc9b824496172de0788fb041f7ea1822709a0fbfcc592b84fb7896a6940986'
+  ZIP_2_SHA: '4993ecd0bcf2e2e71b36d234726e44ae396c8499b1631a4296bbf1c9c060d4bf'
+  BUNDLE_SHA: '83cf2df10e598e6f3964af93ea3b8a53c7dbf4e8f470d717a85d503b14660f36'
+  PRIMARY_SHA: '63a85cfbf35be70b2fed9c9cf1da73910331685ef3c33dca815aa7761cf112a1'
+  INDEPENDENT_SHA: '470eaee6897f5b99437be7a7f73b39ac16ff200007c84e479c55b0190ffb3dde'
+
+jobs:
+  freeze:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify archival trigger boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "a0fd5f0b587654ebd08f5a8144d3ef270a32ea30"
+          test "$(git hash-object tools/e2_a3_a4_witness_microqualify.py)" = "cf000fe11aeca95cae61c858cf4cc01d34f5c9af"
+          test "$(git hash-object tools/e2_a3_a4_witness_microcheck.py)" = "88c009c09397c7fefe734c431d88663f14de63d7"
+          test "$(git hash-object protocols/RISU_DIFF_E2_A3_A4_VERDICT_PREREGISTRATION_v0.1.json)" = "8926d0b32a1c48addb5e341c3b8bdeb258fc7f85"
+          test "$(git hash-object experiments/risu-diff-e2/qualification/a3-a4/E2_A3_A4_CANONICAL_SEED_CONSEQUENCE_SIGNATURES_v0.1.json)" = "cfa7d78707599177afe690c3aad7faaa22cb1930"
+      - name: Download and compare both hosted artifacts
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/m1 /tmp/m2
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${ARTIFACT_1}/zip" > /tmp/a1.zip
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${ARTIFACT_2}/zip" > /tmp/a2.zip
+          test "$(sha256sum /tmp/a1.zip | cut -d' ' -f1)" = "$ZIP_1_SHA"
+          test "$(sha256sum /tmp/a2.zip | cut -d' ' -f1)" = "$ZIP_2_SHA"
+          unzip -q /tmp/a1.zip -d /tmp/m1
+          unzip -q /tmp/a2.zip -d /tmp/m2
+          diff -qr /tmp/m1 /tmp/m2
+          test "$(sha256sum /tmp/m1/o1/bundle.json | cut -d' ' -f1)" = "$BUNDLE_SHA"
+          test "$(sha256sum /tmp/m1/o1/primary.json | cut -d' ' -f1)" = "$PRIMARY_SHA"
+          test "$(sha256sum /tmp/m1/c1/independent.json | cut -d' ' -f1)" = "$INDEPENDENT_SHA"
+          test "$(wc -c < /tmp/m1/o1/bundle.json)" = "64000"
+          test "$(wc -c < /tmp/m1/o1/primary.json)" = "11595"
+          test "$(wc -c < /tmp/m1/c1/independent.json)" = "10256"
+      - name: Independently audit qualification semantics
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, collections
+          b=json.load(open('/tmp/m1/o1/bundle.json'))
+          p=json.load(open('/tmp/m1/o1/primary.json'))
+          c=json.load(open('/tmp/m1/c1/independent.json'))
+          assert b['family_count']==14 and b['language_count']==3 and b['case_count']==42
+          assert p['status']=='PASS' and p['case_count']==42
+          assert c['status']=='PASS' and c['errors']==[] and c['case_count']==42
+          families={x['family_id'] for x in b['cases']}
+          assert len(families)==14
+          assert all(sum(x['family_id']==f for x in b['cases'])==3 for f in families)
+          dist=collections.Counter(r['composed_outcome'] for r in c['rows'])
+          assert dist=={'PRESERVATION_EVIDENCE':9,'REGRESSION_WITNESS':18,'ASSURANCE_INCOMPLETE':15}
+          d=[r for r in c['rows'] if r['family_id']=='VQ_CHECKER_DISAGREEMENT']
+          assert len(d)==3 and all(r['primary_outcome']!=r['checker_outcome'] and r['composed_outcome']=='ASSURANCE_INCOMPLETE' for r in d)
+          assert all(v is False for v in b['firewall'].values())
+          assert all(v is False for v in p['firewall'].values())
+          assert all(v is False for v in c['firewall'].values())
+          PY
+      - name: Materialize exact canonical outputs and freeze receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          D=experiments/risu-diff-e2/qualification/a3-a4/microqualification
+          mkdir -p "$D"
+          cp /tmp/m1/o1/bundle.json "$D/E2_A3_A4_WITNESS_MICROFIXTURE_BUNDLE_v0.1.json"
+          cp /tmp/m1/o1/primary.json "$D/E2_A3_A4_WITNESS_MICROQUALIFICATION_PRIMARY_RECEIPT_v0.1.json"
+          cp /tmp/m1/c1/independent.json "$D/E2_A3_A4_WITNESS_MICROQUALIFICATION_INDEPENDENT_CHECK_v0.1.json"
+          python - <<'PY'
+          import json, hashlib, os, pathlib
+          D=pathlib.Path('experiments/risu-diff-e2/qualification/a3-a4/microqualification')
+          family_expectations={
+            'VQ_DIRECT_STABLE':'PRESERVATION_EVIDENCE','VQ_HELPER_STABLE_IDENTITY':'PRESERVATION_EVIDENCE','VQ_HELPER_NEGATED':'ASSURANCE_INCOMPLETE',
+            'VQ_WRONG_BINDING':'REGRESSION_WITNESS','VQ_DEFINITE_OVERWRITE':'REGRESSION_WITNESS','VQ_GUARD_BYPASS':'REGRESSION_WITNESS',
+            'VQ_EFFECT_BEFORE_GUARD':'REGRESSION_WITNESS','VQ_REJECTION_FALLBACK':'REGRESSION_WITNESS','VQ_POLARITY_INVERSION':'REGRESSION_WITNESS',
+            'VQ_TRANSPORT_AMBIGUOUS':'ASSURANCE_INCOMPLETE','VQ_CONTROL_INCOMPLETE':'ASSURANCE_INCOMPLETE','VQ_ANCHOR_DELETED_NO_REPLACEMENT_PROOF':'ASSURANCE_INCOMPLETE',
+            'VQ_PRESERVING_WRAPPER_REFACTOR':'PRESERVATION_EVIDENCE','VQ_CHECKER_DISAGREEMENT':'ASSURANCE_INCOMPLETE'}
+          rec={
+            'schema':'risu.e2-a3-a4-witness-microqualification-freeze-receipt/v0.1','freeze_status':'PASS',
+            'authority':{
+              'repository':'risu-research/risu-verify','branch':'e2-development','a3_a4_verdict_preregistration_commit':'1efc11b4f5b3a3e51cc1168c076be67213f335e0','preregistration_git_blob':'8926d0b32a1c48addb5e341c3b8bdeb258fc7f85',
+              'canonical_signature_freeze_commit':'f2d42da72dc8569624a0bd8ede30bc3155175d3a','canonical_signature_git_blob':'cfa7d78707599177afe690c3aad7faaa22cb1930','canonical_signature_sha256':'7a652a508d53960dc0fcdb8860b9d358165f6a6c96b050e6b962edccc2a4549f','canonical_signature_freeze_receipt_git_blob':'2b5735dae285d6b3e67e1083f3e9b4381b63d170',
+              'microqualification_implementation_commit':'a0fd5f0b587654ebd08f5a8144d3ef270a32ea30','primary_implementation_git_blob':'cf000fe11aeca95cae61c858cf4cc01d34f5c9af','independent_checker_git_blob':'88c009c09397c7fefe734c431d88663f14de63d7','workflow_git_blob':'65f4bf547061d40074ff668a60af1f71b3536be2','archival_trigger_commit':os.environ['GITHUB_SHA']},
+            'staging_incidents':[
+              {'commit':'059c265118fae8b898df62eaf3f5f67040d66203','classification':'NONSCIENTIFIC_ACCIDENTAL_SENTINEL_ADD','scientific_execution_started':False},
+              {'commit':'bba13b5b2c3008462bc73f7ceddeb4e9a3df830b','classification':'SENTINEL_CLEANUP','result':'SCIENTIFIC_TREE_RETURNED_BYTE_IDENTICAL_TO_STAGE1_BEFORE_IMPLEMENTATION'},
+              {'git_blob':'c0d065236881ab6492c2e91487a9a3d7ea12073d','classification':'UNATTACHED_CORRUPTED_STAGING_BLOB','referenced_by_scientific_tree_or_execution_authority':False}],
+            'qualification':{'family_count':14,'language_instantiation_count':3,'case_count':42,'family_expectations':family_expectations,'composed_outcome_counts':{'PRESERVATION_EVIDENCE':9,'REGRESSION_WITNESS':18,'ASSURANCE_INCOMPLETE':15},'checker_disagreement_cases':3,'primary_status':'PASS','independent_status':'PASS','scope_note':'Protocol-authored abstract proof-mechanics fixtures instantiated under Python/Go/TypeScript-JavaScript labels; this qualifies verdict-calculus mechanics, not frontend/parser end-to-end performance.'},
+            'canonical_outputs':{
+              'E2_A3_A4_WITNESS_MICROFIXTURE_BUNDLE_v0.1.json':{'bytes':64000,'sha256':os.environ['BUNDLE_SHA']},
+              'E2_A3_A4_WITNESS_MICROQUALIFICATION_PRIMARY_RECEIPT_v0.1.json':{'bytes':11595,'sha256':os.environ['PRIMARY_SHA']},
+              'E2_A3_A4_WITNESS_MICROQUALIFICATION_INDEPENDENT_CHECK_v0.1.json':{'bytes':10256,'sha256':os.environ['INDEPENDENT_SHA']}},
+            'replay_evidence':{
+              'run_id':34041608879,'exact_head_sha':'a0fd5f0b587654ebd08f5a8144d3ef270a32ea30','canonical_three_files_byte_identical_across_attempts':True,
+              'attempt_1':{'job_id':101509276290,'runner_worker_id':'ba1617af-d29d-46f8-b74f-118b503d215d','runner_region':'northcentralus','artifact_id':9991833886,'artifact_zip_sha256':os.environ['ZIP_1_SHA']},
+              'attempt_2':{'job_id':101509344753,'runner_worker_id':'43104293-b841-42a1-b188-206da6de6017','runner_region':'westcentralus','artifact_id':9991841462,'artifact_zip_sha256':os.environ['ZIP_2_SHA']},
+              'python':'CPython 3.13.15','runner_image':'ubuntu-24.04 20260831.293.1'},
+            'scientific_firewall':{'candidate_or_mutant_bytes_read':False,'mutation_truth_read':False,'operator_metadata_read':False,'fresh_target_bytes_read':False,'58_case_a3_a4_predictions_emitted':False,'primary_checker_shared_aggregation_code':False},
+            'freeze_conclusion':{'witness_microqualification_frozen':True,'candidate_overlay_qualification_authorized_next':True,'58_case_a3_a4_verdict_execution_authorized':False,'a3_a4_candidate_verdict_execution_authorized':False,'fresh_target_evaluation_authorized':False,'next_step':'QUALIFY_CANDIDATE_OVERLAY_AND_PATH_DATAFLOW_CONTROL_OBSERVABILITY_BEFORE_ANY_58_CASE_A3_A4_VERDICT_EXECUTION'}
+          }
+          raw=(json.dumps(rec,sort_keys=True,separators=(',',':'),ensure_ascii=False)+'\n').encode()
+          (D/'E2_A3_A4_WITNESS_MICROQUALIFICATION_FREEZE_RECEIPT_v0.1.json').write_bytes(raw)
+          print('freeze_receipt_sha256='+hashlib.sha256(raw).hexdigest())
+          print('freeze_receipt_bytes='+str(len(raw)))
+          PY
+      - name: Commit exactly four additive freeze files
+        shell: bash
+        run: |
+          set -euo pipefail
+          D=experiments/risu-diff-e2/qualification/a3-a4/microqualification
+          git status --short
+          test "$(git status --short | wc -l)" = "4"
+          test "$(git status --short | grep '^?? ' | wc -l)" = "4"
+          git config user.name 'RISU E2 Freeze Bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add "$D"
+          git diff --cached --name-only > /tmp/names
+          test "$(wc -l < /tmp/names)" = "4"
+          git commit -m 'Freeze preregistered A3/A4 witness microqualification'
+          git push origin HEAD:e2-development
