@@ -1,0 +1,91 @@
+name: E2 A3 A4 Candidate Observability Root Cause Evidence
+
+on:
+  push:
+    paths:
+      - '.github/workflows/e2-a3-a4-candidate-observability-root-cause-evidence.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  evidence:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout exact diagnosis revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 8
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.13'
+      - name: Set up Go
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff
+        with:
+          go-version: '1.23.2'
+      - name: Verify diagnosis and frozen scientific authorities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object protocols/RISU_DIFF_E2_A3_A4_CANDIDATE_OBSERVABILITY_POSTFREEZE_ROOT_CAUSE_ADJUDICATION_v0.1.json)" = "d25dc14d20fdca4712fe91a6323e9f4f2d9734f9"
+          test "$(git hash-object tools/e2_a3_a4_candidate_observability_root_cause_evidence.py)" = "5df61780a5bc0901d2d84e03e359dfbcb497ffbc"
+          test "$(git hash-object protocols/RISU_DIFF_E2_A3_A4_CANDIDATE_OBSERVABILITY_QUALIFICATION_v0.1.json)" = "cdd6dd1329c5fb77318f2ecf7c04c53cb9797b33"
+          test "$(git hash-object experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROFIXTURES_v0.1.json)" = "f990130b782ab242e4e341b45d0d58d298f4f316"
+          test "$(git hash-object experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/freeze/E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROQUALIFICATION_PRIMARY.json)" = "03c9d14affdc8c32a0df397e7105f3b9e315d7dc"
+          test "$(git hash-object tools/e2_a3_a4_candidate_observability_microqualify.py)" = "204d45bab7395b545c736d83a3f4901b23febf3d"
+          test "$(git hash-object tools/e2_a3_a4_candidate_observability_microqualify_v2.py)" = "720e1c50191d43e314a0cb847477508b6a510c62"
+          test "$(git hash-object risu_e2/path_observability.py)" = "6eae3403f53b86f85bac47a31e751d28508e7225"
+          test "$(git hash-object risu_e2/frontend_python.py)" = "e98cc7bbefa80d53b94fec3ef25845a3dbbedd93"
+          test "$(git hash-object risu_e2/frontend_js.py)" = "6f3b6535caf0dcebb3c3c3679d898a23fdd8e795"
+          test "$(git hash-object risu_e2/frontend_go.py)" = "4fc017fd65c8ede67cf11b5e27200c11bbac9d31"
+          test "$(git hash-object risu_e2/observability_overlay.py)" = "77be5ea1dad30aa6daa889e0753ce7d1aaa6f07a"
+          test "$(git hash-object tools/e2_go_ir_extract.go)" = "26e752029d1b4a99b47f1c7024740b7b0ae14ef7"
+          mapfile -t delta < <(git diff --name-only 50079131e9d0ffa35bfa72e290cf3bec60ddd14e HEAD)
+          for p in "${delta[@]}"; do
+            case "$p" in
+              protocols/RISU_DIFF_E2_A3_A4_CANDIDATE_OBSERVABILITY_POSTFREEZE_ROOT_CAUSE_ADJUDICATION_v0.1.json|tools/e2_a3_a4_candidate_observability_root_cause_evidence.py|.github/workflows/e2-a3-a4-candidate-observability-root-cause-evidence.yml) ;;
+              *) echo "non-diagnosis delta from frozen scientific head: $p"; exit 1 ;;
+            esac
+          done
+      - name: Build sealed diagnosis-only sandbox and extract dossier twice
+        shell: bash
+        run: |
+          set -euo pipefail
+          S="$RUNNER_TEMP/root-cause-evidence"
+          mkdir -p "$S/risu_e2" "$S/tools" "$S/input" "$S/output"
+          cp risu_e2/*.py "$S/risu_e2/"
+          cp tools/e2_go_ir_extract.go "$S/tools/"
+          cp tools/e2_a3_a4_candidate_observability_microqualify.py "$S/tools/"
+          cp tools/e2_a3_a4_candidate_observability_root_cause_evidence.py "$S/tools/"
+          cp protocols/RISU_DIFF_E2_A3_A4_CANDIDATE_OBSERVABILITY_POSTFREEZE_ROOT_CAUSE_ADJUDICATION_v0.1.json "$S/input/diagnosis-protocol.json"
+          cp experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROFIXTURES_v0.1.json "$S/input/corpus.json"
+          cp experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/freeze/E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROQUALIFICATION_PRIMARY.json "$S/input/frozen-primary.json"
+          chmod a-rwx "$GITHUB_WORKSPACE"
+          cd "$S"
+          export PYTHONPATH="$S:$S/tools"
+          python tools/e2_a3_a4_candidate_observability_root_cause_evidence.py --diagnosis-protocol input/diagnosis-protocol.json --corpus input/corpus.json --frozen-primary input/frozen-primary.json --go-helper tools/e2_go_ir_extract.go --output output/dossier-1.json
+          python tools/e2_a3_a4_candidate_observability_root_cause_evidence.py --diagnosis-protocol input/diagnosis-protocol.json --corpus input/corpus.json --frozen-primary input/frozen-primary.json --go-helper tools/e2_go_ir_extract.go --output output/dossier-2.json
+          cmp output/dossier-1.json output/dossier-2.json
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path('output/dossier-1.json'); d=json.loads(p.read_bytes())
+          assert d['status']=='PASS' and d['case_count']==8 and d['category_labels_present'] is False
+          assert d['read_set_attestation']['candidate_58_bytes'] is False
+          replayed=[r for r in d['rows'] if r['pipeline_replay_status']=='REPLAYED_EXACT_FROZEN_PIPELINE']
+          unresolved=[r for r in d['rows'] if r['pipeline_replay_status']=='NOT_ATTEMPTED_LOCATOR_UNRESOLVED']
+          assert len(replayed)+len(unresolved)==8
+          assert all(all(x is True for x in r['digest_reproduction'].values() if isinstance(x,bool)) for r in replayed)
+          raw=p.read_bytes()
+          print(json.dumps({'status':'PASS','cases':8,'replayed':len(replayed),'unresolved_locators':len(unresolved),'byte_identical_two_extractions':True,'sha256':hashlib.sha256(raw).hexdigest(),'bytes':len(raw)},sort_keys=True,separators=(',',':')))
+          PY
+          cp output/dossier-1.json "$GITHUB_WORKSPACE/E2_A3_A4_CANDIDATE_OBSERVABILITY_ROOT_CAUSE_EVIDENCE_DOSSIER_v0.1.json"
+          chmod u+rwx "$GITHUB_WORKSPACE"
+      - name: Upload category-free diagnosis evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-a3-a4-candidate-observability-root-cause-evidence
+          path: E2_A3_A4_CANDIDATE_OBSERVABILITY_ROOT_CAUSE_EVIDENCE_DOSSIER_v0.1.json
+          retention-days: 30
