@@ -1,0 +1,309 @@
+{
+  "authority": {
+    "branch": "e2-development",
+    "frozen_base_ir_schema": "risu.e2-normalized-semantic-flow-ir/v0.1",
+    "frozen_model_blob": "64baf95a4939f168881627830134b314a6ee6098",
+    "frozen_normalizer_blob": "d7edac40d4eeda86be74e5785bde3bfc28d4cf5e",
+    "observability_freeze_blob": "b670892e37ad22beb92dc7d1e1075104dda2388c",
+    "observability_freeze_commit": "fecbad3b31c2763448d9ad71a10e6d4fe68ab571",
+    "observability_gate_preregistration_commit": "2922bf9317ab792240b3e4adf79a81cde543804a",
+    "pre_design_head": "fecbad3b31c2763448d9ad71a10e6d4fe68ab571",
+    "repository": "risu-research/risu-verify"
+  },
+  "consequence_anchor_contract": {
+    "freeze_order": "Anchor contracts must be frozen before any A3/A4 qualification scoring that consumes them.",
+    "may_declare": [
+      "effect boundary",
+      "resource identity/binding slots",
+      "success/effect outcome",
+      "rejection/no-effect outcome",
+      "failure outcome"
+    ],
+    "must_be_content_addressed": true,
+    "must_not_declare": [
+      "expected_truth",
+      "expected_e2_primary",
+      "mutation operator id",
+      "mutation operator class",
+      "whether A3/A4 should pass",
+      "mutation-specific repair"
+    ],
+    "must_resolve_uniquely": true,
+    "proposed_schema": "risu.e2-consequence-anchor-contract/v0.1",
+    "separate_schema_required": true
+  },
+  "contract_id": "RISU_DIFF_E2_A2O_MINIMAL_OBSERVABILITY_EXTENSION_DESIGN_001",
+  "control_contract": {
+    "branch_polarity_required": true,
+    "completeness_precondition_for_definitive_a4": true,
+    "entry_exit_required": true,
+    "initial_supported_scope": "Structured straight-line flow plus conditional branches and returns sufficient for the frozen six-seed qualification universe; any unsupported material construct on an anchored path fails closed rather than being approximated.",
+    "join_representation_required_when_paths_reconverge": true,
+    "ordering_source": "language parser or validated structured syntax tree",
+    "raw_source_line_order_semantic_authority": false
+  },
+  "core_decision": {
+    "architecture": "DIGEST_BOUND_SIDECAR_OVERLAY",
+    "base_ir_is_modified": false,
+    "base_ir_reinterpreted_in_place": false,
+    "new_ctv_edge_kinds": [],
+    "new_ctv_node_kinds": [],
+    "overlay_binding": [
+      "base_ir_digest_sha256",
+      "acquired_file_sha256",
+      "consequence_anchor_contract_sha256"
+    ],
+    "overlay_schema": "risu.e2-observability-overlay/v0.1",
+    "reason": "The frozen vocabulary already contains every semantic node/edge family required by A3/A4; the observed insufficiency is loss of definition identity plus absent execution/effect materialization, not a missing ontology.",
+    "reuse_edge_kinds": [
+      "CARRIES",
+      "DERIVES",
+      "BINDS_TO",
+      "COMPARES",
+      "GUARDS",
+      "PRECEDES",
+      "MUTATES",
+      "REJECTS_AS",
+      "EVIDENCED_BY"
+    ],
+    "reuse_node_kinds": [
+      "OPERATION",
+      "RESOURCE",
+      "INPUT",
+      "SEMANTIC_COORDINATE",
+      "GUARD",
+      "EFFECT",
+      "OUTCOME",
+      "FAILURE",
+      "EVIDENCE"
+    ]
+  },
+  "design_goal": "Satisfy the nine frozen downstream observability obligations with the smallest semantic delta while preserving A2 v0.1 byte-for-byte as historical evidence.",
+  "minimal_deltas": [
+    {
+      "ctv_materialization": {
+        "relations": [
+          "DERIVES",
+          "CARRIES",
+          "BINDS_TO",
+          "COMPARES",
+          "EVIDENCED_BY"
+        ],
+        "representation_or_call_producers": [
+          "OPERATION"
+        ],
+        "value_instances": [
+          "INPUT",
+          "SEMANTIC_COORDINATE"
+        ]
+      },
+      "forbidden_shortcuts": [
+        "symbol-name equality as proof of value identity",
+        "shared coordinate node across distinct definition sites",
+        "field-name equality without representation-instance identity",
+        "source-line ordering as a substitute for reaching-definition semantics"
+      ],
+      "id": "D1_VERSIONED_VALUE_AND_REPRESENTATION_IDENTITY",
+      "purpose": "Replace may-flow symbol coalescing only in the overlay with definition-sensitive value instances and exact carrier/binding lineage.",
+      "required_semantics": [
+        "Each function parameter, assignment/definition, field/serialization write, call result, and required expression temporary receives a distinct content-addressed value-instance identity.",
+        "A later write kills the prior reaching definition on the same straight-line path; branch joins preserve the explicit set of reaching definitions rather than collapsing them into one symbol node.",
+        "Reads consume their reaching definition set; ambiguous or unsupported reaching-definition state remains explicit and cannot be promoted to a must claim.",
+        "Representation fields are bound to a particular representation-instance identity, not only a lexical field name, so two objects carrying the same field name do not alias by construction.",
+        "Unique acquired call binding is extended with actual-to-formal and return-to-call-result lineage; ambiguous call resolution remains incomplete.",
+        "Argument index, keyword/field key, receiver/resource role, and representation slot remain explicit binding identities."
+      ]
+    },
+    {
+      "ctv_materialization": {
+        "control_points": [
+          "OPERATION",
+          "GUARD",
+          "EFFECT",
+          "OUTCOME",
+          "FAILURE"
+        ],
+        "relations": [
+          "PRECEDES",
+          "GUARDS",
+          "EVIDENCED_BY"
+        ]
+      },
+      "id": "D2_COMPLETE_CONTROL_SKELETON_FOR_CLAIMED_SCOPE",
+      "minimality_boundary": "No whole-program CFG, pointer analysis, arbitrary loop invariant engine, or exception semantics is required for v0.1 of the overlay. Unsupported structure fails closed.",
+      "purpose": "Expose only the execution structure necessary for guard control, must-path, and ordering proofs.",
+      "required_semantics": [
+        "Materialize a parser-derived intraprocedural control skeleton with explicit function entry, guard branch polarity, consequential anchors, returns/exits, and joins required to preserve path alternatives.",
+        "Use PRECEDES for semantic control-flow succession derived from language parser/structured syntax, never raw line-number order alone.",
+        "Use GUARDS from a guard to the immediately controlled branch/region or anchored node with explicit true/false polarity; transitive guard-to-effect dominance is derived later, not guessed during extraction.",
+        "Mark each analyzed function/control region with control_completeness=COMPLETE or INCOMPLETE_FOR_MUST_PATH.",
+        "Unsupported control constructs, ambiguous nesting, unresolved exceptional/async transfer that can affect the anchored path, or incomplete JavaScript/TypeScript structure force INCOMPLETE_FOR_MUST_PATH.",
+        "Interprocedural A4 proof is permitted only through uniquely bound acquired callees with complete summaries; otherwise abstain."
+      ]
+    },
+    {
+      "ctv_materialization": {
+        "nodes": [
+          "EFFECT",
+          "RESOURCE",
+          "OUTCOME",
+          "FAILURE"
+        ],
+        "relations": [
+          "BINDS_TO",
+          "MUTATES",
+          "REJECTS_AS",
+          "EVIDENCED_BY"
+        ]
+      },
+      "forbidden_shortcuts": [
+        "callee/function name alone as effect semantics",
+        "comments/docstrings as effect semantics",
+        "target/repository identity as effect semantics",
+        "treating every call or return as a consequential effect"
+      ],
+      "id": "D3_DECLARED_CONSEQUENCE_ANCHORS",
+      "purpose": "Make effect/resource/outcome meaning explicit without inferring consequence semantics from names, comments, or arbitrary calls.",
+      "required_semantics": [
+        "A separate content-addressed consequence-anchor contract declares the effect cut and any consequence-relevant resource/binding slots for the analysis scope.",
+        "The contract may also declare success/no-effect/rejection/failure outcome anchors when those distinctions are required by the consequence contract.",
+        "Each anchor must resolve uniquely to provenance-bearing acquired syntax/operation evidence for the analyzed revision; zero or multiple resolutions force assurance incomplete.",
+        "The overlay materializes resolved anchors as EFFECT plus optional RESOURCE, OUTCOME, and FAILURE nodes using the already-frozen CTV vocabulary.",
+        "The anchor contract is scope authority only: it states what consequence boundary is being checked, not whether the target preserves it and not any mutation truth.",
+        "Qualification anchor contracts must be frozen before downstream A3/A4 scoring and must not contain expected_truth, expected_e2_primary, operator id/class, or mutation-specific repair knowledge."
+      ]
+    }
+  ],
+  "minimality_argument": {
+    "D1_is_necessary": "Without definition-sensitive instances, the frozen 37-cell coalescing witness survives and overwrite/kill semantics remain unprovable.",
+    "D2_is_necessary": "Without an explicit complete control skeleton, guard existence cannot distinguish guarded effect, ignored guard, bypass, fallback, or effect-before-guard.",
+    "D3_is_necessary": "Without declared consequence anchors, effect/outcome meaning must be guessed from names/comments/arbitrary calls, which the frozen gate forbids.",
+    "no_fourth_delta_needed": "Representation survival, binding identity, resource identity, and outcome distinction can be expressed by D1-D3 using the already-frozen CTV node/edge vocabulary; adding new ontology is therefore not yet justified."
+  },
+  "next_authorized_step": "IMPLEMENT_AND_QUALIFY_ONLY_D1_D2_D3_AS_A_DIGEST_BOUND_OVERLAY; DO_NOT_IMPLEMENT A3/A4 VERDICT LOGIC YET",
+  "obligation_coverage": {
+    "A3_BINDING_IDENTITY": {
+      "covered_by": [
+        "D1_VERSIONED_VALUE_AND_REPRESENTATION_IDENTITY",
+        "D3_DECLARED_CONSEQUENCE_ANCHORS"
+      ],
+      "proof_surface": "Exact argument/field/receiver/resource slot identity bound to the declared consequence surface."
+    },
+    "A3_DATAFLOW": {
+      "covered_by": [
+        "D1_VERSIONED_VALUE_AND_REPRESENTATION_IDENTITY"
+      ],
+      "proof_surface": "Versioned DERIVES/CARRIES/BINDS_TO paths from reaching definitions; no name-only flow."
+    },
+    "A3_DEFINITION_SENSITIVITY": {
+      "covered_by": [
+        "D1_VERSIONED_VALUE_AND_REPRESENTATION_IDENTITY"
+      ],
+      "proof_surface": "Distinct content-addressed definitions plus kill/merge reaching-definition semantics."
+    },
+    "A3_REPRESENTATION_SURVIVAL": {
+      "covered_by": [
+        "D1_VERSIONED_VALUE_AND_REPRESENTATION_IDENTITY"
+      ],
+      "proof_surface": "Source value instance -> representation-instance field value -> effect binding path."
+    },
+    "A4_CONTROL_DEPENDENCE": {
+      "covered_by": [
+        "D2_COMPLETE_CONTROL_SKELETON_FOR_CLAIMED_SCOPE",
+        "D3_DECLARED_CONSEQUENCE_ANCHORS"
+      ],
+      "proof_surface": "Branch-polarized GUARDS/PRECEDES graph reaching the declared EFFECT."
+    },
+    "A4_EFFECT_BOUNDARY": {
+      "covered_by": [
+        "D3_DECLARED_CONSEQUENCE_ANCHORS"
+      ],
+      "proof_surface": "Uniquely resolved provenance-bearing EFFECT anchor."
+    },
+    "A4_MUST_PATH": {
+      "covered_by": [
+        "D2_COMPLETE_CONTROL_SKELETON_FOR_CLAIMED_SCOPE"
+      ],
+      "proof_surface": "All-path/dominance reasoning only when control_completeness is COMPLETE."
+    },
+    "A4_ORDERING": {
+      "covered_by": [
+        "D2_COMPLETE_CONTROL_SKELETON_FOR_CLAIMED_SCOPE"
+      ],
+      "proof_surface": "Parser-derived PRECEDES relation; source coordinates remain evidence only."
+    },
+    "A4_OUTCOME_DISTINCTION": {
+      "covered_by": [
+        "D2_COMPLETE_CONTROL_SKELETON_FOR_CLAIMED_SCOPE",
+        "D3_DECLARED_CONSEQUENCE_ANCHORS"
+      ],
+      "proof_surface": "Distinct anchored OUTCOME/FAILURE nodes on explicit control paths."
+    }
+  },
+  "overlay_contract": {
+    "base_ir_immutability": "The overlay may reference base node/edge ids but may not mutate, replace, delete, or reinterpret any frozen A2 v0.1 node or edge.",
+    "content_addressing": "All overlay nodes/edges and anchors must be content-addressed from semantics plus exact provenance; iteration order must not affect bytes.",
+    "determinism": "Canonical JSON and two-replay byte identity remain mandatory.",
+    "provenance": "Every materialized overlay semantic node must resolve to exact acquired source evidence or an explicit contract anchor that itself resolves to such evidence.",
+    "required_top_level_fields": [
+      "schema",
+      "semantic_authority",
+      "base_ir_schema",
+      "base_ir_digest_sha256",
+      "consequence_anchor_contract_sha256",
+      "files",
+      "frontend_status",
+      "control_completeness",
+      "nodes",
+      "edges",
+      "overlay_digest_sha256"
+    ],
+    "semantic_authority": false
+  },
+  "qualification_before_a3_a4": {
+    "fresh_target_evaluation_authorized": false,
+    "fresh_target_selection_authorized": false,
+    "gates": [
+      "A2 v0.1 output remains byte-identical to its frozen implementation on the 58-cell universe.",
+      "Overlay builds deterministically or fails closed on all 58 cells.",
+      "No multi-definition coalescing remains in definitive A3 candidate paths; multiplicity at joins is explicit.",
+      "Every definitive A4 candidate has a uniquely resolved effect anchor and COMPLETE control skeleton.",
+      "Guarded, bypass, fallback, ignored-guard, and effect-before-guard structures are distinguishable without truth/operator/comment/name features.",
+      "Preserving refactors remain stable under the overlay semantics.",
+      "Two replay attempts produce byte-identical overlay receipts.",
+      "Independent specialization scan remains zero for target/repository literals used as detector semantics."
+    ],
+    "must_not_modify_frozen_truth": true,
+    "must_reuse_frozen_58_cells": true,
+    "required": true
+  },
+  "schema": "risu.diff-e2-a2o-minimal-observability-extension-design/v0.1",
+  "scientific_firewall": {
+    "anchor_resolution_failure_may_be_silently_recovered": false,
+    "comments_or_docstrings_may_be_semantic_feature": false,
+    "expected_e2_primary_may_be_used_to_design_or_resolve_overlay": false,
+    "expected_truth_may_be_used_to_design_or_resolve_overlay": false,
+    "fresh_gold_consumed": false,
+    "fresh_target_bytes_consumed": false,
+    "frozen_58_cell_truth_may_be_modified": false,
+    "frozen_a2_v0_1_may_be_modified": false,
+    "mutation_operator_name_may_be_detector_feature": false,
+    "source_line_order_alone_may_establish_execution_order": false,
+    "target_or_repository_name_may_be_semantic_feature": false,
+    "unsupported_control_may_be_approximated_for_definitive_a4": false
+  },
+  "status": "PRE_IMPLEMENTATION_DESIGN_FROZEN",
+  "value_identity_contract": {
+    "definition_id_basis": [
+      "file_sha256",
+      "scope_identity",
+      "coordinate_or_slot_identity",
+      "definition_span",
+      "definition_role"
+    ],
+    "kill_rule": "A definite write on a path replaces the reaching-definition set for that coordinate/slot on that successor state.",
+    "merge_rule": "At a control join, the reaching-definition state for a coordinate/slot is the explicit union of predecessor states. No synthetic single value identity may erase multiplicity.",
+    "must_lineage_rule": "A must-lineage claim is permitted only when every reaching alternative admitted by the complete control skeleton satisfies the same required source/slot lineage.",
+    "temporary_rule": "Unnamed call/expression results that cross a carrier boundary receive content-addressed temporary value identities rather than being dropped."
+  }
+}
