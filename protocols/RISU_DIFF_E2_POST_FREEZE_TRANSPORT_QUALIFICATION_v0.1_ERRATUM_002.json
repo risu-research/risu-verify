@@ -1,0 +1,170 @@
+{
+  "schema": "risu.diff-e2-post-freeze-transport-qualification-erratum/v0.1",
+  "erratum_id": "ERRATUM_002_TRANSPORT_RECEIPT_REPRESENTATION",
+  "status": "FROZEN_AFTER_TRANSPORT_RECEIPT_SCHEMA_UNBLINDING_BEFORE_ANY_TRUTH_TRANSPORT_JOIN_OUTPUT",
+  "semantic_authority": false,
+  "purpose": "Define the minimal deterministic compatibility projection from the already-frozen mutation-blind transport receipt representation into the field names consumed by the already-frozen post-freeze qualifier, without modifying transport bytes, transport semantics, truth, join semantics, metrics, strata, or any verdict logic.",
+  "parent_chain": {
+    "parent_protocol": {
+      "path": "protocols/RISU_DIFF_E2_POST_FREEZE_TRANSPORT_QUALIFICATION_v0.1.json",
+      "commit": "4dd2e6ee2a90bd130042889dabe9ca116b8830a9",
+      "git_blob": "8d1860312d259e628e86070416a4757c570ba05f"
+    },
+    "erratum_001": {
+      "path": "protocols/RISU_DIFF_E2_POST_FREEZE_TRANSPORT_QUALIFICATION_v0.1_ERRATUM_001.json",
+      "commit": "b1e0a0681f51ee64946ef2cad64c94572dcc4646",
+      "git_blob": "a226d19994b55e7668658a94604db2d1ce07cb05"
+    }
+  },
+  "triggering_execution": {
+    "run_id": 34032646058,
+    "job_id": 101484947691,
+    "head_sha": "b72e8226460a1cd9bf87f62df5fb5fbdaef28a56",
+    "erratum_001_gate_passed": true,
+    "expanded_matrix_labels_already_unblinded": true,
+    "frozen_transport_bundle_read": true,
+    "failure_location": "tools/e2_postfreeze_transport_qualify.py receipt-language lookup while constructing transport_by_key",
+    "failure_exception": "KeyError: language",
+    "cell_json_iteration_started": false,
+    "per_cell_truth_transport_join_started": false,
+    "joined_record_emitted": false,
+    "qualification_json_emitted": false,
+    "independent_join_audit_executed": false,
+    "joined_scientific_aggregate_emitted": false,
+    "failure_class": "TRANSPORT_RECEIPT_REPRESENTATION_MISMATCH"
+  },
+  "frozen_authorities": {
+    "blind_transport_bundle_path": "experiments/risu-diff-e2/qualification/anchor-transport/blind58/E2_BLIND_58_ANCHOR_TRANSPORT_BUNDLE.json",
+    "blind_transport_bundle_git_blob": "95f7338e6f21bc3e0a8fc3209296d2e98c1c6f12",
+    "blind_transport_bundle_sha256": "78c5f024c1af7a353844120879d3ec4487b5f56fb443bc6e063530f836a9f74c",
+    "blind_transport_freeze_receipt_git_blob": "1c97eb8df5bafcfd8523ee6aba0c5a2b981b5df0",
+    "blind58_tree_git_sha": "bcd2f7bb71a24a467b2486633e133c776368b3cb",
+    "sanitized_admission_manifest_path": "experiments/risu-diff-e2/qualification/anchor-transport/admission/E2_SANITIZED_OPAQUE_58_ADMISSION_MANIFEST.json",
+    "sanitized_admission_manifest_git_blob": "f2fc78439d4bfadce5941bf71aadd15ec292bcb1",
+    "sanitized_admission_manifest_sha256": "847d85c2274cd6b94a83eefe0f6153a8fb183dbad758efa75118a4fd368623e4",
+    "frozen_transport_receipt_schema_path": "schemas/RISU_E2_MUTATION_BLIND_ANCHOR_TRANSPORT_RECEIPT_v0.1.schema.json",
+    "frozen_transport_receipt_schema_git_blob": "09a35d3c505b7ceaa0ecdefc682945fd61adfe37",
+    "blind58_runner_git_blob": "9acd48e66a749c39ac0e648317e19336477b980b",
+    "blind58_auditor_git_blob": "dfb7c68147245cd190bf1dc0db5e398308df59fe",
+    "transport_engine_sha256": "3b626fc83fe76a1dfafdcf896efc8a16440bbeec062cfb1dbb86badd23b7af4c",
+    "canonical_anchor_bundle_git_blob": "ec8d8b287a80b87c815f0362be366be076d2b091",
+    "original_postfreeze_qualifier_git_blob": "3b5cbe1bac55503e135426ccaab5ed73b65e5480",
+    "erratum_001_wrapper_git_blob": "e8fa82b3282253b33c4930c5d885a44db588909c",
+    "independent_postfreeze_auditor_git_blob": "9bae752a306c762576c2b10f8cafbf400674566b",
+    "expanded_truth_matrix_sha256": "afd681d308a6f4ec8c183edd9b139c6b914fe501936cf84e5845a6a1c0d6b7cb",
+    "materialized_cells_tree_git_sha": "34a30574c7420728bff57958c815194979a622ab"
+  },
+  "schema_comparison": {
+    "frozen_receipt_schema_additional_properties": false,
+    "qualifier_consumed_fields_already_present_with_identical_names_and_structures": [
+      "seed_id",
+      "candidate_source_sha256",
+      "transport_case_id",
+      "case_transport_status",
+      "parser_status",
+      "anchors[].anchor_key",
+      "anchors[].lineage_status",
+      "anchors[].realization_status",
+      "binding_slots.expected_coordinate.status",
+      "binding_slots.current_coordinate.status"
+    ],
+    "representation_differences_exhaustive_for_frozen_qualifier": [
+      {
+        "qualifier_field": "language",
+        "frozen_receipt_field": null,
+        "projection_source": "the unique row in the frozen sanitized admission manifest whose transport_case_id equals receipt.transport_case_id",
+        "projection": "projected.language = admission_row.language"
+      },
+      {
+        "qualifier_field": "receipt_digest_sha256",
+        "frozen_receipt_field": "transport_digest_sha256",
+        "projection_source": "the same frozen receipt",
+        "projection": "projected.receipt_digest_sha256 = receipt.transport_digest_sha256"
+      }
+    ],
+    "no_other_field_alias_or_structural_conversion_authorized": true
+  },
+  "compatibility_projection_contract": {
+    "input_receipt_must_validate_against_frozen_receipt_schema": true,
+    "input_receipt_must_remain_byte_for_byte_unchanged": true,
+    "projection_is_ephemeral_non_authoritative_view": true,
+    "original_fields_retained_verbatim": true,
+    "language_projection": {
+      "lookup_key": "receipt.transport_case_id",
+      "required_admission_match_count": 1,
+      "cross_checks": [
+        "admission_row.transport_case_id == receipt.transport_case_id",
+        "admission_row.seed_id == receipt.seed_id",
+        "admission_row.candidate_source_sha256 == receipt.candidate_source_sha256",
+        "admission_row.language == parent_protocol.primary_source_contract[receipt.seed_id].language"
+      ],
+      "projected_field": "language",
+      "projected_value": "admission_row.language",
+      "truth_operator_or_cell_metadata_may_not_participate": true,
+      "language_is_redundant_compatibility_metadata_not_a_new_matching_degree_of_freedom": true
+    },
+    "digest_projection": {
+      "source_field": "transport_digest_sha256",
+      "projected_field": "receipt_digest_sha256",
+      "operation": "EXACT_STRING_ALIAS_ONLY",
+      "digest_bytes_recomputed": false,
+      "digest_preimage_changed": false,
+      "digest_value_changed": false,
+      "transport_receipt_digest_verification_semantics_changed": false
+    },
+    "conflict_policy": {
+      "if_projected_target_field_is_already_present": "FAIL_CLOSED_UNLESS_JSON_SCALAR_VALUE_IS_EXACTLY_EQUAL_TO_THE_AUTHORIZED_PROJECTION",
+      "if_admission_lookup_is_zero_or_non_unique": "FAIL_CLOSED",
+      "if_any_language_cross_check_fails": "FAIL_CLOSED",
+      "if_transport_digest_sha256_is_missing_or_not_a_64_lowercase_hex_digest": "FAIL_CLOSED",
+      "if_any_non_authorized_field_conversion_would_be_required": "FAIL_CLOSED"
+    }
+  },
+  "minimality_proof": {
+    "language_alias_is_required": "The frozen qualifier constructs the preregistered transport join key using receipt.language, while the frozen receipt schema intentionally omits language even though the truth-blind admission manifest already binds language to each opaque transport_case_id.",
+    "digest_alias_is_required": "The frozen qualifier emits receipt.receipt_digest_sha256 as provenance, while the frozen receipt schema names the already-verified receipt digest transport_digest_sha256.",
+    "all_other_qualifier_consumed_transport_fields_need_no_projection": true,
+    "adding_any_third_alias_is_not_authorized_without_a_new_explicit_erratum": true
+  },
+  "scientific_noninterference": {
+    "transport_outputs_modified": false,
+    "transport_engine_modified": false,
+    "transport_witnesses_reranked_or_repaired": false,
+    "anchor_lineage_status_modified": false,
+    "anchor_realization_status_modified": false,
+    "binding_slot_status_modified": false,
+    "parser_status_modified": false,
+    "case_transport_status_modified": false,
+    "candidate_source_sha256_modified": false,
+    "transport_case_id_modified": false,
+    "truth_labels_modified": false,
+    "operator_metadata_modified": false,
+    "join_key_semantics_modified": false,
+    "predeclared_metrics_modified": false,
+    "predeclared_strata_modified": false,
+    "cell_exclusion_or_replacement_authorized": false,
+    "a3_a4_verdict_logic_authorized_or_executed": false,
+    "fresh_target_selection_or_evaluation_authorized": false,
+    "tp_fp_fn_tn_still_forbidden": true,
+    "accuracy_sensitivity_specificity_still_forbidden": true
+  },
+  "scientific_disclosure": {
+    "truth_operator_labels_have_already_been_exposed": true,
+    "pristine_pre_unblinding_status_for_transport_receipt_representation_is_lost": true,
+    "reason": "The missing receipt.language field was discovered only after the frozen post-freeze qualifier began reading the already-frozen transport bundle under already-unblinded truth/operator labels.",
+    "per_cell_truth_transport_association_output_observed_before_this_erratum_freeze": false,
+    "joined_scientific_aggregate_observed_before_this_erratum_freeze": false,
+    "qualification_result_observed_before_this_erratum_freeze": false,
+    "erratum_is_representation_only_not_outcome_metric_or_threshold_driven": true
+  },
+  "authorized_next_implementation_delta": {
+    "allowed": "Implement only the compatibility_projection_contract above as a wrapper/view layer around the frozen bundle before invoking the frozen qualifier and frozen independent auditor.",
+    "original_qualifier_may_be_modified": false,
+    "original_independent_auditor_may_be_modified": false,
+    "frozen_transport_bundle_may_be_modified": false,
+    "frozen_transport_receipts_may_be_modified": false,
+    "new_transport_computation_may_be_executed": false,
+    "new_metric_or_join_rule_may_be_added": false
+  },
+  "next_authorized_step": "IMPLEMENT_ONLY_THE_FROZEN_ERRATUM_001_AND_ERRATUM_002_COMPATIBILITY_VIEWS_AROUND_THE_UNCHANGED_FROZEN_QUALIFIER_AND_AUDITOR; THEN RERUN THE OTHERWISE_IDENTICAL_POST_FREEZE_QUALIFICATION. IF A COMPLETE JOINED OUTPUT IS PRODUCED, FREEZE IT WITHOUT OUTCOME_DRIVEN_MODIFICATION BEFORE INTERPRETATION."
+}
