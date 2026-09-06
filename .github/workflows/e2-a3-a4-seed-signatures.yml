@@ -73,3 +73,5 @@ jobs:
             out/check1/E2_A3_A4_CANONICAL_SEED_CONSEQUENCE_SIGNATURE_INDEPENDENT_CHECK_v0.1.json
           if-no-files-found: error
           retention-days: 30
+
+# replay-trigger-only: canonical-signature cross-run 2; no semantic, derivation, or checker logic change
