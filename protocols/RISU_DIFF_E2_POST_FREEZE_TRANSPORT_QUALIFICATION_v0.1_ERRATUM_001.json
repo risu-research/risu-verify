@@ -1,0 +1,75 @@
+{
+  "schema": "risu.diff-e2-post-freeze-transport-qualification-erratum/v0.1",
+  "erratum_id": "ERRATUM_001_OPERATOR_ID_REPRESENTATION",
+  "status": "FROZEN_AFTER_LABEL_SCHEMA_UNBLINDING_BEFORE_ANY_TRUTH_TRANSPORT_JOIN",
+  "parent_protocol": {
+    "path": "protocols/RISU_DIFF_E2_POST_FREEZE_TRANSPORT_QUALIFICATION_v0.1.json",
+    "git_blob": "8d1860312d259e628e86070416a4757c570ba05f",
+    "commit": "4dd2e6ee2a90bd130042889dabe9ca116b8830a9"
+  },
+  "triggering_execution": {
+    "run_id": 34032454347,
+    "job_id": 101484389797,
+    "head_sha": "ff4720e862f5459002d77a23eb9df8269d5876e1",
+    "authority_gate_passed": true,
+    "expanded_matrix_read": true,
+    "cell_json_read_started": false,
+    "per_cell_truth_transport_join_started": false,
+    "qualification_json_emitted": false,
+    "independent_audit_executed": false,
+    "scientific_aggregate_emitted": false,
+    "failure_location": "tools/e2_postfreeze_transport_qualify.py operator-ID allowlist assertion before materialized-cell iteration",
+    "failure_class": "LABEL_SCHEMA_REPRESENTATION_MISMATCH"
+  },
+  "frozen_evidence": {
+    "expanded_matrix_sha256": "afd681d308a6f4ec8c183edd9b139c6b914fe501936cf84e5845a6a1c0d6b7cb",
+    "materialized_cells_tree_git_sha": "34a30574c7420728bff57958c815194979a622ab",
+    "frozen_transport_bundle_sha256": "78c5f024c1af7a353844120879d3ec4487b5f56fb443bc6e063530f836a9f74c",
+    "frozen_transport_bundle_git_blob": "95f7338e6f21bc3e0a8fc3209296d2e98c1c6f12",
+    "qualifier_git_blob_at_failure": "3b5cbe1bac55503e135426ccaab5ed73b65e5480",
+    "independent_auditor_git_blob_at_failure": "9bae752a306c762576c2b10f8cafbf400674566b"
+  },
+  "representation_correction": {
+    "original_protocol_field": "truth_contract.allowed_operator_ids",
+    "original_values_are_short_operator_codes": true,
+    "frozen_matrix_operator_id_encoding": "<SHORT_CODE>_<CANONICAL_OPERATOR_NAME>",
+    "validation_rule": "For each frozen matrix row, derive operator_code as the substring before the first underscore in operator_id; require operator_id to contain an underscore and require operator_code to belong to the parent protocol's class-specific allowed_operator_ids list.",
+    "full_operator_id_retained_verbatim_in_joined_records": true,
+    "full_operator_id_retained_verbatim_for_operator_id_stratification": true,
+    "operator_name_or_code_not_used_as_transport_join_feature": true,
+    "transport_join_key_unchanged": [
+      "seed_id",
+      "language",
+      "candidate_source_sha256"
+    ]
+  },
+  "unchanged_scientific_contract": {
+    "case_count": 58,
+    "class_cardinalities_unchanged": true,
+    "truth_labels_unchanged": true,
+    "expected_e2_primary_report_only_unchanged": true,
+    "predeclared_strata_unchanged": true,
+    "predeclared_metrics_unchanged": true,
+    "no_acceptance_threshold_added": true,
+    "no_cell_exclusion_or_replacement": true,
+    "no_transport_output_change": true,
+    "no_anchor_transport_repair_or_reranking": true,
+    "no_a3_a4_verdict_logic": true,
+    "no_fresh_target_evaluation": true,
+    "tp_fp_fn_tn_still_forbidden": true,
+    "accuracy_sensitivity_specificity_still_forbidden": true
+  },
+  "scientific_disclosure": {
+    "pristine_pre_unblinding_status_for_operator_id_encoding_check_is_lost": true,
+    "reason": "The mismatch was discovered only after the frozen expanded label matrix was first read.",
+    "outcome_association_still_unobserved_at_erratum_freeze": true,
+    "reason_outcome_association_still_unobserved": "Execution stopped before any materialized CELL.json iteration and before any per-cell lookup into the frozen transport receipts; no joined record or aggregate was emitted.",
+    "erratum_is_representation_only_not_metric_or_outcome_driven": true
+  },
+  "authorized_implementation_delta": {
+    "qualifier": "Replace exact full-string membership of operator_id against the short-code allowlist with the representation_correction validation_rule only.",
+    "auditor": "No scientific aggregation change authorized; existing independent join and aggregate recomputation remains unchanged.",
+    "workflow": "Update only authority hashes needed to bind the corrected qualifier and this erratum; do not change metrics, join, output interpretation, or frozen inputs."
+  },
+  "next_authorized_step": "IMPLEMENT_ONLY_THIS_REPRESENTATION_CORRECTION, RE-RUN THE OTHERWISE IDENTICAL POST-FREEZE QUALIFICATION, AND IF A COMPLETE SCIENTIFIC OUTPUT IS PRODUCED, FREEZE IT WITHOUT OUTCOME-DRIVEN MODIFICATION."
+}
