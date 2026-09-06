@@ -32,6 +32,11 @@ def canon(obj: Any) -> bytes:
     return json.dumps(obj, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
 
 
+def contract_canon(obj: Any) -> bytes:
+    # Exact frozen consequence-anchor validator convention: canonical JSON plus one final LF.
+    return canon(obj) + b"\n"
+
+
 def sha(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
@@ -111,7 +116,7 @@ def main() -> int:
         decl = entry["declaration"]
         if decl["source"]["language"] != row["language"]:
             raise SystemExit("admission language/contract mismatch")
-        if sha(canon(decl)) != entry["contract_canonical_sha256"]:
+        if sha(contract_canon(decl)) != entry["contract_canonical_sha256"]:
             raise SystemExit("anchor contract canonical digest mismatch")
 
         baseline_path = root / decl["source"]["path"]

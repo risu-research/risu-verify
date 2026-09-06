@@ -43,8 +43,8 @@ jobs:
           test "$(git hash-object protocols/RISU_DIFF_E2_MUTATION_BLIND_ANCHOR_TRANSPORT_v0.1.json)" = "7da7d3ac536d5edda56aa2c2636db1c8b02569b3"
           test "$(git hash-object risu_e2/model.py)" = "64baf95a4939f168881627830134b314a6ee6098"
           test "$(git hash-object risu_e2/ir.py)" = "d7edac40d4eeda86be74e5785bde3bfc28d4cf5e"
-          test "$(git hash-object tools/e2_anchor_transport_run_blind58.py)" = "61d38cae70ab5ceaf9be350fc3e1be5c30bfdd8d"
-          test "$(git hash-object tools/e2_anchor_transport_audit_blind58.py)" = "5cdc92e1d8108905d9414dd8c5320beab23db1dd"
+          test "$(git hash-object tools/e2_anchor_transport_run_blind58.py)" = "9acd48e66a749c39ac0e648317e19336477b980b"
+          test "$(git hash-object tools/e2_anchor_transport_audit_blind58.py)" = "dfb7c68147245cd190bf1dc0db5e398308df59fe"
           CAND="experiments/risu-diff-e2/qualification/anchor-transport/implementation-candidate"
           test "$(git hash-object "$CAND/chunk-00.b64")" = "d0a5ed7980d9ae0d2f2740624ac29a6e161ac9b9"
           test "$(git hash-object "$CAND/chunk-01.b64")" = "d196782d6dced42ac761e9cf923022ad45c79110"
@@ -188,8 +188,12 @@ jobs:
           assert b['claim_boundary']['a3_a4_verdict_logic_executed'] is False and b['claim_boundary']['truth_or_operator_unblinded'] is False
           h=lambda x:hashlib.sha256(x).hexdigest()
           r={
-            'schema':'risu.e2-blind-58-anchor-transport-authoritative-receipt/v0.1','status':'PASS','case_count':58,
-            'bundle_sha256':h(bundle),'independent_audit_sha256':h(audit),'source_only_staging_audit_sha256':h(staging),
+            'schema':'risu.e2-blind-58-anchor-transport-authoritative-receipt/v0.1',
+            'status':'PASS',
+            'case_count':58,
+            'bundle_sha256':h(bundle),
+            'independent_audit_sha256':h(audit),
+            'source_only_staging_audit_sha256':h(staging),
             'admission_manifest_sha256':'847d85c2274cd6b94a83eefe0f6153a8fb183dbad758efa75118a4fd368623e4',
             'admission_freeze_receipt_git_blob':'2c2ea8b9f6ca72c2262ffe6294287ee2e58fc00f',
             'transport_engine_sha256':'3b626fc83fe76a1dfafdcf896efc8a16440bbeec062cfb1dbb86badd23b7af4c',

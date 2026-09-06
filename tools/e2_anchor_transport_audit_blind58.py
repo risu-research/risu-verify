@@ -27,6 +27,11 @@ def canon(obj: Any) -> bytes:
     return json.dumps(obj, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
 
 
+def contract_canon(obj: Any) -> bytes:
+    # Exact frozen consequence-anchor validator convention: canonical JSON plus one final LF.
+    return canon(obj) + b"\n"
+
+
 def sha(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
@@ -182,7 +187,7 @@ def main() -> int:
                 errors.append("candidate_binding:" + case_id)
             if receipt.get("anchor_contract_sha256") != entry["contract_canonical_sha256"]:
                 errors.append("anchor_contract_binding:" + case_id)
-            if sha(canon(decl)) != entry["contract_canonical_sha256"]:
+            if sha(contract_canon(decl)) != entry["contract_canonical_sha256"]:
                 errors.append("anchor_contract_digest:" + case_id)
             try:
                 checker.verify_transport_receipt(receipt, baseline_bytes.decode("utf-8"), candidate_bytes.decode("utf-8"))
