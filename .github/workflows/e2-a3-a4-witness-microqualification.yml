@@ -1,0 +1,85 @@
+name: E2 A3 A4 Witness Microqualification
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'tools/e2_a3_a4_witness_microqualify.py'
+      - 'tools/e2_a3_a4_witness_microcheck.py'
+      - '.github/workflows/e2-a3-a4-witness-microqualification.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  microqualify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Verify frozen and implementation authorities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object protocols/RISU_DIFF_E2_A3_A4_VERDICT_PREREGISTRATION_v0.1.json)" = "8926d0b32a1c48addb5e341c3b8bdeb258fc7f85"
+          test "$(git hash-object experiments/risu-diff-e2/qualification/a3-a4/E2_A3_A4_CANONICAL_SEED_CONSEQUENCE_SIGNATURES_v0.1.json)" = "cfa7d78707599177afe690c3aad7faaa22cb1930"
+          test "$(sha256sum experiments/risu-diff-e2/qualification/a3-a4/E2_A3_A4_CANONICAL_SEED_CONSEQUENCE_SIGNATURES_v0.1.json | cut -d' ' -f1)" = "7a652a508d53960dc0fcdb8860b9d358165f6a6c96b050e6b962edccc2a4549f"
+          test "$(git hash-object experiments/risu-diff-e2/qualification/a3-a4/E2_A3_A4_CANONICAL_SEED_CONSEQUENCE_SIGNATURE_FREEZE_RECEIPT_v0.1.json)" = "2b5735dae285d6b3e67e1083f3e9b4381b63d170"
+          test "$(git hash-object tools/e2_a3_a4_witness_microqualify.py)" = "cf000fe11aeca95cae61c858cf4cc01d34f5c9af"
+          test "$(git hash-object tools/e2_a3_a4_witness_microcheck.py)" = "88c009c09397c7fefe734c431d88663f14de63d7"
+          python -m py_compile tools/e2_a3_a4_witness_microqualify.py tools/e2_a3_a4_witness_microcheck.py
+          ! grep -q "e2_a3_a4_witness_microqualify" tools/e2_a3_a4_witness_microcheck.py
+      - name: Construct closed runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          R="$RUNNER_TEMP/a3a4-micro"; rm -rf "$R"; mkdir -p "$R"/{in,bin,o1,o2,c1,c2}
+          cp protocols/RISU_DIFF_E2_A3_A4_VERDICT_PREREGISTRATION_v0.1.json "$R/in/pre.json"
+          cp experiments/risu-diff-e2/qualification/a3-a4/E2_A3_A4_CANONICAL_SEED_CONSEQUENCE_SIGNATURES_v0.1.json "$R/in/sig.json"
+          cp tools/e2_a3_a4_witness_microqualify.py "$R/bin/p.py"
+          cp tools/e2_a3_a4_witness_microcheck.py "$R/bin/c.py"
+          echo "$R" > "$RUNNER_TEMP/a3a4_micro_root"
+      - name: Primary replay twice
+        shell: bash
+        run: |
+          set -euo pipefail; R="$(cat "$RUNNER_TEMP/a3a4_micro_root")"; cd "$R"
+          python bin/p.py --prereg in/pre.json --signatures in/sig.json --bundle o1/bundle.json --receipt o1/primary.json
+          python bin/p.py --prereg in/pre.json --signatures in/sig.json --bundle o2/bundle.json --receipt o2/primary.json
+          cmp o1/bundle.json o2/bundle.json; cmp o1/primary.json o2/primary.json
+      - name: Independent replay twice
+        shell: bash
+        run: |
+          set -euo pipefail; R="$(cat "$RUNNER_TEMP/a3a4_micro_root")"; cd "$R"
+          python bin/c.py --prereg in/pre.json --bundle o1/bundle.json --primary o1/primary.json --receipt c1/independent.json
+          python bin/c.py --prereg in/pre.json --bundle o1/bundle.json --primary o1/primary.json --receipt c2/independent.json
+          cmp c1/independent.json c2/independent.json
+      - name: Assert preregistered mechanics and firewalls
+        shell: bash
+        run: |
+          set -euo pipefail; R="$(cat "$RUNNER_TEMP/a3a4_micro_root")"; cd "$R"
+          python - <<'PY'
+          import json
+          b=json.load(open('o1/bundle.json')); p=json.load(open('o1/primary.json')); c=json.load(open('c1/independent.json'))
+          assert b['family_count']==14 and b['case_count']==42 and p['status']=='PASS' and c['status']=='PASS'
+          assert all(sum(x['family_id']==f for x in b['cases'])==3 for f in {x['family_id'] for x in b['cases']})
+          assert all(v is False for v in p['firewall'].values()) and all(v is False for v in c['firewall'].values())
+          d=[r for r in c['rows'] if r['family_id']=='VQ_CHECKER_DISAGREEMENT']
+          assert len(d)==3 and all(r['primary_outcome']!=r['checker_outcome'] and r['composed_outcome']=='ASSURANCE_INCOMPLETE' for r in d)
+          print(json.dumps({'status':'PASS','families':14,'cases':42,'checker_disagreement_cases':3},sort_keys=True,separators=(',',':')))
+          PY
+          sha256sum o1/bundle.json o1/primary.json c1/independent.json
+      - name: Upload microqualification artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2-a3-a4-witness-microqualification
+          path: |
+            ${{ runner.temp }}/a3a4-micro/o1/bundle.json
+            ${{ runner.temp }}/a3a4-micro/o1/primary.json
+            ${{ runner.temp }}/a3a4-micro/c1/independent.json
+          if-no-files-found: error
+          retention-days: 30
