@@ -1,0 +1,28 @@
+{
+  "cell_id": "Q018",
+  "evidence_contract": {},
+  "evidence_fault": null,
+  "extra_files": [],
+  "operator_class": "M_ZERO_SEMANTIC_PRESERVING",
+  "operator_id": "N10_FILE_OR_SYMBOL_RENAME_WITH_RESOLUTION_UPDATED",
+  "primary_patch_ops": [
+    {
+      "after_b64": "ZGVmIGFzc2VtYmxlX2NvbW1hbmQoYm9keTogc3RyLCBzdXBwbGllZF9lcG9jaDogaW50KSAtPiBHdWFyZGVkQ29tbWFuZDoK",
+      "before_b64": "ZGVmIGJ1aWxkX2NvbW1hbmQoYm9keTogc3RyLCBzdXBwbGllZF9lcG9jaDogaW50KSAtPiBHdWFyZGVkQ29tbWFuZDoK",
+      "before_sha256": "4709fd06dab8af3a7b6d7b8aac656414f30021a21f7cf9df12901d5c2e43be88",
+      "seed_end_line_exclusive_1based": 14,
+      "seed_start_line_1based": 13,
+      "tag": "replace"
+    },
+    {
+      "after_b64": "ICAgIHJldHVybiBjb21taXRfZWZmZWN0KGN1cnJlbnRfZXBvY2gsIGFzc2VtYmxlX2NvbW1hbmQoInYxIiwgc3VwcGxpZWRfZXBvY2gpKQo=",
+      "before_b64": "ICAgIHJldHVybiBjb21taXRfZWZmZWN0KGN1cnJlbnRfZXBvY2gsIGJ1aWxkX2NvbW1hbmQoInYxIiwgc3VwcGxpZWRfZXBvY2gpKQo=",
+      "before_sha256": "082d1a2931dd7271e2d3a3f49642a0690293f32aad27d339bfc27d982b820b02",
+      "seed_end_line_exclusive_1based": 31,
+      "seed_start_line_1based": 30,
+      "tag": "replace"
+    }
+  ],
+  "seed_id": "SYN-PY-02",
+  "seed_sha256": "94671d3e704b93b5b5b8331e01cc8cad9a8b23366911d9282770d960da080f59"
+}

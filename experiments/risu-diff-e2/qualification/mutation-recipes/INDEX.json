@@ -1,0 +1,16 @@
+{
+  "aggregate_plain_recipes_sha256": "06373ac3414229c5817e1233804bd05f412c7d7fba155063b9b3b1b0296b74c2",
+  "anti_contamination": {
+    "e2_prediction_consumed": false,
+    "expected_truth_modified": false,
+    "real_target_bytes_used": false
+  },
+  "authority": {
+    "expanded_matrix_sha256": "afd681d308a6f4ec8c183edd9b139c6b914fe501936cf84e5845a6a1c0d6b7cb",
+    "truth_freeze_commit": "5738a2025457afeb408a44b446019347c1289a80"
+  },
+  "recipe_count": 58,
+  "recipe_shards": "Q001.json..Q058.json; each shard is one recipe object",
+  "schema": "risu.diff-e2-mutation-materialization-recipe-index/v0.1",
+  "status": "FROZEN_RECIPE_SET_DERIVED_FROM_PREDECLARED_58_CELL_MATRIX"
+}

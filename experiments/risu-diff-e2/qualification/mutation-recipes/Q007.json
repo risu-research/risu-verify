@@ -1,0 +1,20 @@
+{
+  "cell_id": "Q007",
+  "evidence_contract": {},
+  "evidence_fault": null,
+  "extra_files": [],
+  "operator_class": "M_ZERO_SEMANTIC_PRESERVING",
+  "operator_id": "N06_IRRELEVANT_METADATA_LOG_COMMENT_CHANGE",
+  "primary_patch_ops": [
+    {
+      "after_b64": "CiMgTVVUQVRJT04gTjA2OiBub25tYXRlcmlhbCBxdWFsaWZpY2F0aW9uIG5vdGUgb25seS4K",
+      "before_b64": "",
+      "before_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "seed_end_line_exclusive_1based": 5,
+      "seed_start_line_1based": 5,
+      "tag": "insert"
+    }
+  ],
+  "seed_id": "SYN-PY-01",
+  "seed_sha256": "f44afc11c76e0bf3b794d7286f14349e3026cfc6741e86459e3e734fb077090d"
+}

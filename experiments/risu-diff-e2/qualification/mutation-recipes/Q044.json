@@ -1,0 +1,28 @@
+{
+  "cell_id": "Q044",
+  "evidence_contract": {},
+  "evidence_fault": null,
+  "extra_files": [],
+  "operator_class": "M_ZERO_SEMANTIC_PRESERVING",
+  "operator_id": "N01_ALPHA_RENAME",
+  "primary_patch_ops": [
+    {
+      "after_b64": "ZnVuY3Rpb24gc2VyaWFsaXplKHNvdXJjZUludGVudCkgewo=",
+      "before_b64": "ZnVuY3Rpb24gc2VyaWFsaXplKGludGVudCkgewo=",
+      "before_sha256": "7483d5ab0a5dd03d552fb24c5d144686a760346a7c7a44c11fd4dfd61d2935f4",
+      "seed_end_line_exclusive_1based": 8,
+      "seed_start_line_1based": 7,
+      "tag": "replace"
+    },
+    {
+      "after_b64": "ICByZXR1cm4geyBib2R5OiBzb3VyY2VJbnRlbnQucGF5bG9hZCwgd2lyZV9ndWFyZDogc291cmNlSW50ZW50Lmd1YXJkU3RhbXAgfTsK",
+      "before_b64": "ICByZXR1cm4geyBib2R5OiBpbnRlbnQucGF5bG9hZCwgd2lyZV9ndWFyZDogaW50ZW50Lmd1YXJkU3RhbXAgfTsK",
+      "before_sha256": "bbcf22f9574eed8357e4f995dda798ac6ae1a88770fe4d8aa4f09717c6ebf6af",
+      "seed_end_line_exclusive_1based": 10,
+      "seed_start_line_1based": 9,
+      "tag": "replace"
+    }
+  ],
+  "seed_id": "SYN-TS-01",
+  "seed_sha256": "6cfef91eabc9342b42fbbe2ac8d7d5682b334efda0a058f4747e8b5579d25491"
+}

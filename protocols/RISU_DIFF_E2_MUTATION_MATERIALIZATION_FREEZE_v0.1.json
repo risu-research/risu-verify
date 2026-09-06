@@ -1,0 +1,67 @@
+{
+  "authority": {
+    "expanded_matrix_blob": "0ab0c31377d7e03bc279943af151c687f51ffc93",
+    "expanded_matrix_sha256": "afd681d308a6f4ec8c183edd9b139c6b914fe501936cf84e5845a6a1c0d6b7cb",
+    "materialization_contract_blob": "4bd3e92796e6e7f8ec69ed6805e22ee8942e01e6",
+    "mutation_algebra_blob": "58db99aaa0378da170a59dc99f0a5d2c1f006194",
+    "seed_catalog_blob": "2a0c01ad5850d3a701fb243d307ff441e9cae358",
+    "truth_oracle_blob": "1e5fe69f302df6fdd367797649b17eb3c4ea5950"
+  },
+  "claim_boundary": "This freeze establishes deterministic materialization and independent locality/runtime verification for the frozen 58-cell synthetic qualification universe. It does not establish E2 qualification success, fresh real-target performance, population accuracy, repair effectiveness, or authorization to begin the fresh held-out block.",
+  "commit_contract": {
+    "branch_update_must_be_fast_forward_only": true,
+    "containing_commit_and_tree_are_nonselfreferential_and_must_be_bound_by_postwrite_audit": true,
+    "force_update_forbidden": true,
+    "normative_commit_must_have_exactly_one_parent": "b76899d4796e9c1628782e8da4920230b22b30f8",
+    "postwrite_audit_required": true,
+    "preexisting_file_deletion_forbidden": true,
+    "preexisting_file_modification_forbidden": true
+  },
+  "freeze_id": "RISU_DIFF_E2_MUTATION_MATERIALIZATION_FREEZE_001",
+  "lineage": {
+    "parent_branch": "e2-development",
+    "parent_commit": "b76899d4796e9c1628782e8da4920230b22b30f8",
+    "parent_tree": "f81a725641a1cdaf1c9c23ef52435efc49ea4d96",
+    "truth_freeze_audit_commit": "b76899d4796e9c1628782e8da4920230b22b30f8",
+    "truth_freeze_commit": "5738a2025457afeb408a44b446019347c1289a80"
+  },
+  "materialization_objects": {
+    "cells_tree": "34a30574c7420728bff57958c815194979a622ab",
+    "materialization_manifest_blob": "d4253e71e5cdca6089cb0c5adbe8ae616fe93b71",
+    "materialized_subtree": "bc5064cf60bfd86940f870e478eb8fde95977382",
+    "materializer_blob": "72605d23f207aa15e5dd2461923bd87d1e095d77",
+    "pre_manifest_candidate_tree": "daf61602d729eb0e043b6a75d271a8b71863c897",
+    "recipe_tree": "3a74ad2783590f32f151aff9af6801d579811f9d",
+    "verification_receipt_blob": "0d35fbb6515c0de2f99b6ec1b8d5fe05ba412679",
+    "verifier_common_blob": "247f1f9c384ab6afb02a43ff5e8a8a9e96f82957",
+    "verifier_engine_blob": "db3c939071993afa10a46940914a6a3f4dcf21e2",
+    "verifier_entrypoint_blob": "583990b057adb16dedcde5a4c6bfd3b87b29e3d1"
+  },
+  "schema": "risu.diff-e2-mutation-materialization-freeze/v0.1",
+  "scientific_firewall": {
+    "e2_engine_runtime_implementation_included": false,
+    "e2_prediction_consumed": false,
+    "expected_truth_modified_after_e2_output": false,
+    "fresh_gold_consumed": false,
+    "fresh_target_bytes_consumed": false,
+    "fresh_target_selected": false,
+    "real_target_gold_consumed": false
+  },
+  "status": "FROZEN_AFTER_TRUTH_FREEZE_BEFORE_E2_ENGINE_IMPLEMENTATION",
+  "verified_results": {
+    "cell_count": 58,
+    "deterministic_replay": "PASS",
+    "direct_cell_file_count": 117,
+    "emitted_tree_digest_sha256": "e4702e642a6907894442dc8c317f6cdd3d814c296532fac5af6b2456c8b318f2",
+    "epistemic_adversarial_cells": 10,
+    "git_cells_tree_reconciliation": "PASS",
+    "git_cells_tree_sha": "34a30574c7420728bff57958c815194979a622ab",
+    "locality_pass": "58/58",
+    "logical_corpus_sha256": "e7612adb012eadb744066b3ae0a9421a3c17970730e556ec1c564f075e859746",
+    "positive_semantic_loss_cells": 24,
+    "runtime_relation_pass": "58/58",
+    "semantic_preserving_cells": 24,
+    "verifier_errors": [],
+    "world_input_invariance_pass": "58/58"
+  }
+}

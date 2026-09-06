@@ -1,0 +1,36 @@
+{
+  "cell_id": "Q023",
+  "evidence_contract": {},
+  "evidence_fault": null,
+  "extra_files": [],
+  "operator_class": "M_PLUS_SEMANTIC_LOSS",
+  "operator_id": "P06_EFFECT_BEFORE_GUARD",
+  "primary_patch_ops": [
+    {
+      "after_b64": "ICAgIGFwcGxpZWQgOj0gT2JzZXJ2YXRpb257T3V0Y29tZTogIldSSVRFX0FQUExJRUQiLCBFZmZlY3Q6IHRydWV9IC8vIE1VVEFUSU9OIFAwNjogZWZmZWN0IGZpcnN0Lgo=",
+      "before_b64": "ICAgIC8vIEVmZmVjdCBjdXQ6IHRoZSBjb25zZXF1ZW50aWFsIHdyaXRlIGlzIHJlYWNoYWJsZSBvbmx5IHdoZW4gdGhlIGNhcnJpZWQgbWFyayBtYXRjaGVzLgo=",
+      "before_sha256": "747523ee535ebf1a05cdc195f216845e0fc6cae4b08e9ea1931d92f57922fdb3",
+      "seed_end_line_exclusive_1based": 29,
+      "seed_start_line_1based": 28,
+      "tag": "replace"
+    },
+    {
+      "after_b64": "ICAgICAgICByZXR1cm4gYXBwbGllZAo=",
+      "before_b64": "ICAgICAgICByZXR1cm4gT2JzZXJ2YXRpb257T3V0Y29tZTogIlNUQUxFX1JFSkVDVEVEX05PX0VGRkVDVCIsIEVmZmVjdDogZmFsc2V9Cg==",
+      "before_sha256": "0838c4d5f1d31e67f002f654a0f9559d2387189b08cb782941e6f3e1f9cb2b9d",
+      "seed_end_line_exclusive_1based": 31,
+      "seed_start_line_1based": 30,
+      "tag": "replace"
+    },
+    {
+      "after_b64": "ICAgIHJldHVybiBhcHBsaWVkCg==",
+      "before_b64": "ICAgIHJldHVybiBPYnNlcnZhdGlvbntPdXRjb21lOiAiV1JJVEVfQVBQTElFRCIsIEVmZmVjdDogdHJ1ZX0K",
+      "before_sha256": "8d7f77c07de5940db7cd1216dc39ca441032befefd966aa235e591e9e2935155",
+      "seed_end_line_exclusive_1based": 33,
+      "seed_start_line_1based": 32,
+      "tag": "replace"
+    }
+  ],
+  "seed_id": "SYN-GO-01",
+  "seed_sha256": "b8d3c2a4df06c81a9f6b5794075ec7e98536f53bc39fca136477f659c99a95a7"
+}

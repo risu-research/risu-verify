@@ -1,0 +1,33 @@
+{
+  "bundle_sha256": "e3e82e6b18374ebb5e4d5fb6033322c2c522e7cf0cdbbba7fb6348525c476404",
+  "cell_id": "Q049",
+  "evidence_contract": {
+    "checker_disagreement_injected": true
+  },
+  "evidence_fault": "INDEPENDENT_CHECKER_DISAGREEMENT_INJECTION",
+  "expected_e2_primary": "INFRASTRUCTURE_INVALID_BEFORE_PREDICTION",
+  "expected_truth": "INFRASTRUCTURE_INVALID_BEFORE_PREDICTION",
+  "operator_class": "M_QUESTION_EPISTEMIC_ADVERSARIAL",
+  "operator_id": "A07_INDEPENDENT_CHECKER_DISAGREEMENT_INJECTION",
+  "primary_diff": {
+    "hunks": [
+      {
+        "mutant_lines": [
+          2,
+          3
+        ],
+        "seed_lines": [
+          2,
+          1
+        ],
+        "tag": "insert"
+      }
+    ],
+    "mutant_changed_line_count": 2,
+    "seed_changed_line_count": 0
+  },
+  "schema": "risu.diff-e2-materialized-mutant-cell/v0.1",
+  "seed_id": "SYN-TS-01",
+  "seed_sha256": "6cfef91eabc9342b42fbbe2ac8d7d5682b334efda0a058f4747e8b5579d25491",
+  "truth_source": "FROZEN_MUTATION_MATRIX_NOT_E2_OUTPUT"
+}

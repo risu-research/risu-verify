@@ -1,0 +1,31 @@
+{
+  "bundle_sha256": "3d142e5ecfc742f9f05ffce6e395db4c43491f8dfd4112cd79df2e9490c0a1c3",
+  "cell_id": "Q002",
+  "evidence_contract": {},
+  "evidence_fault": null,
+  "expected_e2_primary": "E2_PREDICTED_REGRESSION_WITNESS",
+  "expected_truth": "CONSEQUENCE_REGRESSION",
+  "operator_class": "M_PLUS_SEMANTIC_LOSS",
+  "operator_id": "P04_BIND_WRONG_COORDINATE_OR_RESOURCE",
+  "primary_diff": {
+    "hunks": [
+      {
+        "mutant_lines": [
+          27,
+          29
+        ],
+        "seed_lines": [
+          27,
+          27
+        ],
+        "tag": "replace"
+      }
+    ],
+    "mutant_changed_line_count": 3,
+    "seed_changed_line_count": 1
+  },
+  "schema": "risu.diff-e2-materialized-mutant-cell/v0.1",
+  "seed_id": "SYN-PY-01",
+  "seed_sha256": "f44afc11c76e0bf3b794d7286f14349e3026cfc6741e86459e3e734fb077090d",
+  "truth_source": "FROZEN_MUTATION_MATRIX_NOT_E2_OUTPUT"
+}

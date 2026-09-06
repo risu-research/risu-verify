@@ -1,0 +1,20 @@
+{
+  "cell_id": "Q033",
+  "evidence_contract": {},
+  "evidence_fault": null,
+  "extra_files": [],
+  "operator_class": "M_PLUS_SEMANTIC_LOSS",
+  "operator_id": "P05_REMOVE_OR_BYPASS_GUARD",
+  "primary_patch_ops": [
+    {
+      "after_b64": "ICAgIF8gPSBzbmFwc2hvdC5FcG9jaCA9PSBjb21tYW5kLkV4cGVjdGVkRXBvY2ggLy8gTVVUQVRJT04gUDA1OiBjb21wYXJlIG5vIGxvbmdlciBnYXRlcyBlZmZlY3QuCg==",
+      "before_b64": "ICAgIGlmIHNuYXBzaG90LkVwb2NoICE9IGNvbW1hbmQuRXhwZWN0ZWRFcG9jaCB7CiAgICAgICAgcmV0dXJuIE9ic2VydmF0aW9ue091dGNvbWU6ICJTVEFMRV9SRUpFQ1RFRF9OT19FRkZFQ1QiLCBFZmZlY3Q6IGZhbHNlfQogICAgfQo=",
+      "before_sha256": "b9b6f44353f51ed654786aaad256c85baaa37390c5bcbfd3f16a3761e19f1c2e",
+      "seed_end_line_exclusive_1based": 35,
+      "seed_start_line_1based": 32,
+      "tag": "replace"
+    }
+  ],
+  "seed_id": "SYN-GO-02",
+  "seed_sha256": "06d946178334d528d1dd4da7b9eb236f9c3bb65e75cb2e051d9f6ec76e1f18d1"
+}

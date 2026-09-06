@@ -1,0 +1,20 @@
+{
+  "cell_id": "Q014",
+  "evidence_contract": {},
+  "evidence_fault": null,
+  "extra_files": [],
+  "operator_class": "M_PLUS_SEMANTIC_LOSS",
+  "operator_id": "P03_OVERWRITE_CARRIER_BEFORE_EFFECT",
+  "primary_patch_ops": [
+    {
+      "after_b64": "ICAgIGNvbW1hbmQgPSBidWlsZF9jb21tYW5kKCJ2MSIsIHN1cHBsaWVkX2Vwb2NoKQogICAgY29tbWFuZCA9IEd1YXJkZWRDb21tYW5kKGJvZHk9Y29tbWFuZC5ib2R5LCBleHBlY3RlZF9lcG9jaD1jdXJyZW50X2Vwb2NoKSAgIyBNVVRBVElPTiBQMDMKICAgIHJldHVybiBjb21taXRfZWZmZWN0KGN1cnJlbnRfZXBvY2gsIGNvbW1hbmQpCg==",
+      "before_b64": "ICAgIHJldHVybiBjb21taXRfZWZmZWN0KGN1cnJlbnRfZXBvY2gsIGJ1aWxkX2NvbW1hbmQoInYxIiwgc3VwcGxpZWRfZXBvY2gpKQo=",
+      "before_sha256": "082d1a2931dd7271e2d3a3f49642a0690293f32aad27d339bfc27d982b820b02",
+      "seed_end_line_exclusive_1based": 31,
+      "seed_start_line_1based": 30,
+      "tag": "replace"
+    }
+  ],
+  "seed_id": "SYN-PY-02",
+  "seed_sha256": "94671d3e704b93b5b5b8331e01cc8cad9a8b23366911d9282770d960da080f59"
+}

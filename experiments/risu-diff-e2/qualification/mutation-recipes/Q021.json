@@ -1,0 +1,20 @@
+{
+  "cell_id": "Q021",
+  "evidence_contract": {},
+  "evidence_fault": null,
+  "extra_files": [],
+  "operator_class": "M_PLUS_SEMANTIC_LOSS",
+  "operator_id": "P01_DROP_GUARD_CARRIER_AT_EFFECT",
+  "primary_patch_ops": [
+    {
+      "after_b64": "ICAgIF8gPSByZXEuR3VhcmRNYXJrIC8vIE1VVEFUSU9OIFAwMTogY2FycmllZCBndWFyZCBkcm9wcGVkIGF0IGVmZmVjdCBjdXQuCg==",
+      "before_b64": "ICAgIGlmIHJlcS5HdWFyZE1hcmsgIT0gY3VycmVudE1hcmsgewogICAgICAgIHJldHVybiBPYnNlcnZhdGlvbntPdXRjb21lOiAiU1RBTEVfUkVKRUNURURfTk9fRUZGRUNUIiwgRWZmZWN0OiBmYWxzZX0KICAgIH0K",
+      "before_sha256": "a3552c4c970adeff897ad9c4c9d9bc0dedac039b3a9e8b13d8855d8cd3a4b7ec",
+      "seed_end_line_exclusive_1based": 32,
+      "seed_start_line_1based": 29,
+      "tag": "replace"
+    }
+  ],
+  "seed_id": "SYN-GO-01",
+  "seed_sha256": "b8d3c2a4df06c81a9f6b5794075ec7e98536f53bc39fca136477f659c99a95a7"
+}

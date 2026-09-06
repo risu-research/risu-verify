@@ -1,0 +1,20 @@
+{
+  "cell_id": "Q052",
+  "evidence_contract": {},
+  "evidence_fault": null,
+  "extra_files": [],
+  "operator_class": "M_PLUS_SEMANTIC_LOSS",
+  "operator_id": "P05_REMOVE_OR_BYPASS_GUARD",
+  "primary_patch_ops": [
+    {
+      "after_b64": "ICB2b2lkIChyZXEuZXhwZWN0ZWRHZW5lcmF0aW9uID09PSBjdXJyZW50R2VuZXJhdGlvbik7IC8vIE1VVEFUSU9OIFAwNQo=",
+      "before_b64": "ICBpZiAocmVxLmV4cGVjdGVkR2VuZXJhdGlvbiAhPT0gY3VycmVudEdlbmVyYXRpb24pIHsKICAgIHJldHVybiB7IG9rOiBmYWxzZSwga2luZDogIlNUQUxFIiwgZWZmZWN0OiBmYWxzZSB9OwogIH0K",
+      "before_sha256": "daf2a70c84de211011d7059cc79f09d38040bcbc526f810efc4ed0a89b3826eb",
+      "seed_end_line_exclusive_1based": 12,
+      "seed_start_line_1based": 9,
+      "tag": "replace"
+    }
+  ],
+  "seed_id": "SYN-TS-02",
+  "seed_sha256": "d738c2dbe3406d0afe65803cb743bd136316d81f58f2b86b406dd9f3bbc99b99"
+}

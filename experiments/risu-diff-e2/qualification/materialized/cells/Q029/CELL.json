@@ -1,0 +1,21 @@
+{
+  "bundle_sha256": "bb568ed5951463f1f3d34cef7e0c25664a87a310ca8c05d6aff2a96411d6c3c4",
+  "cell_id": "Q029",
+  "evidence_contract": {
+    "acquisition_budget_files": 1
+  },
+  "evidence_fault": "ACQUISITION_BUDGET_CEILING",
+  "expected_e2_primary": "E2_PREDICTED_ASSURANCE_INCOMPLETE",
+  "expected_truth": "ASSURANCE_INCOMPLETE",
+  "operator_class": "M_QUESTION_EPISTEMIC_ADVERSARIAL",
+  "operator_id": "A04_ACQUISITION_BUDGET_CEILING",
+  "primary_diff": {
+    "hunks": [],
+    "mutant_changed_line_count": 0,
+    "seed_changed_line_count": 0
+  },
+  "schema": "risu.diff-e2-materialized-mutant-cell/v0.1",
+  "seed_id": "SYN-GO-01",
+  "seed_sha256": "b8d3c2a4df06c81a9f6b5794075ec7e98536f53bc39fca136477f659c99a95a7",
+  "truth_source": "FROZEN_MUTATION_MATRIX_NOT_E2_OUTPUT"
+}

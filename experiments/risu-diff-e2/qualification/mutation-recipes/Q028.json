@@ -1,0 +1,20 @@
+{
+  "cell_id": "Q028",
+  "evidence_contract": {},
+  "evidence_fault": null,
+  "extra_files": [],
+  "operator_class": "M_ZERO_SEMANTIC_PRESERVING",
+  "operator_id": "N09_PURE_REQUEST_BUILDER_REFACTOR",
+  "primary_patch_ops": [
+    {
+      "after_b64": "ICAgIHJlcSA6PSBSZXF1ZXN0e1BheWxvYWQ6IGludGVudC5QYXlsb2FkLCBHdWFyZE1hcms6IGludGVudC5HdWFyZE1hcmt9CiAgICByZXR1cm4gcmVxCg==",
+      "before_b64": "ICAgIHJldHVybiBSZXF1ZXN0e1BheWxvYWQ6IGludGVudC5QYXlsb2FkLCBHdWFyZE1hcms6IGludGVudC5HdWFyZE1hcmt9Cg==",
+      "before_sha256": "beb49d211ba634d1fc6e3f0761a199f39e0fc4463c7a70cbcac53d648bbf8f37",
+      "seed_end_line_exclusive_1based": 25,
+      "seed_start_line_1based": 24,
+      "tag": "replace"
+    }
+  ],
+  "seed_id": "SYN-GO-01",
+  "seed_sha256": "b8d3c2a4df06c81a9f6b5794075ec7e98536f53bc39fca136477f659c99a95a7"
+}

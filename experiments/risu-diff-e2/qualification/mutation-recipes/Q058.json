@@ -1,0 +1,20 @@
+{
+  "cell_id": "Q058",
+  "evidence_contract": {},
+  "evidence_fault": "EXTERNAL_CONSEQUENCE_UNRESOLVED",
+  "extra_files": [],
+  "operator_class": "M_QUESTION_EPISTEMIC_ADVERSARIAL",
+  "operator_id": "A03_EXTERNAL_CONSEQUENCE_UNRESOLVED",
+  "primary_patch_ops": [
+    {
+      "after_b64": "CmNvbnN0IEVYVEVSTkFMX0NPTlNFUVVFTkNFX0NPTlRSQUNUID0gIlVOUkVTT0xWRUQiOyAvLyBNVVRBVElPTiBBMDMKdm9pZCBFWFRFUk5BTF9DT05TRVFVRU5DRV9DT05UUkFDVDsK",
+      "before_b64": "",
+      "before_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "seed_end_line_exclusive_1based": 2,
+      "seed_start_line_1based": 2,
+      "tag": "insert"
+    }
+  ],
+  "seed_id": "SYN-TS-02",
+  "seed_sha256": "d738c2dbe3406d0afe65803cb743bd136316d81f58f2b86b406dd9f3bbc99b99"
+}

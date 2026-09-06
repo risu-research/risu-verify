@@ -1,0 +1,22 @@
+{
+  "cell_id": "Q049",
+  "evidence_contract": {
+    "checker_disagreement_injected": true
+  },
+  "evidence_fault": "INDEPENDENT_CHECKER_DISAGREEMENT_INJECTION",
+  "extra_files": [],
+  "operator_class": "M_QUESTION_EPISTEMIC_ADVERSARIAL",
+  "operator_id": "A07_INDEPENDENT_CHECKER_DISAGREEMENT_INJECTION",
+  "primary_patch_ops": [
+    {
+      "after_b64": "Ci8vIE1VVEFUSU9OIEEwNzogc2VtYW50aWMgcHJvZ3JhbSB1bmNoYW5nZWQ7IGhhcm5lc3MgaW5qZWN0cyBjaGVja2VyIGRpc2FncmVlbWVudC4K",
+      "before_b64": "",
+      "before_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "seed_end_line_exclusive_1based": 2,
+      "seed_start_line_1based": 2,
+      "tag": "insert"
+    }
+  ],
+  "seed_id": "SYN-TS-01",
+  "seed_sha256": "6cfef91eabc9342b42fbbe2ac8d7d5682b334efda0a058f4747e8b5579d25491"
+}

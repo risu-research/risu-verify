@@ -1,0 +1,108 @@
+{
+  "authoritative_storage": {
+    "cell_count": 58,
+    "cell_tree_entry_list_sha256": "14dfe08b6f5f455c3fa68cc24c4c3542fce35095706af90256713cc83ffeb1a4",
+    "cells_git_tree_sha": "34a30574c7420728bff57958c815194979a622ab",
+    "cells_root": "experiments/risu-diff-e2/qualification/materialized/cells",
+    "compressed_transport_authoritative": false,
+    "corpus_sha256": "e7612adb012eadb744066b3ae0a9421a3c17970730e556ec1c564f075e859746",
+    "direct_file_count": 117,
+    "emitted_content_tree_sha256": "e4702e642a6907894442dc8c317f6cdd3d814c296532fac5af6b2456c8b318f2",
+    "generated_corpus_sha256": "e7612adb012eadb744066b3ae0a9421a3c17970730e556ec1c564f075e859746",
+    "logical_corpus_regeneration": "tools/e2_mutation_materializer.py from frozen seed bytes + mutation-recipes/Q001..Q058.json",
+    "logical_corpus_stored_as_normative_git_blob": false,
+    "mode": "PLAIN_CANONICAL_PLUS_DIRECT_REVIEWABLE_CELL_TREE",
+    "recipe_index_present": true,
+    "recipe_shard_count": 58,
+    "recipe_shards_git_tree_sha": "3a74ad2783590f32f151aff9af6801d579811f9d",
+    "recipe_shards_root": "experiments/risu-diff-e2/qualification/mutation-recipes",
+    "recipes_sha256": "06373ac3414229c5817e1233804bd05f412c7d7fba155063b9b3b1b0296b74c2",
+    "rule": "Authoritative storage is the plain sharded recipe tree plus direct Q001-Q058 reviewable cell tree. The logical JSONL corpus is deterministically regenerated and checked by digest; no compressed archive can override these bytes."
+  },
+  "authority": {
+    "expanded_matrix_sha256": "afd681d308a6f4ec8c183edd9b139c6b914fe501936cf84e5845a6a1c0d6b7cb",
+    "parent_branch_head": "b76899d4796e9c1628782e8da4920230b22b30f8",
+    "truth_freeze_audit_commit": "b76899d4796e9c1628782e8da4920230b22b30f8",
+    "truth_freeze_commit": "5738a2025457afeb408a44b446019347c1289a80"
+  },
+  "claim_boundary": "This manifest establishes deterministic materialization, direct reviewable archival, and independent locality/runtime/invariance verification of the previously frozen 58-cell synthetic qualification universe. It does not establish that E2 passes the qualification suite and does not provide fresh real-target evidence.",
+  "detected_and_excluded_objects": {
+    "compressed_or_mismatched_detached_objects_authoritative": false,
+    "connector_large_file_mismatch_policy": "Any upload whose Git blob SHA differed from locally computed expected identity was excluded before commit/ref admission."
+  },
+  "implementation": {
+    "contract": {
+      "git_blob": "4bd3e92796e6e7f8ec69ed6805e22ee8942e01e6",
+      "path": "protocols/RISU_DIFF_E2_MUTATION_MATERIALIZATION_CONTRACT_v0.1.json",
+      "sha256": "986073182c6709f0f4b494c578ee049d04becb59bd6b08755a0e54aad7e5e17d"
+    },
+    "materializer": {
+      "git_blob": "72605d23f207aa15e5dd2461923bd87d1e095d77",
+      "path": "tools/e2_mutation_materializer.py",
+      "sha256": "ded47b07b9c72ae76a782ef698f7548e895106d0a45b115886241530fc62b425"
+    },
+    "verifier_common": {
+      "git_blob": "247f1f9c384ab6afb02a43ff5e8a8a9e96f82957",
+      "path": "tools/e2_mutation_verifier_common.py",
+      "sha256": "78c50c22ce9367443014bafc3bb7887d957135cd13c22fef2fd9419fe0f27a32"
+    },
+    "verifier_engine": {
+      "git_blob": "db3c939071993afa10a46940914a6a3f4dcf21e2",
+      "path": "tools/e2_mutation_verifier_engine.py",
+      "sha256": "1929061dd421e9f337c42a43c99e27e3ba4979e30c847e60c85874c3ee91a4d4"
+    },
+    "verifier_entrypoint": {
+      "git_blob": "583990b057adb16dedcde5a4c6bfd3b87b29e3d1",
+      "path": "tools/e2_mutation_locality_verifier.py",
+      "sha256": "f83f4f9cb576149513ab438c9672f8c93d19aa75a9fb40efbcb5e751776ded01"
+    }
+  },
+  "materialization": {
+    "all_direct_git_cell_bytes_match_local_canonical": true,
+    "cells": 58,
+    "class_counts": {
+      "epistemic_adversarial": 10,
+      "semantic_loss": 24,
+      "semantic_preserving": 24
+    },
+    "emitted_tree_exact_replay": true,
+    "git_tree_reconciliation_method": "Independent Git object hashing of the local 58-cell directory produced cells_git_tree_sha identical to the detached Git candidate cells subtree.",
+    "logical_corpus_exact_replay": true,
+    "replay_count": 2
+  },
+  "next_gate": {
+    "e2_engine_implementation_may_begin": true,
+    "fresh_e2_evaluation_authorized": false,
+    "reason": "E2 engine implementation, execution against the frozen synthetic qualification suite, specialization audit, effective-universe closure, exact engine freeze, and fresh-selection protocol remain outstanding."
+  },
+  "schema": "risu.diff-e2-mutation-materialization-manifest/v0.2",
+  "scientific_firewall": {
+    "e2_engine_output_consumed": false,
+    "fresh_real_target_gold_consumed": false,
+    "fresh_target_bytes_consumed": false,
+    "fresh_target_selected": false,
+    "historical_unit002m_score_reused": false,
+    "materializer_role": "untrusted deterministic producer of synthetic fixture bytes",
+    "truth_modified_after_materialization": false,
+    "verifier_role": "independent fixture checker; not E2 semantic engine"
+  },
+  "status": "MATERIALIZATION_AND_INDEPENDENT_LOCALITY_INVARIANCE_VERIFICATION_PASS",
+  "verification": {
+    "bundle_hashes_verified": 58,
+    "deterministic_replay": {
+      "corpus_sha256": "e7612adb012eadb744066b3ae0a9421a3c17970730e556ec1c564f075e859746",
+      "emitted_tree_sha256": "e4702e642a6907894442dc8c317f6cdd3d814c296532fac5af6b2456c8b318f2",
+      "exact": true
+    },
+    "epistemic_runtime_and_fault_relation": "10/10 predeclared fail-closed/infrastructure fault behavior; A01 parse/compile invalid as declared",
+    "errors": [],
+    "locality_pass_cells": 58,
+    "receipt_git_blob": "0d35fbb6515c0de2f99b6ec1b8d5fe05ba412679",
+    "receipt_path": "experiments/risu-diff-e2/qualification/materialized/VERIFICATION_RECEIPT.json",
+    "receipt_sha256": "654145a267e94e084af74b2db4fd7ad8b39a5851aaa3099d3f0da6f6f00075c8",
+    "runtime_pass_cells": 58,
+    "semantic_loss_runtime_relation": "24/24 explicit target collapse: W_MATCH and W_STALE both WRITE_APPLIED/effect=true",
+    "semantic_preserving_runtime_relation": "24/24 exact baseline observation invariance",
+    "world_input_invariance_checked_cells": 58
+  }
+}

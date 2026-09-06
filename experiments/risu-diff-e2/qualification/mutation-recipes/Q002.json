@@ -1,0 +1,20 @@
+{
+  "cell_id": "Q002",
+  "evidence_contract": {},
+  "evidence_fault": null,
+  "extra_files": [],
+  "operator_class": "M_PLUS_SEMANTIC_LOSS",
+  "operator_id": "P04_BIND_WRONG_COORDINATE_OR_RESOURCE",
+  "primary_patch_ops": [
+    {
+      "after_b64": "ICAgIHJlcXVlc3QgPSBwcm9qZWN0KGludGVudCkKICAgIHJlcXVlc3RbImd1YXJkIl0gPSBjdXJyZW50X3Rva2VuICAjIE1VVEFUSU9OIFAwNDogd3JvbmcvY3VycmVudCByZXNvdXJjZSBjb29yZGluYXRlIHJlYm91bmQuCiAgICByZXR1cm4gdGFyZ2V0X2FwcGx5KGN1cnJlbnRfdG9rZW4sIHJlcXVlc3QpCg==",
+      "before_b64": "ICAgIHJldHVybiB0YXJnZXRfYXBwbHkoY3VycmVudF90b2tlbiwgcHJvamVjdChpbnRlbnQpKQo=",
+      "before_sha256": "03310b710e90625b307a5ee819ee4b0d80d2f425bbcfd3bc0a195e1518f3ba09",
+      "seed_end_line_exclusive_1based": 28,
+      "seed_start_line_1based": 27,
+      "tag": "replace"
+    }
+  ],
+  "seed_id": "SYN-PY-01",
+  "seed_sha256": "f44afc11c76e0bf3b794d7286f14349e3026cfc6741e86459e3e734fb077090d"
+}

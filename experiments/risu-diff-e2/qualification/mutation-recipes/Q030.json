@@ -1,0 +1,22 @@
+{
+  "cell_id": "Q030",
+  "evidence_contract": {
+    "withheld_role": "EFFECT_BINDING"
+  },
+  "evidence_fault": "PARTIAL_FLOW_WITH_MISSING_EFFECT_BINDING",
+  "extra_files": [],
+  "operator_class": "M_QUESTION_EPISTEMIC_ADVERSARIAL",
+  "operator_id": "A06_PARTIAL_FLOW_WITH_MISSING_EFFECT_BINDING",
+  "primary_patch_ops": [
+    {
+      "after_b64": "ICAgIC8vIE1VVEFUSU9OIEEwNjogcnVudGltZSBmbG93IHJlbWFpbnMgaW50YWN0OyBldmlkZW5jZSB2aWV3IHdpdGhob2xkcyBlZmZlY3QtYmluZGluZyBlZGdlLgo=",
+      "before_b64": "",
+      "before_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "seed_end_line_exclusive_1based": 36,
+      "seed_start_line_1based": 36,
+      "tag": "insert"
+    }
+  ],
+  "seed_id": "SYN-GO-01",
+  "seed_sha256": "b8d3c2a4df06c81a9f6b5794075ec7e98536f53bc39fca136477f659c99a95a7"
+}

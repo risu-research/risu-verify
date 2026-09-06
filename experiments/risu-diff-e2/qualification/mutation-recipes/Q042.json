@@ -1,0 +1,20 @@
+{
+  "cell_id": "Q042",
+  "evidence_contract": {},
+  "evidence_fault": null,
+  "extra_files": [],
+  "operator_class": "M_PLUS_SEMANTIC_LOSS",
+  "operator_id": "P08_SWALLOW_STALE_FAILURE_AS_SUCCESS",
+  "primary_patch_ops": [
+    {
+      "after_b64": "ICAgIHJldHVybiB7IG91dGNvbWU6ICJXUklURV9BUFBMSUVEIiwgZWZmZWN0OiB0cnVlIH07IC8vIE1VVEFUSU9OIFAwOAo=",
+      "before_b64": "ICAgIHJldHVybiB7IG91dGNvbWU6ICJTVEFMRV9SRUpFQ1RFRF9OT19FRkZFQ1QiLCBlZmZlY3Q6IGZhbHNlIH07Cg==",
+      "before_sha256": "738ca2d994e8b7f170f90912c4b3eceef3e2ceaba87341502e1e4f721829765a",
+      "seed_end_line_exclusive_1based": 16,
+      "seed_start_line_1based": 15,
+      "tag": "replace"
+    }
+  ],
+  "seed_id": "SYN-TS-01",
+  "seed_sha256": "6cfef91eabc9342b42fbbe2ac8d7d5682b334efda0a058f4747e8b5579d25491"
+}

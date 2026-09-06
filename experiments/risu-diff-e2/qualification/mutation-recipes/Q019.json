@@ -1,0 +1,20 @@
+{
+  "cell_id": "Q019",
+  "evidence_contract": {},
+  "evidence_fault": "AMBIGUOUS_DUAL_COORDINATES",
+  "extra_files": [],
+  "operator_class": "M_QUESTION_EPISTEMIC_ADVERSARIAL",
+  "operator_id": "A02_AMBIGUOUS_DUAL_COORDINATES",
+  "primary_patch_ops": [
+    {
+      "after_b64": "ICAgIGFsdGVybmF0ZV9leHBlY3RlZF9lcG9jaCA9IHN1cHBsaWVkX2Vwb2NoICsgMCAgIyBNVVRBVElPTiBBMDI6IGVxdWFsbHkgcGxhdXNpYmxlIGNvb3JkaW5hdGUuCiAgICBfID0gYWx0ZXJuYXRlX2V4cGVjdGVkX2Vwb2NoCg==",
+      "before_b64": "",
+      "before_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "seed_end_line_exclusive_1based": 30,
+      "seed_start_line_1based": 30,
+      "tag": "insert"
+    }
+  ],
+  "seed_id": "SYN-PY-02",
+  "seed_sha256": "94671d3e704b93b5b5b8331e01cc8cad9a8b23366911d9282770d960da080f59"
+}

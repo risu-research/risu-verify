@@ -1,0 +1,20 @@
+{
+  "cell_id": "Q011",
+  "evidence_contract": {},
+  "evidence_fault": null,
+  "extra_files": [],
+  "operator_class": "M_PLUS_SEMANTIC_LOSS",
+  "operator_id": "P02_RETRIEVE_THEN_DISCARD_IDENTITY",
+  "primary_patch_ops": [
+    {
+      "after_b64": "ICAgICIiIk1VVEFUSU9OIFAwMjogY3VycmVudCBpZGVudGl0eSBpcyBvYnNlcnZlZCBidXQgZGlzY2FyZGVkIGJlZm9yZSB0aGUgZWZmZWN0LiIiIgogICAgb2JzZXJ2ZWRfY3VycmVudCA9IGN1cnJlbnRfZXBvY2gKICAgIF8gPSBvYnNlcnZlZF9jdXJyZW50CiAgICBfID0gY29tbWFuZC5leHBlY3RlZF9lcG9jaAo=",
+      "before_b64": "ICAgICIiIkVmZmVjdCBjdXQ6IGNvbW1pdCBvY2N1cnMgb25seSBhZnRlciB0aGUgZXhwbGljaXQgZ3VhcmQgcHJlZGljYXRlIHN1Y2NlZWRzLiIiIgogICAgaWYgbm90IHBlcm1pdF9lZmZlY3QoY3VycmVudF9lcG9jaCwgY29tbWFuZCk6CiAgICAgICAgcmV0dXJuIHsib3V0Y29tZSI6ICJTVEFMRV9SRUpFQ1RFRF9OT19FRkZFQ1QiLCAiZWZmZWN0IjogRmFsc2V9Cg==",
+      "before_sha256": "322d9fc918cdfb13624359e5e62cf3f841da86afc7db57e5e934b7c74eac221a",
+      "seed_end_line_exclusive_1based": 26,
+      "seed_start_line_1based": 23,
+      "tag": "replace"
+    }
+  ],
+  "seed_id": "SYN-PY-02",
+  "seed_sha256": "94671d3e704b93b5b5b8331e01cc8cad9a8b23366911d9282770d960da080f59"
+}

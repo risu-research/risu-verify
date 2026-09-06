@@ -1,0 +1,20 @@
+{
+  "cell_id": "Q034",
+  "evidence_contract": {},
+  "evidence_fault": null,
+  "extra_files": [],
+  "operator_class": "M_PLUS_SEMANTIC_LOSS",
+  "operator_id": "P07_UNCONDITIONAL_FALLBACK",
+  "primary_patch_ops": [
+    {
+      "after_b64": "ICAgICAgICByZXR1cm4gT2JzZXJ2YXRpb257T3V0Y29tZTogIldSSVRFX0FQUExJRUQiLCBFZmZlY3Q6IHRydWV9IC8vIE1VVEFUSU9OIFAwNyBmYWxsYmFjawo=",
+      "before_b64": "ICAgICAgICByZXR1cm4gT2JzZXJ2YXRpb257T3V0Y29tZTogIlNUQUxFX1JFSkVDVEVEX05PX0VGRkVDVCIsIEVmZmVjdDogZmFsc2V9Cg==",
+      "before_sha256": "0838c4d5f1d31e67f002f654a0f9559d2387189b08cb782941e6f3e1f9cb2b9d",
+      "seed_end_line_exclusive_1based": 34,
+      "seed_start_line_1based": 33,
+      "tag": "replace"
+    }
+  ],
+  "seed_id": "SYN-GO-02",
+  "seed_sha256": "06d946178334d528d1dd4da7b9eb236f9c3bb65e75cb2e051d9f6ec76e1f18d1"
+}

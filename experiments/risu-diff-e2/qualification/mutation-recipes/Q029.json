@@ -1,0 +1,19 @@
+{
+  "cell_id": "Q029",
+  "evidence_contract": {
+    "acquisition_budget_files": 1
+  },
+  "evidence_fault": "ACQUISITION_BUDGET_CEILING",
+  "extra_files": [
+    {
+      "content_b64": "cGFja2FnZSBtYWluCgovLyBNVVRBVElPTiBBMDQ6IG1hdGVyaWFsIHNlbWFudGljIGVkZ2UgaW50ZW50aW9uYWxseSBwbGFjZWQgb3V0c2lkZSBhIG9uZS1maWxlIGV2aWRlbmNlIGJ1ZGdldC4KY29uc3QgSGlkZGVuTWF0ZXJpYWxDYXJyaWVyID0gImd1YXJkIgo=",
+      "path": "material_edge.go",
+      "sha256": "4df88c4ef1ba934b232cabeffb89dd6633ca336ccbe7c93ad7211645938c4f44"
+    }
+  ],
+  "operator_class": "M_QUESTION_EPISTEMIC_ADVERSARIAL",
+  "operator_id": "A04_ACQUISITION_BUDGET_CEILING",
+  "primary_patch_ops": [],
+  "seed_id": "SYN-GO-01",
+  "seed_sha256": "b8d3c2a4df06c81a9f6b5794075ec7e98536f53bc39fca136477f659c99a95a7"
+}

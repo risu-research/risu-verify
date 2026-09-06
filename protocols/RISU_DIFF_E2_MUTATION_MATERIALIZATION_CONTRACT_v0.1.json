@@ -1,0 +1,207 @@
+{
+  "authority": {
+    "matrix_sha256": "afd681d308a6f4ec8c183edd9b139c6b914fe501936cf84e5845a6a1c0d6b7cb",
+    "truth_freeze_audit_commit": "b76899d4796e9c1628782e8da4920230b22b30f8",
+    "truth_freeze_commit": "5738a2025457afeb408a44b446019347c1289a80"
+  },
+  "canonical_bundle_hash": "sha256 over each lexicographically sorted path encoded UTF-8, NUL, 8-byte big-endian content length, and exact content bytes",
+  "claim_boundary": "Passing materialization verification establishes deterministic, local, executable synthetic mutation fixtures under the frozen 58-cell contract. It is not E2 qualification success and not fresh real-target evidence.",
+  "determinism_contract": {
+    "materializer_replays": 2,
+    "require_identical_corpus_bytes": true,
+    "require_identical_emitted_tree_digest": true
+  },
+  "epistemic_fault_contract": {
+    "A01": "primary program must fail language syntax/compile before semantic execution.",
+    "A04": {
+      "acquisition_budget_files": 1,
+      "required_auxiliary_file": "material_edge.go"
+    },
+    "A07": {
+      "checker_disagreement_injected": true
+    },
+    "expected_fault_by_operator": {
+      "A01_MATERIAL_PARSE_FAILURE": "MATERIAL_PARSE_FAILURE",
+      "A02_AMBIGUOUS_DUAL_COORDINATES": "AMBIGUOUS_DUAL_COORDINATES",
+      "A03_EXTERNAL_CONSEQUENCE_UNRESOLVED": "EXTERNAL_CONSEQUENCE_UNRESOLVED",
+      "A04_ACQUISITION_BUDGET_CEILING": "ACQUISITION_BUDGET_CEILING",
+      "A05_DECORATIVE_VERSION_TOKEN": "DECORATIVE_VERSION_TOKEN",
+      "A06_PARTIAL_FLOW_WITH_MISSING_EFFECT_BINDING": "PARTIAL_FLOW_WITH_MISSING_EFFECT_BINDING",
+      "A07_INDEPENDENT_CHECKER_DISAGREEMENT_INJECTION": "INDEPENDENT_CHECKER_DISAGREEMENT_INJECTION"
+    }
+  },
+  "independence_rules": [
+    "Materializer may consume only frozen seed bytes, frozen 58-row matrix identity, and frozen materialization recipes.",
+    "Materializer must not accept E2 prediction, gold from any real target, or fresh target bytes.",
+    "Verifier must not trust materializer claims about semantic truth; it recomputes syntax/runtime relation and locality from exact bytes.",
+    "Expected truth remains the previously frozen matrix; this contract may not alter it."
+  ],
+  "locality_policy": {
+    "limits": {
+      "A01_MATERIAL_PARSE_FAILURE": {
+        "max_extra_files": 0,
+        "max_mutant_changed_lines": 3,
+        "max_seed_changed_lines": 0
+      },
+      "A02_AMBIGUOUS_DUAL_COORDINATES": {
+        "max_extra_files": 0,
+        "max_mutant_changed_lines": 2,
+        "max_seed_changed_lines": 0
+      },
+      "A03_EXTERNAL_CONSEQUENCE_UNRESOLVED": {
+        "max_extra_files": 0,
+        "max_mutant_changed_lines": 3,
+        "max_seed_changed_lines": 0
+      },
+      "A04_ACQUISITION_BUDGET_CEILING": {
+        "max_extra_files": 1,
+        "max_mutant_changed_lines": 0,
+        "max_seed_changed_lines": 0
+      },
+      "A05_DECORATIVE_VERSION_TOKEN": {
+        "max_extra_files": 0,
+        "max_mutant_changed_lines": 2,
+        "max_seed_changed_lines": 0
+      },
+      "A06_PARTIAL_FLOW_WITH_MISSING_EFFECT_BINDING": {
+        "max_extra_files": 0,
+        "max_mutant_changed_lines": 1,
+        "max_seed_changed_lines": 0
+      },
+      "A07_INDEPENDENT_CHECKER_DISAGREEMENT_INJECTION": {
+        "max_extra_files": 0,
+        "max_mutant_changed_lines": 2,
+        "max_seed_changed_lines": 0
+      },
+      "N01_ALPHA_RENAME": {
+        "max_extra_files": 0,
+        "max_mutant_changed_lines": 2,
+        "max_seed_changed_lines": 2
+      },
+      "N02_EQUIVALENT_SERIALIZATION_RENAME": {
+        "max_extra_files": 0,
+        "max_mutant_changed_lines": 3,
+        "max_seed_changed_lines": 3
+      },
+      "N03_HELPER_EXTRACT_OR_INLINE": {
+        "max_extra_files": 0,
+        "max_mutant_changed_lines": 5,
+        "max_seed_changed_lines": 1
+      },
+      "N04_WRAPPER_DEPTH_INSERTION": {
+        "max_extra_files": 0,
+        "max_mutant_changed_lines": 5,
+        "max_seed_changed_lines": 1
+      },
+      "N05_OBJECT_PROPERTY_ALIAS_WITH_EXACT_FLOW": {
+        "max_extra_files": 0,
+        "max_mutant_changed_lines": 2,
+        "max_seed_changed_lines": 1
+      },
+      "N06_IRRELEVANT_METADATA_LOG_COMMENT_CHANGE": {
+        "max_extra_files": 0,
+        "max_mutant_changed_lines": 2,
+        "max_seed_changed_lines": 0
+      },
+      "N07_EQUIVALENT_GUARD_NORMALIZATION": {
+        "max_extra_files": 0,
+        "max_mutant_changed_lines": 1,
+        "max_seed_changed_lines": 1
+      },
+      "N08_ERROR_WRAPPER_PRESERVES_DISTINCTION": {
+        "max_extra_files": 0,
+        "max_mutant_changed_lines": 8,
+        "max_seed_changed_lines": 2
+      },
+      "N09_PURE_REQUEST_BUILDER_REFACTOR": {
+        "max_extra_files": 0,
+        "max_mutant_changed_lines": 2,
+        "max_seed_changed_lines": 1
+      },
+      "N10_FILE_OR_SYMBOL_RENAME_WITH_RESOLUTION_UPDATED": {
+        "max_extra_files": 0,
+        "max_mutant_changed_lines": 3,
+        "max_seed_changed_lines": 3
+      },
+      "P01_DROP_GUARD_CARRIER_AT_EFFECT": {
+        "max_extra_files": 0,
+        "max_mutant_changed_lines": 3,
+        "max_seed_changed_lines": 3
+      },
+      "P02_RETRIEVE_THEN_DISCARD_IDENTITY": {
+        "max_extra_files": 0,
+        "max_mutant_changed_lines": 4,
+        "max_seed_changed_lines": 4
+      },
+      "P03_OVERWRITE_CARRIER_BEFORE_EFFECT": {
+        "max_extra_files": 0,
+        "max_mutant_changed_lines": 3,
+        "max_seed_changed_lines": 4
+      },
+      "P04_BIND_WRONG_COORDINATE_OR_RESOURCE": {
+        "max_extra_files": 0,
+        "max_mutant_changed_lines": 3,
+        "max_seed_changed_lines": 1
+      },
+      "P05_REMOVE_OR_BYPASS_GUARD": {
+        "max_extra_files": 0,
+        "max_mutant_changed_lines": 1,
+        "max_seed_changed_lines": 3
+      },
+      "P06_EFFECT_BEFORE_GUARD": {
+        "max_extra_files": 0,
+        "max_mutant_changed_lines": 3,
+        "max_seed_changed_lines": 5
+      },
+      "P07_UNCONDITIONAL_FALLBACK": {
+        "max_extra_files": 0,
+        "max_mutant_changed_lines": 2,
+        "max_seed_changed_lines": 1
+      },
+      "P08_SWALLOW_STALE_FAILURE_AS_SUCCESS": {
+        "max_extra_files": 0,
+        "max_mutant_changed_lines": 1,
+        "max_seed_changed_lines": 1
+      },
+      "P09_COMPARE_CORRECTLY_EFFECT_UNGUARDED": {
+        "max_extra_files": 0,
+        "max_mutant_changed_lines": 2,
+        "max_seed_changed_lines": 4
+      },
+      "P10_SERIALIZATION_OMITS_GUARD_FIELD": {
+        "max_extra_files": 0,
+        "max_mutant_changed_lines": 2,
+        "max_seed_changed_lines": 2
+      }
+    },
+    "rule": "Each primary diff must stay at or below the predeclared operator-specific changed-line ceiling; auxiliary file count must not exceed its ceiling. Exact observed values may be lower."
+  },
+  "materialization_unit": "cell bundle: one primary executable source plus zero or more explicitly declared auxiliary evidence/program files",
+  "promotion_gates": {
+    "A01_compile_failures_exactly_predeclared": true,
+    "all_bundle_hashes_recompute": true,
+    "all_locality_checks_pass": true,
+    "all_matrix_recipe_keys_match": true,
+    "all_seed_hashes_match_frozen_catalog": true,
+    "all_valid_program_runtime_relations_pass": true,
+    "all_world_inputs_unchanged": true,
+    "cell_count": 58,
+    "epistemic_fault_mismatches": 0,
+    "semantic_loss_noncollapse_count": 0,
+    "semantic_preserving_runtime_mismatches": 0
+  },
+  "runtime_relations": {
+    "M_PLUS_SEMANTIC_LOSS": {
+      "valid_program_expected": "W_MATCH and W_STALE both materialize as WRITE_APPLIED/effect=true, establishing an explicit target collapse for these qualification mutants."
+    },
+    "M_QUESTION_EPISTEMIC_ADVERSARIAL": {
+      "valid_program_expected": "exact baseline runtime observations unless the operator is predeclared infrastructure-invalid; semantic uncertainty comes from evidence availability, not fabricated runtime divergence."
+    },
+    "M_ZERO_SEMANTIC_PRESERVING": {
+      "valid_program_expected": "exact equality with frozen baseline observations in both worlds."
+    }
+  },
+  "schema": "risu.diff-e2-mutation-materialization-contract/v0.1",
+  "status": "FROZEN_BEFORE_E2_ENGINE_IMPLEMENTATION",
+  "world_input_invariance": "The exact frozen W_MATCH and W_STALE invocation lines must remain present unchanged in every primary mutant source."
+}

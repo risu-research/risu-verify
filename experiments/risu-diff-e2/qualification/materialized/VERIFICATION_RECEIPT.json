@@ -1,0 +1,75 @@
+{
+  "anti_contamination": {
+    "e2_prediction_consumed": false,
+    "fresh_target_bytes_consumed": false,
+    "real_target_gold_consumed": false
+  },
+  "authority": {
+    "cells_git_tree_sha": "34a30574c7420728bff57958c815194979a622ab",
+    "expanded_matrix_sha256": "afd681d308a6f4ec8c183edd9b139c6b914fe501936cf84e5845a6a1c0d6b7cb",
+    "recipe_shards_git_tree_sha": "3a74ad2783590f32f151aff9af6801d579811f9d",
+    "truth_freeze_audit_commit": "b76899d4796e9c1628782e8da4920230b22b30f8"
+  },
+  "canonical_generated_corpus_sha256": "e7612adb012eadb744066b3ae0a9421a3c17970730e556ec1c564f075e859746",
+  "claim_boundary": "Passing materialization verification establishes deterministic, local, executable synthetic mutation fixtures under the frozen 58-cell contract. It is not E2 qualification success and not fresh real-target evidence.",
+  "deterministic_replay": {
+    "corpus_bytes_identical": true,
+    "emitted_tree_digest_identical": true,
+    "emitted_tree_sha256": "e4702e642a6907894442dc8c317f6cdd3d814c296532fac5af6b2456c8b318f2",
+    "replay_corpus_sha256": "e7612adb012eadb744066b3ae0a9421a3c17970730e556ec1c564f075e859746",
+    "requested": true
+  },
+  "independence": "Verifier recomputes seed identity, bundle hashes, world-input invariance, diff locality, syntax/runtime relation, and epistemic fault contracts; it does not accept E2 predictions as truth authority.",
+  "schema": "risu.diff-e2-mutation-materialization-verification-receipt/v0.2",
+  "status": "PASS",
+  "verification": {
+    "bundle_hashes_verified": 58,
+    "cell_count": 58,
+    "cell_result_records_sha256": "08554aa6e0b031b1bc53dfa0c7a48c2d8ff52f84159290e8f55a027332b35a0f",
+    "class_counts": {
+      "M_PLUS_SEMANTIC_LOSS": 24,
+      "M_QUESTION_EPISTEMIC_ADVERSARIAL": 10,
+      "M_ZERO_SEMANTIC_PRESERVING": 24
+    },
+    "epistemic_adversarial_cells": 10,
+    "errors": [],
+    "locality_pass_cells": 58,
+    "runtime_pass_cells": 58,
+    "semantic_loss_cells": 24,
+    "semantic_preserving_cells": 24,
+    "world_input_invariance_checked_cells": 58
+  },
+  "verification_implementation": {
+    "contract": {
+      "bytes": 8302,
+      "git_blob": "4bd3e92796e6e7f8ec69ed6805e22ee8942e01e6",
+      "path": "protocols/RISU_DIFF_E2_MUTATION_MATERIALIZATION_CONTRACT_v0.1.json",
+      "sha256": "986073182c6709f0f4b494c578ee049d04becb59bd6b08755a0e54aad7e5e17d"
+    },
+    "materializer": {
+      "bytes": 8543,
+      "git_blob": "72605d23f207aa15e5dd2461923bd87d1e095d77",
+      "path": "tools/e2_mutation_materializer.py",
+      "sha256": "ded47b07b9c72ae76a782ef698f7548e895106d0a45b115886241530fc62b425"
+    },
+    "verifier_common": {
+      "bytes": 4048,
+      "git_blob": "247f1f9c384ab6afb02a43ff5e8a8a9e96f82957",
+      "path": "tools/e2_mutation_verifier_common.py",
+      "sha256": "78c50c22ce9367443014bafc3bb7887d957135cd13c22fef2fd9419fe0f27a32"
+    },
+    "verifier_engine": {
+      "bytes": 9960,
+      "git_blob": "db3c939071993afa10a46940914a6a3f4dcf21e2",
+      "path": "tools/e2_mutation_verifier_engine.py",
+      "sha256": "1929061dd421e9f337c42a43c99e27e3ba4979e30c847e60c85874c3ee91a4d4"
+    },
+    "verifier_entrypoint": {
+      "bytes": 663,
+      "git_blob": "583990b057adb16dedcde5a4c6bfd3b87b29e3d1",
+      "path": "tools/e2_mutation_locality_verifier.py",
+      "sha256": "f83f4f9cb576149513ab438c9672f8c93d19aa75a9fb40efbcb5e751776ded01"
+    }
+  },
+  "verifier_modularization_note": "Large-file connector byte mismatch was detected before lineage admission; verifier was split without changing verification logic, rerun end-to-end, and only exact modular blobs are authoritative."
+}

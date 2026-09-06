@@ -1,0 +1,31 @@
+{
+  "bundle_sha256": "8053544ba86fb5a542f4aa2f20a9005d29ec0e957e9c68b7f3bdba1d229c738f",
+  "cell_id": "Q058",
+  "evidence_contract": {},
+  "evidence_fault": "EXTERNAL_CONSEQUENCE_UNRESOLVED",
+  "expected_e2_primary": "E2_PREDICTED_ASSURANCE_INCOMPLETE",
+  "expected_truth": "ASSURANCE_INCOMPLETE",
+  "operator_class": "M_QUESTION_EPISTEMIC_ADVERSARIAL",
+  "operator_id": "A03_EXTERNAL_CONSEQUENCE_UNRESOLVED",
+  "primary_diff": {
+    "hunks": [
+      {
+        "mutant_lines": [
+          2,
+          4
+        ],
+        "seed_lines": [
+          2,
+          1
+        ],
+        "tag": "insert"
+      }
+    ],
+    "mutant_changed_line_count": 3,
+    "seed_changed_line_count": 0
+  },
+  "schema": "risu.diff-e2-materialized-mutant-cell/v0.1",
+  "seed_id": "SYN-TS-02",
+  "seed_sha256": "d738c2dbe3406d0afe65803cb743bd136316d81f58f2b86b406dd9f3bbc99b99",
+  "truth_source": "FROZEN_MUTATION_MATRIX_NOT_E2_OUTPUT"
+}

@@ -1,0 +1,53 @@
+{
+  "bundle_sha256": "0a0e9e6858c80242800f3992da42a50379021e9be0cbf62d6ae10f575d27fd24",
+  "cell_id": "Q035",
+  "evidence_contract": {},
+  "evidence_fault": null,
+  "expected_e2_primary": "E2_PREDICTED_PRESERVATION_EVIDENCE",
+  "expected_truth": "CONSEQUENCE_STABLE_IN_DECLARED_SCOPE",
+  "operator_class": "M_ZERO_SEMANTIC_PRESERVING",
+  "operator_id": "N02_EQUIVALENT_SERIALIZATION_RENAME",
+  "primary_diff": {
+    "hunks": [
+      {
+        "mutant_lines": [
+          14,
+          14
+        ],
+        "seed_lines": [
+          14,
+          14
+        ],
+        "tag": "replace"
+      },
+      {
+        "mutant_lines": [
+          27,
+          27
+        ],
+        "seed_lines": [
+          27,
+          27
+        ],
+        "tag": "replace"
+      },
+      {
+        "mutant_lines": [
+          32,
+          32
+        ],
+        "seed_lines": [
+          32,
+          32
+        ],
+        "tag": "replace"
+      }
+    ],
+    "mutant_changed_line_count": 3,
+    "seed_changed_line_count": 3
+  },
+  "schema": "risu.diff-e2-materialized-mutant-cell/v0.1",
+  "seed_id": "SYN-GO-02",
+  "seed_sha256": "06d946178334d528d1dd4da7b9eb236f9c3bb65e75cb2e051d9f6ec76e1f18d1",
+  "truth_source": "FROZEN_MUTATION_MATRIX_NOT_E2_OUTPUT"
+}

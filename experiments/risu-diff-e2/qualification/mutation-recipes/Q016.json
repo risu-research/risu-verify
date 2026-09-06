@@ -1,0 +1,20 @@
+{
+  "cell_id": "Q016",
+  "evidence_contract": {},
+  "evidence_fault": null,
+  "extra_files": [],
+  "operator_class": "M_ZERO_SEMANTIC_PRESERVING",
+  "operator_id": "N05_OBJECT_PROPERTY_ALIAS_WITH_EXACT_FLOW",
+  "primary_patch_ops": [
+    {
+      "after_b64": "ICAgIGV4cGVjdGVkX2FsaWFzID0gY29tbWFuZC5leHBlY3RlZF9lcG9jaAogICAgcmV0dXJuIGV4cGVjdGVkX2FsaWFzID09IGN1cnJlbnRfZXBvY2gK",
+      "before_b64": "ICAgIHJldHVybiBjb21tYW5kLmV4cGVjdGVkX2Vwb2NoID09IGN1cnJlbnRfZXBvY2gK",
+      "before_sha256": "09aad3dac2c1c9c42914df84777c651ba99d1540bcccb9908b9cd3f98d487e2a",
+      "seed_end_line_exclusive_1based": 20,
+      "seed_start_line_1based": 19,
+      "tag": "replace"
+    }
+  ],
+  "seed_id": "SYN-PY-02",
+  "seed_sha256": "94671d3e704b93b5b5b8331e01cc8cad9a8b23366911d9282770d960da080f59"
+}

@@ -1,0 +1,20 @@
+{
+  "cell_id": "Q046",
+  "evidence_contract": {},
+  "evidence_fault": null,
+  "extra_files": [],
+  "operator_class": "M_ZERO_SEMANTIC_PRESERVING",
+  "operator_id": "N07_EQUIVALENT_GUARD_NORMALIZATION",
+  "primary_patch_ops": [
+    {
+      "after_b64": "ICBpZiAoISh3aXJlUmVxdWVzdC53aXJlX2d1YXJkID09PSBjdXJyZW50U3RhbXApKSB7Cg==",
+      "before_b64": "ICBpZiAod2lyZVJlcXVlc3Qud2lyZV9ndWFyZCAhPT0gY3VycmVudFN0YW1wKSB7Cg==",
+      "before_sha256": "f4cef085c5bfb687a9e2400fb4881f64815560868dff2a35a00fd926884dfa96",
+      "seed_end_line_exclusive_1based": 15,
+      "seed_start_line_1based": 14,
+      "tag": "replace"
+    }
+  ],
+  "seed_id": "SYN-TS-01",
+  "seed_sha256": "6cfef91eabc9342b42fbbe2ac8d7d5682b334efda0a058f4747e8b5579d25491"
+}

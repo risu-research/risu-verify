@@ -1,0 +1,20 @@
+{
+  "cell_id": "Q025",
+  "evidence_contract": {},
+  "evidence_fault": null,
+  "extra_files": [],
+  "operator_class": "M_ZERO_SEMANTIC_PRESERVING",
+  "operator_id": "N01_ALPHA_RENAME",
+  "primary_patch_ops": [
+    {
+      "after_b64": "ZnVuYyBwcm9qZWN0KHNvdXJjZUludGVudCBJbnRlbnQpIFJlcXVlc3QgewogICAgcmV0dXJuIFJlcXVlc3R7UGF5bG9hZDogc291cmNlSW50ZW50LlBheWxvYWQsIEd1YXJkTWFyazogc291cmNlSW50ZW50Lkd1YXJkTWFya30K",
+      "before_b64": "ZnVuYyBwcm9qZWN0KGludGVudCBJbnRlbnQpIFJlcXVlc3QgewogICAgcmV0dXJuIFJlcXVlc3R7UGF5bG9hZDogaW50ZW50LlBheWxvYWQsIEd1YXJkTWFyazogaW50ZW50Lkd1YXJkTWFya30K",
+      "before_sha256": "936abdcec22f7b7e8812e9c5a75a6554c30205ce7bfce38921c1848b6ed182dd",
+      "seed_end_line_exclusive_1based": 25,
+      "seed_start_line_1based": 23,
+      "tag": "replace"
+    }
+  ],
+  "seed_id": "SYN-GO-01",
+  "seed_sha256": "b8d3c2a4df06c81a9f6b5794075ec7e98536f53bc39fca136477f659c99a95a7"
+}

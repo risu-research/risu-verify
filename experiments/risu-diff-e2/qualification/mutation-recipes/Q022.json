@@ -1,0 +1,20 @@
+{
+  "cell_id": "Q022",
+  "evidence_contract": {},
+  "evidence_fault": null,
+  "extra_files": [],
+  "operator_class": "M_PLUS_SEMANTIC_LOSS",
+  "operator_id": "P02_RETRIEVE_THEN_DISCARD_IDENTITY",
+  "primary_patch_ops": [
+    {
+      "after_b64": "ICAgIG9ic2VydmVkQ3VycmVudCA6PSBjdXJyZW50TWFyayAvLyBNVVRBVElPTiBQMDI6IHJldHJpZXZlZCBpZGVudGl0eS4KICAgIF8gPSBvYnNlcnZlZEN1cnJlbnQgICAgICAgICAgICAgLy8gZGlzY2FyZGVkIGJlZm9yZSBlZmZlY3QuCiAgICBfID0gcmVxLkd1YXJkTWFyawo=",
+      "before_b64": "ICAgIC8vIEVmZmVjdCBjdXQ6IHRoZSBjb25zZXF1ZW50aWFsIHdyaXRlIGlzIHJlYWNoYWJsZSBvbmx5IHdoZW4gdGhlIGNhcnJpZWQgbWFyayBtYXRjaGVzLgogICAgaWYgcmVxLkd1YXJkTWFyayAhPSBjdXJyZW50TWFyayB7CiAgICAgICAgcmV0dXJuIE9ic2VydmF0aW9ue091dGNvbWU6ICJTVEFMRV9SRUpFQ1RFRF9OT19FRkZFQ1QiLCBFZmZlY3Q6IGZhbHNlfQogICAgfQo=",
+      "before_sha256": "8de311322963e86df45d238b266ca30eb61039c65f15762adfe6a64c0c4c07b1",
+      "seed_end_line_exclusive_1based": 32,
+      "seed_start_line_1based": 28,
+      "tag": "replace"
+    }
+  ],
+  "seed_id": "SYN-GO-01",
+  "seed_sha256": "b8d3c2a4df06c81a9f6b5794075ec7e98536f53bc39fca136477f659c99a95a7"
+}
