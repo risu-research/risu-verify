@@ -1,0 +1,69 @@
+name: E2 Candidate Observability Locator Diagnostic
+
+on:
+  push:
+    branches: [e2-development]
+    paths:
+      - ".github/workflows/e2-a3-a4-candidate-observability-locator-diagnostic.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  locator-only:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.13"
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff
+        with:
+          go-version: "1.23.2"
+      - name: Enumerate frontend anchor-locator matches only
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          from risu_e2.frontend_python import extract as pyx
+          from risu_e2.frontend_js import extract as jsx
+          from risu_e2.frontend_go import extract_many as gox
+          corpus=json.loads(Path('experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/E2_A3_A4_CANDIDATE_OBSERVABILITY_MICROFIXTURES_v0.1.json').read_bytes())
+          def span(f):
+              s=f['span']; return s['start_line'],s['start_col'],s['end_line'],s['end_col']
+          def sl(source,sp):
+              a,b,c,d=sp; lines=source.splitlines(keepends=True)
+              if a==c: return lines[a-1].encode()[b:d].decode(errors='replace')
+              out=lines[a-1].encode()[b:]
+              for line in lines[a:c-1]: out+=line.encode()
+              out+=lines[c-1].encode()[:d]
+              return out.decode(errors='replace')
+          rows=[]
+          for fx in sorted(corpus['fixtures'],key=lambda x:x['fixture_id']):
+              src=fx['source']; raw=src.encode(); lang=fx['language']; path=fx['filename']
+              if lang=='python': parsed=pyx(src)
+              elif lang=='typescript_javascript': parsed=jsx(src)
+              else: parsed=gox([{'path':path,'data':raw}],Path('tools/e2_go_ir_extract.go'))[path]
+              rr={'fixture_id':fx['fixture_id'],'frontend_status':parsed.get('status'),'locators':{}}
+              for key,loc in fx['anchor_locators'].items():
+                  matches=[]
+                  for fact in parsed.get('facts',[]):
+                      if fact.get('kind')!=loc['fact_kind']: continue
+                      text=sl(src,span(fact))
+                      if loc['source_contains'] in text: matches.append({'span':list(span(fact)),'slice':text,'operators':fact.get('operators'),'operands':fact.get('operands')})
+                  rr['locators'][key]={'expected_occurrence':loc.get('occurrence',0),'match_count':len(matches),'matches':matches}
+              rows.append(rr)
+          bad=[r for r in rows if any(v['match_count']<=v['expected_occurrence'] for v in r['locators'].values())]
+          out={'schema':'risu.e2-candidate-observability-locator-diagnostic/v0.1','status':'DIAGNOSTIC_ONLY','fixture_count':48,'bad_fixture_count':len(bad),'bad_rows':bad,'candidate_58_bytes_read':False,'path_microqualification_executed':False}
+          raw=json.dumps(out,sort_keys=True,separators=(',',':')).encode(); Path('locator-diagnostic.json').write_bytes(raw)
+          print(json.dumps({'bad_fixture_count':len(bad),'bad_fixture_ids':[r['fixture_id'] for r in bad],'sha256':hashlib.sha256(raw).hexdigest(),'candidate_58_bytes_read':False},sort_keys=True,separators=(',',':')))
+          for r in bad: print(json.dumps(r,sort_keys=True,separators=(',',':')))
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-candidate-observability-locator-diagnostic
+          path: locator-diagnostic.json
+          if-no-files-found: error
+          retention-days: 30
