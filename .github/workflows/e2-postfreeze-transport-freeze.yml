@@ -1,0 +1,149 @@
+name: E2 Post-Freeze Transport Qualification Freeze
+
+on:
+  push:
+    branches: [e2-development]
+    paths:
+      - ".github/workflows/e2-postfreeze-transport-freeze.yml"
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  freeze:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout archival trigger revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 4
+
+      - name: Verify archival-only trigger boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "d0e4a3963bbc7f2079a770b33ca1afa16be65edb"
+          test "$(git diff --name-only HEAD^ HEAD)" = ".github/workflows/e2-postfreeze-transport-freeze.yml"
+          test "$(git hash-object tools/e2_postfreeze_transport_qualify.py)" = "3b5cbe1bac55503e135426ccaab5ed73b65e5480"
+          test "$(git hash-object tools/e2_postfreeze_transport_audit.py)" = "9bae752a306c762576c2b10f8cafbf400674566b"
+          test "$(git hash-object tools/e2_postfreeze_transport_compat_errata.py)" = "d479596d6e2e683c067537be03a0d40e05e49cc4"
+          test "$(git hash-object protocols/RISU_DIFF_E2_POST_FREEZE_TRANSPORT_QUALIFICATION_v0.1_ERRATUM_001.json)" = "a226d19994b55e7668658a94604db2d1ce07cb05"
+          test "$(git hash-object protocols/RISU_DIFF_E2_POST_FREEZE_TRANSPORT_QUALIFICATION_v0.1_ERRATUM_002.json)" = "663673cc3b1b4fdad07541dc0113b15de3e00fa2"
+          test ! -e experiments/risu-diff-e2/qualification/anchor-transport/postfreeze
+
+      - name: Download and byte-compare the two frozen hosted artifact sets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/a1" "$RUNNER_TEMP/a2"
+          gh api repos/risu-research/risu-verify/actions/artifacts/9989926912/zip > "$RUNNER_TEMP/a1.zip"
+          gh api repos/risu-research/risu-verify/actions/artifacts/9989937659/zip > "$RUNNER_TEMP/a2.zip"
+          echo "1feb1cf2cbb42b05aa3a6c9cab36b096e87293bba32f7666d1fdf39057003a87  $RUNNER_TEMP/a1.zip" | sha256sum -c -
+          echo "37213913c5600f04b08547127d7a0ca1d22df1c9d9d32a81a8333cbba225e434  $RUNNER_TEMP/a2.zip" | sha256sum -c -
+          unzip -q "$RUNNER_TEMP/a1.zip" -d "$RUNNER_TEMP/a1"
+          unzip -q "$RUNNER_TEMP/a2.zip" -d "$RUNNER_TEMP/a2"
+          test "$(find "$RUNNER_TEMP/a1" -maxdepth 1 -type f | wc -l)" -eq 5
+          test "$(find "$RUNNER_TEMP/a2" -maxdepth 1 -type f | wc -l)" -eq 5
+          while IFS= read -r f; do
+            test -f "$RUNNER_TEMP/a1/$f"
+            test -f "$RUNNER_TEMP/a2/$f"
+            cmp "$RUNNER_TEMP/a1/$f" "$RUNNER_TEMP/a2/$f"
+          done <<'FILES'
+          E2_POSTFREEZE_TRANSPORT_QUALIFICATION.json
+          E2_POSTFREEZE_TRANSPORT_QUALIFICATION_INDEPENDENT_AUDIT.json
+          E2_POSTFREEZE_TRANSPORT_QUALIFIER_COMPATIBILITY_VIEW_ATTESTATION.json
+          E2_POSTFREEZE_TRANSPORT_AUDITOR_COMPATIBILITY_VIEW_ATTESTATION.json
+          E2_POSTFREEZE_TRANSPORT_QUALIFICATION_AUTHORITATIVE_RECEIPT.json
+          FILES
+          echo "bbc7d72fded307b23f6e0d20609b85662e63013cc06cd05b0c3c30269ba71749  $RUNNER_TEMP/a2/E2_POSTFREEZE_TRANSPORT_QUALIFICATION.json" | sha256sum -c -
+          echo "07deca2c6ec6fcf80fdf03a28358bdc0f2adbce89addec7054b64961fd77b6be  $RUNNER_TEMP/a2/E2_POSTFREEZE_TRANSPORT_QUALIFICATION_INDEPENDENT_AUDIT.json" | sha256sum -c -
+          echo "da40034e8821a789833483e15d8810761caf3c3c5c8be684fd84eb78850f8aad  $RUNNER_TEMP/a2/E2_POSTFREEZE_TRANSPORT_QUALIFIER_COMPATIBILITY_VIEW_ATTESTATION.json" | sha256sum -c -
+          echo "f7f7c06270c7fcfac3d9de6e49e040cc8ab4b5c9b6e14e0826ffa28e5dd5a4d6  $RUNNER_TEMP/a2/E2_POSTFREEZE_TRANSPORT_AUDITOR_COMPATIBILITY_VIEW_ATTESTATION.json" | sha256sum -c -
+          echo "2983d77a43568f4acce68bf7dbe4d54b2cadb159d0e2f53714c8982c09d08954  $RUNNER_TEMP/a2/E2_POSTFREEZE_TRANSPORT_QUALIFICATION_AUTHORITATIVE_RECEIPT.json" | sha256sum -c -
+
+      - name: Recompute fixed integrity bindings and materialize exact scientific bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          export DEST="experiments/risu-diff-e2/qualification/anchor-transport/postfreeze"
+          mkdir -p "$DEST"
+          cp "$RUNNER_TEMP/a2/E2_POSTFREEZE_TRANSPORT_QUALIFICATION.json" "$DEST/"
+          cp "$RUNNER_TEMP/a2/E2_POSTFREEZE_TRANSPORT_QUALIFICATION_INDEPENDENT_AUDIT.json" "$DEST/"
+          cp "$RUNNER_TEMP/a2/E2_POSTFREEZE_TRANSPORT_QUALIFIER_COMPATIBILITY_VIEW_ATTESTATION.json" "$DEST/"
+          cp "$RUNNER_TEMP/a2/E2_POSTFREEZE_TRANSPORT_AUDITOR_COMPATIBILITY_VIEW_ATTESTATION.json" "$DEST/"
+          cp "$RUNNER_TEMP/a2/E2_POSTFREEZE_TRANSPORT_QUALIFICATION_AUTHORITATIVE_RECEIPT.json" "$DEST/"
+          python - <<'PY'
+          import hashlib,json,os,subprocess
+          from pathlib import Path
+          dest=Path(os.environ['DEST'])
+          canon=lambda x:json.dumps(x,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode()
+          h=lambda b:hashlib.sha256(b).hexdigest()
+          qraw=(dest/'E2_POSTFREEZE_TRANSPORT_QUALIFICATION.json').read_bytes(); q=json.loads(qraw)
+          araw=(dest/'E2_POSTFREEZE_TRANSPORT_QUALIFICATION_INDEPENDENT_AUDIT.json').read_bytes(); a=json.loads(araw)
+          qcopy=dict(q); qdigest=qcopy.pop('result_digest_sha256')
+          assert qdigest==h(canon(qcopy))
+          assert q['status']=='PASS' and q['qualification_pass_meaning']=='PROVENANCE_AND_AGGREGATION_INTEGRITY_ONLY'
+          assert q['integrity']=={
+            'bijective_join_count':58,'cell_count':58,'cell_matrix_exact_required_field_agreement_count':58,
+            'class_counts':{'M_PLUS_SEMANTIC_LOSS':24,'M_QUESTION_EPISTEMIC_ADVERSARIAL':10,'M_ZERO_SEMANTIC_PRESERVING':24},
+            'duplicate_cell_join_keys':0,'duplicate_transport_join_keys':0,'excluded_cells':0,'matrix_row_count':58,
+            'transport_receipt_count':58,'unconsumed_transport_receipts':0}
+          assert len(q['joined_records'])==58 and len({r['cell_id'] for r in q['joined_records']})==58 and len({r['transport_case_id'] for r in q['joined_records']})==58
+          assert a['status']=='PASS' and a['errors']==[] and a['case_count']==58
+          assert a['qualification_sha256']==h(qraw)
+          assert a['joined_records_digest_sha256']==h(canon(q['joined_records']))
+          assert a['aggregates_digest_sha256']==h(canon(q['aggregates']))
+          expected={
+            'E2_POSTFREEZE_TRANSPORT_QUALIFICATION.json':('bbc7d72fded307b23f6e0d20609b85662e63013cc06cd05b0c3c30269ba71749',143420),
+            'E2_POSTFREEZE_TRANSPORT_QUALIFICATION_INDEPENDENT_AUDIT.json':('07deca2c6ec6fcf80fdf03a28358bdc0f2adbce89addec7054b64961fd77b6be',770),
+            'E2_POSTFREEZE_TRANSPORT_QUALIFIER_COMPATIBILITY_VIEW_ATTESTATION.json':('da40034e8821a789833483e15d8810761caf3c3c5c8be684fd84eb78850f8aad',2355),
+            'E2_POSTFREEZE_TRANSPORT_AUDITOR_COMPATIBILITY_VIEW_ATTESTATION.json':('f7f7c06270c7fcfac3d9de6e49e040cc8ab4b5c9b6e14e0826ffa28e5dd5a4d6',2353),
+            'E2_POSTFREEZE_TRANSPORT_QUALIFICATION_AUTHORITATIVE_RECEIPT.json':('2983d77a43568f4acce68bf7dbe4d54b2cadb159d0e2f53714c8982c09d08954',2245),
+          }
+          logical=[]
+          for name,(sha,nbytes) in expected.items():
+            raw=(dest/name).read_bytes(); assert h(raw)==sha and len(raw)==nbytes
+            logical.append({'path':name,'bytes':nbytes,'sha256':sha})
+          workflow_blob=subprocess.check_output(['git','hash-object','.github/workflows/e2-postfreeze-transport-freeze.yml'],text=True).strip()
+          receipt={
+            'schema':'risu.e2-post-freeze-transport-qualification-freeze/v0.1','status':'FROZEN_PASS',
+            'qualification_pass_meaning':'PROVENANCE_AND_AGGREGATION_INTEGRITY_ONLY',
+            'scientific_authorities':{
+              'parent_protocol_git_blob':'8d1860312d259e628e86070416a4757c570ba05f','erratum_001_git_blob':'a226d19994b55e7668658a94604db2d1ce07cb05','erratum_001_freeze_commit':'b1e0a0681f51ee64946ef2cad64c94572dcc4646','erratum_002_git_blob':'663673cc3b1b4fdad07541dc0113b15de3e00fa2','erratum_002_freeze_commit':'9983590366068a95d8ac54fd2f6b520c523247a9','compatibility_wrapper_git_blob':'d479596d6e2e683c067537be03a0d40e05e49cc4','execution_authority_commit':'d0e4a3963bbc7f2079a770b33ca1afa16be65edb','frozen_qualifier_git_blob':'3b5cbe1bac55503e135426ccaab5ed73b65e5480','frozen_independent_auditor_git_blob':'9bae752a306c762576c2b10f8cafbf400674566b','frozen_transport_bundle_git_blob':'95f7338e6f21bc3e0a8fc3209296d2e98c1c6f12','frozen_transport_bundle_sha256':'78c5f024c1af7a353844120879d3ec4487b5f56fb443bc6e063530f836a9f74c','sanitized_admission_manifest_git_blob':'f2fc78439d4bfadce5941bf71aadd15ec292bcb1','sanitized_admission_manifest_sha256':'847d85c2274cd6b94a83eefe0f6153a8fb183dbad758efa75118a4fd368623e4','frozen_transport_receipt_schema_git_blob':'09a35d3c505b7ceaa0ecdefc682945fd61adfe37','expanded_truth_matrix_sha256':'afd681d308a6f4ec8c183edd9b139c6b914fe501936cf84e5845a6a1c0d6b7cb','materialized_cells_tree_git_sha':'34a30574c7420728bff57958c815194979a622ab'},
+            'pre_execution_harness_staging_history':[{'commit':'d286e536ef7049f336c0c9b2c63331dff3d1dbba','classification':'NON_SCIENTIFIC_PLACEHOLDER_STAGING_COMMIT_NO_WORKFLOW_TRIGGER'},{'commit':'2db33d8870d08cd64ad318cc0df7cccf30a9b6c4','classification':'NON_SCIENTIFIC_WRAPPER_STAGING_COMMIT_NO_WORKFLOW_TRIGGER'}],
+            'archival_freeze_plumbing':{'trigger_commit':os.environ['GITHUB_SHA'],'workflow_git_blob':workflow_blob,'scientific_logic_added_after_first_complete_output':False,'purpose':'HASH_VERIFICATION_AND_EXACT_BYTE_ARCHIVAL_ONLY'},
+            'authoritative_hosted_replays':[
+              {'run_id':34035195888,'run_attempt':1,'job_id':101491864191,'head_sha':'d0e4a3963bbc7f2079a770b33ca1afa16be65edb','conclusion':'success','azure_region':'westus2','runner_version':'2.337.0','runner_image':'ubuntu-24.04','runner_image_version':'20260831.293.1','python_version':'3.13.15','artifact_id':9989926912,'artifact_size_bytes':19550,'artifact_zip_sha256':'1feb1cf2cbb42b05aa3a6c9cab36b096e87293bba32f7666d1fdf39057003a87'},
+              {'run_id':34035195888,'run_attempt':2,'job_id':101491964249,'head_sha':'d0e4a3963bbc7f2079a770b33ca1afa16be65edb','conclusion':'success','azure_region':'northcentralus','runner_version':'2.337.0','runner_image':'ubuntu-24.04','runner_image_version':'20260831.293.1','python_version':'3.13.15','artifact_id':9989937659,'artifact_size_bytes':19550,'artifact_zip_sha256':'37213913c5600f04b08547127d7a0ca1d22df1c9d9d32a81a8333cbba225e434'}],
+            'logical_outputs':logical,
+            'cross_hosted_replay':{'attempts':2,'distinct_azure_regions':True,'logical_file_count':5,'all_five_logical_outputs_byte_identical':True,'artifact_zip_hashes_expected_and_observed_to_differ':True,'artifact_zip_payload_files_independently_unpacked_and_compared':True},
+            'integrity_recomputation':{'qualification_internal_digest_recomputed':True,'independent_audit_qualification_sha_binding_recomputed':True,'independent_audit_joined_records_digest_recomputed':True,'independent_audit_aggregates_digest_recomputed':True,'cell_count':58,'transport_receipt_count':58,'matrix_row_count':58,'bijective_join_count':58,'duplicate_cell_join_keys':0,'duplicate_transport_join_keys':0,'unconsumed_transport_receipts':0,'excluded_cells':0,'class_counts':{'M_PLUS_SEMANTIC_LOSS':24,'M_QUESTION_EPISTEMIC_ADVERSARIAL':10,'M_ZERO_SEMANTIC_PRESERVING':24}},
+            'scientific_noninterference':{'qualification_output_is_exact_frozen_qualifier_output':True,'independent_audit_output_is_exact_frozen_auditor_output':True,'raw_parent_protocol_bytes_modified':False,'raw_frozen_transport_bundle_bytes_modified':False,'frozen_transport_receipts_modified':False,'transport_engine_or_witnesses_rerun_repaired_or_reranked':False,'join_key_semantics_modified':False,'predeclared_metrics_modified':False,'predeclared_strata_modified':False,'cell_exclusion_or_replacement_performed':False,'outcome_driven_code_metric_join_or_view_modification_after_first_complete_output':False,'a3_a4_verdict_logic_executed':False,'fresh_target_selection_or_evaluation_executed':False},
+            'interpretation_boundary':{'transport_is_regression_classifier':False,'tp_fp_fn_tn_labels_emitted':False,'accuracy_sensitivity_specificity_emitted':False,'integrity_pass_is_not_semantic_success_or_safety_claim':True,'transport_incomplete_is_not_automatically_semantic_loss_or_preservation':True},
+            'freeze_conclusion':{'first_complete_joined_output_frozen_without_outcome_driven_modification':True,'two_hosted_replays_frozen':True,'scientific_interpretation_of_predeclared_transport_strata_authorized_next':True,'a3_a4_verdict_logic_authorized_next':False,'fresh_target_evaluation_authorized_next':False}}
+          pre=canon(receipt); receipt['freeze_receipt_digest_sha256']=h(pre)
+          (dest/'E2_POSTFREEZE_TRANSPORT_QUALIFICATION_FREEZE_RECEIPT.json').write_bytes(canon(receipt))
+          PY
+
+      - name: Commit exactly six additive freeze files
+        shell: bash
+        run: |
+          set -euo pipefail
+          DEST="experiments/risu-diff-e2/qualification/anchor-transport/postfreeze"
+          git status --porcelain
+          test "$(find "$DEST" -maxdepth 1 -type f | wc -l)" -eq 6
+          git add "$DEST"
+          mapfile -t staged < <(git diff --cached --name-only | sort)
+          test "${#staged[@]}" -eq 6
+          for p in "${staged[@]}"; do case "$p" in "$DEST"/*) ;; *) exit 1;; esac; done
+          test -z "$(git diff --cached --name-only --diff-filter=MDR)"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Freeze post-freeze transport qualification outputs" -m "Archive the exact first complete joined qualification bytes after two byte-identical hosted replays under frozen ERRATUM_001 and ERRATUM_002 compatibility views. No scientific code, metric, join, transport output, A3/A4 logic, or fresh-target evaluation is modified in this freeze commit."
+          git fetch origin e2-development
+          test "$(git rev-parse origin/e2-development)" = "$GITHUB_SHA"
+          git push origin HEAD:e2-development
