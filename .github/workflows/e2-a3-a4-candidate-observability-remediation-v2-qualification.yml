@@ -1,0 +1,185 @@
+name: E2 A3 A4 Candidate Observability Remediation v0.2 Qualification
+
+on:
+  push:
+    paths:
+      - 'risu_e2/frontend_js_v2.py'
+      - 'risu_e2/frontend_python_v2.py'
+      - 'risu_e2/ir_v2.py'
+      - 'tools/e2_a3_a4_candidate_observability_remediation_v2_qualify.py'
+      - 'tools/e2_a3_a4_candidate_observability_remediation_v2_independent.py'
+      - '.github/workflows/e2-a3-a4-candidate-observability-remediation-v2-qualification.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  microqualification:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout exact qualification revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 16
+
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.13'
+
+      - name: Verify prospective authorities and scientific delta
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object protocols/RISU_DIFF_E2_A3_A4_CANDIDATE_OBSERVABILITY_REMEDIATION_v0.2.json)" = "28abd43d0a99fe747243f657961e278da2035784"
+          test "$(git hash-object experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/remediation-v0.2/E2_A3_A4_CANDIDATE_OBSERVABILITY_REMEDIATION_V0_2_MICROQUALIFICATION_CORPUS.json)" = "a0036c02826d54ac9ac22501b7eb341a600d1607"
+          test "$(git hash-object experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/remediation-v0.2/E2_A3_A4_CANDIDATE_OBSERVABILITY_REMEDIATION_V0_2_PREREGISTRATION_FREEZE_RECEIPT.json)" = "9e5b2731eea873d800e46aaec664878e1b7e92a7"
+
+          test "$(git hash-object risu_e2/frontend_js.py)" = "6f3b6535caf0dcebb3c3c3679d898a23fdd8e795"
+          test "$(git hash-object risu_e2/frontend_python.py)" = "e98cc7bbefa80d53b94fec3ef25845a3dbbedd93"
+          test "$(git hash-object risu_e2/ir.py)" = "d7edac40d4eeda86be74e5785bde3bfc28d4cf5e"
+          test "$(git hash-object risu_e2/path_observability.py)" = "6eae3403f53b86f85bac47a31e751d28508e7225"
+
+          test "$(git hash-object risu_e2/frontend_js_v2.py)" = "2fdf90b8c35c6c62c7f47d6b64f281f50c0852ce"
+          test "$(git hash-object risu_e2/frontend_python_v2.py)" = "8b7e4d0e2bb9ef6487ef2b90d2390b55ced55ea9"
+          test "$(git hash-object risu_e2/ir_v2.py)" = "a0676f228562fbf73a91d6449ab3af3a6783aa21"
+
+          mapfile -t delta < <(git diff --name-only cb1e2886e68e842b8edc7131150d11e08b4ae997 HEAD)
+          test "${#delta[@]}" -eq 6
+          for p in "${delta[@]}"; do
+            case "$p" in
+              risu_e2/frontend_js_v2.py|risu_e2/frontend_python_v2.py|risu_e2/ir_v2.py|tools/e2_a3_a4_candidate_observability_remediation_v2_qualify.py|tools/e2_a3_a4_candidate_observability_remediation_v2_independent.py|.github/workflows/e2-a3-a4-candidate-observability-remediation-v2-qualification.yml) ;;
+              *) echo "unauthorized post-preregistration delta: $p"; exit 1 ;;
+            esac
+          done
+
+          ! grep -E 'V2B|V2M|CQ_|FRONTEND_OBSERVABILITY_GAP|MICROQUALIFICATION_EXPECTATION_NOT_MET' \
+            risu_e2/frontend_js_v2.py risu_e2/frontend_python_v2.py risu_e2/ir_v2.py
+
+      - name: Compile versioned surface and separated checkers
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            risu_e2/frontend_js_v2.py \
+            risu_e2/frontend_python_v2.py \
+            risu_e2/ir_v2.py \
+            tools/e2_a3_a4_candidate_observability_remediation_v2_qualify.py \
+            tools/e2_a3_a4_candidate_observability_remediation_v2_independent.py
+          ! grep -q 'e2_a3_a4_candidate_observability_remediation_v2_qualify' \
+            tools/e2_a3_a4_candidate_observability_remediation_v2_independent.py
+
+      - name: Run sealed prospective 24-case primary and independent qualification
+        shell: bash
+        run: |
+          set -euo pipefail
+          S="$RUNNER_TEMP/v0-2-remediation-qualification"
+          mkdir -p "$S/risu_e2" "$S/tools" "$S/input" "$S/output"
+
+          cp risu_e2/__init__.py "$S/risu_e2/"
+          cp risu_e2/model.py "$S/risu_e2/"
+          cp risu_e2/acquisition.py "$S/risu_e2/"
+          cp risu_e2/frontend_go.py "$S/risu_e2/"
+          cp risu_e2/frontend_js.py "$S/risu_e2/"
+          cp risu_e2/frontend_python.py "$S/risu_e2/"
+          cp risu_e2/ir.py "$S/risu_e2/"
+          cp risu_e2/overlay_common.py "$S/risu_e2/"
+          cp risu_e2/overlay_control.py "$S/risu_e2/"
+          cp risu_e2/frontend_js_v2.py "$S/risu_e2/"
+          cp risu_e2/frontend_python_v2.py "$S/risu_e2/"
+          cp risu_e2/ir_v2.py "$S/risu_e2/"
+          cp tools/e2_a3_a4_candidate_observability_remediation_v2_qualify.py "$S/tools/primary.py"
+          cp tools/e2_a3_a4_candidate_observability_remediation_v2_independent.py "$S/tools/independent.py"
+          cp tools/e2_go_ir_extract.go "$S/tools/e2_go_ir_extract.go"
+          cp protocols/RISU_DIFF_E2_A3_A4_CANDIDATE_OBSERVABILITY_REMEDIATION_v0.2.json "$S/input/protocol.json"
+          cp experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/remediation-v0.2/E2_A3_A4_CANDIDATE_OBSERVABILITY_REMEDIATION_V0_2_MICROQUALIFICATION_CORPUS.json "$S/input/corpus.json"
+
+          test "$(find "$S" -type f | wc -l)" -eq 17
+          ! find "$S" -type f -print | grep -E '58|blind.*transport|truth|operator|prediction'
+
+          trap 'chmod u+rwx "$GITHUB_WORKSPACE" || true' EXIT
+          chmod a-rwx "$GITHUB_WORKSPACE"
+          cd "$S"
+          export PYTHONPATH="$S"
+
+          python tools/primary.py --protocol input/protocol.json --corpus input/corpus.json \
+            --scientific-root "$S" --go-helper tools/e2_go_ir_extract.go --output output/primary-1.json
+          chmod u+rwx "$GITHUB_WORKSPACE"
+          cp output/primary-1.json "$GITHUB_WORKSPACE/E2_A3_A4_REMEDIATION_V0_2_PRIMARY.json"
+          chmod a-rwx "$GITHUB_WORKSPACE"
+          python tools/primary.py --protocol input/protocol.json --corpus input/corpus.json \
+            --scientific-root "$S" --go-helper tools/e2_go_ir_extract.go --output output/primary-2.json
+          cmp output/primary-1.json output/primary-2.json
+
+          python tools/independent.py --protocol input/protocol.json --corpus input/corpus.json \
+            --scientific-root "$S" --output output/independent-1.json
+          chmod u+rwx "$GITHUB_WORKSPACE"
+          cp output/independent-1.json "$GITHUB_WORKSPACE/E2_A3_A4_REMEDIATION_V0_2_INDEPENDENT.json"
+          chmod a-rwx "$GITHUB_WORKSPACE"
+          python tools/independent.py --protocol input/protocol.json --corpus input/corpus.json \
+            --scientific-root "$S" --output output/independent-2.json
+          cmp output/independent-1.json output/independent-2.json
+
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=json.loads(Path("output/primary-1.json").read_bytes())
+          i=json.loads(Path("output/independent-1.json").read_bytes())
+          pm={r["fixture_id"]:r["passed"] for r in p["rows"]}
+          im={r["fixture_id"]:r["passed"] for r in i["rows"]}
+          doc={
+            "schema":"risu.e2-a3-a4-candidate-observability-remediation-v0.2-cross-check/v0.1",
+            "case_count":24,
+            "same_fixture_set":sorted(pm)==sorted(im),
+            "exact_per_case_pass_agreement":pm==im,
+            "primary_status":p["status"],
+            "independent_status":i["status"],
+            "primary_sha256":hashlib.sha256(Path("output/primary-1.json").read_bytes()).hexdigest(),
+            "independent_sha256":hashlib.sha256(Path("output/independent-1.json").read_bytes()).hexdigest(),
+            "candidate_58_bytes_read":False,
+            "frozen_48_corpus_read":False,
+            "semantic_verdicts_emitted":False
+          }
+          doc["status"]="PASS" if doc["same_fixture_set"] and doc["exact_per_case_pass_agreement"] else "FAIL"
+          Path("output/cross-check.json").write_text(json.dumps(doc,sort_keys=True,separators=(",",":"))+"\n")
+          print(json.dumps(doc,sort_keys=True,separators=(",",":")))
+          PY
+
+          chmod u+rwx "$GITHUB_WORKSPACE"
+          cp output/cross-check.json "$GITHUB_WORKSPACE/E2_A3_A4_REMEDIATION_V0_2_CROSS_CHECK.json"
+
+      - name: Upload first complete prospective microqualification
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-a3-a4-remediation-v0-2-prospective-microqualification
+          path: |
+            E2_A3_A4_REMEDIATION_V0_2_PRIMARY.json
+            E2_A3_A4_REMEDIATION_V0_2_INDEPENDENT.json
+            E2_A3_A4_REMEDIATION_V0_2_CROSS_CHECK.json
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Assert prospective gate only after artifact upload
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          p=json.load(open("E2_A3_A4_REMEDIATION_V0_2_PRIMARY.json"))
+          i=json.load(open("E2_A3_A4_REMEDIATION_V0_2_INDEPENDENT.json"))
+          c=json.load(open("E2_A3_A4_REMEDIATION_V0_2_CROSS_CHECK.json"))
+          assert p["case_count"]==i["case_count"]==24
+          assert p["passed_case_count"]==i["passed_case_count"]==24
+          assert p["status"]==i["status"]==c["status"]=="PASS"
+          assert not p["failed_fixture_ids"] and not i["failed_fixture_ids"]
+          assert p["specialization_scan"]["status"]==i["specialization_scan"]["status"]=="PASS"
+          assert p["variant_invariance_status"]=="PASS"
+          assert not i["variant_pair_failures"]
+          assert c["exact_per_case_pass_agreement"] is True
+          assert p["read_set_attestation"]["candidate_58_bytes"] is False
+          assert i["read_set_attestation"]["candidate_58_bytes"] is False
+          assert p["read_set_attestation"]["frozen_48_corpus"] is False
+          assert i["read_set_attestation"]["frozen_48_corpus"] is False
+          PY
