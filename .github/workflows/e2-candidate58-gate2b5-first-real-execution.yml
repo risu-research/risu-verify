@@ -1,0 +1,162 @@
+name: E2 Candidate58 Gate2B5 First Real Execution
+
+on:
+  push:
+    branches: [e2-development]
+    paths:
+      - ".github/workflows/e2-candidate58-gate2b5-first-real-execution.yml"
+
+permissions:
+  contents: write
+
+env:
+  EXPECTED_PARENT: 65c4cfc3375f081d19ebee8011ca5b8fef8e565b
+  PROTOCOL_PATH: protocols/RISU_DIFF_E2_CANDIDATE58_GATE2B5_GUARD_OPERATOR_EVIDENCE_ATTRIBUTION_PROTOCOL_v0.1.json
+  ANALYZER_PATH: tools/e2_candidate58_gate2b5_guard_operator_evidence_attribution.py
+  FREEZE_PATH: protocols/RISU_DIFF_E2_CANDIDATE58_GATE2B5_IMPLEMENTATION_FREEZE_v0.1.json
+  G2B4_LEDGER: experiments/risu-diff-e2/qualification/candidate58/gate2b4-counterfactual-obligation-sufficiency/first-complete/E2_CANDIDATE58_GATE2B4_COUNTERFACTUAL_SUFFICIENCY_LEDGER.json
+  MANIFEST: experiments/risu-diff-e2/qualification/candidate58/first-complete-machine/E2_CANDIDATE58_FIRST_COMPLETE_BUNDLE_CONTENT_MANIFEST.json
+  BUNDLE: experiments/risu-diff-e2/qualification/candidate58/first-complete-machine/E2_CANDIDATE58_FIRST_MACHINE_ONLY_BUNDLE.zip
+  PROTOCOL_BLOB: 182ab00a5ad35b6751e80b6c180fc9ca0162cd28
+  ANALYZER_BLOB: 68d4938c2dabdf67f527be7462727fe193f79500
+  FREEZE_BLOB: 7c764ee4f72e71b6b3db412d63469270d3770ec1
+  G2B4_SHA256: ac1ad9acd7cb35decfd5d3dc3f03a92317d92653426bdef41787a17188233ae1
+  MANIFEST_SHA256: c5030f084936c186b1d320b02ad8bf1e1648bbc9e97ad78b33db81fb9a6bd217
+  BUNDLE_SHA256: d77caaf74bf4dc8e94cf769d10092f8413595ac93422042e8a374f76c343f42d
+
+jobs:
+  first-real-gate2b5:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exact Gate2B5 execution revision with full history
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - name: Prove exact frozen execution boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "$EXPECTED_PARENT"
+          test "$(git diff --name-only HEAD^ HEAD)" = ".github/workflows/e2-candidate58-gate2b5-first-real-execution.yml"
+          test "$(git hash-object "$PROTOCOL_PATH")" = "$PROTOCOL_BLOB"
+          test "$(git hash-object "$ANALYZER_PATH")" = "$ANALYZER_BLOB"
+          test "$(git hash-object "$FREEZE_PATH")" = "$FREEZE_BLOB"
+          test "$(sha256sum "$G2B4_LEDGER" | cut -d' ' -f1)" = "$G2B4_SHA256"
+          test "$(sha256sum "$MANIFEST" | cut -d' ' -f1)" = "$MANIFEST_SHA256"
+          test "$(sha256sum "$BUNDLE" | cut -d' ' -f1)" = "$BUNDLE_SHA256"
+          git merge-base --is-ancestor 2ece1023252a8e9100a34d74079493040441e1e2 HEAD
+          git merge-base --is-ancestor 6c98ccb2820c9a05cab9c318e437d04dbc49db1d HEAD
+          echo GATE2B5_REAL_PREFLIGHT=PASS
+      - name: Set up exact Python runtime
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.13.5"
+      - name: Materialize exact 30-overlay allowed evidence surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          export ALLOWED="$RUNNER_TEMP/gate2b5-allowed"
+          export MAT="$RUNNER_TEMP/gate2b5-materialization"
+          mkdir -p "$ALLOWED" "$MAT"
+          python - <<'PY'
+          import hashlib,json,os,zipfile
+          from pathlib import Path
+          g=json.loads(Path(os.environ['G2B4_LEDGER']).read_text())
+          rows=g['rows']; ids=sorted(r['case_id'] for r in rows if r.get('gate2b4_taxonomy_id')=='SCOPE_ONLY_INSUFFICIENT_SINGLE_RESIDUAL_FAMILY' and r.get('residual_primitive_atom_prefixes')==['GUARD_OPERATOR_UNRESOLVED'] and r.get('residual_distinct_family_count')==1)
+          assert len(ids)==30, len(ids)
+          m=json.loads(Path(os.environ['MANIFEST']).read_text()); assert m['file_count']==946 and len(m['files'])==946
+          mm={r['path']:r for r in m['files']}; assert len(mm)==946
+          with zipfile.ZipFile(os.environ['BUNDLE']) as z:
+              names=z.namelist(); assert len(names)==946 and len(set(names))==946 and set(names)==set(mm)
+              consumed=[]
+              for cid in ids:
+                  rel=f'prepared/evidence/{cid}.overlay.json'; assert rel in mm
+                  raw=z.read(rel); assert hashlib.sha256(raw).hexdigest()==mm[rel]['sha256']
+                  Path(os.environ['ALLOWED'],f'{cid}.overlay.json').write_bytes(raw); consumed.append({'case_id':cid,'path':rel,'sha256':mm[rel]['sha256']})
+          r={'schema':'risu.e2-candidate58-gate2b5-evidence-materialization/v0.1','status':'EXACT_30_OVERLAY_ALLOWED_SURFACE_MATERIALIZED','selected_case_count':30,'extracted_member_count':30,'bundle_manifest_file_count':946,'archive_member_name_set_exactly_matches_frozen_manifest':True,'only_selected_overlay_member_bytes_extracted':True,'path_member_bytes_extracted':False,'candidate_source_member_bytes_extracted':False,'semantic_slice_adapter_kernel_certificate_c1_member_bytes_extracted':False,'truth_operator_epistemic10_member_bytes_extracted':False,'consumed_overlays':consumed}
+          Path(os.environ['MAT'],'E2_CANDIDATE58_GATE2B5_EVIDENCE_MATERIALIZATION_RECEIPT.json').write_text(json.dumps(r,sort_keys=True,separators=(',',':'))+'\n')
+          PY
+      - name: Execute first deterministic Gate2B5 replay
+        shell: bash
+        run: |
+          set -euo pipefail
+          python "$ANALYZER_PATH" --protocol "$PROTOCOL_PATH" --gate2b4-ledger "$G2B4_LEDGER" --manifest "$MANIFEST" --evidence-dir "$RUNNER_TEMP/gate2b5-allowed" --output-dir "$RUNNER_TEMP/gate2b5-replay1"
+      - name: Execute mandatory second deterministic Gate2B5 replay
+        shell: bash
+        run: |
+          set -euo pipefail
+          python "$ANALYZER_PATH" --protocol "$PROTOCOL_PATH" --gate2b4-ledger "$G2B4_LEDGER" --manifest "$MANIFEST" --evidence-dir "$RUNNER_TEMP/gate2b5-allowed" --output-dir "$RUNNER_TEMP/gate2b5-replay2"
+      - name: Require exact logical byte identity before interpretation
+        shell: bash
+        run: |
+          set -euo pipefail
+          for f in E2_CANDIDATE58_GATE2B5_GUARD_OPERATOR_ATTRIBUTION_LEDGER.json E2_CANDIDATE58_GATE2B5_GUARD_OPERATOR_ATTRIBUTION_SUMMARY.json E2_CANDIDATE58_GATE2B5_DIAGNOSTIC_RECEIPT.json; do cmp "$RUNNER_TEMP/gate2b5-replay1/$f" "$RUNNER_TEMP/gate2b5-replay2/$f"; done
+          test "$(python -c 'import json,sys;print(json.load(open(sys.argv[1]))["primary_operator_frontier_case_count"])' "$RUNNER_TEMP/gate2b5-replay1/E2_CANDIDATE58_GATE2B5_GUARD_OPERATOR_ATTRIBUTION_SUMMARY.json")" = 30
+          echo GATE2B5_REAL_DUAL_REPLAY_IDENTITY=PASS
+      - name: Prepare exact dual replay artifact payload
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/gate2b5-artifact/replay1" "$RUNNER_TEMP/gate2b5-artifact/replay2" "$RUNNER_TEMP/gate2b5-artifact/provenance"
+          cp "$RUNNER_TEMP/gate2b5-replay1/"*.json "$RUNNER_TEMP/gate2b5-artifact/replay1/"
+          cp "$RUNNER_TEMP/gate2b5-replay2/"*.json "$RUNNER_TEMP/gate2b5-artifact/replay2/"
+          cp "$RUNNER_TEMP/gate2b5-materialization/"*.json "$RUNNER_TEMP/gate2b5-artifact/provenance/"
+      - name: Upload exact dual replay before repository freeze
+        id: upload
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-candidate58-gate2b5-first-complete-dual-replay
+          path: ${{ runner.temp }}/gate2b5-artifact
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+      - name: Materialize exact immutable first-complete payload
+        shell: bash
+        env:
+          ARTIFACT_ID: ${{ steps.upload.outputs.artifact-id }}
+          ARTIFACT_DIGEST: ${{ steps.upload.outputs.artifact-digest }}
+        run: |
+          set -euo pipefail
+          export DEST=experiments/risu-diff-e2/qualification/candidate58/gate2b5-guard-operator-evidence-attribution/first-complete
+          mkdir -p "$DEST"
+          cp "$RUNNER_TEMP/gate2b5-replay1/E2_CANDIDATE58_GATE2B5_GUARD_OPERATOR_ATTRIBUTION_LEDGER.json" "$DEST/"
+          cp "$RUNNER_TEMP/gate2b5-replay1/E2_CANDIDATE58_GATE2B5_GUARD_OPERATOR_ATTRIBUTION_SUMMARY.json" "$DEST/"
+          cp "$RUNNER_TEMP/gate2b5-replay1/E2_CANDIDATE58_GATE2B5_DIAGNOSTIC_RECEIPT.json" "$DEST/"
+          cp "$RUNNER_TEMP/gate2b5-materialization/E2_CANDIDATE58_GATE2B5_EVIDENCE_MATERIALIZATION_RECEIPT.json" "$DEST/"
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          d=Path(os.environ['DEST']); h=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+          logical={p.name:h(p) for p in sorted(d.glob('*.json'))}
+          (d/'E2_CANDIDATE58_GATE2B5_LOGICAL_TREE.json').write_text(json.dumps({'schema':'risu.e2-candidate58-gate2b5-logical-tree/v0.1','files':logical},sort_keys=True,separators=(',',':'))+'\n')
+          replay={p.name:h(p) for p in sorted(Path(os.environ['RUNNER_TEMP'],'gate2b5-replay1').glob('*.json'))}
+          rec={'schema':'risu.e2-candidate58-gate2b5-first-real-execution-receipt/v0.1','status':'FIRST_COMPLETE_REAL_GATE2B5_DUAL_REPLAY_BYTE_IDENTICAL_BEFORE_INTERPRETATION','workflow_run_id':os.environ['GITHUB_RUN_ID'],'workflow_trigger_commit':os.environ['GITHUB_SHA'],'first_complete_logical_output_is_replay1':True,'two_replay_exact_logical_byte_identity':True,'replay1_outputs_sha256':replay,'scientific_firewall':{'candidate_source_read':False,'path_evidence_read':False,'semantic_slice_read':False,'adapter_receipt_read':False,'kernel_result_read':False,'certificate_or_c1_read':False,'truth_or_operator_metadata_read':False,'epistemic10_read':False,'fresh_heldout_read':False,'semantic_engine_kernel_adapter_or_c1_rerun':False,'semantic_rule_change':False,'remediation':False}}
+          (d/'E2_CANDIDATE58_GATE2B5_FIRST_REAL_EXECUTION_RECEIPT.json').write_text(json.dumps(rec,sort_keys=True,separators=(',',':'))+'\n')
+          files={p.name:h(p) for p in sorted(d.glob('*.json'))}
+          freeze={'schema':'risu.e2-candidate58-gate2b5-first-complete-immutable-freeze/v0.1','status':'FIRST_COMPLETE_REAL_GATE2B5_OPERATOR_ATTRIBUTION_IMMUTABLY_FROZEN_BY_CONTAINING_COMMIT','repository':'risu-research/risu-verify','branch':'e2-development','frozen_authority':{'gate2b4_first_complete_freeze_commit':'6c98ccb2820c9a05cab9c318e437d04dbc49db1d','gate2b5_protocol_git_blob':'182ab00a5ad35b6751e80b6c180fc9ca0162cd28','gate2b5_analyzer_git_blob':'68d4938c2dabdf67f527be7462727fe193f79500','gate2b5_implementation_freeze_git_blob':'7c764ee4f72e71b6b3db412d63469270d3770ec1','gate2b4_ledger_sha256':os.environ['G2B4_SHA256'],'candidate58_bundle_zip_sha256':os.environ['BUNDLE_SHA256'],'candidate58_manifest_sha256':os.environ['MANIFEST_SHA256']},'hosted_artifact':{'id':os.environ['ARTIFACT_ID'],'digest':os.environ['ARTIFACT_DIGEST'],'name':'e2-candidate58-gate2b5-first-complete-dual-replay'},'hosted_artifact_uploaded_before_repository_freeze':True,'frozen_files_sha256':files,'immutability_rule':{'this_first_complete_real_gate2b5_result_may_not_be_replaced':True,'later_diagnostics_or_remediation_must_be_additive':True},'interpretation_boundary':{'boundary_attribution_not_upstream_semantic_root_cause':True,'definitive_verdict_gain_not_inferred':True,'remediation_priority_not_inferred':True},'scientific_firewall':rec['scientific_firewall']}
+          (d/'E2_CANDIDATE58_GATE2B5_FIRST_COMPLETE_IMMUTABLE_FREEZE_RECEIPT.json').write_text(json.dumps(freeze,sort_keys=True,separators=(',',':'))+'\n')
+          PY
+      - name: Commit and fast-forward push exact seven-file first-complete freeze
+        shell: bash
+        run: |
+          set -euo pipefail
+          DEST=experiments/risu-diff-e2/qualification/candidate58/gate2b5-guard-operator-evidence-attribution/first-complete
+          git add "$DEST"
+          mapfile -t STAGED < <(git diff --cached --name-only)
+          test "${#STAGED[@]}" -eq 7
+          for p in "${STAGED[@]}"; do case "$p" in "$DEST"/*) ;; *) exit 1 ;; esac; done
+          test "$(git ls-remote origin refs/heads/e2-development | cut -f1)" = "$GITHUB_SHA"
+          git config user.name "RISU Evidence Freeze"
+          git config user.email "risu-evidence-freeze@users.noreply.github.com"
+          git commit -m "Freeze first complete Candidate58 Gate2B5 operator attribution"
+          echo "GATE2B5_FREEZE_COMMIT=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          git push origin HEAD:e2-development
+      - name: Post-push exact remote verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git ls-remote origin refs/heads/e2-development | cut -f1)" = "$GATE2B5_FREEZE_COMMIT"
+          test "$(git diff --name-only "$GITHUB_SHA" "$GATE2B5_FREEZE_COMMIT" | wc -l)" -eq 7
+          echo GATE2B5_FIRST_COMPLETE_FREEZE=PASS
