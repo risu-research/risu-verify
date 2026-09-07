@@ -1,0 +1,70 @@
+{
+  "schema": "risu.e2-candidate58-gate2b2-implementation-freeze/v0.1",
+  "freeze_id": "RISU_DIFF_E2_CANDIDATE58_GATE2B2_IMPLEMENTATION_FREEZE_v0.1",
+  "status": "GATE2B2_PROVENANCE_IMPLEMENTATION_FROZEN_BEFORE_FIRST_REAL_AGGREGATION",
+  "repository": "risu-research/risu-verify",
+  "branch": "e2-development",
+  "scientific_parent": {
+    "gate2b1_first_complete_freeze_commit": "bb9174f33d4c199e26b079ccebc2845c91fa2826",
+    "gate2b2_taxonomy_commit": "801c250ea6aa50a4d21e83786c2b25c97c26c729",
+    "gate2b2_analyzer_commit": "9b63d6bc1d321e205d6d922396366ef076ae7817",
+    "pre_freeze_head": "9b63d6bc1d321e205d6d922396366ef076ae7817"
+  },
+  "implementation_lock": {
+    "protocol": {
+      "path": "protocols/RISU_DIFF_E2_CANDIDATE58_GATE2B2_CLOSURE_DEFICIT_PROVENANCE_PROFILE_PROTOCOL_v0.1.json",
+      "git_blob": "7bf11e1cd27d3fb74176abad7f4883a57b2875d1"
+    },
+    "stdlib_only_analyzer": {
+      "path": "tools/e2_candidate58_gate2b2_closure_deficit_provenance_profile.py",
+      "git_blob": "ce1328e43ab86af5c2021ef57444818cc227bef2",
+      "imports_or_executes_risu_semantic_kernel_adapter_or_c1": false,
+      "reads_candidate_source_or_semantic_slice": false,
+      "reads_kernel_result_or_machine_bundle": false,
+      "reads_truth_or_operator": false
+    }
+  },
+  "input_lock": {
+    "gate2b1_ledger_git_blob": "7c5684ffdb7f3c6050e7c385fcbf407bd8bf63dd",
+    "gate2b1_ledger_sha256": "e487cfdcac7e6ed4d024086e989560bdf8054e4d5181c7a5929af1187801fa63",
+    "gate2b1_summary_git_blob": "fd62dd62ff07d5abf10fe1085324a1edee62f6cb",
+    "gate2b1_summary_sha256": "c41e17b964fbf3877c66842c44c22c6b9662a69647ac00a1752d8afbc27c822e",
+    "gate2b1_freeze_receipt_git_blob": "1cb3696d6dc7caa2e6db0637b11fd376d14cb32f",
+    "expected_case_count": 39
+  },
+  "producer_taxonomy_authority": {
+    "primary_adapter_git_blob": "c1b5d5e666bdd1b8f9bb1e041f76368f7f7a741c",
+    "adapter_support_git_blob": "5558d4bc91a0e51c4f836b4ae6db69bcf6abafe7",
+    "kernel_git_blob": "e91e51397f4cc201452b1a0f80d130265dca2ea0",
+    "producer_code_executed_by_gate2b2": false
+  },
+  "observed_gate2b2_aggregate_counts_present_in_this_freeze": false,
+  "prior_visibility_disclosure_preserved": true,
+  "execution_rule": {
+    "verify_exact_protocol_analyzer_freeze_and_input_blob_identities": true,
+    "run_analyzer_self_test_before_first_real_aggregation": true,
+    "unknown_producer_atom_prefix_fails_closed": true,
+    "run_exact_real_diagnostic_twice": true,
+    "require_exact_logical_byte_identity": true,
+    "upload_both_replays_before_repository_result_freeze": true,
+    "first_complete_result_must_be_additive_and_immutable": true
+  },
+  "scientific_firewall": {
+    "semantic_engine_kernel_adapter_or_c1_rerun": false,
+    "candidate_source_read": false,
+    "semantic_slice_or_kernel_result_read": false,
+    "truth_or_operator_read": false,
+    "gate2a_truth_join_input": false,
+    "fresh_heldout_read": false,
+    "remediation": false,
+    "semantic_rule_change": false,
+    "prior_gate_artifact_rewrite": false
+  },
+  "interpretation_boundary": {
+    "producer_site_provenance_is_not_semantic_root_cause": true,
+    "wrapper_leaf_separation_is_bookkeeping_not_causal_dominance": true,
+    "counterfactual_fix_or_coverage_gain_not_inferred": true,
+    "remediation_priority_not_authorized": true
+  },
+  "next_authorized_action": "Add one orchestration-only workflow, prove the exact additive Gate2B2 delta, self-test the frozen analyzer before aggregation, execute two deterministic profiles over exactly the immutable 39-row Gate2B1 ledger, require zero unmapped atoms and byte identity, upload both replays, and immutably commit the first complete Gate2B2 outputs."
+}
