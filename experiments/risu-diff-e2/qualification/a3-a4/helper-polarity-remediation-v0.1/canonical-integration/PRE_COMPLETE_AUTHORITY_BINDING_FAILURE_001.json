@@ -1,0 +1,37 @@
+{
+  "schema": "risu.e2-helper-polarity-canonical-integration-precomplete-failure/v0.1",
+  "status": "PRE_COMPLETE_AUTHORITY_BINDING_FAILURE",
+  "scientific_result": false,
+  "run_id": 34075327552,
+  "job_id": 101600192523,
+  "head_sha": "b88747825391aa54c8a29fa75ffe60a1eb998a83",
+  "failed_step": "Materialize exact frozen authorities without checkout",
+  "cause": {
+    "path": "protocols/RISU_DIFF_E2_A3_A4_HELPER_POLARITY_CANONICAL_INTEGRATION_REGRESSION_v0.1.json",
+    "workflow_expected_git_blob": "27c1b25bb5d94b19c82bdcb1023dd11af7fb9f17",
+    "actual_frozen_git_blob": "754b5d91510567eaa60086997d34a6df50bb7166",
+    "classification": "NON_SCIENTIFIC_AUTHORITY_HASH_TRANSCRIPTION_ERROR"
+  },
+  "execution_boundary": {
+    "historical_overlay_artifact_download_attempted": false,
+    "canonical_seed_sources_materialized_before_failure": false,
+    "integration_harness_executed": false,
+    "run_outputs_created": false,
+    "artifact_uploaded": false,
+    "first_complete_result_exists": false
+  },
+  "immutability": {
+    "protocol_changed": false,
+    "canonical_expectations_changed": false,
+    "predicate_polarity_v1_changed": false,
+    "path_observability_v2_changed": false,
+    "regression_harness_changed": false
+  },
+  "allowed_repair": "Update only the workflow authority binding for the protocol Git blob from the mistyped expected SHA to the already-frozen actual SHA, then rerun unchanged integration science and harness.",
+  "firewall": {
+    "frozen48_read": false,
+    "candidate58_read": false,
+    "epistemic10_read": false,
+    "a3_a4_semantic_verdicts_executed": false
+  }
+}
