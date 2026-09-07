@@ -11,7 +11,7 @@ permissions:
 env:
   REPO: risu-research/risu-verify
   ADAPTER_FREEZE: cec8ee0ae79d5481beafbea55ed7aad5208a2179
-  PROTOCOL_FREEZE: 6bde01e80d78aaff91a94b1ee1b90141a780c516
+  FIRST_LAUNCH: bde157acf16ab3bbb217a68dd53e4468fc186cc5
   ROOT: /tmp/e2-f48-hp-sealed
   OUT: /tmp/e2-f48-hp-output
   SELECTED_BLOBS: /tmp/e2-f48-hp-blobs
@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
-      - name: Verify launch commit is workflow-only child of frozen adapters
+      - name: Verify workflow-only pre-complete repair lineage
         env:
           GH_TOKEN: ${{ github.token }}
           CURRENT_SHA: ${{ github.sha }}
@@ -32,25 +32,28 @@ jobs:
           set -euo pipefail
           python3 - <<'PY'
           import json,os,urllib.request
-          repo=os.environ['REPO']; sha=os.environ['CURRENT_SHA']; token=os.environ['GH_TOKEN']
-          headers={'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','User-Agent':'risu-f48-hp-launch'}
-          req=urllib.request.Request(f'https://api.github.com/repos/{repo}/commits/{sha}',headers=headers)
-          with urllib.request.urlopen(req,timeout=30) as r: doc=json.loads(r.read())
-          if [p['sha'] for p in doc.get('parents',[])] != [os.environ['ADAPTER_FREEZE']]: raise SystemExit('LAUNCH_PARENT_NOT_ADAPTER_FREEZE')
-          files=[f['filename'] for f in doc.get('files',[])]
-          if files != ['.github/workflows/e2-frozen48-helper-polarity-requalification.yml']: raise SystemExit('LAUNCH_NOT_WORKFLOW_ONLY')
-          print('LAUNCH_AUTHORITY=PASS')
+          repo=os.environ['REPO']; token=os.environ['GH_TOKEN']; current=os.environ['CURRENT_SHA']
+          headers={'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','User-Agent':'risu-f48-hp-lineage'}
+          def commit(sha):
+              req=urllib.request.Request(f'https://api.github.com/repos/{repo}/commits/{sha}',headers=headers)
+              with urllib.request.urlopen(req,timeout=30) as r: return json.loads(r.read())
+          workflow='.github/workflows/e2-frozen48-helper-polarity-requalification.yml'
+          first=commit(os.environ['FIRST_LAUNCH']); cur=commit(current)
+          if [p['sha'] for p in first.get('parents',[])] != [os.environ['ADAPTER_FREEZE']]: raise SystemExit('FIRST_LAUNCH_PARENT_NOT_ADAPTER_FREEZE')
+          if [f['filename'] for f in first.get('files',[])] != [workflow]: raise SystemExit('FIRST_LAUNCH_NOT_WORKFLOW_ONLY')
+          if [p['sha'] for p in cur.get('parents',[])] != [os.environ['FIRST_LAUNCH']]: raise SystemExit('REPAIR_NOT_CHILD_OF_FIRST_LAUNCH')
+          if [f['filename'] for f in cur.get('files',[])] != [workflow]: raise SystemExit('REPAIR_NOT_WORKFLOW_ONLY')
+          print('PRECOMPLETE_REPAIR_LINEAGE=PASS')
           PY
 
-      - name: Set up exact Python and Go toolchains
-        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: '3.13'
       - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff
         with:
           go-version: '1.23.2'
 
-      - name: Materialize only exact frozen authorities without checkout
+      - name: Materialize exact authorities and execute sealed first-complete candidate
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
@@ -59,19 +62,20 @@ jobs:
           rm -rf "$ROOT" "$OUT" "$SELECTED_BLOBS" "$SELECTED_SOURCES"
           mkdir -p "$ROOT" "$OUT" "$SELECTED_BLOBS" "$SELECTED_SOURCES"
           python3 - <<'PY'
-          import base64,hashlib,io,json,os,pathlib,tarfile,urllib.request
-          repo=os.environ['REPO']; token=os.environ['GH_TOKEN']; root=pathlib.Path(os.environ['ROOT'])
-          headers={'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','User-Agent':'risu-f48-hp-authority'}
+          import base64,hashlib,io,json,os,pathlib,re,subprocess,tarfile,urllib.request
+          repo=os.environ['REPO']; token=os.environ['GH_TOKEN']; root=pathlib.Path(os.environ['ROOT']); out=pathlib.Path(os.environ['OUT'])
+          blob_dir=pathlib.Path(os.environ['SELECTED_BLOBS']); source_root=pathlib.Path(os.environ['SELECTED_SOURCES'])
+          headers={'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','User-Agent':'risu-f48-hp-sealed'}
           def git_blob(data): return hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
           def fetch_blob(sha):
               req=urllib.request.Request(f'https://api.github.com/repos/{repo}/git/blobs/{sha}',headers=headers)
               with urllib.request.urlopen(req,timeout=30) as r: obj=json.loads(r.read())
-              if obj.get('encoding')!='base64': raise SystemExit('UNEXPECTED_BLOB_ENCODING')
+              if obj.get('encoding')!='base64': raise SystemExit('UNEXPECTED_BLOB_ENCODING:'+sha)
               data=base64.b64decode(obj['content'])
               if git_blob(data)!=sha: raise SystemExit('BLOB_IDENTITY_MISMATCH:'+sha)
               return data
           specs=[
-            ('input/protocol.json','751e11360930644dc958323961f9803ba050649b'),
+            ('input/protocol.json','197ed2a93739bd4d23ae481c8657e7e4b7649435'),
             ('tools/e2_a3_a4_selected48_transport_heldout_orchestrator.py','189e51b80aa7630064fc0164efe0ada30c324963'),
             ('tools/e2_frozen48_requalification_primary_v2.py','57c537cbf3ba43aa5ff6fdb35a3651652fd1743f'),
             ('tools/e2_frozen48_requalification_independent_v2.py','a018c76fcb30af419b15f0fe49aba41464d9b1d6'),
@@ -97,238 +101,135 @@ jobs:
             ('tools/e2_go_ir_extract.go','26e752029d1b4a99b47f1c7024740b7b0ae14ef7'),
             ('input/selection.json','8336a8e33e189e373a8a59cca57c4cab20fdc5f7'),
             ('protocols/RISU_DIFF_E2_CANONICAL_SEED_CONSEQUENCE_ANCHORS_v0.1.json','ec8d8b287a80b87c815f0362be366be076d2b091'),
-            ('input/signatures.json','cfa7d78707599177afe690c3aad7faaa22cb1930'),
-          ]
+            ('input/signatures.json','cfa7d78707599177afe690c3aad7faaa22cb1930')]
           for dst,sha in specs:
               data=fetch_blob(sha); p=root/dst; p.parent.mkdir(parents=True,exist_ok=True); p.write_bytes(data)
-          chunks=[
-            'd0a5ed7980d9ae0d2f2740624ac29a6e161ac9b9','d196782d6dced42ac761e9cf923022ad45c79110',
-            'a58cbdbf9fe5cb2cc03ca4f3e779f72c44632049','0882b17589095ae526f1ed533a9d60a43609932d']
-          archive=base64.b64decode(b''.join(fetch_blob(x) for x in chunks))
+          archive=base64.b64decode(b''.join(fetch_blob(x) for x in ['d0a5ed7980d9ae0d2f2740624ac29a6e161ac9b9','d196782d6dced42ac761e9cf923022ad45c79110','a58cbdbf9fe5cb2cc03ca4f3e779f72c44632049','0882b17589095ae526f1ed533a9d60a43609932d']))
           if hashlib.sha256(archive).hexdigest()!='7e08347694e82210bdcf53a8cec3f0684dcda5089020ad0d33e21b144fb88278': raise SystemExit('TRANSPORT_ARCHIVE_MISMATCH')
-          wanted={
-            'anchor_transport.py':('risu_e2/anchor_transport.py','3b626fc83fe76a1dfafdcf896efc8a16440bbeec062cfb1dbb86badd23b7af4c'),
-            'e2_anchor_transport_independent_check.py':('tools/e2_anchor_transport_independent_check.py','a24d6350636098e6083629f31db142e8061525f0b0d6af3538bab9a2d96048c6')}
+          wanted={'anchor_transport.py':('risu_e2/anchor_transport.py','3b626fc83fe76a1dfafdcf896efc8a16440bbeec062cfb1dbb86badd23b7af4c'),'e2_anchor_transport_independent_check.py':('tools/e2_anchor_transport_independent_check.py','a24d6350636098e6083629f31db142e8061525f0b0d6af3538bab9a2d96048c6')}
           found={}
           with tarfile.open(fileobj=io.BytesIO(archive),mode='r:gz') as tf:
-              for member in tf.getmembers():
-                  name=pathlib.PurePosixPath(member.name).name
-                  if name in wanted:
-                      f=tf.extractfile(member)
-                      if f is None or name in found: raise SystemExit('TRANSPORT_MEMBER_INVALID:'+name)
-                      found[name]=f.read()
+              for m in tf.getmembers():
+                  n=pathlib.PurePosixPath(m.name).name
+                  if n in wanted:
+                      f=tf.extractfile(m)
+                      if f is None or n in found: raise SystemExit('TRANSPORT_MEMBER_INVALID:'+n)
+                      found[n]=f.read()
           if set(found)!=set(wanted): raise SystemExit('TRANSPORT_MEMBER_SET_MISMATCH')
-          for name,(dst,sha256) in wanted.items():
-              data=found[name]
-              if hashlib.sha256(data).hexdigest()!=sha256: raise SystemExit('TRANSPORT_MEMBER_SHA_MISMATCH:'+name)
+          for n,(dst,want) in wanted.items():
+              data=found[n]
+              if hashlib.sha256(data).hexdigest()!=want: raise SystemExit('TRANSPORT_MEMBER_SHA:'+n)
               p=root/dst; p.parent.mkdir(parents=True,exist_ok=True); p.write_bytes(data)
           anchors=json.loads((root/'protocols/RISU_DIFF_E2_CANONICAL_SEED_CONSEQUENCE_ANCHORS_v0.1.json').read_bytes())
-          if len(anchors.get('contracts',[]))!=6: raise SystemExit('ANCHOR_COUNT_MISMATCH')
-          for entry in anchors['contracts']:
-              src=entry['declaration']['source']; rel=pathlib.PurePosixPath(src['path'])
+          if len(anchors.get('contracts',[]))!=6: raise SystemExit('ANCHOR_COUNT')
+          for e in anchors['contracts']:
+              src=e['declaration']['source']; rel=pathlib.PurePosixPath(src['path'])
               if rel.is_absolute() or '..' in rel.parts: raise SystemExit('UNSAFE_BASELINE_PATH')
               data=fetch_blob(src['git_blob_sha'])
-              if hashlib.sha256(data).hexdigest()!=src['sha256']: raise SystemExit('BASELINE_SHA_MISMATCH')
+              if hashlib.sha256(data).hexdigest()!=src['sha256']: raise SystemExit('BASELINE_SHA')
               p=root/'baseline'/pathlib.Path(*rel.parts); p.parent.mkdir(parents=True,exist_ok=True); p.write_bytes(data)
-          print('SEALED_AUTHORITY_MATERIALIZATION=PASS')
-          PY
-
-      - name: Compile and enforce generic adapter specialization firewall
-        shell: bash
-        run: |
-          set -euo pipefail
-          cd "$ROOT"
-          PYTHONPATH=. python3 -m py_compile \
-            tools/e2_frozen48_requalification_primary_v2.py tools/e2_frozen48_requalification_independent_v2.py \
-            tools/e2_frozen48_helper_polarity_requalification_primary.py tools/e2_frozen48_helper_polarity_requalification_independent.py \
-            risu_e2/predicate_polarity_v1.py risu_e2/path_observability_v2.py
-          python3 - <<'PY'
-          import pathlib,re
-          files=[pathlib.Path('tools/e2_frozen48_helper_polarity_requalification_primary.py'),pathlib.Path('tools/e2_frozen48_helper_polarity_requalification_independent.py')]
-          forbidden=[r'Q[0-9]{3}',r'V[23][A-Z][0-9]{2}',r'expected_truth',r'expected_e2',r'operator_id',r'operator_name',r'operator_class',r'SYN-PY-02',r'HPB',r'HPM']
-          for p in files:
+          wrappers=[root/'tools/e2_frozen48_helper_polarity_requalification_primary.py',root/'tools/e2_frozen48_helper_polarity_requalification_independent.py']
+          for p in wrappers:
               text=p.read_text()
-              for pat in forbidden:
-                  if re.search(pat,text): raise SystemExit(f'SPECIALIZATION_TOKEN:{p.name}:{pat}')
-              if re.search(r'(?<![0-9a-f])[0-9a-f]{40}(?![0-9a-f])',text): raise SystemExit(f'HASH_SPECIALIZATION:{p.name}')
-          if 'requalification_independent' in files[0].read_text() or 'requalification_primary' in files[1].read_text(): raise SystemExit('CHECKER_IMPORT_COUPLING')
-          print('SPECIALIZATION_FIREWALL=PASS')
-          PY
-          PYTHONPATH=. python3 tools/e2_a3_a4_selected48_transport_heldout_orchestrator.py project-admission --selection input/selection.json --output input/runtime_admission.json
-          cp input/runtime_admission.json "$OUT/runtime_admission.json"
-
-      - name: Read exactly the frozen selected-48 source blobs and no other heldout source set
-        env:
-          GH_TOKEN: ${{ github.token }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          cd "$ROOT"
-          python3 - <<'PY'
-          import base64,hashlib,json,os,pathlib,urllib.request
-          repo=os.environ['REPO']; token=os.environ['GH_TOKEN']; blob_dir=pathlib.Path(os.environ['SELECTED_BLOBS'])
-          admission=json.loads(pathlib.Path('input/runtime_admission.json').read_bytes()); rows=admission.get('selected_cells',[])
+              for pat in [r'Q[0-9]{3}',r'V[23][A-Z][0-9]{2}',r'expected_truth',r'expected_e2',r'operator_id',r'operator_name',r'operator_class',r'SYN-PY-02',r'HPB',r'HPM']:
+                  if re.search(pat,text): raise SystemExit('SPECIALIZATION_TOKEN:'+p.name+':'+pat)
+              if re.search(r'(?<![0-9a-f])[0-9a-f]{40}(?![0-9a-f])',text): raise SystemExit('HASH_SPECIALIZATION:'+p.name)
+          if 'requalification_independent' in wrappers[0].read_text() or 'requalification_primary' in wrappers[1].read_text(): raise SystemExit('CHECKER_IMPORT_COUPLING')
+          for p in ['tools/e2_frozen48_requalification_primary_v2.py','tools/e2_frozen48_requalification_independent_v2.py','tools/e2_frozen48_helper_polarity_requalification_primary.py','tools/e2_frozen48_helper_polarity_requalification_independent.py','risu_e2/predicate_polarity_v1.py','risu_e2/path_observability_v2.py']:
+              subprocess.run(['python3','-m','py_compile',str(root/p)],check=True,cwd=root)
+          env={**os.environ,'PYTHONPATH':str(root)}
+          def run(args,check=True): return subprocess.run(args,cwd=root,env=env,check=check).returncode
+          run(['python3','tools/e2_a3_a4_selected48_transport_heldout_orchestrator.py','project-admission','--selection','input/selection.json','--output','input/runtime_admission.json'])
+          (out/'runtime_admission.json').write_bytes((root/'input/runtime_admission.json').read_bytes())
+          admission=json.loads((root/'input/runtime_admission.json').read_bytes()); rows=admission.get('selected_cells',[])
           if len(rows)!=48: raise SystemExit('ADMISSION_NOT_48')
-          headers={'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','User-Agent':'risu-f48-hp-exact-source'}
-          def git_blob(data): return hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
           seen=set()
           for row in rows:
               if set(row)!={'cell_id','language','source_git_blob_identity','source_file_path_metadata'}: raise SystemExit('ADMISSION_FIELD_FIREWALL')
               blobs=row['source_git_blob_identity']
               if len(blobs)!=1: raise SystemExit('SOURCE_BLOB_CARDINALITY')
               sha=blobs[0]
-              if sha in seen: raise SystemExit('DUPLICATE_SELECTED_BLOB')
-              seen.add(sha)
-              req=urllib.request.Request(f'https://api.github.com/repos/{repo}/git/blobs/{sha}',headers=headers)
-              with urllib.request.urlopen(req,timeout=30) as r: obj=json.loads(r.read())
-              data=base64.b64decode(obj['content'])
-              if obj.get('encoding')!='base64' or git_blob(data)!=sha: raise SystemExit('SELECTED_BLOB_IDENTITY')
-              (blob_dir/sha).write_bytes(data)
-          if len(seen)!=48 or len(list(blob_dir.iterdir()))!=48: raise SystemExit('SELECTED_BLOB_COUNT')
-          pathlib.Path(os.environ['OUT'],'source_read_receipt.json').write_text(json.dumps({'schema':'risu.e2-f48-hp-source-read/v0.1','status':'PASS','selected48_source_blob_count':48,'exact_git_blob_endpoint_only':True,'candidate58_read':False,'epistemic10_read':False,'raw_blind58_transport_read':False},sort_keys=True,separators=(',',':'))+'\n')
-          PY
-          PYTHONPATH=. python3 tools/e2_a3_a4_selected48_transport_heldout_orchestrator.py stage-selected --authorization "$AUTH_PHRASE" --admission input/runtime_admission.json --blob-dir "$SELECTED_BLOBS" --source-root "$SELECTED_SOURCES"
-
-      - name: Recompute exact frozen transport and bind its frozen digest
-        shell: bash
-        run: |
-          set -euo pipefail
-          cd "$ROOT"
-          PYTHONPATH=. python3 tools/e2_a3_a4_selected48_transport_heldout_orchestrator.py transport \
-            --authorization "$AUTH_PHRASE" --admission input/runtime_admission.json \
-            --anchors protocols/RISU_DIFF_E2_CANONICAL_SEED_CONSEQUENCE_ANCHORS_v0.1.json \
-            --baseline-root "$ROOT/baseline" --source-root "$SELECTED_SOURCES" --output "$OUT/transport_bundle.json"
-          python3 - <<'PY'
-          import hashlib,json,os,pathlib
-          protocol=json.loads(pathlib.Path('input/protocol.json').read_bytes()); p=pathlib.Path(os.environ['OUT'],'transport_bundle.json')
-          got=hashlib.sha256(p.read_bytes()).hexdigest(); want=protocol['authority']['frozen_transport_bundle_sha256']
-          if got!=want: raise SystemExit(f'FROZEN_TRANSPORT_DIGEST_MISMATCH:{got}:{want}')
-          print('FROZEN_TRANSPORT_DIGEST=PASS')
-          PY
-
-      - name: Execute historical baseline and new Primary Independent twice
-        shell: bash
-        run: |
-          set -u
-          cd "$ROOT"; export PYTHONPATH=.
-          SEL=input/selection.json; TRANS="$OUT/transport_bundle.json"; ANC=protocols/RISU_DIFF_E2_CANONICAL_SEED_CONSEQUENCE_ANCHORS_v0.1.json; SIG=input/signatures.json; GO=tools/e2_go_ir_extract.go
-          set +e
-          python3 tools/e2_frozen48_requalification_primary_v2.py heldout --selection "$SEL" --transport "$TRANS" --anchors "$ANC" --signatures "$SIG" --source-root "$SELECTED_SOURCES" --go-helper "$GO" --output "$OUT/historical_primary.json"; HP=$?
-          python3 tools/e2_frozen48_requalification_independent_v2.py heldout --selection "$SEL" --transport "$TRANS" --anchors "$ANC" --signatures "$SIG" --source-root "$SELECTED_SOURCES" --go-helper "$GO" --output "$OUT/historical_independent.json"; HI=$?
-          python3 tools/e2_frozen48_helper_polarity_requalification_primary.py heldout --selection "$SEL" --transport "$TRANS" --anchors "$ANC" --signatures "$SIG" --source-root "$SELECTED_SOURCES" --go-helper "$GO" --output "$OUT/primary_run1.json"; P1=$?
-          python3 tools/e2_frozen48_helper_polarity_requalification_primary.py heldout --selection "$SEL" --transport "$TRANS" --anchors "$ANC" --signatures "$SIG" --source-root "$SELECTED_SOURCES" --go-helper "$GO" --output "$OUT/primary_run2.json"; P2=$?
-          python3 tools/e2_frozen48_helper_polarity_requalification_independent.py heldout --selection "$SEL" --transport "$TRANS" --anchors "$ANC" --signatures "$SIG" --source-root "$SELECTED_SOURCES" --go-helper "$GO" --output "$OUT/independent_run1.json"; I1=$?
-          python3 tools/e2_frozen48_helper_polarity_requalification_independent.py heldout --selection "$SEL" --transport "$TRANS" --anchors "$ANC" --signatures "$SIG" --source-root "$SELECTED_SOURCES" --go-helper "$GO" --output "$OUT/independent_run2.json"; I2=$?
-          set -e
-          python3 - <<PY
-          import json,pathlib,os
-          pathlib.Path(os.environ['OUT'],'exit_codes.json').write_text(json.dumps({'historical_primary':$HP,'historical_independent':$HI,'primary_run1':$P1,'primary_run2':$P2,'independent_run1':$I1,'independent_run2':$I2},sort_keys=True,separators=(',',':'))+'\n')
-          PY
-
-      - name: Build first-complete two-axis adjudication without modifying outputs
-        shell: bash
-        run: |
-          set -euo pipefail
-          cd "$ROOT"
-          python3 - <<'PY'
-          import hashlib,json,os,pathlib
-          out=pathlib.Path(os.environ['OUT'])
-          def load(name): return json.loads((out/name).read_bytes())
-          def sha(name): return hashlib.sha256((out/name).read_bytes()).hexdigest()
-          protocol=load_from= json.loads(pathlib.Path('input/protocol.json').read_bytes())
-          hp,hi=load('historical_primary.json'),load('historical_independent.json')
-          p1,p2=load('primary_run1.json'),load('primary_run2.json'); i1,i2=load('independent_run1.json'),load('independent_run2.json')
-          codes=load('exit_codes.json')
+              if sha in seen: raise SystemExit('DUPLICATE_SOURCE_BLOB')
+              seen.add(sha); (blob_dir/sha).write_bytes(fetch_blob(sha))
+          if len(seen)!=48: raise SystemExit('SELECTED_BLOB_COUNT')
+          (out/'source_read_receipt.json').write_text(json.dumps({'schema':'risu.e2-f48-hp-source-read/v0.1','status':'PASS','selected48_source_blob_count':48,'exact_git_blob_endpoint_only':True,'candidate58_read':False,'epistemic10_read':False,'raw_blind58_transport_read':False},sort_keys=True,separators=(',',':'))+'\n')
+          run(['python3','tools/e2_a3_a4_selected48_transport_heldout_orchestrator.py','stage-selected','--authorization',os.environ['AUTH_PHRASE'],'--admission','input/runtime_admission.json','--blob-dir',str(blob_dir),'--source-root',str(source_root)])
+          run(['python3','tools/e2_a3_a4_selected48_transport_heldout_orchestrator.py','transport','--authorization',os.environ['AUTH_PHRASE'],'--admission','input/runtime_admission.json','--anchors','protocols/RISU_DIFF_E2_CANONICAL_SEED_CONSEQUENCE_ANCHORS_v0.1.json','--baseline-root',str(root/'baseline'),'--source-root',str(source_root),'--output',str(out/'transport_bundle.json')])
+          protocol=json.loads((root/'input/protocol.json').read_bytes())
+          if hashlib.sha256((out/'transport_bundle.json').read_bytes()).hexdigest()!=protocol['authority']['frozen_transport_bundle_sha256']: raise SystemExit('FROZEN_TRANSPORT_DIGEST')
+          common=['heldout','--selection','input/selection.json','--transport',str(out/'transport_bundle.json'),'--anchors','protocols/RISU_DIFF_E2_CANONICAL_SEED_CONSEQUENCE_ANCHORS_v0.1.json','--signatures','input/signatures.json','--source-root',str(source_root),'--go-helper','tools/e2_go_ir_extract.go','--output']
+          runs=[('historical_primary','tools/e2_frozen48_requalification_primary_v2.py'),('historical_independent','tools/e2_frozen48_requalification_independent_v2.py'),('primary_run1','tools/e2_frozen48_helper_polarity_requalification_primary.py'),('primary_run2','tools/e2_frozen48_helper_polarity_requalification_primary.py'),('independent_run1','tools/e2_frozen48_helper_polarity_requalification_independent.py'),('independent_run2','tools/e2_frozen48_helper_polarity_requalification_independent.py')]
+          codes={}
+          for name,tool in runs: codes[name]=run(['python3',tool]+common+[str(out/(name+'.json'))],check=False)
+          (out/'exit_codes.json').write_text(json.dumps(codes,sort_keys=True,separators=(',',':'))+'\n')
+          def load(n): return json.loads((out/n).read_bytes())
+          def sha(n): return hashlib.sha256((out/n).read_bytes()).hexdigest()
+          hp,hi=load('historical_primary.json'),load('historical_independent.json'); p1=load('primary_run1.json'); i1=load('independent_run1.json')
           failures=[]
           if sha('historical_primary.json')!='9481b9ddfe39d42aaeca322530fdb3dc89a4b1316774c0230a876cbf03c5ce2c': failures.append('historical_primary_byte_identity')
           if sha('historical_independent.json')!='602f5da052824b77f354923815509daa7bcc933a67f47d4ed3df63d0ab2e1669': failures.append('historical_independent_byte_identity')
           if (out/'primary_run1.json').read_bytes()!=(out/'primary_run2.json').read_bytes(): failures.append('primary_repeat_identity')
           if (out/'independent_run1.json').read_bytes()!=(out/'independent_run2.json').read_bytes(): failures.append('independent_repeat_identity')
           if any(v!=0 for v in codes.values()): failures.append('nonzero_checker_exit')
-          def rows(doc): return {r['cell_id']:r for r in doc['rows']}
-          def canon(doc): return {r['cell_id']:r for r in doc['canonical_rows']}
-          hpr,hir,pr,ir=rows(hp),rows(hi),rows(p1),rows(i1); hpc,hic,pc,ic=canon(hp),canon(hi),canon(p1),canon(i1)
-          ids=set(pr); expected_ids=set(protocol['frozen_postdiagnosis_partition']['transport_ineligible_cells']); fixed=set(protocol['frozen_postdiagnosis_partition']['diagnosed_helper_polarity_cells'])
+          def rmap(d): return {r['cell_id']:r for r in d['rows']}
+          def cmap(d): return {r['cell_id']:r for r in d['canonical_rows']}
+          hpr,hir,pr,ir=rmap(hp),rmap(hi),rmap(p1),rmap(i1); hpc,hic,pc,ic=cmap(hp),cmap(hi),cmap(p1),cmap(i1)
+          ids=set(pr); excluded=set(protocol['frozen_postdiagnosis_partition']['transport_ineligible_cells']); fixed=set(protocol['frozen_postdiagnosis_partition']['diagnosed_helper_polarity_cells']); eligible=ids-excluded; prior=eligible-fixed
           if len(ids)!=48 or ids!=set(ir) or ids!=set(hpr) or ids!=set(hir): failures.append('selected_identity_set')
           if pc!=ic: failures.append('primary_independent_canonical_agreement')
-          if hpc!=hic: failures.append('historical_canonical_reproduction_agreement')
-          eligible=ids-expected_ids; prior=eligible-fixed
-          if len(expected_ids)!=17 or len(eligible)!=31 or len(prior)!=26 or len(fixed)!=5: failures.append('partition_cardinality')
-          for cid in sorted(expected_ids):
+          if hpc!=hic: failures.append('historical_canonical_agreement')
+          if (len(excluded),len(eligible),len(prior),len(fixed))!=(17,31,26,5): failures.append('partition_cardinality')
+          for cid in sorted(excluded):
               for label,r in [('primary',pr[cid]),('independent',ir[cid])]:
-                  if r['qualification_status']!='OBSERVABILITY_INCOMPLETE' or r['sorted_reasons']!=['OBSERVABILITY_INCOMPLETE_TRANSPORT'] or r['base_ir_status']!='NOT_EVALUATED' or r['overlay_status']!='NOT_EVALUATED' or r['path_observability_status']!='NOT_EVALUATED' or r['anchor_usability']!='INCOMPLETE': failures.append(f'{label}:{cid}:transport_fail_closed')
-              if pc[cid]!=hpc[cid] or ic[cid]!=hic[cid]: failures.append(f'{cid}:transport_canonical_changed')
+                  if r['qualification_status']!='OBSERVABILITY_INCOMPLETE' or r['sorted_reasons']!=['OBSERVABILITY_INCOMPLETE_TRANSPORT'] or r['base_ir_status']!='NOT_EVALUATED' or r['overlay_status']!='NOT_EVALUATED' or r['path_observability_status']!='NOT_EVALUATED' or r['anchor_usability']!='INCOMPLETE': failures.append(label+':'+cid+':transport_fail_closed')
+              if pc[cid]!=hpc[cid] or ic[cid]!=hic[cid]: failures.append(cid+':transport_canonical_changed')
           for cid in sorted(prior):
-              if hpr[cid]['qualification_status']!='OBSERVABILITY_QUALIFIED_FOR_A3_A4_EXECUTION' or pr[cid]['qualification_status']!='OBSERVABILITY_QUALIFIED_FOR_A3_A4_EXECUTION' or ir[cid]['qualification_status']!='OBSERVABILITY_QUALIFIED_FOR_A3_A4_EXECUTION': failures.append(f'{cid}:prior_qualified_not_preserved')
-              if pc[cid]!=hpc[cid] or ic[cid]!=hic[cid]: failures.append(f'{cid}:prior_canonical_changed')
+              if hpr[cid]['qualification_status']!='OBSERVABILITY_QUALIFIED_FOR_A3_A4_EXECUTION' or pr[cid]['qualification_status']!='OBSERVABILITY_QUALIFIED_FOR_A3_A4_EXECUTION' or ir[cid]['qualification_status']!='OBSERVABILITY_QUALIFIED_FOR_A3_A4_EXECUTION': failures.append(cid+':prior_qualification')
+              if pc[cid]!=hpc[cid] or ic[cid]!=hic[cid]: failures.append(cid+':prior_canonical_changed')
           for cid in sorted(fixed):
-              if hpr[cid]['qualification_status']!='OBSERVABILITY_INCOMPLETE' or pr[cid]['qualification_status']!='OBSERVABILITY_QUALIFIED_FOR_A3_A4_EXECUTION' or ir[cid]['qualification_status']!='OBSERVABILITY_QUALIFIED_FOR_A3_A4_EXECUTION': failures.append(f'{cid}:remediation_status')
+              if hpr[cid]['qualification_status']!='OBSERVABILITY_INCOMPLETE' or pr[cid]['qualification_status']!='OBSERVABILITY_QUALIFIED_FOR_A3_A4_EXECUTION' or ir[cid]['qualification_status']!='OBSERVABILITY_QUALIFIED_FOR_A3_A4_EXECUTION': failures.append(cid+':remediation_status')
               for label,r in [('primary',pr[cid]),('independent',ir[cid])]:
                   ev=r.get('helper_polarity_evidence',{})
-                  if r['effective_guard_form']!='HELPER_CONTROL' or ev.get('certificate_status')!='PROVED' or ev.get('effective_guard_form')!='HELPER_CONTROL' or not ev.get('certificate_sha256'): failures.append(f'{label}:{cid}:certificate')
+                  if r['effective_guard_form']!='HELPER_CONTROL' or ev.get('certificate_status')!='PROVED' or ev.get('effective_guard_form')!='HELPER_CONTROL' or not ev.get('certificate_sha256'): failures.append(label+':'+cid+':certificate')
           changed={cid for cid in ids if pc[cid]!=hpc[cid]}
           if changed!=fixed: failures.append('canonical_delta_set')
-          qualified={cid for cid,r in pr.items() if r['qualification_status']=='OBSERVABILITY_QUALIFIED_FOR_A3_A4_EXECUTION'}
-          if qualified!=eligible or {cid for cid,r in ir.items() if r['qualification_status']=='OBSERVABILITY_QUALIFIED_FOR_A3_A4_EXECUTION'}!=eligible: failures.append('31_of_31_admission_gate')
-          summary={
-            'schema':'risu.e2-a3-a4-frozen48-helper-polarity-requalification-first-complete/v0.1',
-            'status':'REMEDIATION_REQUALIFICATION_PASS' if not failures else 'REMEDIATION_REQUALIFICATION_FAIL',
-            'classification':'NON_PROSPECTIVE_POST_DIAGNOSIS_REMEDIATION_REQUALIFICATION',
-            'historical_first_complete_status_preserved':'ORIGINAL_FIRST_COMPLETE_FROZEN_FAIL_26_OF_48',
-            'selected_case_count':48,'strict_transport_eligible_count':31,'strict_transport_ineligible_count':17,
-            'qualified_given_admission_count':len(qualified),'conservative_exclusion_preserved_count':sum(1 for x in expected_ids if pr[x]['qualification_status']=='OBSERVABILITY_INCOMPLETE'),
-            'diagnosed_helper_polarity_promoted_count':sum(1 for x in fixed if pr[x]['qualification_status']=='OBSERVABILITY_QUALIFIED_FOR_A3_A4_EXECUTION'),
-            'primary_independent_canonical_agreed_count':sum(1 for x in ids if pc[x]==ic[x]),
-            'changed_canonical_cell_ids':sorted(changed),'expected_changed_cell_ids':sorted(fixed),
-            'historical_byte_identity':{'primary':sha('historical_primary.json')=='9481b9ddfe39d42aaeca322530fdb3dc89a4b1316774c0230a876cbf03c5ce2c','independent':sha('historical_independent.json')=='602f5da052824b77f354923815509daa7bcc933a67f47d4ed3df63d0ab2e1669'},
-            'repeat_byte_identity':{'primary':(out/'primary_run1.json').read_bytes()==(out/'primary_run2.json').read_bytes(),'independent':(out/'independent_run1.json').read_bytes()==(out/'independent_run2.json').read_bytes()},
-            'failures':failures,
-            'coverage_statement':'31/48 strict-transport eligible; 31/31 observability-qualified given admission; 17/17 conservative transport exclusions preserved.',
-            'forbidden_claim_not_made':True,
-            'firewall':{'candidate58_read':False,'epistemic10_read':False,'raw_blind58_transport_read':False,'mutation_truth_or_operator_metadata_read':False,'expected_e2_prediction_read':False,'fresh_target_bytes_read':False,'a3_a4_semantic_verdict_execution':False}
-          }
+          pq={cid for cid,r in pr.items() if r['qualification_status']=='OBSERVABILITY_QUALIFIED_FOR_A3_A4_EXECUTION'}; iq={cid for cid,r in ir.items() if r['qualification_status']=='OBSERVABILITY_QUALIFIED_FOR_A3_A4_EXECUTION'}
+          if pq!=eligible or iq!=eligible: failures.append('31_of_31_admission_gate')
+          summary={'schema':'risu.e2-a3-a4-frozen48-helper-polarity-requalification-first-complete/v0.1','status':'REMEDIATION_REQUALIFICATION_PASS' if not failures else 'REMEDIATION_REQUALIFICATION_FAIL','classification':'NON_PROSPECTIVE_POST_DIAGNOSIS_REMEDIATION_REQUALIFICATION','historical_first_complete_status_preserved':'ORIGINAL_FIRST_COMPLETE_FROZEN_FAIL_26_OF_48','selected_case_count':48,'strict_transport_eligible_count':31,'strict_transport_ineligible_count':17,'qualified_given_admission_count':len(pq),'conservative_exclusion_preserved_count':sum(1 for x in excluded if pr[x]['qualification_status']=='OBSERVABILITY_INCOMPLETE'),'diagnosed_helper_polarity_promoted_count':sum(1 for x in fixed if pr[x]['qualification_status']=='OBSERVABILITY_QUALIFIED_FOR_A3_A4_EXECUTION'),'primary_independent_canonical_agreed_count':sum(1 for x in ids if pc[x]==ic[x]),'changed_canonical_cell_ids':sorted(changed),'expected_changed_cell_ids':sorted(fixed),'historical_byte_identity':{'primary':sha('historical_primary.json')=='9481b9ddfe39d42aaeca322530fdb3dc89a4b1316774c0230a876cbf03c5ce2c','independent':sha('historical_independent.json')=='602f5da052824b77f354923815509daa7bcc933a67f47d4ed3df63d0ab2e1669'},'repeat_byte_identity':{'primary':(out/'primary_run1.json').read_bytes()==(out/'primary_run2.json').read_bytes(),'independent':(out/'independent_run1.json').read_bytes()==(out/'independent_run2.json').read_bytes()},'failures':failures,'coverage_statement':'31/48 strict-transport eligible; 31/31 observability-qualified given admission; 17/17 conservative transport exclusions preserved.','forbidden_claim_not_made':True,'firewall':{'candidate58_read':False,'epistemic10_read':False,'raw_blind58_transport_read':False,'mutation_truth_or_operator_metadata_read':False,'expected_e2_prediction_read':False,'fresh_target_bytes_read':False,'a3_a4_semantic_verdict_execution':False}}
           (out/'first_complete_summary.json').write_text(json.dumps(summary,sort_keys=True,separators=(',',':'))+'\n')
-          cross={'schema':'risu.e2-f48-hp-canonical-cross-check/v0.1','status':'PASS' if pc==ic else 'FAIL','case_count':48,'agreed_count':sum(1 for x in ids if pc[x]==ic[x]),'mismatch_cell_ids':sorted(x for x in ids if pc[x]!=ic[x]),'candidate58_read':False,'a3_a4_semantic_verdict_execution':False}
-          (out/'cross_check.json').write_text(json.dumps(cross,sort_keys=True,separators=(',',':'))+'\n')
-          print(json.dumps(summary,sort_keys=True,separators=(',',':')))
-          PY
-
-      - name: Assert raw selected source cannot leak into evidence
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 - <<'PY'
-          import json,os,pathlib
-          out=pathlib.Path(os.environ['OUT']); sources=pathlib.Path(os.environ['SELECTED_SOURCES']); blobs=[p.read_bytes() for p in out.iterdir() if p.is_file()]
-          for src in sources.rglob('*'):
+          (out/'cross_check.json').write_text(json.dumps({'schema':'risu.e2-f48-hp-canonical-cross-check/v0.1','status':'PASS' if pc==ic else 'FAIL','case_count':48,'agreed_count':sum(1 for x in ids if pc[x]==ic[x]),'mismatch_cell_ids':sorted(x for x in ids if pc[x]!=ic[x]),'candidate58_read':False,'a3_a4_semantic_verdict_execution':False},sort_keys=True,separators=(',',':'))+'\n')
+          output_bytes=[p.read_bytes() for p in out.iterdir() if p.is_file()]
+          for src in source_root.rglob('*'):
               if not src.is_file(): continue
               raw=src.read_bytes()
-              if raw and any(raw in b for b in blobs): raise SystemExit('RAW_SOURCE_LEAK')
+              if raw and any(raw in b for b in output_bytes): raise SystemExit('RAW_SOURCE_LEAK')
               for line in raw.splitlines():
                   s=line.strip()
                   if len(s)<24: continue
                   try: enc=json.dumps(s.decode('utf-8'),ensure_ascii=False)[1:-1].encode()
                   except UnicodeDecodeError: continue
-                  if enc and any(enc in b for b in blobs): raise SystemExit('SOURCE_LINE_LEAK')
-          print('RAW_SOURCE_FIREWALL=PASS')
+                  if enc and any(enc in b for b in output_bytes): raise SystemExit('SOURCE_LINE_LEAK')
+          print(json.dumps(summary,sort_keys=True,separators=(',',':')))
           PY
 
-      - name: Upload first-complete evidence before final gate
+      - name: Upload first-complete evidence before final assertion
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: e2-frozen48-helper-polarity-requalification-first-complete
           path: /tmp/e2-f48-hp-output/
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 90
 
-      - name: Assert immutable first-complete gate after upload
+      - name: Assert first-complete gate only after artifact upload
         shell: bash
         run: |
           set -euo pipefail
           python3 - <<'PY'
           import json,os,pathlib
-          s=json.loads(pathlib.Path(os.environ['OUT'],'first_complete_summary.json').read_bytes())
-          if s['status']!='REMEDIATION_REQUALIFICATION_PASS' or s['failures'] or s['qualified_given_admission_count']!=31 or s['conservative_exclusion_preserved_count']!=17 or s['primary_independent_canonical_agreed_count']!=48 or not all(s['historical_byte_identity'].values()) or not all(s['repeat_byte_identity'].values()): raise SystemExit('FIRST_COMPLETE_REMEDIATION_REQUALIFICATION_FAIL')
+          p=pathlib.Path(os.environ['OUT'],'first_complete_summary.json')
+          if not p.is_file(): raise SystemExit('NO_COMPLETE_SCIENTIFIC_OUTPUT')
+          s=json.loads(p.read_bytes())
+          if s['status']!='REMEDIATION_REQUALIFICATION_PASS' or s['failures'] or s['qualified_given_admission_count']!=31 or s['conservative_exclusion_preserved_count']!=17 or s['diagnosed_helper_polarity_promoted_count']!=5 or s['primary_independent_canonical_agreed_count']!=48 or not all(s['historical_byte_identity'].values()) or not all(s['repeat_byte_identity'].values()): raise SystemExit('FIRST_COMPLETE_REMEDIATION_REQUALIFICATION_FAIL')
           print('FIRST_COMPLETE_REMEDIATION_REQUALIFICATION_PASS')
           PY
