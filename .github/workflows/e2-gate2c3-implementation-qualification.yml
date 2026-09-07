@@ -1,0 +1,131 @@
+name: E2 Gate2C3 Implementation Qualification
+
+on:
+  push:
+    branches: [gate2c3-staging]
+    paths:
+      - ".github/workflows/e2-gate2c3-implementation-qualification.yml"
+
+permissions:
+  contents: read
+
+env:
+  EXPECTED_PARENT: 63d0011d2ac3df699138647eb35523fc5477bfbf
+  PROTOCOL: protocols/RISU_DIFF_E2_GATE2C3_PYTHON_C1_WORLD_EVALUATION_PROVENANCE_PROTOCOL_v0.1.json
+  AMENDMENT: protocols/RISU_DIFF_E2_GATE2C3_PYTHON_C1_WORLD_EVALUATION_PROVENANCE_PROTOCOL_AMENDMENT_001.json
+  ANALYZER: tools/e2_gate2c3_python_c1_world_eval_provenance.py
+  TEST: tests/test_e2_gate2c3_python_c1_world_eval_provenance.py
+  PROTOCOL_BLOB: 658572619ed5f68127a97f053056ccad4269c4a6
+  AMENDMENT_BLOB: b3229f9ee3c77648e85e2b3cc86b749209434e11
+  ANALYZER_BLOB: a30172a3f72d17bc29b37b0f6c5d86a3b6893741
+  TEST_BLOB: d96c31f68cd33d74e92692d785793bdc7accf607
+
+jobs:
+  synthetic-qualification:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact qualification revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 10
+
+      - name: Prove prospective implementation boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "$EXPECTED_PARENT"
+          test "$(git diff --name-only HEAD^ HEAD)" = ".github/workflows/e2-gate2c3-implementation-qualification.yml"
+          test "$(git hash-object "$PROTOCOL")" = "$PROTOCOL_BLOB"
+          test "$(git hash-object "$AMENDMENT")" = "$AMENDMENT_BLOB"
+          test "$(git hash-object "$ANALYZER")" = "$ANALYZER_BLOB"
+          test "$(git hash-object "$TEST")" = "$TEST_BLOB"
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          p=json.loads(Path(os.environ['PROTOCOL']).read_text())
+          a=json.loads(Path(os.environ['AMENDMENT']).read_text())
+          assert p['status']=='PROSPECTIVE_SEALED_BEFORE_SEVEN_SOURCE_READS'
+          assert a['status']=='PROSPECTIVE_SEALED_BEFORE_LOCATOR_OR_SEVEN_SOURCE_ANALYSIS'
+          assert p['population']['case_count']==7
+          assert p['scientific_firewall']['c1_rerun'] is False
+          assert p['scientific_firewall']['truth_read'] is False
+          print('GATE2C3_PROSPECTIVE_BOUNDARY=PASS')
+          PY
+
+      - name: Set up exact Python runtime
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.13.5"
+
+      - name: Audit independent stdlib-only surface and frozen taxonomy
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import ast,json,sys,importlib.util,os
+          from pathlib import Path
+          p=Path(os.environ['ANALYZER']); tree=ast.parse(p.read_text())
+          roots=[]
+          for n in ast.walk(tree):
+              if isinstance(n,ast.Import): roots += [a.name.split('.',1)[0] for a in n.names]
+              elif isinstance(n,ast.ImportFrom) and n.module: roots.append(n.module.split('.',1)[0])
+          bad=[x for x in roots if x not in sys.stdlib_module_names and x!='__future__']
+          assert not bad,bad
+          assert not [x for x in roots if x.startswith('risu')],roots
+          text=p.read_text()
+          for forbidden in ('risu_e2_c1','risu_e2_semantic','mutation_truth','expected_e2_prediction'):
+              assert forbidden not in text,forbidden
+          spec=importlib.util.spec_from_file_location('g2c3',p);m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
+          prot=json.loads(Path(os.environ['PROTOCOL']).read_text())
+          assert m.TAXONOMY==prot['diagnostic_model']['taxonomy_precedence']
+          assert sys.implementation.name=='cpython'
+          assert '.'.join(map(str,sys.version_info[:3]))=='3.13.5'
+          print('GATE2C3_INDEPENDENCE_AND_TAXONOMY=PASS')
+          PY
+
+      - name: Execute adversarial synthetic qualification twice
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile "$ANALYZER" "$TEST"
+          python "$TEST" > "$RUNNER_TEMP/test1.txt" 2>&1
+          python "$TEST" > "$RUNNER_TEMP/test2.txt" 2>&1
+          cmp "$RUNNER_TEMP/test1.txt" "$RUNNER_TEMP/test2.txt"
+          grep -q '^OK$' "$RUNNER_TEMP/test1.txt"
+          echo GATE2C3_SYNTHETIC_DUAL_REPLAY=PASS
+
+      - name: Materialize qualification receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/gate2c3-qualification"; export OUT; mkdir -p "$OUT"
+          python - <<'PY'
+          import hashlib,json,os,platform
+          from pathlib import Path
+          h=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          r={
+            'schema':'risu.e2-gate2c3-implementation-qualification/v0.1',
+            'status':'SYNTHETICALLY_QUALIFIED_NOT_REAL_EXECUTED',
+            'workflow_run_id':os.environ['GITHUB_RUN_ID'],'workflow_sha':os.environ['GITHUB_SHA'],
+            'python_version':platform.python_version(),
+            'protocol_git_blob':os.environ['PROTOCOL_BLOB'],'amendment_git_blob':os.environ['AMENDMENT_BLOB'],
+            'analyzer_git_blob':os.environ['ANALYZER_BLOB'],'test_git_blob':os.environ['TEST_BLOB'],
+            'analyzer_sha256':h(os.environ['ANALYZER']),'test_sha256':h(os.environ['TEST']),
+            'taxonomy_branch_suite':True,'locator_58_hash_7_retain_suite':True,
+            'synthetic_test_dual_replay_identical':True,'stdlib_only':True,
+            'real_source_locator_executed':False,'selected_real_source_content_read':False,
+            'c1_rerun':False,'semantic_engine_rerun':False,'truth_read':False,'epistemic10_read':False,'remediation':False,
+          }
+          Path(os.environ['OUT'],'E2_GATE2C3_IMPLEMENTATION_QUALIFICATION_RECEIPT.json').write_text(json.dumps(r,sort_keys=True,separators=(',',':'))+'\n')
+          PY
+
+      - name: Upload qualification receipt before implementation freeze
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-gate2c3-implementation-qualification
+          path: ${{ runner.temp }}/gate2c3-qualification/E2_GATE2C3_IMPLEMENTATION_QUALIFICATION_RECEIPT.json
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
