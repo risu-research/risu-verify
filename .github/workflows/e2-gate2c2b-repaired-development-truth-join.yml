@@ -1,0 +1,219 @@
+name: E2 Gate2C2b Repaired Development Truth Join
+
+on:
+  push:
+    branches: [e2-development]
+    paths:
+      - ".github/workflows/e2-gate2c2b-repaired-development-truth-join.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: e2-gate2c2b-repaired-development-truth-join
+  cancel-in-progress: false
+
+env:
+  EXPECTED_PARENT: e06d4a14242332b67f3b655914805167a87f41ee
+  PROTOCOL_PATH: protocols/RISU_DIFF_E2_GATE2C2B_REPAIRED_DEVELOPMENT_TRUTH_JOIN_PROTOCOL_v0.1.json
+  PROTOCOL_BLOB: dff73185837392e041d4d9f0d54ee89daa5cbd3b
+  WRAPPER_PATH: tools/e2_candidate58_gate2c2b_repaired_truth_join.py
+  WRAPPER_BLOB: 884c2032f968c3932840f752bd96abd1dc3a9f52
+  REPAIRED_MATRIX: experiments/risu-diff-e2/qualification/candidate58/gate2c2a-repaired-machine-requalification/first-complete/E2_GATE2C2A_REPAIRED_MACHINE_PREDICTION_MATRIX.json
+  REPAIRED_MATRIX_SHA256: da8cb707a5cc71b36881eafc01a377ba040bb5148ae3d3997ecd95f7572138d3
+  REPAIRED_FREEZE: experiments/risu-diff-e2/qualification/candidate58/gate2c2a-repaired-machine-requalification/first-complete/E2_GATE2C2A_FIRST_COMPLETE_IMMUTABLE_FREEZE_RECEIPT.json
+
+jobs:
+  repaired-development-join:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact Gate2C2b orchestration revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+
+      - name: Prove frozen scoring and repaired-machine boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "$EXPECTED_PARENT"
+          test "$(git diff --name-only HEAD^ HEAD)" = ".github/workflows/e2-gate2c2b-repaired-development-truth-join.yml"
+          test "$(git hash-object "$PROTOCOL_PATH")" = "$PROTOCOL_BLOB"
+          test "$(git hash-object "$WRAPPER_PATH")" = "$WRAPPER_BLOB"
+          test "$(git hash-object tools/e2_candidate58_gate2a_truth_join.py)" = "f6645926d60a7029388b0f78a03115b7a4649c09"
+          test "$(git hash-object tools/e2_candidate58_gate2a_truth_join_v2.py)" = "9eed33c52db0cd4af4def5ed61edd3ca05bd0ba0"
+          test "$(git hash-object protocols/RISU_DIFF_E2_CANDIDATE58_GATE2A_TRUTH_JOIN_PROTOCOL_v0.1.json)" = "1ba7117818fe2f8efe568d7c67ae50a3dba77f65"
+          test "$(git hash-object experiments/risu-diff-e2/qualification/TRUTH_ORACLE_CONTRACT.json)" = "98e53e13472c9d1287c3114734464994a6693778"
+          test "$(git hash-object tools/e2_mutation_truth_oracle.py)" = "1e5fe69f302df6fdd367797649b17eb3c4ea5950"
+          test "$(git hash-object experiments/risu-diff-e2/qualification/MUTATION_QUALIFICATION_MATRIX_EXPANDED.jsonl)" = "0ab0c31377d7e03bc279943af151c687f51ffc93"
+          test "$(git hash-object "$REPAIRED_FREEZE")" = "0a5853950905ecd2fca219945c4e8f3844f6af81"
+          echo "$REPAIRED_MATRIX_SHA256  $REPAIRED_MATRIX" | sha256sum -c -
+          echo "afd681d308a6f4ec8c183edd9b139c6b914fe501936cf84e5845a6a1c0d6b7cb  experiments/risu-diff-e2/qualification/MUTATION_QUALIFICATION_MATRIX_EXPANDED.jsonl" | sha256sum -c -
+          echo "8014c1aa8ed252a5187be51b574348bdb3a744ba3070ace208a98156e7eed8a5  experiments/risu-diff-e2/qualification/candidate58/gate2a-first-complete-truth-join/E2_CANDIDATE58_GATE2A_METRICS.json" | sha256sum -c -
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          f=json.loads(Path('experiments/risu-diff-e2/qualification/candidate58/gate2c2a-repaired-machine-requalification/first-complete/E2_GATE2C2A_FIRST_COMPLETE_IMMUTABLE_FREEZE_RECEIPT.json').read_text())
+          assert f['status']=='FIRST_COMPLETE_REPAIRED_CANDIDATE58_MACHINE_ONLY_IMMUTABLY_FROZEN_BY_CONTAINING_COMMIT'
+          assert f['machine_only_before_truth_join'] is True and f['truth_or_gold_read'] is False
+          assert f['frozen_files_sha256']['E2_GATE2C2A_REPAIRED_MACHINE_PREDICTION_MATRIX.json']=='da8cb707a5cc71b36881eafc01a377ba040bb5148ae3d3997ecd95f7572138d3'
+          p=json.loads(Path('protocols/RISU_DIFF_E2_GATE2C2B_REPAIRED_DEVELOPMENT_TRUTH_JOIN_PROTOCOL_v0.1.json').read_text())
+          assert p['status']=='PROSPECTIVE_FROZEN_BEFORE_GATE2C2B_JOIN_EXECUTION'
+          print('GATE2C2B_SCORING_AND_MACHINE_BOUNDARY=PASS')
+          PY
+
+      - name: Set up exact Python runtime
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.13.5"
+
+      - name: Independently preflight frozen truth oracle
+        shell: bash
+        run: |
+          set -euo pipefail
+          python tools/e2_mutation_truth_oracle.py > "$RUNNER_TEMP/gate2c2b-truth-oracle-preflight.json"
+          python - <<'PY'
+          import json,os,platform
+          from pathlib import Path
+          x=json.loads((Path(os.environ['RUNNER_TEMP'])/'gate2c2b-truth-oracle-preflight.json').read_text())
+          assert platform.python_version()=='3.13.5'
+          assert x['status']=='PASS' and x['cell_count']==58 and x['seed_count']==6
+          assert x['e2_prediction_consumed'] is False
+          assert x['matrix_sha256']=='afd681d308a6f4ec8c183edd9b139c6b914fe501936cf84e5845a6a1c0d6b7cb'
+          print('GATE2C2B_TRUTH_ORACLE_PREFLIGHT=PASS')
+          PY
+
+      - name: Execute first frozen-semantics repaired truth join
+        shell: bash
+        env:
+          PYTHONPATH: ${{ github.workspace }}/tools
+          PYTHONHASHSEED: "0"
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/gate2c2b/replay1"
+          python "$WRAPPER_PATH" --output-dir "$RUNNER_TEMP/gate2c2b/replay1"
+          test "$(find "$RUNNER_TEMP/gate2c2b/replay1" -maxdepth 1 -type f | wc -l)" -eq 6
+          (cd "$RUNNER_TEMP/gate2c2b/replay1" && find . -type f -print0 | sort -z | xargs -0 sha256sum) > "$RUNNER_TEMP/gate2c2b/replay1.logical-tree.sha256"
+
+      - name: Execute mandatory second frozen-semantics repaired truth join
+        shell: bash
+        env:
+          PYTHONPATH: ${{ github.workspace }}/tools
+          PYTHONHASHSEED: "0"
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/gate2c2b/replay2"
+          python "$WRAPPER_PATH" --output-dir "$RUNNER_TEMP/gate2c2b/replay2"
+          test "$(find "$RUNNER_TEMP/gate2c2b/replay2" -maxdepth 1 -type f | wc -l)" -eq 6
+          (cd "$RUNNER_TEMP/gate2c2b/replay2" && find . -type f -print0 | sort -z | xargs -0 sha256sum) > "$RUNNER_TEMP/gate2c2b/replay2.logical-tree.sha256"
+
+      - name: Require exact join identity and frozen decision rule
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmp "$RUNNER_TEMP/gate2c2b/replay1.logical-tree.sha256" "$RUNNER_TEMP/gate2c2b/replay2.logical-tree.sha256"
+          diff -qr "$RUNNER_TEMP/gate2c2b/replay1" "$RUNNER_TEMP/gate2c2b/replay2"
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          r=Path(os.environ['RUNNER_TEMP'])/'gate2c2b/replay1'
+          met=json.loads((r/'E2_CANDIDATE58_GATE2A_METRICS.json').read_text())
+          cmp=json.loads((r/'E2_GATE2C2B_ORIGINAL_VS_REPAIRED_DEVELOPMENT_METRICS.json').read_text())
+          rec=json.loads((r/'E2_GATE2C2B_COMPATIBILITY_WRAPPER_RECEIPT.json').read_text())
+          led=json.loads((r/'E2_CANDIDATE58_GATE2A_JOINED_LEDGER.json').read_text())
+          mapping=json.loads((r/'E2_CANDIDATE58_GATE2A_SOURCE_IDENTITY_VIEW_RECEIPT.json').read_text())
+          assert led['case_count']==58 and len(led['rows'])==58
+          assert met['population']=={'all':58,'semantic':48,'M_PLUS':24,'M_ZERO':24,'M_QUESTION':10}
+          assert mapping['status']=='PASS_UNIQUE_ADMISSION_HASH_PER_Q' and mapping['q_count']==58
+          assert rec['truth_or_metric_semantics_modified'] is False
+          assert rec['semantic_engine_rerun'] is False and rec['c1_checker_rerun'] is False and rec['epistemic10_read'] is False
+          unsafe=met['primary_preregistered']['unsafe_false_stability']['numerator']
+          c1bad=met['primary_preregistered']['c1_disagreement_or_invalid_certificate_rate']['numerator']
+          cov=met['primary_preregistered']['selective_coverage']['numerator']
+          expected='HARD_STOP_NO_HELDOUT' if unsafe>0 or c1bad>0 else ('NO_EPISTEMIC10_REASSESS_SUBSTRATE' if cov==0 else 'EPISTEMIC10_ELIGIBLE_REASSESS_BEST_NEXT_STEP_FIRST')
+          assert cmp['post_gate_decision']==expected
+          print('GATE2C2B_DUAL_REPLAY_AND_DECISION_RULE=PASS')
+          PY
+
+      - name: Upload exact dual truth-join evidence before repository freeze
+        id: upload
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-gate2c2b-repaired-development-truth-join
+          path: |
+            ${{ runner.temp }}/gate2c2b/replay1
+            ${{ runner.temp }}/gate2c2b/replay2
+            ${{ runner.temp }}/gate2c2b/replay1.logical-tree.sha256
+            ${{ runner.temp }}/gate2c2b/replay2.logical-tree.sha256
+            ${{ runner.temp }}/gate2c2b-truth-oracle-preflight.json
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+
+      - name: Materialize exact additive Gate2C2b freeze payload
+        shell: bash
+        env:
+          ARTIFACT_ID: ${{ steps.upload.outputs.artifact-id }}
+          ARTIFACT_DIGEST: ${{ steps.upload.outputs.artifact-digest }}
+        run: |
+          set -euo pipefail
+          SRC="$RUNNER_TEMP/gate2c2b/replay1"
+          D="experiments/risu-diff-e2/qualification/candidate58/gate2c2b-repaired-development-truth-join/first-complete"
+          test ! -e "$D"; mkdir -p "$D"
+          cp "$SRC/E2_CANDIDATE58_GATE2A_JOINED_LEDGER.json" "$D/E2_GATE2C2B_REPAIRED_JOINED_LEDGER.json"
+          cp "$SRC/E2_CANDIDATE58_GATE2A_METRICS.json" "$D/E2_GATE2C2B_REPAIRED_METRICS.json"
+          cp "$SRC/E2_CANDIDATE58_GATE2A_JOIN_RECEIPT.json" "$D/E2_GATE2C2B_INHERITED_SCORING_JOIN_RECEIPT.json"
+          cp "$SRC/E2_CANDIDATE58_GATE2A_SOURCE_IDENTITY_VIEW_RECEIPT.json" "$D/E2_GATE2C2B_SOURCE_IDENTITY_VIEW_RECEIPT.json"
+          cp "$SRC/E2_GATE2C2B_ORIGINAL_VS_REPAIRED_DEVELOPMENT_METRICS.json" "$D/"
+          cp "$SRC/E2_GATE2C2B_COMPATIBILITY_WRAPPER_RECEIPT.json" "$D/"
+          cp "$RUNNER_TEMP/gate2c2b/replay1.logical-tree.sha256" "$D/E2_GATE2C2B_LOGICAL_TREE.sha256"
+          cp "$RUNNER_TEMP/gate2c2b-truth-oracle-preflight.json" "$D/E2_GATE2C2B_TRUTH_ORACLE_PREFLIGHT.json"
+          export D
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          d=Path(os.environ['D']); h=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          cmp=json.loads((d/'E2_GATE2C2B_ORIGINAL_VS_REPAIRED_DEVELOPMENT_METRICS.json').read_text())
+          files={p.name:h(p) for p in sorted(d.iterdir()) if p.is_file()}
+          out={
+            'schema':'risu.e2-gate2c2b-repaired-development-truth-join-first-complete-freeze/v0.1',
+            'status':'FIRST_COMPLETE_GATE2C2B_REPAIRED_DEVELOPMENT_TRUTH_JOIN_IMMUTABLY_FROZEN_BY_CONTAINING_COMMIT',
+            'workflow_trigger_commit':os.environ['GITHUB_SHA'],'workflow_run_id':os.environ['GITHUB_RUN_ID'],
+            'gate2c2a_machine_freeze_commit':'cad7072ed88abf3df6d0ecf263e3ba2de4d8172b',
+            'original_gate2a_truth_join_freeze_commit':'afcf9ce67d93be612f1004c6a2031e819f0ea12d',
+            'protocol_git_blob':os.environ['PROTOCOL_BLOB'],'wrapper_git_blob':os.environ['WRAPPER_BLOB'],
+            'hosted_artifact':{'id':os.environ['ARTIFACT_ID'],'digest':os.environ['ARTIFACT_DIGEST'],'uploaded_before_repository_freeze':True},
+            'frozen_files_sha256':files,'two_join_replay_logical_byte_identity':True,
+            'post_gate_decision':cmp['post_gate_decision'],
+            'semantic_engine_rerun':False,'c1_checker_rerun':False,'truth_modified':False,
+            'epistemic10_read':False,'fresh_heldout_read':False,
+            'development_only_not_fresh_generalization':True,
+          }
+          (d/'E2_GATE2C2B_FIRST_COMPLETE_IMMUTABLE_FREEZE_RECEIPT.json').write_text(json.dumps(out,sort_keys=True,separators=(',',':'))+'\n')
+          PY
+          test "$(find "$D" -maxdepth 1 -type f | wc -l)" -eq 9
+
+      - name: Commit and fast-forward push exact nine-file Gate2C2b freeze
+        shell: bash
+        run: |
+          set -euo pipefail
+          D="experiments/risu-diff-e2/qualification/candidate58/gate2c2b-repaired-development-truth-join/first-complete"
+          git config user.name "RISU Evidence Freeze"
+          git config user.email "risu-evidence-freeze@users.noreply.github.com"
+          git add "$D"
+          test "$(git diff --cached --name-only | wc -l)" -eq 9
+          test -z "$(git diff --cached --name-only | grep -v '^experiments/risu-diff-e2/qualification/candidate58/gate2c2b-repaired-development-truth-join/first-complete/' || true)"
+          git commit -m "Freeze Gate2C2b repaired Candidate58 development metrics"
+          git push origin HEAD:e2-development
+
+      - name: Post-push immutable Gate2C2b verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          local_sha="$(git rev-parse HEAD)"; remote_sha="$(git ls-remote origin refs/heads/e2-development | cut -f1)"
+          test "$local_sha" = "$remote_sha"
+          test "$(git diff --name-only HEAD^ HEAD | wc -l)" -eq 9
+          test -z "$(git diff --name-only HEAD^ HEAD | grep -v '^experiments/risu-diff-e2/qualification/candidate58/gate2c2b-repaired-development-truth-join/first-complete/' || true)"
+          echo GATE2C2B_IMMUTABLE_FREEZE=PASS
