@@ -1,0 +1,148 @@
+{
+  "schema": "risu.e2-candidate58-gate2b3-implementation-freeze/v0.1",
+  "protocol_id": "RISU_DIFF_E2_CANDIDATE58_GATE2B3_IMPLEMENTATION_FREEZE_v0.1",
+  "status": "IMPLEMENTATION_FROZEN_SYNTHETICALLY_QUALIFIED_REAL_39_TRACE_UNOPENED_BY_CONTAINING_COMMIT",
+  "repository": "risu-research/risu-verify",
+  "branch": "e2-development",
+  "scientific_boundary": {
+    "prospective_protocol_commit": "10c7e4d74fd4e4d3482638a49ed577b915510dd2",
+    "prospective_protocol_git_blob": "a587adee49f6169da4555e22a9a278c0052a2e4e",
+    "gate2b2_first_complete_freeze_commit": "3cd22bdcf596407c2e8076b024af832311264779",
+    "gate2b2_ledger_sha256": "da53c72af39adba927b56fbeaf52922245bb503f8b6b5a14c45ce157fed5e2a2",
+    "candidate58_first_complete_machine_freeze_commit": "2ece1023252a8e9100a34d74079493040441e1e2",
+    "candidate58_bundle_content_manifest_git_blob": "3ff712eab14dab6686267f9a790909c78f384c14",
+    "candidate58_bundle_content_manifest_sha256": "c5030f084936c186b1d320b02ad8bf1e1648bbc9e97ad78b33db81fb9a6bd217",
+    "candidate58_bundle_file_count": 946,
+    "real_selected_39_overlay_path_pairs_opened_before_this_freeze": false
+  },
+  "frozen_implementation": {
+    "analyzer": {
+      "path": "tools/e2_candidate58_gate2b3_guard_scope_provenance_attribution.py",
+      "introducing_commit": "05a07ab2e146d88cb887bb7025841dc2fa72aef7",
+      "git_blob": "8924a296453e21c8af29628f074551fdffaca5ba",
+      "sha256": "8e45eb744760ae0d0b623fcb959a1138fb860455429ee02c3e2b09353d58787d",
+      "stdlib_only": true,
+      "imports_risu_semantic_kernel_adapter_or_c1": false
+    },
+    "adversarial_synthetic_selftest": {
+      "path": "tests/test_e2_candidate58_gate2b3_guard_scope_provenance_attribution.py",
+      "introducing_commit": "78e0366e8b8a4466ae4681b31b9c43c85108a275",
+      "git_blob": "310864fc36649abb2b32e7ce517db75b3b74d5cf",
+      "sha256": "67a164d279866883eb067e3b8bfef296d487cc8feb27bb289f90d21f6ddeeb79"
+    },
+    "qualified_workflow": {
+      "path": ".github/workflows/e2-candidate58-gate2b3-synthetic-qualification.yml",
+      "initial_commit": "8e981cb631f9d3dc680d074a266bae93bad8f73b",
+      "initial_git_blob": "382fd16f300bbd91857ee40cb8593ce68650de76",
+      "pre_execution_firewall_self_match_correction_commit": "5be6e44386f4eb830212d4da78fad0ea2a042613",
+      "qualified_git_blob": "b494a7b6e19fad931c80a43e9ee8cdeb84b85e72",
+      "correction_scope": "one-line workflow plumbing only; analyzer and self-test bytes unchanged"
+    },
+    "synthetic_qualification_receipt": {
+      "path": "experiments/risu-diff-e2/qualification/candidate58/gate2b3-guard-scope-provenance-attribution/harness/E2_CANDIDATE58_GATE2B3_SYNTHETIC_QUALIFICATION_RECEIPT.json",
+      "containing_commit": "9b837613b67700d61497576db87faa7a15d67096"
+    }
+  },
+  "pre_evidence_history_disclosure": {
+    "implementation_files_were_serialized_as_separate_additive_commits_by_connector": true,
+    "implementation_commits_in_order": [
+      "05a07ab2e146d88cb887bb7025841dc2fa72aef7",
+      "78e0366e8b8a4466ae4681b31b9c43c85108a275",
+      "8e981cb631f9d3dc680d074a266bae93bad8f73b"
+    ],
+    "preserved_plumbing_correction_commit": "5be6e44386f4eb830212d4da78fad0ea2a042613",
+    "synthetic_qualification_receipt_commit": "9b837613b67700d61497576db87faa7a15d67096",
+    "all_preceded_real_39_trace_opening": true,
+    "no_claim_of_single_atomic_implementation_authoring_commit": true
+  },
+  "preserved_failed_qualification_attempt": {
+    "run_id": 34150001805,
+    "job_id": 101830099065,
+    "head_sha": "8e981cb631f9d3dc680d074a266bae93bad8f73b",
+    "conclusion": "failure",
+    "classification": "PRE_EXECUTION_FIREWALL_SELF_MATCH",
+    "synthetic_test_execution_started": false,
+    "real_trace_read": false,
+    "scientific_result_emitted": false,
+    "replacement_or_deletion_allowed": false
+  },
+  "hosted_synthetic_qualification": {
+    "run_id": 34150370611,
+    "job_id": 101831208273,
+    "head_sha": "5be6e44386f4eb830212d4da78fad0ea2a042613",
+    "conclusion": "success",
+    "python": "CPython 3.13.5",
+    "runner_os": "Ubuntu 24.04.4",
+    "runner_version": "2.337.0",
+    "scenario_count": 24,
+    "scenario_pass_count_replay_1": 24,
+    "scenario_pass_count_replay_2": 24,
+    "two_replay_exact_byte_identity": true,
+    "population_fail_closed_test": true,
+    "stdlib_import_firewall_pass": true,
+    "python_bytecode_sanity_pass": true,
+    "synthetic_selftest_receipt_sha256": "d503defb5217339f61ca044c7b022f2cbcb023adca84c2639547303719df0b38",
+    "artifact": {
+      "id": 10029135699,
+      "name": "e2-candidate58-gate2b3-synthetic-qualification",
+      "size_bytes": 6448,
+      "zip_sha256": "b5d21e28c001ab7c81a826e59b70e6d24a9eb97ddbbea5b0482471910b26d4ae",
+      "uploaded_before_implementation_freeze": true
+    }
+  },
+  "frozen_taxonomy": [
+    "TRACE_EVIDENCE_INCOMPLETE",
+    "FROZEN_CHAIN_INCONSISTENT",
+    "ANCHOR_IDENTITY_OR_EFFECTIVE_GUARD_ASSOCIATION_UNRESOLVED",
+    "UPSTREAM_STRUCTURED_SCOPE_UNRESOLVED_OR_AMBIGUOUS",
+    "GUARD_SCOPE_CARRIER_SURVIVAL_FAILURE",
+    "ATTRIBUTION_INCOMPLETE_NO_CAUSAL_CLAIM"
+  ],
+  "synthetic_coverage": {
+    "positive_direct_control": true,
+    "positive_helper_control": true,
+    "trace_integrity_fail_closed": true,
+    "anchor_identity_fail_closed": true,
+    "effective_guard_association_fail_closed": true,
+    "helper_bad_transform_fail_closed": true,
+    "helper_multi_consumer_fail_closed": true,
+    "structured_scope_ambiguity_fail_closed": true,
+    "control_completeness_fail_closed": true,
+    "statement_span_ambiguity_fail_closed": true,
+    "population_size_fail_closed": true
+  },
+  "scientific_firewall_at_freeze": {
+    "real_selected_39_overlay_or_path_content_read": false,
+    "candidate_source_read": false,
+    "materialized_cell_source_or_metadata_read": false,
+    "semantic_slice_read": false,
+    "adapter_receipt_read": false,
+    "kernel_result_read": false,
+    "certificate_or_c1_read": false,
+    "gate2a_truth_join_input": false,
+    "truth_or_expected_label_read": false,
+    "mutation_operator_metadata_read": false,
+    "epistemic10_read": false,
+    "fresh_heldout_read": false,
+    "semantic_engine_kernel_adapter_or_c1_rerun": false,
+    "semantic_rule_change": false,
+    "remediation": false
+  },
+  "immutability_rule": {
+    "first_real_gate2b3_execution_must_use_exact_frozen_protocol_blob": "a587adee49f6169da4555e22a9a278c0052a2e4e",
+    "first_real_gate2b3_execution_must_use_exact_frozen_analyzer_blob": "8924a296453e21c8af29628f074551fdffaca5ba",
+    "first_real_gate2b3_execution_must_use_exact_gate2b2_ledger_sha256": "da53c72af39adba927b56fbeaf52922245bb503f8b6b5a14c45ce157fed5e2a2",
+    "first_real_gate2b3_execution_must_use_exact_bundle_manifest_sha256": "c5030f084936c186b1d320b02ad8bf1e1648bbc9e97ad78b33db81fb9a6bd217",
+    "case_reselection_or_dropping_allowed": false,
+    "semantic_or_taxonomy_change_during_first_real_execution_allowed": false,
+    "real_execution_must_run_twice_and_require_exact_logical_byte_identity": true,
+    "later_correction_or_remediation_must_be_additive_and_must_not_replace_first_complete_real_gate2b3_result": true
+  },
+  "interpretation_boundary": {
+    "synthetic_qualification_is_not_real_candidate58_attribution": true,
+    "guard_scope_attribution_is_not_remediation_success": true,
+    "definitive_coverage_gain_not_inferred": true,
+    "cooccurring_gate2b2_deficits_not_collapsed": true
+  },
+  "next_authorized_action": "Execute the exact frozen Gate2B3 analyzer twice over exactly the 39 manifest-bound Gate2B2-selected overlay/path pairs, without reading source/truth/operator/kernel/cert/C1 or modifying semantic code; require exact logical byte identity and archive the first complete Gate2B3 attribution before interpretation or remediation."
+}
