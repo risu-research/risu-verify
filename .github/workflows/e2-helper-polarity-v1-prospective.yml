@@ -1,0 +1,137 @@
+name: E2 Helper Polarity v1 Prospective Qualification
+
+on:
+  push:
+    branches: [e2-development]
+    paths:
+      - .github/workflows/e2-helper-polarity-v1-prospective.yml
+
+permissions:
+  contents: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Materialize exact prospective authorities without checkout
+        env:
+          REPO: risu-research/risu-verify
+          REF: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          mkdir -p sealed/risu_e2 sealed/tools sealed/experiments
+          printf '' > sealed/risu_e2/__init__.py
+          python3 - <<'PY'
+          import hashlib, os, pathlib, urllib.request
+          repo=os.environ['REPO']; ref=os.environ['REF']
+          files={
+            'protocols/RISU_DIFF_E2_A3_A4_HELPER_POLARITY_REMEDIATION_v0.1.json':('sealed/protocol.json','a78d1d0dfea79c1b87ab26a6d6ee92aed1173a2b'),
+            'experiments/risu-diff-e2/qualification/a3-a4/helper-polarity-remediation-v0.1/E2_A3_A4_HELPER_POLARITY_V0_1_PROSPECTIVE_CORPUS.json':('sealed/experiments/corpus.json','f908c1474ec7ea45ba36e3bd35841990e788fa42'),
+            'experiments/risu-diff-e2/qualification/a3-a4/helper-polarity-remediation-v0.1/E2_A3_A4_HELPER_POLARITY_V0_1_PREREGISTRATION_RECEIPT.json':('sealed/prereg.json','0103d1c4cfadc61411d433880827d9f86f716532'),
+            'risu_e2/predicate_polarity_v1.py':('sealed/risu_e2/predicate_polarity_v1.py','de0b188dda16cacf842bc5539066681d01a4f9b3'),
+            'tools/e2_helper_polarity_v1_primary_qualify.py':('sealed/tools/primary.py','699292db8484be3ea9c18a298c4f32efe7057493'),
+            'tools/e2_helper_polarity_v1_independent.py':('sealed/tools/independent.py','735a5a13e7d4550d720f73a8b2c5c515416c9d58'),
+          }
+          def git_blob(raw):
+              return hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()
+          for src,(dst,want) in files.items():
+              url=f'https://raw.githubusercontent.com/{repo}/{ref}/{src}'
+              raw=urllib.request.urlopen(url,timeout=30).read()
+              got=git_blob(raw)
+              if got!=want:
+                  raise SystemExit(f'BLOB_MISMATCH {src} {got} != {want}')
+              pathlib.Path(dst).write_bytes(raw)
+          print('AUTHORITY_MATERIALIZATION_PASS', len(files))
+          PY
+
+      - name: Compile and specialization scan
+        run: |
+          set -euo pipefail
+          cd sealed
+          python3 -m py_compile risu_e2/predicate_polarity_v1.py tools/primary.py tools/independent.py
+          python3 - <<'PY'
+          from pathlib import Path
+          text=Path('risu_e2/predicate_polarity_v1.py').read_text()
+          forbidden=['HPB','HPM','Q013','Q014','Q015','Q017','Q018','SYN-PY-02','case_id','source_sha256']
+          hits=[x for x in forbidden if x in text]
+          if hits: raise SystemExit('SPECIALIZATION_SCAN_FAIL:'+','.join(hits))
+          print('SPECIALIZATION_SCAN_PASS')
+          PY
+
+      - name: Execute Primary and Independent twice
+        run: |
+          set -u
+          cd sealed
+          mkdir -p out
+          export PYTHONPATH="$PWD"
+          set +e
+          python3 tools/primary.py --corpus experiments/corpus.json --output out/primary_run1.json; p1=$?
+          python3 tools/primary.py --corpus experiments/corpus.json --output out/primary_run2.json; p2=$?
+          python3 tools/independent.py --corpus experiments/corpus.json --output out/independent_run1.json; i1=$?
+          python3 tools/independent.py --corpus experiments/corpus.json --output out/independent_run2.json; i2=$?
+          set -e
+          printf '{"primary_run1":%d,"primary_run2":%d,"independent_run1":%d,"independent_run2":%d}\n' "$p1" "$p2" "$i1" "$i2" > out/exit_codes.json
+
+      - name: Build deterministic repeat and canonical cross-check evidence
+        run: |
+          set -euo pipefail
+          cd sealed
+          python3 - <<'PY'
+          import hashlib,json,pathlib
+          out=pathlib.Path('out')
+          def raw(name): return (out/name).read_bytes()
+          def doc(name): return json.loads(raw(name))
+          repeat={
+            'primary_byte_identical':raw('primary_run1.json')==raw('primary_run2.json'),
+            'independent_byte_identical':raw('independent_run1.json')==raw('independent_run2.json'),
+            'primary_sha256':hashlib.sha256(raw('primary_run1.json')).hexdigest(),
+            'independent_sha256':hashlib.sha256(raw('independent_run1.json')).hexdigest(),
+          }
+          repeat['status']='PASS' if repeat['primary_byte_identical'] and repeat['independent_byte_identical'] else 'FAIL'
+          (out/'repeat_check.json').write_text(json.dumps(repeat,sort_keys=True,separators=(',',':'))+'\n')
+          p=doc('primary_run1.json'); i=doc('independent_run1.json')
+          pm={r['case_id']:(r['passed'],r['status'],r['final_relation'],r['integration_form'],r['reason']) for r in p['rows']}
+          im={r['case_id']:(r['passed'],r['status'],r['final_relation'],r['integration_form'],r['reason']) for r in i['rows']}
+          same=set(pm)==set(im)
+          mismatches=sorted(k for k in set(pm)&set(im) if pm[k]!=im[k])
+          cross={
+            'status':'PASS' if same and not mismatches and p['status']=='PASS' and i['status']=='PASS' else 'FAIL',
+            'same_case_set':same,
+            'case_count':len(pm),
+            'exact_named_semantic_agreement':not mismatches,
+            'mismatch_case_ids':mismatches,
+            'primary_status':p['status'],
+            'independent_status':i['status'],
+            'primary_passed_count':p['passed_count'],
+            'independent_passed_count':i['passed_count'],
+          }
+          (out/'cross_check.json').write_text(json.dumps(cross,sort_keys=True,separators=(',',':'))+'\n')
+          PY
+
+      - name: Upload first-complete evidence before final gate
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2-helper-polarity-v1-first-complete
+          path: sealed/out/*
+          if-no-files-found: error
+
+      - name: Assert frozen prospective gate
+        run: |
+          set -euo pipefail
+          cd sealed
+          python3 - <<'PY'
+          import json,pathlib
+          out=pathlib.Path('out')
+          p=json.loads((out/'primary_run1.json').read_text())
+          i=json.loads((out/'independent_run1.json').read_text())
+          r=json.loads((out/'repeat_check.json').read_text())
+          c=json.loads((out/'cross_check.json').read_text())
+          codes=json.loads((out/'exit_codes.json').read_text())
+          ok=(p['status']=='PASS' and i['status']=='PASS' and p['case_count']==32 and i['case_count']==32
+              and p['metamorphic_pair_count']==16 and not p['metamorphic_pair_failures']
+              and not i['pair_failures'] and r['status']=='PASS' and c['status']=='PASS'
+              and all(v==0 for v in codes.values()))
+          if not ok:
+              raise SystemExit('FIRST_COMPLETE_PROSPECTIVE_FAIL')
+          print('FIRST_COMPLETE_PROSPECTIVE_PASS')
+          PY
