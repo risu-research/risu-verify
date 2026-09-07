@@ -1,0 +1,86 @@
+{
+  "schema": "risu.e2-helper-polarity-public-nonregression-first-complete-freeze-receipt/v0.1",
+  "status": "FROZEN_PASS",
+  "classification": "NON_PROSPECTIVE_ALREADY_PUBLIC_EVIDENCE_REGRESSION",
+  "authority": {
+    "repository": "risu-research/risu-verify",
+    "branch": "e2-development",
+    "public_nonregression_protocol_commit": "7599c8b2bca15188d55fb9ff4396d63fffe29aa4",
+    "public_nonregression_protocol_git_blob": "0dd8d70984b564d9abcb23158436d0920ea86dc0",
+    "qualification_head": "d575f209d8e89e71cc39c91c52f10c408a862320",
+    "predicate_polarity_v1_git_blob": "de0b188dda16cacf842bc5539066681d01a4f9b3",
+    "path_observability_v2_git_blob": "e3d0b19fd87d3b5ff0a3344e0915b56bcb342bb9",
+    "frontend_js_v3_git_blob": "13ffb1b149150b7e730591de7acf47e9322bdf02",
+    "frontend_python_v2_git_blob": "8b7e4d0e2bb9ef6487ef2b90d2390b55ced55ea9",
+    "ir_v3_git_blob": "1d95cfcb2e76563aa5d3ceb65815043eb8b2884a"
+  },
+  "hosted_run": {
+    "run_id": 34075742351,
+    "job_id": 101601349237,
+    "artifact_id": 10001958744,
+    "runner_version": "2.337.0",
+    "runner_image": "ubuntu-24.04",
+    "runner_image_version": "20260831.293.1",
+    "hosted_compute_agent_version": "20260828.587",
+    "azure_region": "westus3",
+    "worker_id": "7ef1f6ca-2820-464a-9b44-7eca6fb1f78a"
+  },
+  "artifact": {
+    "zip_bytes": 29304,
+    "zip_sha256": "0502350087b14d0e6b269beb8c57e7e854ca3daaca1b65c0b601736acc0d2236",
+    "github_reported_digest": "sha256:0502350087b14d0e6b269beb8c57e7e854ca3daaca1b65c0b601736acc0d2236",
+    "downloaded_and_independently_verified": true,
+    "inner_file_count": 13,
+    "inner_files": {
+      "combined-summary.json": {"bytes":981,"sha256":"3f66fc27a6491ebb78c39489d2f585f795387269e4d0ab925ad2964c14b1d3a4"},
+      "v02-adjudication.json": {"bytes":6426,"sha256":"f4294f76f9267f59102c2b4f1ac78742bd2a3ff2386ca1833a85923292b38545"},
+      "v02-exit-codes.json": {"bytes":62,"sha256":"c94d0f440ebb652d963d3e75d05c7ad023c2380740db38a8d9f334281fa8f691"},
+      "v02-independent-1.json": {"bytes":8440,"sha256":"0a62f4eb71d3e036b838f4385eb9dcd944a03f8f2cd5d90da81f9fa592f42005"},
+      "v02-independent-2.json": {"bytes":8440,"sha256":"0a62f4eb71d3e036b838f4385eb9dcd944a03f8f2cd5d90da81f9fa592f42005"},
+      "v02-primary-1.json": {"bytes":17310,"sha256":"b1b4d70e773058264c2d0e810f3a0ce6e66d3f7f0bf9091fabca70bd4d9b3f9f"},
+      "v02-primary-2.json": {"bytes":17310,"sha256":"b1b4d70e773058264c2d0e810f3a0ce6e66d3f7f0bf9091fabca70bd4d9b3f9f"},
+      "v03-cross-check.json": {"bytes":566,"sha256":"7861aadc0061da3b67ad9bd0a8e67ca8545503e178b3fcb12aea1666de0e7784"},
+      "v03-exit-codes.json": {"bytes":62,"sha256":"c94d0f440ebb652d963d3e75d05c7ad023c2380740db38a8d9f334281fa8f691"},
+      "v03-independent-1.json": {"bytes":7808,"sha256":"96e0b6b0904527952930e6288bf9efa1516307813595f084fd29b08e17ab2877"},
+      "v03-independent-2.json": {"bytes":7808,"sha256":"96e0b6b0904527952930e6288bf9efa1516307813595f084fd29b08e17ab2877"},
+      "v03-primary-1.json": {"bytes":14153,"sha256":"5daeff813b05ac1c06890d9c3a7e20f2d19f515b07c3ee091ec1c5376089822f"},
+      "v03-primary-2.json": {"bytes":14153,"sha256":"5daeff813b05ac1c06890d9c3a7e20f2d19f515b07c3ee091ec1c5376089822f"}
+    }
+  },
+  "result": {
+    "official_status": "PASS",
+    "surface_A_v0_3_24": {
+      "primary": "24_OF_24_PASS",
+      "independent": "24_OF_24_PASS",
+      "metamorphic_pairs": "12_OF_12_PASS_BOTH",
+      "exact_per_case_and_signature_agreement": true,
+      "primary_repeat_byte_identical": true,
+      "independent_repeat_byte_identical": true,
+      "primary_sha256_matches_historical_first_complete": true,
+      "independent_sha256_matches_historical_first_complete": true
+    },
+    "surface_B_frozen_v0_2_24": {
+      "primary": "24_OF_24_PASS",
+      "independent": "24_OF_24_PASS",
+      "old_metamorphic_pairs": "8_OF_8_PASS_BOTH",
+      "primary_exact_historical_first_complete_bytes": true,
+      "independent_exact_historical_first_complete_bytes": true,
+      "canonical_adjudication": "24_OF_24_PASS",
+      "adjudicator_self_tests": "9_OF_9_PASS",
+      "repeat_byte_identity": true
+    }
+  },
+  "interpretation": {
+    "established": "The new helper-polarity modules did not alter either already-public v3 extraction evidence surface under exact frozen frontend, IR, corpus, and checker authorities.",
+    "not_established_here": "This run is not new prospective evidence and does not itself test path_observability_v2; canonical integration evidence separately does that."
+  },
+  "firewall": {
+    "repository_checkout_used": false,
+    "frozen48_source_rerun": false,
+    "candidate58_read": false,
+    "epistemic10_read": false,
+    "mutation_truth_or_operator_metadata_read": false,
+    "a3_a4_semantic_verdicts_executed": false
+  },
+  "next_boundary": "Prospectively freeze a post-diagnosis frozen-48 helper-polarity remediation requalification protocol. Preserve the historical 26/48 FROZEN_FAIL; require all 31 strict-transport-eligible rows to qualify and all 17 strict-transport-ineligible rows to remain fail-closed. Candidate-58 remains sealed."
+}
