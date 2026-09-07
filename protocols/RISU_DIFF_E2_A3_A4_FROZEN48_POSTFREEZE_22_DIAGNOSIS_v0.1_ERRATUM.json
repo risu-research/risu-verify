@@ -1,0 +1,42 @@
+{
+  "schema": "risu.e2-a3-a4-frozen48-postfreeze-22-diagnosis-protocol-erratum/v0.1",
+  "status": "FROZEN_PROTOCOL_WORDING_ERRATUM",
+  "original_protocol_commit": "89e7c3791cfe30b5a36e33cac34cc8d1464d830e",
+  "original_protocol_git_blob": "624330c873a1cf0a58ec7da48686856c51b651ad",
+  "defect": {
+    "field": "strict_transport_eligibility.definition",
+    "original_phrase": "parser_status is PASS",
+    "frozen_transport_receipt_token": "PARSE_OK",
+    "frozen_adapter_behavior": "The exact adapter-v2 strict_transport_eligible predicate does not separately gate on parser_status. It gates on case_transport_status == COMPLETE, exact canonical anchor-set presence, ROLE_COMPATIBLE anchors with valid spans/digests, and AVAILABLE binding slots with matching operand indices.",
+    "classification": "NON_SCIENTIFIC_PROTOCOL_TERMINOLOGY_MISMATCH"
+  },
+  "authoritative_resolution": {
+    "strict_transport_eligibility_authority": "EXACT_FROZEN_ADAPTER_V2_PREDICATE",
+    "primary_v2_git_blob": "57c537cbf3ba43aa5ff6fdb35a3651652fd1743f",
+    "independent_v2_git_blob": "a018c76fcb30af419b15f0fe49aba41464d9b1d6",
+    "canonical_anchor_bundle_git_blob": "ec8d8b287a80b87c815f0362be366be076d2b091",
+    "parser_status_may_not_reclassify_any_row": true
+  },
+  "effect_on_diagnosis": {
+    "partition_changed": false,
+    "D0_count": 17,
+    "D4_count": 5,
+    "transport_eligible_count": 31,
+    "transport_ineligible_count": 17,
+    "reason": "The provisional diagnosis artifacts already used the exact frozen adapter eligibility predicate rather than the erroneous parser-status token."
+  },
+  "immutability": {
+    "first_complete_result_changed": false,
+    "transport_engine_changed": false,
+    "adapter_changed": false,
+    "scientific_code_changed": false,
+    "selection_changed": false,
+    "gate_changed": false
+  },
+  "firewall": {
+    "candidate58_bytes_read": false,
+    "epistemic10_source_bytes_read": false,
+    "raw_blind58_transport_read": false,
+    "a3_a4_semantic_verdicts_executed": false
+  }
+}
