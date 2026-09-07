@@ -1,0 +1,224 @@
+name: E2 Candidate58 First Complete Machine Freeze
+
+on:
+  push:
+    branches: [e2-development]
+    paths:
+      - ".github/workflows/e2-candidate58-first-complete-machine-freeze.yml"
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: e2-candidate58-first-complete-machine-freeze
+  cancel-in-progress: false
+
+jobs:
+  freeze-exact-first-complete:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout archival parent
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: e2-development
+          fetch-depth: 4
+
+      - name: Prove orchestration-only lineage before archive download
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "7603d8e00c57f8c9606158c572e9689bc4260461"
+          test "$(git diff --name-only HEAD^ HEAD)" = ".github/workflows/e2-candidate58-first-complete-machine-freeze.yml"
+          test "$(git hash-object protocols/RISU_DIFF_E2_CANDIDATE58_HARNESS_IMPLEMENTATION_FREEZE_v0.1.json)" = "2b681ecec8fa052d87a2ce3adcab1e20e1c5ba8a"
+          test "$(git hash-object tools/e2_candidate58_execution_harness_v2.py)" = "38a5e9d93b058ea106ca494701e2400b382891d5"
+          echo "ARCHIVAL_PARENT_FIREWALL=PASS"
+
+      - name: Download exact successful first-machine artifact by immutable artifact id
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/c58-freeze"
+          gh api \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            /repos/risu-research/risu-verify/actions/artifacts/10024916787/zip \
+            > "$RUNNER_TEMP/c58-freeze/first-machine.zip"
+          echo "d77caaf74bf4dc8e94cf769d10092f8413595ac93422042e8a374f76c343f42d  $RUNNER_TEMP/c58-freeze/first-machine.zip" | sha256sum -c -
+
+      - name: Independently validate exact logical bundle without truth join
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib, json, os, stat, zipfile
+          from pathlib import Path, PurePosixPath
+          root=Path(os.environ['RUNNER_TEMP'])/'c58-freeze'
+          zp=root/'first-machine.zip'
+          z=zipfile.ZipFile(zp)
+          infos=z.infolist()
+          assert len(infos)==946, len(infos)
+          assert z.testzip() is None
+          for i in infos:
+              p=PurePosixPath(i.filename)
+              assert not p.is_absolute() and '..' not in p.parts and i.filename not in {'','.'}
+              mode=(i.external_attr >> 16) & 0o170000
+              assert mode != stat.S_IFLNK
+          out=root/'verified'; out.mkdir()
+          z.extractall(out)
+          h=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          assert h(zp)=='d77caaf74bf4dc8e94cf769d10092f8413595ac93422042e8a374f76c343f42d'
+          assert h(out/'FIRST_COMPLETE_MACHINE_MATRIX.anchor.json')=='7273ce4034d06e67989a33540f5b22fef3190cf311a8981474413b538e43472d'
+          assert h(out/'replay1.logical-tree.sha256')=='59eae5c1747042d7a2a860c28dcbbdef1a0c6fb891af212330801e3b40a5903d'
+          assert h(out/'replay2.logical-tree.sha256')=='59eae5c1747042d7a2a860c28dcbbdef1a0c6fb891af212330801e3b40a5903d'
+          assert (out/'replay1.logical-tree.sha256').read_bytes()==(out/'replay2.logical-tree.sha256').read_bytes()
+          def tree(d):
+              return {p.relative_to(d).as_posix():h(p) for p in d.rglob('*') if p.is_file()}
+          assert tree(out/'replay1')==tree(out/'replay2')
+          run=json.loads((out/'E2_CANDIDATE58_FIRST_MACHINE_RUN_LOCAL_RECEIPT.json').read_text())
+          assert run['status']=='FIRST_COMPLETE_MACHINE_ONLY_TWO_REPLAY_IDENTICAL_NOT_REPOSITORY_FROZEN'
+          assert run['frozen_implementation_commit']=='246044c6c2a8b68f31965955d04828f4ed04b29b'
+          assert run['case_count']==58 and run['two_replay_logical_byte_identity'] is True
+          assert run['first_complete_machine_matrix_sha256']=='7273ce4034d06e67989a33540f5b22fef3190cf311a8981474413b538e43472d'
+          assert run['scientific_firewall']=={
+            'truth_or_gold_read':False,
+            'expected_e2_prediction_read':False,
+            'mutation_operator_metadata_read':False,
+            'epistemic10_read':False,
+            'fresh_heldout_read':False,
+            'truth_join_executed':False,
+          }
+          matrix=json.loads((out/'FIRST_COMPLETE_MACHINE_MATRIX.anchor.json').read_text())
+          assert matrix['case_count']==58 and len(matrix['cases'])==58 and matrix['machine_only'] is True
+          ids=[x['case_id'] for x in matrix['cases']]
+          assert len(set(ids))==58 and all(len(x)==64 for x in ids)
+          manifest=[]
+          for p in sorted((x for x in out.rglob('*') if x.is_file()), key=lambda x:x.relative_to(out).as_posix()):
+              manifest.append({'path':p.relative_to(out).as_posix(),'sha256':h(p),'bytes':p.stat().st_size})
+          raw=(json.dumps({'schema':'risu.e2-candidate58-first-complete-bundle-content-manifest/v0.1','file_count':len(manifest),'files':manifest},sort_keys=True,separators=(',',':'))+'\n').encode()
+          (root/'bundle_content_manifest.json').write_bytes(raw)
+          print(json.dumps({'status':'INDEPENDENT_BUNDLE_VALIDATION_PASS','file_count':len(manifest),'bundle_manifest_sha256':hashlib.sha256(raw).hexdigest()},sort_keys=True,separators=(',',':')))
+          PY
+
+      - name: Materialize content-addressed repository freeze payload
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$RUNNER_TEMP/c58-freeze"
+          SRC="$ROOT/verified"
+          D="experiments/risu-diff-e2/qualification/candidate58/first-complete-machine"
+          test ! -e "$D"
+          mkdir -p "$D"
+          cp "$ROOT/first-machine.zip" "$D/E2_CANDIDATE58_FIRST_MACHINE_ONLY_BUNDLE.zip"
+          cp "$SRC/FIRST_COMPLETE_MACHINE_MATRIX.anchor.json" "$D/E2_CANDIDATE58_FIRST_COMPLETE_MACHINE_PREDICTION_MATRIX.json"
+          cp "$SRC/E2_CANDIDATE58_FIRST_MACHINE_RUN_LOCAL_RECEIPT.json" "$D/E2_CANDIDATE58_FIRST_MACHINE_RUN_LOCAL_RECEIPT.json"
+          cp "$SRC/replay1.logical-tree.sha256" "$D/E2_CANDIDATE58_FIRST_COMPLETE_LOGICAL_TREE.sha256"
+          cp "$ROOT/bundle_content_manifest.json" "$D/E2_CANDIDATE58_FIRST_COMPLETE_BUNDLE_CONTENT_MANIFEST.json"
+          ZIP_BLOB="$(git hash-object "$D/E2_CANDIDATE58_FIRST_MACHINE_ONLY_BUNDLE.zip")"
+          MATRIX_BLOB="$(git hash-object "$D/E2_CANDIDATE58_FIRST_COMPLETE_MACHINE_PREDICTION_MATRIX.json")"
+          MANIFEST_SHA="$(sha256sum "$D/E2_CANDIDATE58_FIRST_COMPLETE_BUNDLE_CONTENT_MANIFEST.json" | awk '{print $1}')"
+          export ZIP_BLOB MATRIX_BLOB MANIFEST_SHA D
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          d=Path(os.environ['D'])
+          receipt={
+            'schema':'risu.e2-candidate58-first-complete-machine-immutable-freeze/v0.1',
+            'status':'FIRST_COMPLETE_MACHINE_ONLY_IMMUTABLY_FROZEN_NOT_GOLD_JOINED',
+            'repository':'risu-research/risu-verify',
+            'branch':'e2-development',
+            'scientific_authority':{
+              'gate1d_execution_seal_commit':'1baafe5059ce015b68740f245d0b9d5a0a9e7634',
+              'frozen_harness_implementation_commit':'246044c6c2a8b68f31965955d04828f4ed04b29b',
+              'first_machine_workflow_commit':'7603d8e00c57f8c9606158c572e9689bc4260461',
+            },
+            'hosted_execution':{
+              'workflow_run_id':34138423037,
+              'job_id':101794669149,
+              'run_attempt':1,
+              'conclusion':'success',
+              'artifact_id':10024916787,
+              'artifact_name':'e2-candidate58-first-machine-only-bundle',
+              'artifact_zip_sha256':'d77caaf74bf4dc8e94cf769d10092f8413595ac93422042e8a374f76c343f42d',
+              'artifact_zip_bytes':1925969,
+              'artifact_member_count':946,
+            },
+            'first_complete_identity':{
+              'case_count':58,
+              'source_staging_receipt_sha256':'27b0a7360ddfbd6eb0f5bd9011f69bc0603c7b8f00cca46603ccada0ee2bfd4d',
+              'prepared_count':39,
+              'closed_read_policy_sha256':'0e5d9bf0ed905abf2b529a5175154ee7da302ed03675f6c0dc224419a66b145c',
+              'prepared_plan_sha256':'582a94921b3822e4c3abf0da3d2dacf957a6d9c5549b76160545eab6267e399c',
+              'preparation_receipt_sha256':'30b6aceceb6d5dbf379f972f241675654d939ba2a3bda84112037b632bb818d9',
+              'machine_matrix_sha256':'7273ce4034d06e67989a33540f5b22fef3190cf311a8981474413b538e43472d',
+              'logical_tree_manifest_sha256':'59eae5c1747042d7a2a860c28dcbbdef1a0c6fb891af212330801e3b40a5903d',
+              'bundle_content_manifest_sha256':os.environ['MANIFEST_SHA'],
+              'two_replay_logical_byte_identity':True,
+            },
+            'repository_payload':{
+              'exact_hosted_artifact_zip_git_blob':os.environ['ZIP_BLOB'],
+              'machine_matrix_git_blob':os.environ['MATRIX_BLOB'],
+              'complete_certificates_c1_reports_read_receipts_and_runtime_evidence_are_inside_exact_zip':True,
+            },
+            'runtime':{'python':'CPython 3.13.5','go':'go1.23.2 linux/amd64','runner_image':'ubuntu-24.04'},
+            'scientific_firewall':{
+              'truth_or_gold_read':False,
+              'expected_e2_prediction_read':False,
+              'mutation_operator_metadata_read':False,
+              'epistemic10_read':False,
+              'fresh_heldout_read':False,
+              'truth_join_executed':False,
+              'semantic_or_harness_code_modified_after_first_machine_result':False,
+            },
+            'immutability_rule':{
+              'first_complete_machine_bundle_replacement_prohibited':True,
+              'later_diagnostics_must_be_additive_and_must_not_rewrite_this_bundle':True,
+              'truth_join_only_authorized_after_this_freeze_commit_exists':True,
+            },
+            'next_allowed_action':'VERIFY_FREEZE_COMMIT_DELTA_AND_GIT_BLOB_IDENTITIES; ONLY THEN OPEN CANDIDATE58 TRUTH JOIN AS A SEPARATE GATE',
+          }
+          raw=(json.dumps(receipt,sort_keys=True,separators=(',',':'))+'\n').encode()
+          (d/'E2_CANDIDATE58_FIRST_COMPLETE_MACHINE_IMMUTABLE_FREEZE_RECEIPT.json').write_bytes(raw)
+          PY
+          echo "d77caaf74bf4dc8e94cf769d10092f8413595ac93422042e8a374f76c343f42d  $D/E2_CANDIDATE58_FIRST_MACHINE_ONLY_BUNDLE.zip" | sha256sum -c -
+          echo "7273ce4034d06e67989a33540f5b22fef3190cf311a8981474413b538e43472d  $D/E2_CANDIDATE58_FIRST_COMPLETE_MACHINE_PREDICTION_MATRIX.json" | sha256sum -c -
+
+      - name: Create one immutable first-complete data commit and push fast-forward only
+        shell: bash
+        run: |
+          set -euo pipefail
+          D="experiments/risu-diff-e2/qualification/candidate58/first-complete-machine"
+          git config user.name "risu-research-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -- "$D"
+          python - <<'PY'
+          import subprocess
+          names=subprocess.check_output(['git','diff','--cached','--name-only'],text=True).splitlines()
+          prefix='experiments/risu-diff-e2/qualification/candidate58/first-complete-machine/'
+          expected={
+            prefix+'E2_CANDIDATE58_FIRST_MACHINE_ONLY_BUNDLE.zip',
+            prefix+'E2_CANDIDATE58_FIRST_COMPLETE_MACHINE_PREDICTION_MATRIX.json',
+            prefix+'E2_CANDIDATE58_FIRST_MACHINE_RUN_LOCAL_RECEIPT.json',
+            prefix+'E2_CANDIDATE58_FIRST_COMPLETE_LOGICAL_TREE.sha256',
+            prefix+'E2_CANDIDATE58_FIRST_COMPLETE_BUNDLE_CONTENT_MANIFEST.json',
+            prefix+'E2_CANDIDATE58_FIRST_COMPLETE_MACHINE_IMMUTABLE_FREEZE_RECEIPT.json',
+          }
+          assert set(names)==expected, (names,expected)
+          print('FREEZE_COMMIT_DELTA_FIREWALL=PASS')
+          PY
+          git commit -m "Freeze first complete Candidate58 machine-only challenge"
+          FREEZE_SHA="$(git rev-parse HEAD)"
+          git push origin HEAD:e2-development
+          echo "FIRST_COMPLETE_FREEZE_COMMIT=$FREEZE_SHA"
+
+      - name: Post-push local verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git diff-tree --no-commit-id --name-only -r HEAD | grep -v '^$' | wc -l)" -eq 6
+          test "$(git show HEAD:experiments/risu-diff-e2/qualification/candidate58/first-complete-machine/E2_CANDIDATE58_FIRST_MACHINE_ONLY_BUNDLE.zip | sha256sum | awk '{print $1}')" = "d77caaf74bf4dc8e94cf769d10092f8413595ac93422042e8a374f76c343f42d"
+          test "$(git show HEAD:experiments/risu-diff-e2/qualification/candidate58/first-complete-machine/E2_CANDIDATE58_FIRST_COMPLETE_MACHINE_PREDICTION_MATRIX.json | sha256sum | awk '{print $1}')" = "7273ce4034d06e67989a33540f5b22fef3190cf311a8981474413b538e43472d"
+          echo "FIRST_COMPLETE_REPOSITORY_FREEZE=PASS_TRUTH_JOIN_STILL_UNOPENED"
