@@ -12,6 +12,7 @@ permissions:
 env:
   REPO: risu-research/risu-verify
   ERRATUM_FREEZE: 5f93aea9d62e9ff64e4f22dba68f8f0f2950cbea
+  FIRST_REPAIR: 97367bac69ce40dd0b510ade84c96ec84a401b51
   ARTIFACT_ID: '10002409485'
   EXPECTED_BYTES: '78188'
   EXPECTED_SHA256: c73d0b167edc10fbac7103a93317dc674f57bd0e6e0d699bc8e8a23b5ea6fb23
@@ -22,7 +23,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
-      - name: Verify workflow-only child of archive erratum freeze
+      - name: Verify pre-transfer repair lineage
         env:
           GH_TOKEN: ${{ github.token }}
           CURRENT_SHA: ${{ github.sha }}
@@ -31,34 +32,45 @@ jobs:
           set -euo pipefail
           python3 - <<'PY'
           import json,os,urllib.request
-          repo=os.environ['REPO']; token=os.environ['GH_TOKEN']; sha=os.environ['CURRENT_SHA']
-          headers={'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','User-Agent':'risu-archive-lineage'}
-          req=urllib.request.Request(f'https://api.github.com/repos/{repo}/commits/{sha}',headers=headers)
-          with urllib.request.urlopen(req,timeout=30) as r: d=json.loads(r.read())
-          if [p['sha'] for p in d['parents']] != [os.environ['ERRATUM_FREEZE']]: raise SystemExit('BAD_REPAIR_PARENT')
-          if [f['filename'] for f in d['files']] != ['.github/workflows/e2-frozen48-helper-polarity-archive-transfer-repair.yml']: raise SystemExit('BAD_REPAIR_DELTA')
+          repo=os.environ['REPO']; token=os.environ['GH_TOKEN']; current=os.environ['CURRENT_SHA']
+          wf='.github/workflows/e2-frozen48-helper-polarity-archive-transfer-repair.yml'
+          headers={'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','User-Agent':'risu-archive-repair-lineage'}
+          def commit(sha):
+              req=urllib.request.Request(f'https://api.github.com/repos/{repo}/commits/{sha}',headers=headers)
+              with urllib.request.urlopen(req,timeout=30) as r: return json.loads(r.read())
+          first=commit(os.environ['FIRST_REPAIR']); cur=commit(current)
+          if [p['sha'] for p in first['parents']] != [os.environ['ERRATUM_FREEZE']] or [f['filename'] for f in first['files']] != [wf]: raise SystemExit('FIRST_REPAIR_LINEAGE')
+          if [p['sha'] for p in cur['parents']] != [os.environ['FIRST_REPAIR']] or [f['filename'] for f in cur['files']] != [wf]: raise SystemExit('SECOND_REPAIR_LINEAGE')
           print('ARCHIVE_REPAIR_LINEAGE=PASS')
           PY
 
-      - name: Download authoritative Actions artifact and create exact Git blob
+      - name: Download authoritative artifact without forwarding auth and create exact Git blob
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
           python3 - <<'PY'
-          import base64,hashlib,json,os,pathlib,urllib.request
+          import base64,hashlib,json,os,pathlib,urllib.error,urllib.request
           repo=os.environ['REPO']; token=os.environ['GH_TOKEN']
           headers={'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','User-Agent':'risu-exact-artifact-transfer'}
+          class NoRedirect(urllib.request.HTTPRedirectHandler):
+              def redirect_request(self, req, fp, code, msg, hdrs, newurl): return None
           req=urllib.request.Request(f'https://api.github.com/repos/{repo}/actions/artifacts/{os.environ["ARTIFACT_ID"]}/zip',headers=headers)
-          with urllib.request.urlopen(req,timeout=60) as r: raw=r.read()
+          try:
+              urllib.request.build_opener(NoRedirect).open(req,timeout=30)
+              raise SystemExit('EXPECTED_ARTIFACT_REDIRECT')
+          except urllib.error.HTTPError as e:
+              if e.code not in (301,302,303,307,308): raise
+              location=e.headers.get('Location')
+              if not location: raise SystemExit('MISSING_ARTIFACT_LOCATION')
+          with urllib.request.urlopen(location,timeout=60) as r: raw=r.read()
           size=len(raw); sha=hashlib.sha256(raw).hexdigest(); gitsha=hashlib.sha1(b'blob '+str(size).encode()+b'\0'+raw).hexdigest()
           if size!=int(os.environ['EXPECTED_BYTES']): raise SystemExit(f'ARTIFACT_BYTES:{size}')
           if sha!=os.environ['EXPECTED_SHA256']: raise SystemExit(f'ARTIFACT_SHA256:{sha}')
           if gitsha!=os.environ['EXPECTED_GIT_BLOB']: raise SystemExit(f'ARTIFACT_GIT_BLOB_PRECHECK:{gitsha}')
           payload=json.dumps({'content':base64.b64encode(raw).decode(),'encoding':'base64'}).encode()
-          post_headers={**headers,'Content-Type':'application/json'}
-          post=urllib.request.Request(f'https://api.github.com/repos/{repo}/git/blobs',data=payload,headers=post_headers,method='POST')
+          post=urllib.request.Request(f'https://api.github.com/repos/{repo}/git/blobs',data=payload,headers={**headers,'Content-Type':'application/json'},method='POST')
           with urllib.request.urlopen(post,timeout=60) as r: made=json.loads(r.read())
           if made.get('sha')!=os.environ['EXPECTED_GIT_BLOB']: raise SystemExit(f'CREATED_BLOB_SHA:{made.get("sha")}')
           receipt={'schema':'risu.e2-f48-hp-exact-archive-transfer/v0.1','status':'PASS','source_artifact_id':int(os.environ['ARTIFACT_ID']),'bytes':size,'sha256':sha,'git_blob_sha1':made['sha'],'scientific_execution':False,'adjudicator_execution':False,'candidate58_read':False}
@@ -66,8 +78,7 @@ jobs:
           print(json.dumps(receipt,sort_keys=True,separators=(',',':')))
           PY
 
-      - name: Upload transfer receipt
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: e2-frozen48-helper-polarity-exact-archive-transfer-receipt
           path: E2_A3_A4_FROZEN48_HELPER_POLARITY_EXACT_ARCHIVE_TRANSFER_RECEIPT.json
