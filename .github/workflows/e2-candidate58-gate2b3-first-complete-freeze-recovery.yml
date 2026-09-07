@@ -1,0 +1,203 @@
+name: E2 Candidate58 Gate2B3 First Complete Freeze Recovery
+
+on:
+  push:
+    branches: [e2-development]
+    paths:
+      - ".github/workflows/e2-candidate58-gate2b3-first-complete-freeze-recovery.yml"
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: e2-candidate58-gate2b3-first-real
+  cancel-in-progress: false
+
+env:
+  RECOVERY_PARENT: e5c09f45f8069ebba9fc88674699a2977840ad86
+  FIRST_COMPLETE_RUN_ID: "34151942023"
+  FIRST_COMPLETE_JOB_ID: "101835861393"
+  FIRST_COMPLETE_TRIGGER_COMMIT: e5c09f45f8069ebba9fc88674699a2977840ad86
+  FIRST_COMPLETE_ARTIFACT_ID: "10029652352"
+  FIRST_COMPLETE_ARTIFACT_NAME: e2-candidate58-gate2b3-first-complete-dual-replay
+  FIRST_COMPLETE_ARTIFACT_ZIP_SHA256: 8e3bdc57d784c9efd8d98a9b778abd3cec9edb102a8152ee1008b76ad9defee8
+  PRE_EVIDENCE_FAILED_RUN_ID: "34151812627"
+  PRE_EVIDENCE_FAILED_JOB_ID: "101835490017"
+  PRE_EVIDENCE_FAILED_HEAD: 03877b71545deed83c98c7d5784ca8d87101c647
+  PROTOCOL_BLOB: a587adee49f6169da4555e22a9a278c0052a2e4e
+  IMPLEMENTATION_FREEZE_BLOB: 43d4da0915c638519b73a85f12c32ff79be265c6
+  ANALYZER_BLOB: 8924a296453e21c8af29628f074551fdffaca5ba
+  ANALYZER_SHA256: 8e45eb744760ae0d0b623fcb959a1138fb860455429ee02c3e2b09353d58787d
+  GATE2B2_FREEZE: 3cd22bdcf596407c2e8076b024af832311264779
+  GATE2B2_LEDGER_SHA256: da53c72af39adba927b56fbeaf52922245bb503f8b6b5a14c45ce157fed5e2a2
+  MACHINE_FREEZE: 2ece1023252a8e9100a34d74079493040441e1e2
+  BUNDLE_MANIFEST_SHA256: c5030f084936c186b1d320b02ad8bf1e1648bbc9e97ad78b33db81fb9a6bd217
+  MACHINE_ARTIFACT_ID: "10024916787"
+  MACHINE_ARTIFACT_ZIP_SHA256: d77caaf74bf4dc8e94cf769d10092f8413595ac93422042e8a374f76c343f42d
+
+jobs:
+  recover-exact-first-complete-freeze:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exact recovery revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+
+      - name: Prove recovery-only boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "$RECOVERY_PARENT"
+          test "$(git diff --name-only HEAD^ HEAD)" = ".github/workflows/e2-candidate58-gate2b3-first-complete-freeze-recovery.yml"
+          test "$(git hash-object protocols/RISU_DIFF_E2_CANDIDATE58_GATE2B3_GUARD_SCOPE_PROVENANCE_ATTRIBUTION_PROTOCOL_v0.1.json)" = "$PROTOCOL_BLOB"
+          test "$(git hash-object protocols/RISU_DIFF_E2_CANDIDATE58_GATE2B3_IMPLEMENTATION_FREEZE_v0.1.json)" = "$IMPLEMENTATION_FREEZE_BLOB"
+          test "$(git hash-object tools/e2_candidate58_gate2b3_guard_scope_provenance_attribution.py)" = "$ANALYZER_BLOB"
+          echo "$ANALYZER_SHA256  tools/e2_candidate58_gate2b3_guard_scope_provenance_attribution.py" | sha256sum -c -
+          test ! -e experiments/risu-diff-e2/qualification/candidate58/gate2b3-guard-scope-provenance-attribution/first-complete
+          ! grep -q 'e2_candidate58_gate2b3_guard_scope_provenance_attribution.py' .github/workflows/e2-candidate58-gate2b3-first-complete-freeze-recovery.yml
+          echo 'GATE2B3_RECOVERY_NO_ANALYZER_EXECUTION=PASS'
+
+      - name: Set up exact Python runtime
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.13.5"
+
+      - name: Download exact already-frozen hosted first-complete artifact
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          ROOT="$RUNNER_TEMP/gate2b3-recovery"
+          mkdir -p "$ROOT"
+          curl --fail --silent --show-error --location \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/risu-research/risu-verify/actions/artifacts/$FIRST_COMPLETE_ARTIFACT_ID/zip" \
+            -o "$ROOT/first-complete.zip"
+          echo "$FIRST_COMPLETE_ARTIFACT_ZIP_SHA256  $ROOT/first-complete.zip" | sha256sum -c -
+          echo 'GATE2B3_FIRST_COMPLETE_ARTIFACT_IDENTITY=PASS'
+
+      - name: Recover exact replay1 bytes and verify dual-replay identity without interpretation
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$RUNNER_TEMP/gate2b3-recovery"
+          export ROOT
+          python - <<'PY'
+          import hashlib,json,os,zipfile
+          from pathlib import Path
+          root=Path(os.environ['ROOT'])
+          expected={
+            'replay1/E2_CANDIDATE58_GATE2B3_DIAGNOSTIC_RECEIPT.json',
+            'replay1/E2_CANDIDATE58_GATE2B3_GUARD_SCOPE_ATTRIBUTION_LEDGER.json',
+            'replay1/E2_CANDIDATE58_GATE2B3_GUARD_SCOPE_ATTRIBUTION_SUMMARY.json',
+            'replay2/E2_CANDIDATE58_GATE2B3_DIAGNOSTIC_RECEIPT.json',
+            'replay2/E2_CANDIDATE58_GATE2B3_GUARD_SCOPE_ATTRIBUTION_LEDGER.json',
+            'replay2/E2_CANDIDATE58_GATE2B3_GUARD_SCOPE_ATTRIBUTION_SUMMARY.json',
+            'replay1.logical-tree.json','replay2.logical-tree.json',
+            'E2_CANDIDATE58_GATE2B3_EVIDENCE_MATERIALIZATION_RECEIPT.json',
+            'E2_CANDIDATE58_GATE2B3_FIRST_REAL_EXECUTION_RECEIPT.json',
+          }
+          with zipfile.ZipFile(root/'first-complete.zip','r') as z:
+              infos=[i for i in z.infolist() if not i.is_dir()]
+              names=[i.filename for i in infos]
+              assert len(names)==len(set(names))==10 and set(names)==expected, names
+              z.extractall(root/'artifact')
+          a=root/'artifact'; r1=a/'replay1'; r2=a/'replay2'
+          logical1=(a/'replay1.logical-tree.json').read_bytes(); logical2=(a/'replay2.logical-tree.json').read_bytes(); assert logical1==logical2
+          for name in ('E2_CANDIDATE58_GATE2B3_DIAGNOSTIC_RECEIPT.json','E2_CANDIDATE58_GATE2B3_GUARD_SCOPE_ATTRIBUTION_LEDGER.json','E2_CANDIDATE58_GATE2B3_GUARD_SCOPE_ATTRIBUTION_SUMMARY.json'):
+              assert (r1/name).read_bytes()==(r2/name).read_bytes()
+          ex=json.loads((a/'E2_CANDIDATE58_GATE2B3_FIRST_REAL_EXECUTION_RECEIPT.json').read_text())
+          mat=json.loads((a/'E2_CANDIDATE58_GATE2B3_EVIDENCE_MATERIALIZATION_RECEIPT.json').read_text())
+          assert ex['status']=='FIRST_COMPLETE_REAL_GATE2B3_DUAL_REPLAY_BYTE_IDENTICAL_BEFORE_INTERPRETATION'
+          assert ex['workflow_run_id']==os.environ['FIRST_COMPLETE_RUN_ID']
+          assert ex['workflow_trigger_commit']==os.environ['FIRST_COMPLETE_TRIGGER_COMMIT']
+          assert ex['two_replay_exact_logical_byte_identity'] is True
+          assert ex['attribution_bucket_values_printed_or_interpreted_before_freeze'] is False
+          assert mat['selected_case_count']==39 and mat['allowed_member_count']==78 and mat['only_selected_overlay_path_member_bytes_extracted'] is True
+          assert mat['candidate_source_member_bytes_extracted'] is False
+          h=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          for name,digest in ex['replay1_outputs_sha256'].items(): assert h(r1/name)==digest
+          for name,digest in ex['replay2_outputs_sha256'].items(): assert h(r2/name)==digest
+          assert h(a/'replay1.logical-tree.json')==ex['logical_tree_manifest_sha256']
+          print('GATE2B3_RECOVERED_FIRST_COMPLETE_BYTES_EXACT=PASS')
+          PY
+
+      - name: Materialize recovery-only immutable seven-file repository payload
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$RUNNER_TEMP/gate2b3-recovery/artifact"
+          D="experiments/risu-diff-e2/qualification/candidate58/gate2b3-guard-scope-provenance-attribution/first-complete"
+          test ! -e "$D"; mkdir -p "$D"
+          cp "$ROOT/replay1/E2_CANDIDATE58_GATE2B3_GUARD_SCOPE_ATTRIBUTION_LEDGER.json" "$D/"
+          cp "$ROOT/replay1/E2_CANDIDATE58_GATE2B3_GUARD_SCOPE_ATTRIBUTION_SUMMARY.json" "$D/"
+          cp "$ROOT/replay1/E2_CANDIDATE58_GATE2B3_DIAGNOSTIC_RECEIPT.json" "$D/"
+          cp "$ROOT/replay1.logical-tree.json" "$D/E2_CANDIDATE58_GATE2B3_LOGICAL_TREE.json"
+          cp "$ROOT/E2_CANDIDATE58_GATE2B3_EVIDENCE_MATERIALIZATION_RECEIPT.json" "$D/"
+          cp "$ROOT/E2_CANDIDATE58_GATE2B3_FIRST_REAL_EXECUTION_RECEIPT.json" "$D/"
+          export D
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          d=Path(os.environ['D']); h=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest(); files=sorted(p for p in d.iterdir() if p.is_file()); assert len(files)==6
+          receipt={
+            'schema':'risu.e2-candidate58-gate2b3-first-complete-immutable-freeze/v0.1',
+            'status':'FIRST_COMPLETE_REAL_GATE2B3_ATTRIBUTION_IMMUTABLY_FROZEN_BY_RECOVERY_CONTAINING_COMMIT',
+            'repository':'risu-research/risu-verify','branch':'e2-development',
+            'first_complete_scientific_execution':{'run_id':int(os.environ['FIRST_COMPLETE_RUN_ID']),'job_id':int(os.environ['FIRST_COMPLETE_JOB_ID']),'trigger_commit':os.environ['FIRST_COMPLETE_TRIGGER_COMMIT'],'overall_workflow_conclusion':'failure_after_artifact_upload','replay1_is_first_complete_logical_output':True,'replay2_exact_byte_identity':True},
+            'hosted_first_complete_artifact':{'id':int(os.environ['FIRST_COMPLETE_ARTIFACT_ID']),'name':os.environ['FIRST_COMPLETE_ARTIFACT_NAME'],'zip_sha256':os.environ['FIRST_COMPLETE_ARTIFACT_ZIP_SHA256'],'uploaded_before_failed_repository_freeze_step':True},
+            'preserved_failures':[
+              {'run_id':int(os.environ['PRE_EVIDENCE_FAILED_RUN_ID']),'job_id':int(os.environ['PRE_EVIDENCE_FAILED_JOB_ID']),'head_sha':os.environ['PRE_EVIDENCE_FAILED_HEAD'],'classification':'PRE_EVIDENCE_SHALLOW_HISTORY_ANCESTOR_PREFLIGHT_FAILURE','real_evidence_opened':False,'scientific_output_emitted':False},
+              {'run_id':int(os.environ['FIRST_COMPLETE_RUN_ID']),'job_id':int(os.environ['FIRST_COMPLETE_JOB_ID']),'head_sha':os.environ['FIRST_COMPLETE_TRIGGER_COMMIT'],'classification':'POST_ARTIFACT_UNTRACKED_DIRECTORY_PORCELAIN_CARDINALITY_ASSERTION','first_complete_outputs_emitted':True,'two_replay_identity_passed':True,'artifact_uploaded':True,'git_add_commit_push_started':False},
+            ],
+            'frozen_authority':{'gate2b3_prospective_protocol_git_blob':os.environ['PROTOCOL_BLOB'],'gate2b3_implementation_freeze_git_blob':os.environ['IMPLEMENTATION_FREEZE_BLOB'],'gate2b3_analyzer_git_blob':os.environ['ANALYZER_BLOB'],'gate2b3_analyzer_sha256':os.environ['ANALYZER_SHA256'],'gate2b2_first_complete_freeze_commit':os.environ['GATE2B2_FREEZE'],'gate2b2_ledger_sha256':os.environ['GATE2B2_LEDGER_SHA256'],'candidate58_machine_freeze_commit':os.environ['MACHINE_FREEZE'],'candidate58_bundle_manifest_sha256':os.environ['BUNDLE_MANIFEST_SHA256'],'candidate58_machine_artifact_id':int(os.environ['MACHINE_ARTIFACT_ID']),'candidate58_machine_artifact_zip_sha256':os.environ['MACHINE_ARTIFACT_ZIP_SHA256']},
+            'frozen_files_sha256':{p.name:h(p) for p in files},
+            'recovery_scientific_firewall':{'analyzer_rerun':False,'semantic_engine_kernel_adapter_or_c1_rerun':False,'candidate_source_read':False,'truth_or_operator_read':False,'epistemic10_read':False,'fresh_heldout_read':False,'remediation':False,'scientific_output_recomputed':False},
+            'allowed_real_evidence_surface':{'selected_case_count':39,'overlay_path_member_count':78,'full_archive_scientific_member_content_extraction_in_original_execution':False},
+            'interpretation_boundary':{'attribution_result_not_interpreted_before_repository_freeze_recovery':True,'attribution_is_not_remediation_success':True,'definitive_coverage_gain_not_inferred':True,'cooccurring_gate2b2_deficits_not_collapsed':True,'truth_accuracy_or_population_generalization_not_inferred':True},
+            'immutability_rule':{'this_first_complete_real_gate2b3_result_may_not_be_replaced':True,'recovery_freezes_exact_hosted_replay1_bytes_without_reexecution':True,'later_diagnostics_corrections_or_remediation_must_be_additive':True},
+          }
+          (d/'E2_CANDIDATE58_GATE2B3_FIRST_COMPLETE_IMMUTABLE_FREEZE_RECEIPT.json').write_text(json.dumps(receipt,sort_keys=True,separators=(',',':'))+'\n')
+          PY
+
+      - name: Commit exact seven-file recovery freeze after staging
+        shell: bash
+        run: |
+          set -euo pipefail
+          D="experiments/risu-diff-e2/qualification/candidate58/gate2b3-guard-scope-provenance-attribution/first-complete"
+          test "$(find "$D" -maxdepth 1 -type f | wc -l)" -eq 7
+          git config user.name "RISU Evidence Freeze"
+          git config user.email "risu-evidence-freeze@users.noreply.github.com"
+          git add "$D"
+          python - <<'PY'
+          import subprocess
+          prefix='experiments/risu-diff-e2/qualification/candidate58/gate2b3-guard-scope-provenance-attribution/first-complete/'
+          names=subprocess.check_output(['git','diff','--cached','--name-only'],text=True).splitlines()
+          assert len(names)==7 and len(set(names))==7, names
+          assert all(n.startswith(prefix) for n in names), names
+          PY
+          git commit -m "Freeze exact first complete Candidate58 Gate2B3 attribution"
+          RESULT_COMMIT="$(git rev-parse HEAD)"
+          test "$(git rev-parse HEAD^)" = "$GITHUB_SHA"
+          test "$(git diff-tree --no-commit-id --name-only -r HEAD | wc -l)" -eq 7
+          git push origin "HEAD:refs/heads/e2-development"
+          echo "GATE2B3_RECOVERY_FREEZE_COMMIT=$RESULT_COMMIT"
+
+      - name: Post-push exact remote verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          RESULT_COMMIT="$(git rev-parse HEAD)"
+          REMOTE_COMMIT="$(git ls-remote origin refs/heads/e2-development | awk '{print $1}')"
+          test "$REMOTE_COMMIT" = "$RESULT_COMMIT"
+          test "$(git rev-parse HEAD^)" = "$GITHUB_SHA"
+          test "$(git diff-tree --no-commit-id --name-only -r HEAD | wc -l)" -eq 7
+          git diff-tree --no-commit-id --name-only -r HEAD | grep -v '^experiments/risu-diff-e2/qualification/candidate58/gate2b3-guard-scope-provenance-attribution/first-complete/' && exit 1 || true
+          echo 'GATE2B3_FIRST_COMPLETE_RECOVERY_FREEZE=PASS'
