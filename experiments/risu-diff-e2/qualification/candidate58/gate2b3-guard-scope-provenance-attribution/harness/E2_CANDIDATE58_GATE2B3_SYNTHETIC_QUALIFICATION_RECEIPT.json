@@ -1,0 +1,146 @@
+{
+  "schema": "risu.e2-candidate58-gate2b3-synthetic-qualification-receipt/v0.1",
+  "status": "HOSTED_SYNTHETIC_QUALIFICATION_PASS_REAL_39_TRACE_UNOPENED",
+  "repository": "risu-research/risu-verify",
+  "branch": "e2-development",
+  "prospective_protocol": {
+    "commit": "10c7e4d74fd4e4d3482638a49ed577b915510dd2",
+    "git_blob": "a587adee49f6169da4555e22a9a278c0052a2e4e",
+    "path": "protocols/RISU_DIFF_E2_CANDIDATE58_GATE2B3_GUARD_SCOPE_PROVENANCE_ATTRIBUTION_PROTOCOL_v0.1.json"
+  },
+  "implementation": {
+    "analyzer": {
+      "path": "tools/e2_candidate58_gate2b3_guard_scope_provenance_attribution.py",
+      "introducing_commit": "05a07ab2e146d88cb887bb7025841dc2fa72aef7",
+      "git_blob": "8924a296453e21c8af29628f074551fdffaca5ba",
+      "sha256": "8e45eb744760ae0d0b623fcb959a1138fb860455429ee02c3e2b09353d58787d"
+    },
+    "synthetic_selftest": {
+      "path": "tests/test_e2_candidate58_gate2b3_guard_scope_provenance_attribution.py",
+      "introducing_commit": "78e0366e8b8a4466ae4681b31b9c43c85108a275",
+      "git_blob": "310864fc36649abb2b32e7ce517db75b3b74d5cf",
+      "sha256": "67a164d279866883eb067e3b8bfef296d487cc8feb27bb289f90d21f6ddeeb79"
+    },
+    "workflow": {
+      "path": ".github/workflows/e2-candidate58-gate2b3-synthetic-qualification.yml",
+      "introducing_commit": "8e981cb631f9d3dc680d074a266bae93bad8f73b",
+      "initial_git_blob": "382fd16f300bbd91857ee40cb8593ce68650de76",
+      "firewall_self_match_correction_commit": "5be6e44386f4eb830212d4da78fad0ea2a042613",
+      "qualified_git_blob": "b494a7b6e19fad931c80a43e9ee8cdeb84b85e72"
+    }
+  },
+  "pre_evidence_commit_serialization_disclosure": {
+    "implementation_was_not_one_atomic_tree": true,
+    "serialized_additive_commits": [
+      "05a07ab2e146d88cb887bb7025841dc2fa72aef7",
+      "78e0366e8b8a4466ae4681b31b9c43c85108a275",
+      "8e981cb631f9d3dc680d074a266bae93bad8f73b"
+    ],
+    "plumbing_correction_commit": "5be6e44386f4eb830212d4da78fad0ea2a042613",
+    "all_commits_after_prospective_protocol_and_before_real_39_trace_read": true,
+    "scientific_effect": "NONE; serialization and one-line workflow firewall correction occurred before any selected Candidate58 Gate2B3 overlay/path content was opened."
+  },
+  "preserved_failed_hosted_attempt": {
+    "run_id": 34150001805,
+    "job_id": 101830099065,
+    "head_sha": "8e981cb631f9d3dc680d074a266bae93bad8f73b",
+    "conclusion": "failure",
+    "classification": "PRE_EXECUTION_FIREWALL_SELF_MATCH",
+    "exact_failure_boundary": "Scientific read-surface firewall grep inspected the workflow file containing the literal forbidden-term grep expression and matched its own command.",
+    "synthetic_replay_1_started": false,
+    "synthetic_replay_2_started": false,
+    "artifact_uploaded": false,
+    "real_candidate58_trace_read": false,
+    "scientific_result_emitted": false
+  },
+  "successful_hosted_qualification": {
+    "run_id": 34150370611,
+    "job_id": 101831208273,
+    "head_sha": "5be6e44386f4eb830212d4da78fad0ea2a042613",
+    "conclusion": "success",
+    "python": "CPython 3.13.5",
+    "runner_os": "Ubuntu 24.04.4",
+    "runner_version": "2.337.0",
+    "hosted_compute_agent_version": "20260828.587",
+    "azure_region": "westcentralus",
+    "scientific_firewall_step": "success",
+    "synthetic_replay_1": "PASS_24_OF_24",
+    "synthetic_replay_2": "PASS_24_OF_24",
+    "two_replay_exact_byte_identity": true,
+    "python_bytecode_sanity": true,
+    "artifact_uploaded_after_qualification_before_implementation_freeze": true,
+    "artifact": {
+      "id": 10029135699,
+      "name": "e2-candidate58-gate2b3-synthetic-qualification",
+      "size_bytes": 6448,
+      "zip_sha256": "b5d21e28c001ab7c81a826e59b70e6d24a9eb97ddbbea5b0482471910b26d4ae",
+      "file_count": 3,
+      "files": {
+        "E2_CANDIDATE58_GATE2B3_IMPLEMENTATION_FILES.sha256": {
+          "sha256": "101ad3652d05354326768f8db7069ffe279d2983a7c660fff8e5335d8a719908"
+        },
+        "E2_CANDIDATE58_GATE2B3_SYNTHETIC_SELFTEST.sha256": {
+          "sha256": "ab97b9a104fcda42ee9f69bb7c60a53c6320dcb06d8de6d0e64a852afa0c6e1c"
+        },
+        "E2_CANDIDATE58_GATE2B3_SYNTHETIC_SELFTEST_RECEIPT.json": {
+          "sha256": "d503defb5217339f61ca044c7b022f2cbcb023adca84c2639547303719df0b38"
+        }
+      }
+    }
+  },
+  "synthetic_selftest": {
+    "scenario_count": 24,
+    "all_passed": true,
+    "population_fail_closed_test": true,
+    "taxonomy_counts": {
+      "TRACE_EVIDENCE_INCOMPLETE": 7,
+      "FROZEN_CHAIN_INCONSISTENT": 2,
+      "ANCHOR_IDENTITY_OR_EFFECTIVE_GUARD_ASSOCIATION_UNRESOLVED": 7,
+      "UPSTREAM_STRUCTURED_SCOPE_UNRESOLVED_OR_AMBIGUOUS": 6,
+      "GUARD_SCOPE_CARRIER_SURVIVAL_FAILURE": 2,
+      "ATTRIBUTION_INCOMPLETE_NO_CAUSAL_CLAIM": 0
+    },
+    "stdlib_import_firewall": {
+      "pass": true,
+      "import_roots": ["__future__", "argparse", "collections", "hashlib", "json", "pathlib", "re", "typing"],
+      "disallowed_non_stdlib_import_roots": [],
+      "forbidden_risu_import_roots": []
+    },
+    "positive_controls": ["S01_DIRECT_PASS", "S02_HELPER_PASS"],
+    "adversarial_boundaries_covered": [
+      "anchor scope inconsistency",
+      "missing and duplicate anchor",
+      "conflicting structured scope",
+      "single branch polarity",
+      "path control incompleteness",
+      "overlay/path digest mismatch",
+      "missing duplicate and digest-mismatched manifest member",
+      "helper multiple consumer",
+      "helper bad transform",
+      "helper effective-guard id disagreement",
+      "wrong overlay and path schemas",
+      "malformed opaque case id",
+      "missing and conflicting statement spans",
+      "unknown effective-guard form",
+      "missing frozen scope deficit",
+      "material control incomplete",
+      "overlay control incomplete"
+    ]
+  },
+  "scientific_firewall": {
+    "real_selected_39_overlay_or_path_content_read": false,
+    "candidate_source_read": false,
+    "materialized_cell_source_or_metadata_read": false,
+    "semantic_slice_read": false,
+    "adapter_receipt_read": false,
+    "kernel_result_read": false,
+    "certificate_or_c1_read": false,
+    "gate2a_truth_join_input": false,
+    "truth_or_expected_label_read": false,
+    "mutation_operator_metadata_read": false,
+    "epistemic10_read": false,
+    "fresh_heldout_read": false,
+    "semantic_engine_kernel_adapter_or_c1_rerun": false,
+    "remediation": false
+  }
+}
