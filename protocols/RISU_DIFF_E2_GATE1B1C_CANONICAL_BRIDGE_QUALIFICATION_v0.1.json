@@ -1,0 +1,92 @@
+{
+  "schema": "risu.e2-gate1b1c-canonical-bridge-qualification-protocol/v0.1",
+  "protocol_id": "RISU_DIFF_E2_GATE1B1C_CANONICAL_BRIDGE_QUALIFICATION_001",
+  "status": "FROZEN_BEFORE_FIRST_COMPLETE_CANONICAL_BRIDGE_EXECUTION",
+  "purpose": "Qualify an ultra-thin primary-E2 to semantic-slice projection bridge, independently replay the already-frozen canonical six-seed consequence signature bytes from canonical authorities only, derive a separate execution-binding profile and finite-world bundle, and enforce a content-addressed closed runtime read set before any Candidate-58 semantic prediction.",
+  "authority": {
+    "repository": "risu-research/risu-verify",
+    "production_branch": "e2-development",
+    "pre_qualification_head": "7b7cafacb7a7aa32b2ce8ee25acbb050d4ec8f02",
+    "canonical_anchor_bundle_git_blob": "ec8d8b287a80b87c815f0362be366be076d2b091",
+    "canonical_overlay_file_sha256": "2d231b9eae523d7fb84925c302398c4913670b765cb10e2c4f76dc988cc5ea36",
+    "canonical_overlay_internal_digest_sha256": "2d3f6559845323b6821f18920b727a90e5520514f00308af59e6f55a67d683cd",
+    "frozen_canonical_signature_git_blob": "cfa7d78707599177afe690c3aad7faaa22cb1930",
+    "frozen_canonical_signature_bundle_digest_sha256": "ce4502a3f8bb2cf9e2d16138b44e4165b7884737e74e8289883c81e6a7e89a1e",
+    "original_signature_deriver_git_blob": "b72a41c7cc3937130bb4c26b274d501e0df9c165",
+    "independent_signature_checker_git_blob": "19562986974349fdc37e7cdc314d21011be0a3ae",
+    "canonical_overlay_regenerator_git_blob": "4f0f35550af731000c52094b349bdb5aea990192",
+    "path_observability_v1_git_blob": "6eae3403f53b86f85bac47a31e751d28508e7225",
+    "path_observability_v2_git_blob": "e3d0b19fd87d3b5ff0a3344e0915b56bcb342bb9",
+    "predicate_polarity_v1_git_blob": "de0b188dda16cacf842bc5539066681d01a4f9b3",
+    "overlay_implementation_git_blob": "77be5ea1dad30aa6daa889e0753ce7d1aaa6f07a"
+  },
+  "new_implementation_blobs": {
+    "risu_e2_semantic/canonical_bridge.py": "9e3ceeca756d76f0bc913ffc685a413936966aa6",
+    "risu_e2_semantic/primary_adapter.py": "c1b5d5e666bdd1b8f9bb1e041f76368f7f7a741c",
+    "risu_e2_semantic/adapter_support.py": "5558d4bc91a0e51c4f836b4ae6db69bcf6abafe7",
+    "risu_e2_semantic/closed_read_set.py": "5d98c4708e2bcab376d9fc67f660809c93c6e499",
+    "risu_e2_semantic/canonical_worlds.py": "0044b7594a2ae2409c778625933aaca21f763b0d",
+    "tools/e2_gate1b1c_bridge.py": "7d84272e8f34f999dfccd1e529acb2dd0c40c0c2",
+    "tests/test_e2_gate1b1c_bridge.py": "028e5e8ea6075374cfa2951ea292e48c988b9b93",
+    ".github/workflows/e2-gate1b1c-canonical-bridge-qualification.yml": "86fcec4983438abfea1a50626987e77e9bd0f449"
+  },
+  "canonical_signature_rule": {
+    "public_signature_semantics_may_change": false,
+    "required_result": "The new canonical bridge replay must be byte-for-byte identical to the already-frozen public canonical consequence-signature artifact.",
+    "execution_specific_data_location": "SEPARATE_EXECUTION_PROFILE_ONLY",
+    "candidate_data_may_participate": false
+  },
+  "finite_world_rule": {
+    "source": "Canonical six-seed bytes, canonical anchor bundle, canonical overlay, and frozen helper-polarity proof surface only.",
+    "world_count_per_seed": 2,
+    "allowed_world_fields": ["id", "role_values", "kappa"],
+    "target_rho_may_be_stored": false,
+    "target_rho_derivation": "At candidate execution time only, derive rho from the candidate primary comparison operator, provenance-bound operands, helper-polarity certificate where applicable, and complete primary control paths.",
+    "SYN-PY-02_required_helper_certificate": {"status": "PROVED", "final_relation": "INVERTED", "flip_count": 1}
+  },
+  "adapter_rule": {
+    "source_parsing": false,
+    "file_io": false,
+    "semantic_role_authority": "PRIMARY_PROVENANCE_ROOT_PLUS_GUARD_SCOPE_PARAMETER_INDEX",
+    "identifier_or_function_spelling_semantic_authority": false,
+    "unknown_origin_behavior": "OPAQUE_ORIGIN_OR_FAIL_CLOSED",
+    "candidate_source_hash_must_equal_primary_overlay_source_hash": true,
+    "a3_a4_verdict_execution": false
+  },
+  "closed_read_set_rule": {
+    "content_addressed_allowlist_required": true,
+    "bootstrap_policy_requires_out_of_band_sha256": true,
+    "repo_root_unlisted_read_behavior": "ABORT",
+    "symlink_scientific_input": "FORBIDDEN",
+    "forbidden_policy_metadata": ["expected_truth", "gold", "expected_e2_prediction", "operator", "operator_id", "operator_name", "operator_class", "repair", "mutation_class", "verdict"],
+    "audit_hook_negative_probe_required": true,
+    "read_set_receipt_required": true
+  },
+  "first_complete_gates": {
+    "compile": true,
+    "unit_adversarial_tests": true,
+    "canonical_overlay_regenerated_twice": true,
+    "canonical_overlay_exact_sha256": "2d231b9eae523d7fb84925c302398c4913670b765cb10e2c4f76dc988cc5ea36",
+    "new_public_signature_replay_equals_frozen_bytes": true,
+    "new_public_signature_bundle_digest_equals_frozen": "ce4502a3f8bb2cf9e2d16138b44e4165b7884737e74e8289883c81e6a7e89a1e",
+    "control_form_counts": {"DIRECT_CONTROL": 5, "HELPER_CONTROL": 1},
+    "SYN-PY-02_helper_exact": true,
+    "finite_worlds_contain_no_rho": true,
+    "two_bridge_runs_byte_identical": true,
+    "closed_read_set_audit_probe": true,
+    "artifact_upload_before_assertion": true
+  },
+  "scientific_firewall": {
+    "candidate58_bytes_read": false,
+    "epistemic10_read": false,
+    "raw_blind58_transport_read": false,
+    "mutation_truth_read": false,
+    "mutation_operator_metadata_read": false,
+    "expected_e2_prediction_read": false,
+    "fresh_target_bytes_read": false,
+    "a3_a4_semantic_verdicts_executed": false
+  },
+  "first_complete_rule": "The first complete canonical bridge qualification evidence must be uploaded unchanged before the final PASS/FAIL assertion. If FAIL, freeze that failure before diagnosis or remediation.",
+  "promotion_rule": "Only a frozen PASS may be promoted by non-force fast-forward from the exact pre-qualification production head. Any production drift requires rebase/requalification rather than force update.",
+  "next_authorized_step": "Create the isolated qualification branch from the exact pre-qualification head, commit only this protocol and the pinned new implementation/workflow blobs, and allow the branch-scoped first-complete canonical-only workflow to execute. Candidate-58 remains sealed."
+}

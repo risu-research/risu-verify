@@ -1,0 +1,170 @@
+name: E2 Gate1B1C Canonical Bridge Qualification 001
+
+on:
+  push:
+    branches: [e2-gate1b1c-canonical-bridge-q001]
+
+permissions:
+  contents: read
+
+jobs:
+  first-complete-canonical-bridge:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.2'
+
+      - name: Execute first complete canonical-only qualification without early assertion
+        shell: bash
+        run: |
+          set +e
+          mkdir -p qualification-input qualification-out/run1 qualification-out/run2 qualification-out/meta
+          : > qualification-out/meta/status.env
+          stage() {
+            name="$1"; shift
+            "$@" >"qualification-out/meta/${name}.log" 2>&1
+            rc=$?
+            printf '%s=%d\n' "$name" "$rc" >> qualification-out/meta/status.env
+            return 0
+          }
+
+          stage compile python -m py_compile \
+            risu_e2_semantic/adapter_support.py \
+            risu_e2_semantic/canonical_bridge.py \
+            risu_e2_semantic/canonical_worlds.py \
+            risu_e2_semantic/closed_read_set.py \
+            risu_e2_semantic/primary_adapter.py \
+            tools/e2_gate1b1c_bridge.py \
+            tests/test_e2_gate1b1c_bridge.py
+          stage unit_tests python -m unittest tests.test_e2_gate1b1c_bridge
+
+          stage overlay_run1 python tools/e2_a2o_seed_qualify.py \
+            --overlay-output qualification-input/E2_A2O_SEED_OVERLAY_BUNDLE.json \
+            --receipt-output qualification-out/meta/E2_A2O_SEED_QUALIFICATION_RECEIPT_1.json
+          stage overlay_run2 python tools/e2_a2o_seed_qualify.py \
+            --overlay-output qualification-input/E2_A2O_SEED_OVERLAY_BUNDLE_2.json \
+            --receipt-output qualification-out/meta/E2_A2O_SEED_QUALIFICATION_RECEIPT_2.json
+          stage overlay_identity bash -c 'test "$(sha256sum qualification-input/E2_A2O_SEED_OVERLAY_BUNDLE.json | cut -d" " -f1)" = "2d231b9eae523d7fb84925c302398c4913670b765cb10e2c4f76dc988cc5ea36" && cmp qualification-input/E2_A2O_SEED_OVERLAY_BUNDLE.json qualification-input/E2_A2O_SEED_OVERLAY_BUNDLE_2.json'
+
+          stage policy_generation python - <<'PY'
+          import hashlib,json,pathlib,subprocess
+          authorities={
+            'protocols/RISU_DIFF_E2_CANONICAL_SEED_CONSEQUENCE_ANCHORS_v0.1.json':'ec8d8b287a80b87c815f0362be366be076d2b091',
+            'experiments/risu-diff-e2/qualification/a3-a4/E2_A3_A4_CANONICAL_SEED_CONSEQUENCE_SIGNATURES_v0.1.json':'cfa7d78707599177afe690c3aad7faaa22cb1930',
+            'experiments/risu-diff-e2/qualification/seeds/go/SYN-GO-01.go':'3c236a3cc6472bc1895a7a7940d8dcb40a0bfe7e',
+            'experiments/risu-diff-e2/qualification/seeds/go/SYN-GO-02.go':'b4e2ab24a4bf5484684612ae8750fd9a7e3b40db',
+            'experiments/risu-diff-e2/qualification/seeds/python/SYN-PY-01.py':'ac730a4896aa260d5cdb78b47e21c3baa2e66458',
+            'experiments/risu-diff-e2/qualification/seeds/python/SYN-PY-02.py':'3e7a1d1599806e5e46b99f7e953f6b1260d4f931',
+            'experiments/risu-diff-e2/qualification/seeds/typescript-javascript/SYN-TS-01.mjs':'2ed95f2c3c37a1d48a42f81dbc94703321600d0b',
+            'experiments/risu-diff-e2/qualification/seeds/typescript-javascript/SYN-TS-02.mjs':'acbaf1a9f2ef335f3b2f46b0eaa22d3b372525a4',
+          }
+          for path,want in authorities.items():
+              got=subprocess.check_output(['git','hash-object',path],text=True).strip()
+              if got!=want: raise SystemExit(f'GIT_BLOB_MISMATCH:{path}:{got}:{want}')
+          paths=[
+            ('protocols/RISU_DIFF_E2_CANONICAL_SEED_CONSEQUENCE_ANCHORS_v0.1.json','canonical_anchor_bundle','canonical'),
+            ('qualification-input/E2_A2O_SEED_OVERLAY_BUNDLE.json','canonical_overlay_bundle','canonical'),
+            ('experiments/risu-diff-e2/qualification/a3-a4/E2_A3_A4_CANONICAL_SEED_CONSEQUENCE_SIGNATURES_v0.1.json','frozen_canonical_signature','canonical'),
+          ] + [(p,'canonical_seed_source','canonical') for p in authorities if '/seeds/' in p]
+          entries=[]
+          for p,purpose,role in paths:
+              raw=pathlib.Path(p).read_bytes()
+              entries.append({'path':p,'sha256':hashlib.sha256(raw).hexdigest(),'purpose':purpose,'role':role})
+          policy={'schema':'risu.e2-closed-runtime-read-policy/v0.1','closed':True,'entries':entries}
+          raw=(json.dumps(policy,sort_keys=True,separators=(',',':'))+'\n').encode()
+          pathlib.Path('qualification-input/E2_GATE1B1C_CANONICAL_READ_POLICY.json').write_bytes(raw)
+          pathlib.Path('qualification-input/E2_GATE1B1C_CANONICAL_READ_POLICY.sha256').write_text(hashlib.sha256(raw).hexdigest()+'\n')
+          PY
+
+          POLICY_SHA="$(cat qualification-input/E2_GATE1B1C_CANONICAL_READ_POLICY.sha256 2>/dev/null | tr -d '\n')"
+          stage bridge_run1 python tools/e2_gate1b1c_bridge.py canonical \
+            --repo-root . --read-policy qualification-input/E2_GATE1B1C_CANONICAL_READ_POLICY.json --read-policy-sha256 "$POLICY_SHA" \
+            --anchor-path protocols/RISU_DIFF_E2_CANONICAL_SEED_CONSEQUENCE_ANCHORS_v0.1.json \
+            --overlay-path qualification-input/E2_A2O_SEED_OVERLAY_BUNDLE.json \
+            --frozen-signature-path experiments/risu-diff-e2/qualification/a3-a4/E2_A3_A4_CANONICAL_SEED_CONSEQUENCE_SIGNATURES_v0.1.json \
+            --output-dir qualification-out/run1
+          stage bridge_run2 python tools/e2_gate1b1c_bridge.py canonical \
+            --repo-root . --read-policy qualification-input/E2_GATE1B1C_CANONICAL_READ_POLICY.json --read-policy-sha256 "$POLICY_SHA" \
+            --anchor-path protocols/RISU_DIFF_E2_CANONICAL_SEED_CONSEQUENCE_ANCHORS_v0.1.json \
+            --overlay-path qualification-input/E2_A2O_SEED_OVERLAY_BUNDLE.json \
+            --frozen-signature-path experiments/risu-diff-e2/qualification/a3-a4/E2_A3_A4_CANONICAL_SEED_CONSEQUENCE_SIGNATURES_v0.1.json \
+            --output-dir qualification-out/run2
+          stage repeat_identity bash -c 'cmp qualification-out/run1/E2_GATE1B1C_CANONICAL_SIGNATURE_REPLAY.json qualification-out/run2/E2_GATE1B1C_CANONICAL_SIGNATURE_REPLAY.json && cmp qualification-out/run1/E2_GATE1B1C_CANONICAL_EXECUTION_PROFILES.json qualification-out/run2/E2_GATE1B1C_CANONICAL_EXECUTION_PROFILES.json && cmp qualification-out/run1/E2_GATE1B1C_DECLARED_FINITE_WORLDS.json qualification-out/run2/E2_GATE1B1C_DECLARED_FINITE_WORLDS.json && cmp qualification-out/run1/E2_GATE1B1C_CANONICAL_CLOSED_READ_SET_RECEIPT.json qualification-out/run2/E2_GATE1B1C_CANONICAL_CLOSED_READ_SET_RECEIPT.json && cmp qualification-out/run1/E2_GATE1B1C_CANONICAL_BRIDGE_RESULT.json qualification-out/run2/E2_GATE1B1C_CANONICAL_BRIDGE_RESULT.json'
+
+          stage audit_hook_probe python - <<'PY'
+          from pathlib import Path
+          from risu_e2_semantic.closed_read_set import ClosedReadSet,sha256_bytes
+          root=Path('qualification-out/meta/audit-root'); root.mkdir(parents=True,exist_ok=True)
+          (root/'allowed').write_bytes(b'allowed'); (root/'forbidden').write_bytes(b'forbidden')
+          policy={'schema':'risu.e2-closed-runtime-read-policy/v0.1','closed':True,'entries':[{'path':'allowed','sha256':sha256_bytes(b'allowed'),'purpose':'probe','role':'probe'}]}
+          g=ClosedReadSet(root,policy); g.install_audit_guard(); assert g.read_bytes('allowed',purpose='probe')==b'allowed'
+          try:
+              (root/'forbidden').read_bytes()
+          except PermissionError:
+              pass
+          else:
+              raise SystemExit('AUDIT_HOOK_DID_NOT_BLOCK_FORBIDDEN_READ')
+          assert g.forbidden==['forbidden']
+          print('AUDIT_HOOK_PASS')
+          PY
+
+          python - <<'PY'
+          import hashlib,json,pathlib
+          p=pathlib.Path('qualification-out'); meta=p/'meta'
+          codes={}
+          for line in (meta/'status.env').read_text().splitlines():
+              k,v=line.split('=',1); codes[k]=int(v)
+          expected=['compile','unit_tests','overlay_run1','overlay_run2','overlay_identity','policy_generation','bridge_run1','bridge_run2','repeat_identity','audit_hook_probe']
+          missing=[x for x in expected if x not in codes]
+          run=None
+          try: run=json.loads((p/'run1/E2_GATE1B1C_CANONICAL_BRIDGE_RESULT.json').read_text())
+          except Exception: pass
+          checks={
+            'all_stages_present':not missing,
+            'all_stage_exit_codes_zero':not missing and all(codes[x]==0 for x in expected),
+            'bridge_result_pass':isinstance(run,dict) and run.get('status')=='PASS',
+            'candidate58_read':False,
+            'truth_read':False,
+            'operator_metadata_read':False,
+            'a3_a4_verdict_executed':False,
+          }
+          result={'schema':'risu.e2-gate1b1c-canonical-bridge-first-complete/v0.1','status':'PASS' if all(v is True for v in checks.values()) else 'FAIL','checks':checks,'stage_exit_codes':codes,'missing_stages':missing}
+          for name in ['E2_GATE1B1C_CANONICAL_SIGNATURE_REPLAY.json','E2_GATE1B1C_CANONICAL_EXECUTION_PROFILES.json','E2_GATE1B1C_DECLARED_FINITE_WORLDS.json','E2_GATE1B1C_CANONICAL_CLOSED_READ_SET_RECEIPT.json','E2_GATE1B1C_CANONICAL_BRIDGE_RESULT.json']:
+              f=p/'run1'/name
+              if f.exists(): result[name]={'sha256':hashlib.sha256(f.read_bytes()).hexdigest(),'bytes':f.stat().st_size}
+          pol=pathlib.Path('qualification-input/E2_GATE1B1C_CANONICAL_READ_POLICY.json')
+          if pol.exists(): result['read_policy']={'sha256':hashlib.sha256(pol.read_bytes()).hexdigest(),'bytes':pol.stat().st_size}
+          (p/'FIRST_COMPLETE_RESULT.json').write_text(json.dumps(result,sort_keys=True,separators=(',',':'))+'\n')
+          print(json.dumps(result,sort_keys=True,separators=(',',':')))
+          PY
+          exit 0
+
+      - name: Upload first complete evidence before assertion
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2-gate1b1c-canonical-bridge-first-complete-001
+          path: |
+            qualification-out/**
+            qualification-input/E2_GATE1B1C_CANONICAL_READ_POLICY.json
+            qualification-input/E2_GATE1B1C_CANONICAL_READ_POLICY.sha256
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Assert only after evidence upload
+        if: always()
+        run: |
+          python - <<'PY'
+          import json
+          r=json.load(open('qualification-out/FIRST_COMPLETE_RESULT.json'))
+          if r.get('status')!='PASS': raise SystemExit('FIRST_COMPLETE_CANONICAL_BRIDGE_FAIL_FROZEN_BY_ARTIFACT')
+          print('FIRST_COMPLETE_CANONICAL_BRIDGE_PASS')
+          PY
