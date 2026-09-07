@@ -1,0 +1,247 @@
+name: E2 Gate2C3 First Complete v4
+
+on:
+  push:
+    branches: [e2-development]
+    paths:
+      - ".github/workflows/e2-gate2c3-first-complete-v4.yml"
+
+permissions:
+  contents: write
+  actions: read
+
+env:
+  EXPECTED_PARENT: 6d9316be4a8e84ce64393d4e67bf7e14a077c233
+  PROTOCOL: protocols/RISU_DIFF_E2_GATE2C3_PYTHON_C1_WORLD_EVALUATION_PROVENANCE_PROTOCOL_v0.1.json
+  AMENDMENT: protocols/RISU_DIFF_E2_GATE2C3_PYTHON_C1_WORLD_EVALUATION_PROVENANCE_PROTOCOL_AMENDMENT_001.json
+  IMPL_FREEZE: protocols/RISU_DIFF_E2_GATE2C3_IMPLEMENTATION_FREEZE_v0.1.json
+  ERRATUM: protocols/RISU_DIFF_E2_GATE2C3_ARTIFACT_AUTHORITY_ERRATUM_001.json
+  G2C2A_FREEZE: experiments/risu-diff-e2/qualification/candidate58/gate2c2a-repaired-machine-requalification/first-complete/E2_GATE2C2A_FIRST_COMPLETE_IMMUTABLE_FREEZE_RECEIPT.json
+  ANALYZER: tools/e2_gate2c3_python_c1_world_eval_provenance.py
+  TEST: tests/test_e2_gate2c3_python_c1_world_eval_provenance.py
+  PROTOCOL_BLOB: 658572619ed5f68127a97f053056ccad4269c4a6
+  AMENDMENT_BLOB: b3229f9ee3c77648e85e2b3cc86b749209434e11
+  IMPL_FREEZE_BLOB: b14165a9eea03650773b5627e1dd8b91c79adc22
+  ERRATUM_BLOB: 487034018c1e8b5f4420b9781e42584f1002bd57
+  G2C2A_FREEZE_BLOB: 0a5853950905ecd2fca219945c4e8f3844f6af81
+  ANALYZER_BLOB: a30172a3f72d17bc29b37b0f6c5d86a3b6893741
+  TEST_BLOB: d96c31f68cd33d74e92692d785793bdc7accf607
+  MATRIX: experiments/risu-diff-e2/qualification/candidate58/gate2c2a-repaired-machine-requalification/first-complete/E2_GATE2C2A_REPAIRED_MACHINE_PREDICTION_MATRIX.json
+  MATRIX_SHA: da8cb707a5cc71b36881eafc01a377ba040bb5148ae3d3997ecd95f7572138d3
+  ADMISSION: experiments/risu-diff-e2/qualification/anchor-transport/admission/E2_SANITIZED_OPAQUE_58_ADMISSION_MANIFEST.json
+  ADMISSION_BLOB: f2fc78439d4bfadce5941bf71aadd15ec292bcb1
+  ADMISSION_SHA: 847d85c2274cd6b94a83eefe0f6153a8fb183dbad758efa75118a4fd368623e4
+  CELLS: experiments/risu-diff-e2/qualification/materialized/cells
+  CELLS_TREE: 34a30574c7420728bff57958c815194979a622ab
+  GATE2C2A_RUN_ID: "34159645664"
+  GATE2C2A_ARTIFACT_ID: "10032162026"
+  GATE2C2A_ARTIFACT_DIGEST: fe9ba1bcd2d8510acd487f6c5ff41592864bafe1b09df9a00e1a3706817d4b1d
+  RESULT_DIR: experiments/risu-diff-e2/qualification/candidate58/gate2c3-python-c1-world-evaluation-provenance/first-complete
+
+jobs:
+  first-complete-gate2c3:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exact v4 revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+
+      - name: Prove immutable authority chain and empty result slot
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "$EXPECTED_PARENT"
+          test "$(git diff --name-only HEAD^ HEAD)" = ".github/workflows/e2-gate2c3-first-complete-v4.yml"
+          test "$(git hash-object "$PROTOCOL")" = "$PROTOCOL_BLOB"
+          test "$(git hash-object "$AMENDMENT")" = "$AMENDMENT_BLOB"
+          test "$(git hash-object "$IMPL_FREEZE")" = "$IMPL_FREEZE_BLOB"
+          test "$(git hash-object "$ERRATUM")" = "$ERRATUM_BLOB"
+          test "$(git hash-object "$G2C2A_FREEZE")" = "$G2C2A_FREEZE_BLOB"
+          test "$(git hash-object "$ANALYZER")" = "$ANALYZER_BLOB"
+          test "$(git hash-object "$TEST")" = "$TEST_BLOB"
+          test "$(git hash-object "$ADMISSION")" = "$ADMISSION_BLOB"
+          test "$(git rev-parse "HEAD:$CELLS")" = "$CELLS_TREE"
+          echo "$MATRIX_SHA  $MATRIX" | sha256sum -c -
+          echo "$ADMISSION_SHA  $ADMISSION" | sha256sum -c -
+          test ! -e "$RESULT_DIR"
+          test "$(git ls-remote origin refs/heads/e2-development | cut -f1)" = "$GITHUB_SHA"
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          p=json.loads(Path(os.environ['PROTOCOL']).read_text())
+          e=json.loads(Path(os.environ['ERRATUM']).read_text())
+          f=json.loads(Path(os.environ['G2C2A_FREEZE']).read_text())
+          assert p['population']['case_count']==7 and len(set(p['population']['case_ids']))==7
+          assert e['status']=='SEALED_BEFORE_ANY_GATE2C3_ANALYZER_EXECUTION'
+          assert e['correct_authority']['root_git_blob']==os.environ['G2C2A_FREEZE_BLOB']
+          assert e['correct_authority']['hosted_artifact_id']==os.environ['GATE2C2A_ARTIFACT_ID']
+          assert e['correct_authority']['hosted_artifact_digest_sha256']==os.environ['GATE2C2A_ARTIFACT_DIGEST']
+          assert e['correct_authority']['gate2c2a_matrix_sha256']==os.environ['MATRIX_SHA']
+          assert f['workflow_run_id']==os.environ['GATE2C2A_RUN_ID']
+          assert f['hosted_artifact']['id']==os.environ['GATE2C2A_ARTIFACT_ID']
+          assert f['hosted_artifact']['digest']==os.environ['GATE2C2A_ARTIFACT_DIGEST']
+          assert f['frozen_files_sha256']['E2_GATE2C2A_REPAIRED_MACHINE_PREDICTION_MATRIX.json']==os.environ['MATRIX_SHA']
+          print('GATE2C3_V4_AUTHORITY_CHAIN=PASS')
+          PY
+
+      - name: Set up exact Python runtime
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.13.5"
+
+      - name: Materialize exact seven sources through frozen opaque locator
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC="$RUNNER_TEMP/gate2c3-sources"; LOC="$RUNNER_TEMP/E2_GATE2C3_SOURCE_LOCATOR_RECEIPT.json"
+          python "$ANALYZER" locate --cells-dir "$CELLS" --manifest "$ADMISSION" --protocol "$PROTOCOL" --output-sources "$SRC" --receipt "$LOC"
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          r=json.loads(Path(os.environ['RUNNER_TEMP'],'E2_GATE2C3_SOURCE_LOCATOR_RECEIPT.json').read_text())
+          assert r['source_files_stream_hashed']==58 and r['source_files_semantically_parsed']==0
+          assert r['selected_source_count']==7 and r['source_content_exposed_to_diagnostic_analyzer']==0
+          assert r['nonselected_source_bytes_retained'] is False and r['cell_json_read'] is False
+          assert len(r['rows'])==7
+          print('GATE2C3_V4_LOCATOR=PASS')
+          PY
+
+      - name: Bind hosted artifact to immutable freeze and verify exact selected logical files
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          ZIP="$RUNNER_TEMP/gate2c2a.zip"; META="$RUNNER_TEMP/gate2c2a-meta.json"; CASES="$RUNNER_TEMP/gate2c3-cases"; export ZIP META CASES
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$GATE2C2A_ARTIFACT_ID" > "$META"
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          m=json.loads(Path(os.environ['META']).read_text())
+          assert int(m['id'])==int(os.environ['GATE2C2A_ARTIFACT_ID'])
+          assert m.get('expired') is False
+          assert m.get('digest')=='sha256:'+os.environ['GATE2C2A_ARTIFACT_DIGEST']
+          wr=m.get('workflow_run') or {}
+          assert str(wr.get('id'))==os.environ['GATE2C2A_RUN_ID']
+          print('GATE2C3_V4_HOSTED_METADATA=PASS')
+          PY
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$GATE2C2A_ARTIFACT_ID/zip" > "$ZIP"
+          python - <<'PY'
+          import hashlib,json,os,zipfile
+          from pathlib import Path
+          protocol=json.loads(Path(os.environ['PROTOCOL']).read_text())
+          matrix=json.loads(Path(os.environ['MATRIX']).read_text())
+          ids=sorted(protocol['population']['case_ids']); rows={str(r['case_id']):r for r in matrix['cases']}
+          fields={'adapter_receipt.json':'adapter_receipt_sha256','semantic_slice.json':'semantic_slice_sha256','c1_report.json':'c1_report_sha256'}
+          root=Path(os.environ['CASES']);root.mkdir(parents=True,exist_ok=True); z=zipfile.ZipFile(os.environ['ZIP']); verified=[]
+          for cid in ids:
+              row=rows[cid]
+              assert row['language']=='python' and row['tentative_kernel_prediction']=='E2_PREDICTED_PRESERVATION_EVIDENCE'
+              d=root/cid;d.mkdir()
+              for fn,key in fields.items():
+                  n1=f'replay1/cases/{cid}/{fn}';n2=f'replay2/cases/{cid}/{fn}';b1=z.read(n1);b2=z.read(n2)
+                  assert b1==b2,(cid,fn,'replay_mismatch')
+                  got=hashlib.sha256(b1).hexdigest(); assert got==row[key],(cid,fn,got,row[key])
+                  (d/fn).write_bytes(b1);verified.append({'case_id':cid,'file':fn,'sha256':got})
+          assert len(verified)==21
+          rec={'schema':'risu.e2-gate2c3-selected-checker-input-verification/v0.1','authority_root_git_blob':os.environ['G2C2A_FREEZE_BLOB'],'artifact_id':int(os.environ['GATE2C2A_ARTIFACT_ID']),'artifact_digest_sha256':os.environ['GATE2C2A_ARTIFACT_DIGEST'],'download_zip_sha256_observed':hashlib.sha256(Path(os.environ['ZIP']).read_bytes()).hexdigest(),'selected_file_count':21,'replay1_replay2_byte_identical':True,'all_selected_file_sha256_match_frozen_matrix':True,'verified':verified}
+          Path(os.environ['RUNNER_TEMP'],'E2_GATE2C3_SELECTED_CHECKER_INPUT_VERIFICATION.json').write_text(json.dumps(rec,sort_keys=True,separators=(',',':'))+'\n')
+          print('GATE2C3_V4_SELECTED_LOGICAL_FILES=21_PASS')
+          PY
+
+      - name: Execute first deterministic Gate2C3 analyzer replay
+        shell: bash
+        run: |
+          set -euo pipefail
+          python "$ANALYZER" run --protocol "$PROTOCOL" --matrix "$MATRIX" --case-artifacts "$RUNNER_TEMP/gate2c3-cases" --sources "$RUNNER_TEMP/gate2c3-sources" --output "$RUNNER_TEMP/replay1"
+          test -f "$RUNNER_TEMP/replay1/E2_GATE2C3_WORLD_EVAL_PROVENANCE_LEDGER.json"
+          test -f "$RUNNER_TEMP/replay1/E2_GATE2C3_WORLD_EVAL_PROVENANCE_SUMMARY.json"
+          echo GATE2C3_V4_FIRST_ANALYZER_REPLAY=COMPLETE
+
+      - name: Execute mandatory second replay and require byte identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          python "$ANALYZER" run --protocol "$PROTOCOL" --matrix "$MATRIX" --case-artifacts "$RUNNER_TEMP/gate2c3-cases" --sources "$RUNNER_TEMP/gate2c3-sources" --output "$RUNNER_TEMP/replay2"
+          cmp "$RUNNER_TEMP/replay1/E2_GATE2C3_WORLD_EVAL_PROVENANCE_LEDGER.json" "$RUNNER_TEMP/replay2/E2_GATE2C3_WORLD_EVAL_PROVENANCE_LEDGER.json"
+          cmp "$RUNNER_TEMP/replay1/E2_GATE2C3_WORLD_EVAL_PROVENANCE_SUMMARY.json" "$RUNNER_TEMP/replay2/E2_GATE2C3_WORLD_EVAL_PROVENANCE_SUMMARY.json"
+          echo GATE2C3_V4_DUAL_REPLAY_BYTE_IDENTITY=PASS
+
+      - name: Materialize first-complete receipts without taxonomy interpretation
+        shell: bash
+        run: |
+          set -euo pipefail
+          PAY="$RUNNER_TEMP/gate2c3-payload"; export PAY; mkdir -p "$PAY/replay1" "$PAY/replay2"
+          cp "$RUNNER_TEMP/E2_GATE2C3_SOURCE_LOCATOR_RECEIPT.json" "$PAY/"
+          cp "$RUNNER_TEMP/E2_GATE2C3_SELECTED_CHECKER_INPUT_VERIFICATION.json" "$PAY/"
+          cp "$RUNNER_TEMP/replay1/"*.json "$PAY/replay1/"
+          cp "$RUNNER_TEMP/replay2/"*.json "$PAY/replay2/"
+          python - <<'PY'
+          import hashlib,json,os,platform
+          from pathlib import Path
+          pay=Path(os.environ['PAY']);h=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          historical=[{'run_id':34166222552,'classification':'PRE_LOCATOR_MATRIX_SHA_BOOKKEEPING_ASSERTION_FAILURE','locator_executed':False,'analyzer_executed':False,'scientific_result_observed':False},{'run_id':34166763853,'classification':'POST_LOCATOR_PRE_ANALYZER_DYNAMIC_ZIP_DIGEST_ASSERTION_FAILURE','locator_executed':True,'analyzer_executed':False,'scientific_result_observed':False},{'run_id':34166916179,'classification':'POST_LOCATOR_PRE_ANALYZER_MISTRANSCRIBED_ARTIFACT_DIGEST_ASSERTION_FAILURE','locator_executed':True,'analyzer_executed':False,'scientific_result_observed':False}]
+          out={'schema':'risu.e2-gate2c3-diagnostic-receipt/v0.1','status':'FIRST_COMPLETE_REAL_DIAGNOSTIC_PRE_FREEZE','workflow_run_id':os.environ['GITHUB_RUN_ID'],'trigger_commit':os.environ['GITHUB_SHA'],'python_version':platform.python_version(),'authority':{'gate2c3_erratum_git_blob':os.environ['ERRATUM_BLOB'],'gate2c2a_freeze_receipt_git_blob':os.environ['G2C2A_FREEZE_BLOB'],'gate2c2a_artifact_id':int(os.environ['GATE2C2A_ARTIFACT_ID']),'gate2c2a_artifact_digest_sha256':os.environ['GATE2C2A_ARTIFACT_DIGEST'],'gate2c2a_matrix_sha256':os.environ['MATRIX_SHA']},'read_boundary':{'source_files_stream_hashed_for_opaque_localization':58,'source_content_cases_exposed_to_diagnostic':7,'gate2c2a_checker_input_files_exposed':21,'cell_json_read':False,'truth_or_mutation_operator_read':False,'epistemic10_read':False},'logical_input_verification':{'selected_checker_input_verification_sha256':h(pay/'E2_GATE2C3_SELECTED_CHECKER_INPUT_VERIFICATION.json'),'selected_files_match_frozen_matrix':True},'outputs':{'ledger_sha256':h(pay/'replay1/E2_GATE2C3_WORLD_EVAL_PROVENANCE_LEDGER.json'),'summary_sha256':h(pay/'replay1/E2_GATE2C3_WORLD_EVAL_PROVENANCE_SUMMARY.json'),'locator_receipt_sha256':h(pay/'E2_GATE2C3_SOURCE_LOCATOR_RECEIPT.json')},'dual_replay_byte_identical':True,'c1_rerun':False,'semantic_engine_rerun':False,'kernel_rerun':False,'remediation':False,'taxonomy_interpreted_before_archive':False,'historical_incomplete_real_attempts':historical}
+          (pay/'E2_GATE2C3_DIAGNOSTIC_RECEIPT.json').write_text(json.dumps(out,sort_keys=True,separators=(',',':'))+'\n')
+          tree={'schema':'risu.e2-gate2c3-logical-tree/v0.1','files':{p.name:h(p) for p in sorted((pay/'replay1').glob('*.json'))},'locator_receipt_sha256':h(pay/'E2_GATE2C3_SOURCE_LOCATOR_RECEIPT.json'),'selected_checker_input_verification_sha256':h(pay/'E2_GATE2C3_SELECTED_CHECKER_INPUT_VERIFICATION.json'),'diagnostic_receipt_sha256':h(pay/'E2_GATE2C3_DIAGNOSTIC_RECEIPT.json')}
+          (pay/'E2_GATE2C3_LOGICAL_TREE.json').write_text(json.dumps(tree,sort_keys=True,separators=(',',':'))+'\n')
+          run={'schema':'risu.e2-gate2c3-first-real-execution-receipt/v0.1','status':'FIRST_COMPLETE_REAL_REPLAY_BYTE_IDENTICAL_READY_FOR_ARCHIVE','workflow_run_id':os.environ['GITHUB_RUN_ID'],'trigger_commit':os.environ['GITHUB_SHA'],'population_case_count':7,'dual_replay_byte_identical':True,'artifact_upload_required_before_repository_freeze':True,'truth_read':False,'epistemic10_read':False,'c1_rerun':False,'remediation':False,'historical_incomplete_real_attempt_count':3}
+          (pay/'E2_GATE2C3_FIRST_REAL_EXECUTION_RECEIPT.json').write_text(json.dumps(run,sort_keys=True,separators=(',',':'))+'\n')
+          PY
+
+      - name: Upload exact first-complete dual replay before repository freeze
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-gate2c3-first-complete-v4
+          path: ${{ runner.temp }}/gate2c3-payload
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+
+      - name: Materialize exact seven-file immutable repository payload
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          ART=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts" --jq '.artifacts[] | select(.name=="e2-gate2c3-first-complete-v4") | [.id,.digest] | @tsv')
+          test "$(printf '%s\n' "$ART" | wc -l)" -eq 1
+          ART_ID=$(printf '%s' "$ART" | cut -f1);ART_DIGEST=$(printf '%s' "$ART" | cut -f2 | sed 's/^sha256://');test -n "$ART_ID";test "${#ART_DIGEST}" -eq 64
+          test ! -e "$RESULT_DIR";mkdir -p "$RESULT_DIR"
+          cp "$RUNNER_TEMP/gate2c3-payload/E2_GATE2C3_SOURCE_LOCATOR_RECEIPT.json" "$RESULT_DIR/"
+          cp "$RUNNER_TEMP/gate2c3-payload/replay1/E2_GATE2C3_WORLD_EVAL_PROVENANCE_LEDGER.json" "$RESULT_DIR/"
+          cp "$RUNNER_TEMP/gate2c3-payload/replay1/E2_GATE2C3_WORLD_EVAL_PROVENANCE_SUMMARY.json" "$RESULT_DIR/"
+          cp "$RUNNER_TEMP/gate2c3-payload/E2_GATE2C3_DIAGNOSTIC_RECEIPT.json" "$RESULT_DIR/"
+          cp "$RUNNER_TEMP/gate2c3-payload/E2_GATE2C3_LOGICAL_TREE.json" "$RESULT_DIR/"
+          cp "$RUNNER_TEMP/gate2c3-payload/E2_GATE2C3_FIRST_REAL_EXECUTION_RECEIPT.json" "$RESULT_DIR/"
+          export ART_ID ART_DIGEST
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          historical=[{'run_id':34166222552,'classification':'PRE_LOCATOR_MATRIX_SHA_BOOKKEEPING_ASSERTION_FAILURE','scientific_result_observed':False},{'run_id':34166763853,'classification':'POST_LOCATOR_PRE_ANALYZER_DYNAMIC_ZIP_DIGEST_ASSERTION_FAILURE','scientific_result_observed':False},{'run_id':34166916179,'classification':'POST_LOCATOR_PRE_ANALYZER_MISTRANSCRIBED_ARTIFACT_DIGEST_ASSERTION_FAILURE','scientific_result_observed':False}]
+          r={'schema':'risu.e2-gate2c3-first-complete-immutable-freeze/v0.1','status':'FIRST_COMPLETE_REAL_GATE2C3_IMMUTABLY_FROZEN_BY_CONTAINING_COMMIT','repository':'risu-research/risu-verify','branch':'e2-development','trigger_commit':os.environ['GITHUB_SHA'],'hosted_artifact':{'id':int(os.environ['ART_ID']),'name':'e2-gate2c3-first-complete-v4','digest_sha256':os.environ['ART_DIGEST'],'uploaded_before_repository_freeze':True},'authority':{'gate2c3_erratum_git_blob':os.environ['ERRATUM_BLOB'],'gate2c2a_freeze_receipt_git_blob':os.environ['G2C2A_FREEZE_BLOB'],'gate2c2a_artifact_id':int(os.environ['GATE2C2A_ARTIFACT_ID']),'gate2c2a_artifact_digest_sha256':os.environ['GATE2C2A_ARTIFACT_DIGEST'],'gate2c2a_matrix_sha256':os.environ['MATRIX_SHA']},'execution':{'population_case_count':7,'source_files_stream_hashed_for_locator':58,'source_content_cases_analyzed':7,'selected_checker_input_files_verified_to_frozen_matrix':21,'dual_replay_byte_identical':True,'first_complete_result_may_not_be_replaced':True},'scientific_firewall':{'truth_read':False,'mutation_operator_read':False,'epistemic10_read':False,'fresh_target_read':False,'c1_rerun':False,'semantic_engine_rerun':False,'kernel_rerun':False,'remediation':False,'valid_c1_inferred':False},'historical_incomplete_real_attempts':historical,'interpretation_boundary':{'taxonomy_counts_not_used_to_modify_first_complete_result':True,'later_diagnostics_or_repairs_additive_only':True}}
+          Path(os.environ['RESULT_DIR'],'E2_GATE2C3_FIRST_COMPLETE_IMMUTABLE_FREEZE_RECEIPT.json').write_text(json.dumps(r,sort_keys=True,separators=(',',':'))+'\n')
+          PY
+
+      - name: Commit and fast-forward push exact seven-file first-complete freeze
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add "$RESULT_DIR";mapfile -t files < <(git diff --cached --name-only);test "${#files[@]}" -eq 7
+          for f in "${files[@]}";do case "$f" in "$RESULT_DIR"/*);;*)echo "unexpected staged file:$f";exit 1;;esac;done
+          test "$(git diff --cached --name-status | awk '$1!="A"{n++} END{print n+0}')" -eq 0
+          test "$(git ls-remote origin refs/heads/e2-development | cut -f1)" = "$GITHUB_SHA"
+          git config user.name "RISU Evidence Freeze";git config user.email "risu-evidence-freeze@users.noreply.github.com"
+          git commit -m "Freeze first complete Candidate58 Gate2C3 Python C1 provenance trace";git push origin HEAD:e2-development
+
+      - name: Post-push exact remote verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          LOCAL=$(git rev-parse HEAD);REMOTE=$(git ls-remote origin refs/heads/e2-development | cut -f1);test "$LOCAL" = "$REMOTE";test "$(git rev-parse HEAD^)" = "$GITHUB_SHA"
+          mapfile -t files < <(git diff --name-only HEAD^ HEAD);test "${#files[@]}" -eq 7
+          for f in "${files[@]}";do case "$f" in "$RESULT_DIR"/*);;*)exit 1;;esac;done
+          echo GATE2C3_V4_FIRST_COMPLETE_REMOTE_FREEZE=PASS
