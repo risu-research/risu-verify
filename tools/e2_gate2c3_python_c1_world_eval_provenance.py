@@ -10,7 +10,6 @@ from pathlib import Path
 from typing import Any, Mapping, Sequence
 
 PROTOCOL_SCHEMA="risu.e2-gate2c3-python-c1-world-evaluation-provenance-protocol/v0.1"
-MATRIX_SCHEMA="risu.e2-candidate58-machine-prediction-matrix/v0.1"
 C1_SCHEMA="risu.e2-c1-recheck/v0.1"
 PATTERN=re.compile(r"^(SYN-(?:PY|GO|TS)-0[12])\.(py|go|mjs|js|ts)$")
 LANG={"py":"python","go":"go","mjs":"typescript_javascript","js":"typescript_javascript","ts":"typescript_javascript"}
@@ -39,7 +38,7 @@ def origins(expr:ast.AST,state:Mapping[str,set[str]])->set[str]|None:
     return None
 
 def role_state(fn:ast.FunctionDef|ast.AsyncFunctionDef,signature:Mapping[str,Any])->tuple[dict[str,set[str]],list[str]]:
-    params=list(fn.args.posonlyargs)+list(fn.args.args)+list(fn.args.kwonlyargs); st={};bad=[];claimed=set()
+    params=list(fn.args.posonlyargs)+list(fn.args.args)+list(fn.args.kwonlyargs);st={};bad=[];claimed=set()
     for role,spec in sorted((signature.get("source_roles",{}) or {}).items()):
         idx=spec.get("parameter_index")
         if not isinstance(idx,int) or idx<0 or idx>=len(params):bad.append(f"SOURCE_ROLE_PARAMETER_INDEX_INVALID:{role}");continue
@@ -66,6 +65,20 @@ def exact_node(tree:ast.AST,typ:type[ast.AST],sp:Sequence[int])->list[ast.AST]:
 def input_failure(case_id:str,reasons:list[str])->dict[str,Any]:
     return {"case_id":case_id,"taxonomy":"TRACE_INPUT_INTEGRITY_FAILURE","integrity_reasons":sorted(set(reasons)),"primitive":{}}
 
+def classify_world_primitives(left_origins:set[str]|None,right_origins:set[str]|None,world_role_keys:set[str])->tuple[str,dict[str,Any]]:
+    """Frozen Gate2C3 taxonomy over the exact primitive prerequisites of C1 _eval_compare()."""
+    prim={"left_origins":sorted(left_origins) if left_origins is not None else None,"right_origins":sorted(right_origins) if right_origins is not None else None,"effect_world_role_keys":sorted(world_role_keys)}
+    if left_origins is None:return "LEFT_ORIGIN_UNRESOLVED",prim
+    if len(left_origins)!=1:return "LEFT_ORIGIN_NONUNIQUE",prim
+    if right_origins is None:return "RIGHT_ORIGIN_UNRESOLVED",prim
+    if len(right_origins)!=1:return "RIGHT_ORIGIN_NONUNIQUE",prim
+    left=next(iter(left_origins));right=next(iter(right_origins));lm=left not in world_role_keys;rm=right not in world_role_keys
+    prim.update({"left_origin":left,"right_origin":right,"left_key_present":not lm,"right_key_present":not rm})
+    if lm and rm:return "WORLD_ROLE_VALUE_MISSING_BOTH",prim
+    if lm:return "WORLD_ROLE_VALUE_MISSING_LEFT",prim
+    if rm:return "WORLD_ROLE_VALUE_MISSING_RIGHT",prim
+    return "FROZEN_REASON_INCONSISTENT",prim
+
 def diagnose_case(*,case_id:str,source:bytes,expected_source_sha256:str,adapter:Mapping[str,Any],semantic_slice:Mapping[str,Any],c1:Mapping[str,Any],matrix_row:Mapping[str,Any])->dict[str,Any]:
     bad=[]
     if sha(source)!=expected_source_sha256 or matrix_row.get("candidate_source_sha256")!=expected_source_sha256:bad.append("SOURCE_SHA_MISMATCH")
@@ -81,8 +94,7 @@ def diagnose_case(*,case_id:str,source:bytes,expected_source_sha256:str,adapter:
     try:tree=ast.parse(source.decode("utf-8"))
     except Exception as e:return input_failure(case_id,["SOURCE_PARSE_FAILURE:"+type(e).__name__])
     fspan=contract.get("target_function_span",[]);gspan=((contract.get("anchors",{}) or {}).get("guard",{}) or {}).get("span",[])
-    fns=exact_node(tree,ast.FunctionDef,fspan)+exact_node(tree,ast.AsyncFunctionDef,fspan)
-    guards=exact_node(tree,ast.Compare,gspan)
+    fns=exact_node(tree,ast.FunctionDef,fspan)+exact_node(tree,ast.AsyncFunctionDef,fspan);guards=exact_node(tree,ast.Compare,gspan)
     if len(fns)!=1 or len(guards)!=1:return input_failure(case_id,["TARGET_OR_GUARD_NOT_UNIQUE"])
     fn=fns[0];guard=guards[0]
     if len(guard.ops)!=1 or len(guard.comparators)!=1:
@@ -100,26 +112,15 @@ def diagnose_case(*,case_id:str,source:bytes,expected_source_sha256:str,adapter:
         elif isinstance(stmt,ast.Expr) and isinstance(stmt.value,ast.Constant):continue
         else:return input_failure(case_id,["PREFIX_STATEMENT_OUTSIDE_DIAGNOSTIC_FRAGMENT"])
     lo=origins(guard.left,state);ro=origins(guard.comparators[0],state)
-    prim={"guard_span":list(gspan),"left_origins":sorted(lo) if lo is not None else None,"right_origins":sorted(ro) if ro is not None else None}
-    if lo is None:return {"case_id":case_id,"taxonomy":"LEFT_ORIGIN_UNRESOLVED","integrity_reasons":[],"primitive":prim}
-    if len(lo)!=1:return {"case_id":case_id,"taxonomy":"LEFT_ORIGIN_NONUNIQUE","integrity_reasons":[],"primitive":prim}
-    if ro is None:return {"case_id":case_id,"taxonomy":"RIGHT_ORIGIN_UNRESOLVED","integrity_reasons":[],"primitive":prim}
-    if len(ro)!=1:return {"case_id":case_id,"taxonomy":"RIGHT_ORIGIN_NONUNIQUE","integrity_reasons":[],"primitive":prim}
     worlds=[w for w in signature.get("worlds",[]) or [] if str(w.get("id"))=="SYN-PY-01:effect"]
     if len(worlds)!=1:return input_failure(case_id,["EFFECT_WORLD_NOT_UNIQUE"])
-    vals=worlds[0].get("role_values",{}) or {};left=next(iter(lo));right=next(iter(ro));lm=left not in vals;rm=right not in vals
-    prim.update({"left_origin":left,"right_origin":right,"effect_world_role_keys":sorted(map(str,vals.keys())),"left_key_present":not lm,"right_key_present":not rm})
-    if lm and rm:tax="WORLD_ROLE_VALUE_MISSING_BOTH"
-    elif lm:tax="WORLD_ROLE_VALUE_MISSING_LEFT"
-    elif rm:tax="WORLD_ROLE_VALUE_MISSING_RIGHT"
-    else:tax="FROZEN_REASON_INCONSISTENT"
+    vals=worlds[0].get("role_values",{}) or {};tax,prim=classify_world_primitives(lo,ro,set(map(str,vals.keys())));prim["guard_span"]=list(gspan)
     return {"case_id":case_id,"taxonomy":tax,"integrity_reasons":[],"primitive":prim}
 
 def locate_selected_sources(*,cells_dir:Path,manifest:Mapping[str,Any],selected:set[str],output_dir:Path)->dict[str,Any]:
-    rows={str(x["transport_case_id"]):x for x in manifest.get("cases",[]) or []};
+    rows={str(x["transport_case_id"]):x for x in manifest.get("cases",[]) or []}
     if set(selected)-set(rows):raise ValueError("selected case absent from admission")
-    target={(str(rows[c]["seed_id"]),str(rows[c]["language"]),str(rows[c]["candidate_source_sha256"])):c for c in selected}
-    found={};hashed=0
+    target={(str(rows[c]["seed_id"]),str(rows[c]["language"]),str(rows[c]["candidate_source_sha256"])):c for c in selected};found={};hashed=0
     for p in cells_dir.rglob("*"):
         m=PATTERN.fullmatch(p.name)
         if not m or not p.is_file():continue
@@ -131,9 +132,8 @@ def locate_selected_sources(*,cells_dir:Path,manifest:Mapping[str,Any],selected:
     if set(found)!=selected:raise ValueError("selected opaque source resolution incomplete")
     output_dir.mkdir(parents=True,exist_ok=True);out=[]
     for cid in sorted(selected):
-        p,raw=found[cid];dst=output_dir/(cid+".py");dst.write_bytes(raw)
-        out.append({"case_id":cid,"source_sha256":sha(raw),"source_path_localization_sha256":sha(str(p).encode())})
-    return {"schema":"risu.e2-gate2c3-opaque-source-locator/v0.1","source_files_stream_hashed":hashed,"source_files_semantically_parsed":0,"selected_source_count":len(out),"nonselected_source_bytes_retained":False,"cell_json_read":False,"rows":out}
+        p,raw=found[cid];dst=output_dir/(cid+".py");dst.write_bytes(raw);out.append({"case_id":cid,"source_sha256":sha(raw),"source_path_localization_sha256":sha(str(p).encode())})
+    return {"schema":"risu.e2-gate2c3-opaque-source-locator/v0.1","source_files_stream_hashed":hashed,"source_files_semantically_parsed":0,"selected_source_count":len(out),"source_content_exposed_to_diagnostic_analyzer":0,"nonselected_source_bytes_retained":False,"cell_json_read":False,"rows":out}
 
 def run_real(args:argparse.Namespace)->int:
     protocol=readj(Path(args.protocol));matrix=readj(Path(args.matrix));root=Path(args.case_artifacts);sources=Path(args.sources);out=Path(args.output);out.mkdir(parents=True,exist_ok=True)
@@ -142,15 +142,12 @@ def run_real(args:argparse.Namespace)->int:
     if len(selected)!=7 or any(c not in mrows for c in selected):raise ValueError("population binding")
     ledger=[]
     for cid in sorted(selected):
-        d=root/cid
-        adapter=readj(d/"adapter_receipt.json");ss=readj(d/"semantic_slice.json");c1=readj(d/"c1_report.json");src=(sources/(cid+".py")).read_bytes()
+        d=root/cid;adapter=readj(d/"adapter_receipt.json");ss=readj(d/"semantic_slice.json");c1=readj(d/"c1_report.json");src=(sources/(cid+".py")).read_bytes()
         ledger.append(diagnose_case(case_id=cid,source=src,expected_source_sha256=str(mrows[cid]["candidate_source_sha256"]),adapter=adapter,semantic_slice=ss,c1=c1,matrix_row=mrows[cid]))
     counts={k:0 for k in TAXONOMY}
     for r in ledger:counts[r["taxonomy"]]+=1
     summary={"schema":"risu.e2-gate2c3-python-c1-world-evaluation-provenance-summary/v0.1","case_count":7,"taxonomy_counts":counts,"taxonomy_case_ids":{k:[r["case_id"] for r in ledger if r["taxonomy"]==k] for k in TAXONOMY},"interpretation":{"c1_rerun":False,"truth_used":False,"remediation":False,"valid_c1_inferred":False}}
-    (out/"E2_GATE2C3_WORLD_EVAL_PROVENANCE_LEDGER.json").write_bytes(cb({"schema":"risu.e2-gate2c3-ledger/v0.1","cases":ledger}))
-    (out/"E2_GATE2C3_WORLD_EVAL_PROVENANCE_SUMMARY.json").write_bytes(cb(summary))
-    return 0
+    (out/"E2_GATE2C3_WORLD_EVAL_PROVENANCE_LEDGER.json").write_bytes(cb({"schema":"risu.e2-gate2c3-ledger/v0.1","cases":ledger}));(out/"E2_GATE2C3_WORLD_EVAL_PROVENANCE_SUMMARY.json").write_bytes(cb(summary));return 0
 
 def main()->int:
     ap=argparse.ArgumentParser();sub=ap.add_subparsers(dest="cmd",required=True)
