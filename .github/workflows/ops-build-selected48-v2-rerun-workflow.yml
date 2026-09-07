@@ -1,0 +1,65 @@
+name: OPS Build Selected48 V2 Rerun Workflow
+
+on:
+  push:
+    branches: [ops/build-selected48-v2-rerun-workflow]
+    paths: [.github/workflows/ops-build-selected48-v2-rerun-workflow.yml]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Patch exact frozen workflow and atomically add dispatch-only v2 rerun workflow
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import base64,json,os,urllib.request
+          REPO='risu-research/risu-verify'; TARGET='e2-development'; PARENT='5e732483d552ca327e55c095a1eb5b13d82e0005'
+          OLD_WORKFLOW='af7a8e2a70bcd7cb7000335512530ce9b9886666'
+          NEW_PATH='.github/workflows/e2-a3-a4-selected48-adapter-v2-rerun.yml'
+          RECEIPT='experiments/risu-diff-e2/qualification/a3-a4/frozen-48-requalification/selected-48-execution/adapter-v2-rerun/E2_A3_A4_SELECTED_48_ADAPTER_V2_RERUN_PREREGISTRATION_RECEIPT.json'
+          token=os.environ['GH_TOKEN']; H={'Authorization':'Bearer '+token,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','User-Agent':'risu-selected48-v2-workflow-builder'}
+          def api(path,method='GET',payload=None):
+            data=None if payload is None else json.dumps(payload,separators=(',',':')).encode(); h=dict(H)
+            if data is not None: h['Content-Type']='application/json'
+            req=urllib.request.Request('https://api.github.com/repos/'+REPO+path,data=data,method=method,headers=h)
+            with urllib.request.urlopen(req,timeout=60) as r:
+              raw=r.read(); return json.loads(raw) if raw else None
+          def rep(s,a,b,label):
+            n=s.count(a)
+            if n!=1: raise SystemExit('PATCH_MATCH_'+label+'_'+str(n))
+            return s.replace(a,b,1)
+          obj=api('/git/blobs/'+OLD_WORKFLOW)
+          if obj.get('encoding')!='base64': raise SystemExit('WORKFLOW_BLOB_ENCODING')
+          w=base64.b64decode(obj['content']).decode()
+          w=rep(w,'name: E2 Selected 48 Only Transport + Heldout Execution','name: E2 Selected 48 Adapter V2 Fail-Closed Rerun','NAME')
+          w=rep(w,'description: Exact explicit authorization phrase for the first selected-48 source read','description: Exact explicit authorization phrase for the selected-48 adapter-v2 rerun','AUTH_DESC')
+          w=rep(w,'description: Exact workflow-freeze commit SHA whose parent is the frozen orchestration commit','description: Exact workflow-freeze commit SHA whose parent is the frozen adapter-v2 commit','LAUNCH_DESC')
+          w=rep(w,'STAGE2_COMMIT: e4d995ed5869b9f6dcfa176f0d940d461adbda2b','STAGE2_COMMIT: '+PARENT,'STAGE2')
+          w=rep(w,'WORKFLOW_PATH: .github/workflows/e2-a3-a4-selected48-only-transport-heldout.yml','WORKFLOW_PATH: '+NEW_PATH,'PATH')
+          w=rep(w,'RECEIPT_PATH: experiments/risu-diff-e2/qualification/a3-a4/frozen-48-requalification/selected-48-execution/E2_A3_A4_SELECTED_48_ONLY_TRANSPORT_HELDOUT_EXECUTION_PREREGISTRATION_RECEIPT_v0.1.json','RECEIPT_PATH: '+RECEIPT,'RECEIPT')
+          oldp='tools/e2_frozen48_requalification_primary.py'; newp='tools/e2_frozen48_requalification_primary_v2.py'
+          oldi='tools/e2_frozen48_requalification_independent.py'; newi='tools/e2_frozen48_requalification_independent_v2.py'
+          if w.count(oldp)<2 or w.count(oldi)<2: raise SystemExit('ADAPTER_PATH_OCCURRENCE_TOO_LOW')
+          w=w.replace(oldp,newp).replace(oldi,newi)
+          if w.count('56ad7ec667f59f962585c6d5ed81b5dc98a363e2')!=1: raise SystemExit('PRIMARY_BLOB_OCCURRENCE')
+          if w.count('8a68cd1b80e2abeac68a3ca7aed6ab7cfc28c105')!=1: raise SystemExit('INDEPENDENT_BLOB_OCCURRENCE')
+          w=w.replace('56ad7ec667f59f962585c6d5ed81b5dc98a363e2','57c537cbf3ba43aa5ff6fdb35a3651652fd1743f')
+          w=w.replace('8a68cd1b80e2abeac68a3ca7aed6ab7cfc28c105','a018c76fcb30af419b15f0fe49aba41464d9b1d6')
+          w=w.replace('e2-selected48-only-transport-heldout-execution','e2-selected48-adapter-v2-rerun-first-complete')
+          w=w.replace('SELECTED48_FIRST_SOURCE_READ=AUTHORIZED_EXACT_BLOBS_ONLY','SELECTED48_V2_RERUN_SOURCE_READ=AUTHORIZED_EXACT_BLOBS_ONLY')
+          if '\n  push:' in w or '\n  pull_request:' in w or '\n  schedule:' in w: raise SystemExit('AUTOMATIC_TRIGGER_INTRODUCED')
+          if 'actions/checkout@' in w: raise SystemExit('CHECKOUT_INTRODUCED')
+          branch=api('/branches/'+TARGET)
+          if branch['commit']['sha']!=PARENT: raise SystemExit('TARGET_MOVED')
+          base_tree=branch['commit']['commit']['tree']['sha']
+          blob=api('/git/blobs','POST',{'content':base64.b64encode(w.encode()).decode(),'encoding':'base64'})['sha']
+          tree=api('/git/trees','POST',{'base_tree':base_tree,'tree':[{'path':NEW_PATH,'mode':'100644','type':'blob','sha':blob}]})['sha']
+          commit=api('/git/commits','POST',{'message':'e2: freeze dispatch-only selected-48 adapter-v2 rerun workflow','tree':tree,'parents':[PARENT]})['sha']
+          api('/git/refs/heads/'+TARGET,'PATCH',{'sha':commit,'force':False})
+          print(json.dumps({'status':'COMMITTED','commit':commit,'workflow_blob':blob,'workflow_path':NEW_PATH},sort_keys=True,separators=(',',':')))
+          PY
