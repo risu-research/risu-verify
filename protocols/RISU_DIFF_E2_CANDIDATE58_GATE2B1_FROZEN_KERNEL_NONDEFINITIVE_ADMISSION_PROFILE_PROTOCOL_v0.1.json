@@ -1,0 +1,221 @@
+{
+  "schema": "risu.e2-candidate58-gate2b1-frozen-kernel-nondefinitive-admission-profile-protocol/v0.1",
+  "protocol_id": "RISU_DIFF_E2_CANDIDATE58_GATE2B1_FROZEN_KERNEL_NONDEFINITIVE_ADMISSION_PROFILE_PROTOCOL_v0.1",
+  "status": "POST_GATE2B0_DIAGNOSTIC_TAXONOMY_FROZEN_BEFORE_GATE2B1_KERNEL_RESULT_EXECUTION",
+  "gate": "GATE_2B1_CANDIDATE58_FROZEN_KERNEL_NONDEFINITIVE_ADMISSION_PROFILE",
+  "purpose": "Profile the exact already-frozen kernel-result eligibility deficits for the 39 Candidate-58 cases classified by immutable Gate2B0 as KERNEL_NONDEFINITIVE. This gate performs no semantic rerun, no source reinterpretation, no truth/operator join, and no remediation. It treats the frozen kernel result as the scientific observation and independently checks only its identity and internal bookkeeping consistency before descriptive profiling.",
+  "authority": {
+    "repository": "risu-research/risu-verify",
+    "branch": "e2-development",
+    "gate2b0_first_complete_freeze_commit": "2c36c0d0eae46844bc077fc548594ac84b376381",
+    "gate2b0_frontier_ledger": {
+      "path": "experiments/risu-diff-e2/qualification/candidate58/gate2b0-claim-eligibility-frontier/E2_CANDIDATE58_GATE2B0_FRONTIER_LEDGER.json",
+      "git_blob": "5b456fe7675ceaf09c43397ba82ec2df6f51f0c2",
+      "sha256": "522a2e73f55fb79513a04c4edfafb96f6753431bb5cc036700b404398a0a92cc"
+    },
+    "first_complete_machine_matrix": {
+      "path": "experiments/risu-diff-e2/qualification/candidate58/first-complete-machine/E2_CANDIDATE58_FIRST_COMPLETE_MACHINE_PREDICTION_MATRIX.json",
+      "git_blob": "60b27d641682693cb3df654d8aa4f064cc48455d",
+      "sha256": "7273ce4034d06e67989a33540f5b22fef3190cf311a8981474413b538e43472d"
+    },
+    "first_complete_machine_bundle": {
+      "path": "experiments/risu-diff-e2/qualification/candidate58/first-complete-machine/E2_CANDIDATE58_FIRST_MACHINE_ONLY_BUNDLE.zip",
+      "git_blob": "6845228221e9aeb1fe386725c4f3c98234c07a9a",
+      "sha256": "d77caaf74bf4dc8e94cf769d10092f8413595ac93422042e8a374f76c343f42d",
+      "member_count": 946,
+      "replay_logical_tree_sha256": "59eae5c1747042d7a2a860c28dcbbdef1a0c6fb891af212330801e3b40a5903d"
+    },
+    "frozen_kernel": {
+      "path": "risu_e2_semantic/kernel.py",
+      "git_blob": "e91e51397f4cc201452b1a0f80d130265dca2ea0",
+      "result_schema": "risu.e2-semantic-kernel-result/v0.1",
+      "role_in_gate2b1": "normative description of the already-frozen result fields and dependency bookkeeping only; Gate2B1 does not import or execute it"
+    }
+  },
+  "population_lock": {
+    "selector": "Select exactly and only case_id values whose immutable Gate2B0 frontier equals KERNEL_NONDEFINITIVE.",
+    "expected_selected_count": 39,
+    "required_gate2b0_fields": {
+      "frontier": "KERNEL_NONDEFINITIVE",
+      "tentative_kernel_prediction": "E2_PREDICTED_ASSURANCE_INCOMPLETE",
+      "machine_prediction": "E2_PREDICTED_ASSURANCE_INCOMPLETE",
+      "promotion_reasons": []
+    },
+    "case_reselection_allowed": false,
+    "dropping_malformed_or_inconvenient_selected_cases_allowed": false,
+    "all_39_must_be_accounted_for": true
+  },
+  "read_surface": {
+    "allowed_scientific_inputs": [
+      "the exact immutable Gate2B0 frontier ledger above",
+      "the exact immutable first-complete machine matrix above",
+      "within the exact immutable machine-bundle ZIP, only replay1/cases/<selected_case_id>/kernel_result.json and replay2/cases/<selected_case_id>/kernel_result.json bytes"
+    ],
+    "zip_metadata_allowed": "ZIP central-directory metadata may be read only to validate member count, path safety, uniqueness, and the existence of the exact permitted kernel-result members.",
+    "forbidden_content_reads": [
+      "candidate source bytes",
+      "semantic_slice.json",
+      "adapter_receipt.json",
+      "certificate.json",
+      "c1_report.json",
+      "read_receipt.json",
+      "machine_record.json beyond the already-frozen machine matrix",
+      "prepared-plan or preparation evidence",
+      "Gate2A truth-joined ledger or Gate2A metrics",
+      "truth oracle, expanded truth, canonical expected labels, gold verdicts",
+      "mutation operator id/name/class/description/repair",
+      "fresh heldout material"
+    ],
+    "no_semantic_package_import": true,
+    "no_kernel_execution": true,
+    "no_c1_execution": true
+  },
+  "kernel_result_integrity_contract": {
+    "per_selected_case": [
+      "Require exactly one replay1 and one replay2 member at cases/<case_id>/kernel_result.json under their respective replay roots.",
+      "Require replay1 and replay2 kernel-result bytes to be exactly identical.",
+      "Require SHA-256 of the kernel-result bytes to equal kernel_result_sha256 already frozen in the machine-matrix row for that case_id.",
+      "Require result schema risu.e2-semantic-kernel-result/v0.1, prediction E2_PREDICTED_ASSURANCE_INCOMPLETE, and empty infrastructure_reasons.",
+      "Independently recompute result_digest_sha256 as canonical SHA-256 of the kernel-result object with result_digest_sha256 removed; require exact equality.",
+      "Require admissions keys exactly A,B,C,D,E,F with frozen admission ids and boolean satisfied values plus string-list reasons.",
+      "Require obligations keys exactly the 12 frozen A3_P1..P5/A4_P1..P7 obligations with boolean values.",
+      "Require world_relation.complete boolean, world_relation.violating_pairs list, witnesses list, and unresolved string list.",
+      "Independently reconstruct the exact unresolved set from admission reasons, world completeness, collapse-without-witness, and false obligations under the frozen kernel bookkeeping rule; require set equality."
+    ],
+    "admission_ids": {
+      "A": "A_COORDINATE_RESOURCE_IDENTITY",
+      "B": "B_CARRIER_SURVIVAL",
+      "C": "C_GUARD_SEMANTICS",
+      "D": "D_GUARD_EFFECT_CONTROL",
+      "E": "E_EFFECT_AND_OUTCOME",
+      "F": "F_CLOSED_SCOPE"
+    },
+    "obligation_keys": [
+      "A3_P1_REQUIRED_ROLE_REACHABILITY",
+      "A3_P2_BINDING_IDENTITY",
+      "A3_P3_DEFINITION_SENSITIVITY",
+      "A3_P4_REPRESENTATION_SURVIVAL",
+      "A3_P5_PATH_REALIZABILITY",
+      "A4_P1_EFFECT_BOUNDARY",
+      "A4_P2_EFFECTIVE_GUARD",
+      "A4_P3_GUARD_DOMINATES_EFFECT",
+      "A4_P4_CANONICAL_POLARITY",
+      "A4_P5_NO_BYPASS_OR_FALLBACK",
+      "A4_P6_ORDERING",
+      "A4_P7_OUTCOME_DISTINCTION"
+    ]
+  },
+  "top_level_incomplete_branch_lock": {
+    "rule": "Classify each selected frozen kernel result into exactly one branch implied by the frozen kernel decision structure. This is an execution-state partition, not a semantic root-cause label.",
+    "branches": [
+      {
+        "id": "WORLD_INTERPRETATION_INCOMPLETE",
+        "predicate": "world_relation.complete is false and violating_pairs is empty",
+        "required_unresolved_atom": "WORLD_INTERPRETATION_INCOMPLETE"
+      },
+      {
+        "id": "COMPLETE_COLLAPSE_WITHOUT_ADMITTED_WITNESS",
+        "predicate": "world_relation.complete is true, violating_pairs is nonempty, and witnesses is empty",
+        "required_unresolved_atom": "CTV_COLLAPSE_WITHOUT_ADMITTED_CONSTRUCTIVE_WITNESS"
+      },
+      {
+        "id": "COMPLETE_NO_COLLAPSE_PRESERVATION_DEFICIT",
+        "predicate": "world_relation.complete is true, violating_pairs is empty, and at least one admission is unsatisfied or at least one preservation obligation is false",
+        "required_unresolved_atom": null
+      }
+    ],
+    "fail_closed_states": [
+      "world_relation.complete false with any violating pair",
+      "complete world with violating pair and any admitted witness while prediction remains incomplete",
+      "complete world with no violating pair while every admission is satisfied and every obligation is true",
+      "zero or multiple branch matches"
+    ]
+  },
+  "admission_profile_lock": {
+    "admissions_are_parallel_not_ordered": true,
+    "no_first_A_to_F_blocker_is_inferred": true,
+    "per_case_outputs": [
+      "opaque case_id",
+      "top_level_incomplete_branch",
+      "failed_admission_ids in canonical A..F order",
+      "failed_admission_signature: NONE or plus-joined canonical ids such as A+C+F",
+      "failed_admission_count",
+      "exact admission reason strings grouped by A..F",
+      "normalized admission reason families obtained only by taking text before the first colon",
+      "false preservation obligations",
+      "directly shadowed false obligations",
+      "residual false obligations after direct-shadow removal",
+      "world_complete boolean",
+      "violating_pair_count",
+      "witness_count"
+    ],
+    "aggregate_outputs": [
+      "exact count for each A..F admission failure",
+      "exact admission-signature counts",
+      "failed-admission cardinality distribution 0..6",
+      "A..F pairwise co-failure matrix",
+      "exact admission-reason-family counts by A..F",
+      "raw false-obligation counts",
+      "direct-shadowed false-obligation counts",
+      "residual false-obligation counts",
+      "exact top-level incomplete-branch counts",
+      "branch-by-admission-signature counts",
+      "world-completeness, violating-pair-presence, and witness-presence counts",
+      "exact selected population total 39"
+    ]
+  },
+  "direct_obligation_shadow_map": {
+    "purpose": "Avoid mechanically double-counting a false obligation whose frozen formula directly includes a failed admission predicate. Shadow means direct syntactic dependency in the frozen kernel formula, not causal priority and not a remediation claim.",
+    "map": {
+      "A3_P2_BINDING_IDENTITY": "A",
+      "A3_P5_PATH_REALIZABILITY": "B",
+      "A4_P1_EFFECT_BOUNDARY": "E",
+      "A4_P2_EFFECTIVE_GUARD": "C",
+      "A4_P5_NO_BYPASS_OR_FALLBACK": "D"
+    },
+    "unmapped_false_obligations_are_residual": true,
+    "F_has_no_direct_obligation_shadow_mapping": true
+  },
+  "reason_normalization_lock": {
+    "exact_reason_is_authoritative": true,
+    "reason_family_rule": "For descriptive aggregation only, reason_family is the exact substring before the first colon, or the whole reason when no colon exists.",
+    "no_reason_merging_by_semantic_similarity": true,
+    "no_manual_aliasing": true
+  },
+  "interpretation_boundary": {
+    "development_qualification_only": true,
+    "profile_is_not_semantic_root_cause": true,
+    "failed_admission_may_reflect_missing_evidence_or_an_actual_semantic defect": true,
+    "cofailure_is_not_causality": true,
+    "direct_shadow_is_not_causal_dominance": true,
+    "no_counterfactual_fix_or_coverage_gain_is_inferred": true,
+    "no_remediation_priority_is_authorized": true,
+    "no_Gate2A_metric_is_recomputed_or_replaced": true,
+    "no_truth_operator_language_or_seed_stratification_in_this_gate": true,
+    "fresh_heldout_remains_unopened": true
+  },
+  "scientific_firewall": {
+    "semantic_engine_rerun": false,
+    "kernel_rerun": false,
+    "c1_checker_rerun": false,
+    "source_or_semantic_slice_reinterpretation": false,
+    "truth_or_operator_read": false,
+    "gate2a_truth_join_input": false,
+    "fresh_heldout_read": false,
+    "remediation": false,
+    "semantic_rule_change": false,
+    "machine_or_gate2a_or_gate2b0_artifact_rewrite": false
+  },
+  "determinism_and_freeze": {
+    "stdlib_only_analyzer": true,
+    "analyzer_must_not_import_risu_semantic_or_c1_packages": true,
+    "analyzer_self_test_before_first_kernel_result_read": true,
+    "freeze_exact_analyzer_identity_before_first_real_execution": true,
+    "run_exact_diagnostic_twice": true,
+    "require_exact_logical_byte_identity": true,
+    "upload_both_replays_before_repository_result_freeze": true,
+    "first_complete_gate2b1_result_must_be_additive_and_immutable": true,
+    "later_deeper_reason_or_remediation_analysis_must_be_separate_additive_gates": true
+  },
+  "next_authorized_action": "Implement a standard-library-only Gate2B1 analyzer that reads only the allowed frozen surfaces, independently verifies kernel-result identity and bookkeeping consistency, emits the locked admission/obligation profile without result-dependent taxonomy changes, freeze its exact blob identity, then execute two deterministic replays and immutably freeze the first complete Gate2B1 result."
+}
