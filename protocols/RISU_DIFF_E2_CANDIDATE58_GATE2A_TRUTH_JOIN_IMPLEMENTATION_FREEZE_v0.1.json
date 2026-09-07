@@ -1,0 +1,45 @@
+{
+  "schema": "risu.e2-candidate58-gate2a-truth-join-implementation-freeze/v0.1",
+  "status": "FROZEN_BEFORE_FIRST_GATE2A_JOIN_EXECUTION",
+  "repository": "risu-research/risu-verify",
+  "branch": "e2-development",
+  "pre_freeze_parent_commit": "6d1a4fa4d786fbf8e19a9c3d2d4a4f803e83882a",
+  "scientific_authority": {
+    "first_complete_machine_freeze_commit": "2ece1023252a8e9100a34d74079493040441e1e2",
+    "gate2a_protocol": {"path":"protocols/RISU_DIFF_E2_CANDIDATE58_GATE2A_TRUTH_JOIN_PROTOCOL_v0.1.json","git_blob":"1ba7117818fe2f8efe568d7c67ae50a3dba77f65"},
+    "gate2a_joiner": {"path":"tools/e2_candidate58_gate2a_truth_join.py","git_blob":"f6645926d60a7029388b0f78a03115b7a4649c09"},
+    "truth_oracle_contract_git_blob": "98e53e13472c9d1287c3114734464994a6693778",
+    "truth_oracle_git_blob": "1e5fe69f302df6fdd367797649b17eb3c4ea5950",
+    "mutation_matrix_git_blob": "b6d7d9c4d172a6e38ab59e93ae9748fafefc9fd0",
+    "expanded_truth_git_blob": "0ab0c31377d7e03bc279943af151c687f51ffc93",
+    "admission_manifest_git_blob": "f2fc78439d4bfadce5941bf71aadd15ec292bcb1",
+    "materialized_cells_tree_git_sha": "34a30574c7420728bff57958c815194979a622ab",
+    "first_complete_machine_matrix_git_blob": "60b27d641682693cb3df654d8aa4f064cc48455d"
+  },
+  "implementation_boundary": {
+    "python_standard_library_only": true,
+    "imports_risu_semantic_engine": false,
+    "imports_c1_checker": false,
+    "reruns_semantic_engine": false,
+    "reruns_c1_checker": false,
+    "writes_machine_matrix": false,
+    "writes_truth_authority": false,
+    "fresh_heldout_access": false,
+    "join_mapping_uses_prediction_or_favorability": false
+  },
+  "required_execution": {
+    "python": "CPython 3.13.5",
+    "truth_oracle_preflight_must_pass": true,
+    "two_gate2a_replays": true,
+    "exact_logical_byte_identity_required": true,
+    "first_complete_join_outputs_committed_without_human_selected_remediation": true,
+    "commit_delta_may_contain_only_gate2a_output_artifacts": true
+  },
+  "immutable_input_sha256": {
+    "first_complete_machine_matrix": "7273ce4034d06e67989a33540f5b22fef3190cf311a8981474413b538e43472d",
+    "expanded_truth": "afd681d308a6f4ec8c183edd9b139c6b914fe501936cf84e5845a6a1c0d6b7cb",
+    "admission_manifest": "847d85c2274cd6b94a83eefe0f6153a8fb183dbad758efa75118a4fd368623e4",
+    "postfreeze_transport_qualification": "bbc7d72fded307b23f6e0d20609b85662e63013cc06cd05b0c3c30269ba71749"
+  },
+  "next_allowed_action": "Add only a mechanical workflow pinned to this freeze, execute the first Gate2A truth join twice with exact byte comparison, and atomically freeze the first complete joined ledger/metrics/receipt before any remediation or Gate2B diagnostic change."
+}
