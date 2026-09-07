@@ -1,0 +1,61 @@
+{
+  "schema": "risu.e2-candidate58-gate2a-truth-join-implementation-freeze/v0.1.1",
+  "status": "FROZEN_AFTER_PREOUTPUT_PLUMBING_FAILURE_BEFORE_FIRST_COMPLETE_GATE2A_OUTPUT",
+  "repository": "risu-research/risu-verify",
+  "branch": "e2-development",
+  "scientific_authority_unchanged": {
+    "first_complete_machine_freeze_commit": "2ece1023252a8e9100a34d74079493040441e1e2",
+    "gate2a_protocol_git_blob": "1ba7117818fe2f8efe568d7c67ae50a3dba77f65",
+    "truth_oracle_contract_git_blob": "98e53e13472c9d1287c3114734464994a6693778",
+    "truth_oracle_git_blob": "1e5fe69f302df6fdd367797649b17eb3c4ea5950",
+    "mutation_matrix_git_blob": "b6d7d9c4d172a6e38ab59e93ae9748fafefc9fd0",
+    "expanded_truth_git_blob": "0ab0c31377d7e03bc279943af151c687f51ffc93",
+    "admission_manifest_git_blob": "f2fc78439d4bfadce5941bf71aadd15ec292bcb1",
+    "materialized_cells_tree_git_sha": "34a30574c7420728bff57958c815194979a622ab",
+    "first_complete_machine_matrix_git_blob": "60b27d641682693cb3df654d8aa4f064cc48455d"
+  },
+  "preserved_failed_attempt": {
+    "workflow_trigger_commit": "919bb247fa7f99d70b7eff9ea8eb411ce21a5452",
+    "workflow_run_id": 34139907614,
+    "job_id": 101799321281,
+    "run_attempt": 1,
+    "conclusion": "failure",
+    "truth_oracle_preflight": "PASS_NO_MACHINE_INPUT",
+    "first_join_status": "FAILED_BEFORE_JOINED_LEDGER_METRICS_OR_RECEIPT_OUTPUT",
+    "failure_message": "materialized cell must have exactly one source:Q029:2",
+    "failure_classification": "NON_SEMANTIC_SOURCE_IDENTITY_PLUMBING_ASSUMPTION",
+    "repository_result_freeze_performed": false,
+    "machine_artifact_modified": false,
+    "truth_artifact_modified": false,
+    "semantic_engine_rerun": false,
+    "c1_checker_rerun": false
+  },
+  "correction": {
+    "frozen_v1_joiner": {"path":"tools/e2_candidate58_gate2a_truth_join.py","git_blob":"f6645926d60a7029388b0f78a03115b7a4649c09"},
+    "source_identity_wrapper_v2": {"path":"tools/e2_candidate58_gate2a_truth_join_v2.py","git_blob":"9eed33c52db0cd4af4def5ed61edd3ca05bd0ba0"},
+    "rule": "Enumerate all source-like files in each frozen Q directory, compute SHA-256 for each, and require exactly one SHA-256 to belong to the already-frozen sanitized admission candidate_source_sha256 set. Construct a temporary one-candidate-per-Q view and execute the untouched frozen v1 joiner over that view.",
+    "why_not_outcome_adaptation": [
+      "The Gate2A protocol already froze source-SHA to admission to opaque-case identity as the join rule before execution.",
+      "The correction does not read CELL.json for mapping.",
+      "The correction does not read operator class, expected truth, expected E2 label, machine prediction, witness, or score to choose a candidate file.",
+      "Zero or multiple admission-hash matches still fail closed.",
+      "The v1 truth expansion, scoring, metric definitions, denominators, and output logic are unchanged and reused verbatim."
+    ],
+    "static_tree_observation": {
+      "frozen_materialized_tree_git_sha": "34a30574c7420728bff57958c815194979a622ab",
+      "q_directories": 58,
+      "multi_source_like_directory_count": 1,
+      "known_multi_source_like_directory": "Q029",
+      "additional_source_like_path": "Q029/material_edge.go",
+      "candidate_source_sha256_for_q029": "b8d3c2a4df06c81a9f6b5794075ec7e98536f53bc39fca136477f659c99a95a7",
+      "additional_file_sha256": "4df88c4ef1ba934b232cabeffb89dd6633ca336ccbe7c93ad7211645938c4f44"
+    }
+  },
+  "immutable_input_sha256": {
+    "first_complete_machine_matrix": "7273ce4034d06e67989a33540f5b22fef3190cf311a8981474413b538e43472d",
+    "expanded_truth": "afd681d308a6f4ec8c183edd9b139c6b914fe501936cf84e5845a6a1c0d6b7cb",
+    "admission_manifest": "847d85c2274cd6b94a83eefe0f6153a8fb183dbad758efa75118a4fd368623e4",
+    "postfreeze_transport_qualification": "bbc7d72fded307b23f6e0d20609b85662e63013cc06cd05b0c3c30269ba71749"
+  },
+  "next_allowed_action": "Execute a new mechanical v2 workflow pinned to the untouched v1 joiner plus the frozen v2 source-identity wrapper; run two deterministic joins, require exact logical byte identity including the source-identity receipt, and atomically freeze the first complete Gate2A outputs before any result-driven diagnostic or remediation."
+}
