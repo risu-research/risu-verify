@@ -1,0 +1,94 @@
+{
+  "schema": "risu.e2-a3-a4-frozen48-postfreeze-22-diagnosis-freeze-receipt/v0.1",
+  "status": "DIAGNOSIS_FROZEN_COMPLETE",
+  "classification": "POST_FIRST_COMPLETE_EXPLANATORY_EVIDENCE_ONLY",
+  "authority": {
+    "repository": "risu-research/risu-verify",
+    "branch": "e2-development",
+    "first_complete_freeze_commit": "92e7b9630e363c591a424c3ed730b7760e74babd",
+    "first_complete_zip_git_blob": "85f72ed0e6a5a553265129d34ee600315238d21d",
+    "first_complete_zip_sha256": "53874b0cd28a7fd434c599acb79fe6ebf19751e26a86a8b0c374fb268798e1e6",
+    "diagnosis_protocol_commit": "89e7c3791cfe30b5a36e33cac34cc8d1464d830e",
+    "diagnosis_protocol_git_blob": "624330c873a1cf0a58ec7da48686856c51b651ad",
+    "protocol_erratum_commit": "d49f086eefc5eac2b4bc528cb8517a0e9b125258",
+    "protocol_erratum_git_blob": "b28fe5df176d75ae535ec8c68d5ee22498a7fbc5",
+    "receipt_commit_binding_rule": "The commit that adds only this receipt is the diagnosis freeze commit; its SHA is external to this file and must not be backfilled by amending the receipt."
+  },
+  "diagnosis_artifacts": {
+    "summary": {
+      "path": "experiments/risu-diff-e2/qualification/a3-a4/frozen-48-requalification/selected-48-execution/post-freeze-diagnosis/E2_A3_A4_FROZEN48_POSTFREEZE_22_DIAGNOSIS_SUMMARY.json",
+      "git_blob": "6a449ea582eb1c44938664df65edfe6415f76f2c",
+      "bytes": 5066,
+      "sha256": "e5bd4428483bf17d83eea482516386c150a0788dee61eccaf1fca3a9429ce2e3"
+    },
+    "d0_part1": {
+      "path": "experiments/risu-diff-e2/qualification/a3-a4/frozen-48-requalification/selected-48-execution/post-freeze-diagnosis/E2_A3_A4_FROZEN48_POSTFREEZE_17_D0_ROWS_PART1.json",
+      "git_blob": "4855c3b3ac4949eb963ae84d8fe1654b1d40292e",
+      "bytes": 11777,
+      "sha256": "fbec9d277cf5e7b5ed3c958b9a2c7ed41990e6f01cbb70fef9bd3a18be40470a"
+    },
+    "d0_part2": {
+      "path": "experiments/risu-diff-e2/qualification/a3-a4/frozen-48-requalification/selected-48-execution/post-freeze-diagnosis/E2_A3_A4_FROZEN48_POSTFREEZE_17_D0_ROWS_PART2.json",
+      "git_blob": "7000cc68f7088d54b9d217e7ac7ab6bbabb3d327",
+      "bytes": 11681,
+      "sha256": "01e5ea8f10c0eb43c1f9ca5fe0341c000a52fd89c081d511ab966af420fb29bc"
+    },
+    "d4_rows": {
+      "path": "experiments/risu-diff-e2/qualification/a3-a4/frozen-48-requalification/selected-48-execution/post-freeze-diagnosis/E2_A3_A4_FROZEN48_POSTFREEZE_5_D4_ROWS.json",
+      "git_blob": "4c808228acf5b2d27c61bb21ec242d0012e48cb5",
+      "bytes": 8297,
+      "sha256": "302b946b3806e7f5da5ddc14d5441b1d5ab22d7fb3c9bccacab1eba91d29bd51"
+    }
+  },
+  "frozen_diagnosis": {
+    "first_complete_official_status_remains": "FROZEN_FAIL",
+    "selected_case_count": 48,
+    "qualified_count": 26,
+    "nonqualified_count": 22,
+    "checker_disagreement_count": 0,
+    "strict_transport_eligible_count": 31,
+    "strict_transport_ineligible_count": 17,
+    "D0_EXPECTED_TRANSPORT_CONSERVATIVE_REJECTION": 17,
+    "D4_CONTROL_GUARD_LINKAGE_LIMITATION": 5,
+    "all_other_diagnosis_classes": 0,
+    "transport_eligible_nonqualified_cells": ["Q013", "Q014", "Q015", "Q017", "Q018"],
+    "generic_scientific_root_cause": "GENERIC_NEGATED_HELPER_PREDICATE_POLARITY_COMPOSITION_GAP",
+    "shared_failure_reason": "HELPER_PREDICATE_POLARITY_UNPROVEN",
+    "case_specific_branching_needed": false
+  },
+  "interpretation": {
+    "D0": "The 17 D0 rows were rejected by the exact frozen transport-admission predicate before base IR/overlay/path evaluation. Their downstream NOT_EVALUATED and UNPROVEN fields are fail-closed consequences and are not independent scientific-surface failures.",
+    "D4": "The five D4 rows are strict-transport eligible and have PASS base IR, COMPLETE anchor usability, PASS overlay, COMPLETE control scopes, COMPLETE path dataflow, UNIQUE effect surface, and PASS path observability. The sole gating reason is helper predicate polarity under a negated helper-call control shape.",
+    "coverage_statement": "Overall observability qualification is 26/48. Conditional on strict transport eligibility it is 26/31; the remaining 5/31 share one generic helper-polarity limitation. This conditional decomposition does not alter the official 26/48 FROZEN_FAIL result."
+  },
+  "protocol_erratum_effect": {
+    "original_parser_status_wording_was_inconsistent": true,
+    "authoritative_predicate": "EXACT_FROZEN_ADAPTER_V2_STRICT_TRANSPORT_ELIGIBLE",
+    "diagnosis_partition_changed_by_erratum": false
+  },
+  "source_inspection": {
+    "exact_selected48_source_files_inspected": 5,
+    "inspected_cells": ["Q013", "Q014", "Q015", "Q017", "Q018"],
+    "dedicated_mutation_truth_files_read": false,
+    "dedicated_mutation_operator_metadata_files_read": false,
+    "incidental_inline_mutation_annotation_tokens_visible": true,
+    "incidental_annotation_used_for_classification": false
+  },
+  "immutability": {
+    "first_complete_artifact_changed": false,
+    "first_complete_status_changed": false,
+    "scientific_code_changed": false,
+    "transport_engine_changed": false,
+    "adapter_changed": false,
+    "selection_changed": false,
+    "gate_changed": false
+  },
+  "firewall": {
+    "candidate58_bytes_read": false,
+    "epistemic10_source_bytes_read": false,
+    "raw_blind58_transport_read": false,
+    "fresh_target_bytes_read": false,
+    "a3_a4_semantic_verdicts_executed": false
+  },
+  "next_boundary": "If further work is authorized, the strongest next step is a separate prospective generic helper-polarity remediation experiment that proves Boolean polarity composition across helper return/call/negation without case-specific branches. Candidate-58 remains sealed."
+}
