@@ -56,11 +56,11 @@ jobs:
           print('POST_SEAL_DELTA_FIREWALL=PASS')
           PY
 
-      - name: Make real Candidate58 semantic inputs unreadable during qualification
+      - name: Make real Candidate58 semantic input bytes unreadable during qualification
         shell: bash
         run: |
           set -euo pipefail
-          chmod -R a-rwx experiments/risu-diff-e2/qualification/materialized/cells
+          find experiments/risu-diff-e2/qualification/materialized/cells -type f -exec chmod 000 {} +
           chmod 000 experiments/risu-diff-e2/qualification/anchor-transport/blind58/E2_BLIND_58_ANCHOR_TRANSPORT_BUNDLE.json
           chmod 000 experiments/risu-diff-e2/qualification/anchor-transport/admission/E2_SANITIZED_OPAQUE_58_ADMISSION_MANIFEST.json
 
