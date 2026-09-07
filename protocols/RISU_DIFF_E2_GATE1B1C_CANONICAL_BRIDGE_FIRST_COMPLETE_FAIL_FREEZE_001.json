@@ -1,0 +1,32 @@
+{
+  "schema": "risu.e2-gate1b1c-canonical-bridge-first-complete-freeze/v0.1",
+  "status": "FROZEN_FAIL_UNDIAGNOSED",
+  "qualification_commit": "48d19232389a81780132ca9b530e6fa761662253",
+  "workflow_run_id": 34086147580,
+  "workflow_run_number": 1,
+  "workflow_name": "E2 Gate1B1C Canonical Bridge Qualification 001",
+  "first_complete_execution_step_conclusion": "success",
+  "artifact_upload_step_conclusion": "success",
+  "post_upload_assertion_conclusion": "failure",
+  "artifact": {
+    "id": 10005264686,
+    "name": "e2-gate1b1c-canonical-bridge-first-complete-001",
+    "size_in_bytes": 9398,
+    "digest": "sha256:2ef9061c8b54db470c51d24ddda8d3f667e8bb8a0d46e07aae1b60a95586c9a9",
+    "expired": false
+  },
+  "diagnosis_performed_before_freeze": false,
+  "remediation_performed_before_freeze": false,
+  "production_branch_modified": false,
+  "scientific_firewall": {
+    "candidate58_bytes_read": false,
+    "epistemic10_read": false,
+    "raw_blind58_transport_read": false,
+    "mutation_truth_read": false,
+    "mutation_operator_metadata_read": false,
+    "expected_e2_prediction_read": false,
+    "fresh_target_bytes_read": false,
+    "a3_a4_semantic_verdicts_executed": false
+  },
+  "next_authorized_step": "Only after this failure freeze is committed may the uploaded first-complete evidence be opened for diagnosis. Any remediation must be prospectively frozen on a new qualification revision before rerun."
+}
