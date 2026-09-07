@@ -1,0 +1,250 @@
+name: OPS Build Selected48 Adapter V2
+
+on:
+  push:
+    branches:
+      - ops/build-selected48-adapter-v2
+    paths:
+      - .github/workflows/ops-build-selected48-adapter-v2.yml
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Deterministically patch exact frozen adapters and atomically commit v2 pair
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import base64, json, os, pathlib, py_compile, urllib.request
+
+          REPO='risu-research/risu-verify'
+          TARGET='e2-development'
+          PARENT='5db59d8bf0f033af818acb9d4516a3912ab2ce90'
+          OLD_PRIMARY='56ad7ec667f59f962585c6d5ed81b5dc98a363e2'
+          OLD_INDEPENDENT='8a68cd1b80e2abeac68a3ca7aed6ab7cfc28c105'
+          OUT_PRIMARY='tools/e2_frozen48_requalification_primary_v2.py'
+          OUT_INDEPENDENT='tools/e2_frozen48_requalification_independent_v2.py'
+          token=os.environ['GH_TOKEN']
+          headers={'Authorization':'Bearer '+token,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','User-Agent':'risu-selected48-adapter-v2-builder'}
+
+          def api(path,method='GET',payload=None):
+            data=None if payload is None else json.dumps(payload,separators=(',',':')).encode()
+            h=dict(headers)
+            if data is not None: h['Content-Type']='application/json'
+            req=urllib.request.Request('https://api.github.com/repos/'+REPO+path,data=data,method=method,headers=h)
+            with urllib.request.urlopen(req,timeout=60) as r:
+              raw=r.read(); return json.loads(raw) if raw else None
+
+          def blob_text(sha):
+            obj=api('/git/blobs/'+sha)
+            if obj.get('encoding')!='base64': raise SystemExit('BLOB_ENCODING_MISMATCH')
+            return base64.b64decode(obj['content']).decode('utf-8')
+
+          def replace_once(text,old,new,label):
+            count=text.count(old)
+            if count!=1: raise SystemExit(f'PATCH_MATCH_COUNT:{label}:{count}')
+            return text.replace(old,new,1)
+
+          primary=blob_text(OLD_PRIMARY)
+          independent=blob_text(OLD_INDEPENDENT)
+
+          primary=replace_once(primary,
+'''def suffix(language: str) -> str:
+    return {"python": ".py", "go": ".go", "typescript_javascript": ".mjs"}[language]
+
+
+''',
+'''def suffix(language: str) -> str:
+    return {"python": ".py", "go": ".go", "typescript_javascript": ".mjs"}[language]
+
+
+def language_from_source_path(path: str) -> str:
+    mapping = {".py": "python", ".go": "go", ".mjs": "typescript_javascript"}
+    language = mapping.get(Path(path).suffix)
+    if language is None:
+        raise ValueError("unsupported heldout source suffix")
+    return language
+
+
+''','primary-language-helper')
+
+          primary=replace_once(primary,
+'''def projected_contract(canonical_entry: Mapping[str, Any], receipt: Mapping[str, Any], candidate_path: str, source: str) -> tuple[dict[str, Any], str]:
+    declaration = copy.deepcopy(canonical_entry["declaration"])
+    anchors = {row["anchor_key"]: row for row in receipt["anchors"]}
+    language = str(receipt["language"])
+''',
+'''def projected_contract(canonical_entry: Mapping[str, Any], receipt: Mapping[str, Any], candidate_path: str, source: str, language: str) -> tuple[dict[str, Any], str]:
+    declaration = copy.deepcopy(canonical_entry["declaration"])
+    anchors = {row["anchor_key"]: row for row in receipt["anchors"]}
+''','primary-projected-contract-language')
+
+          primary_helper='''def strict_transport_eligible(canonical_entry: Mapping[str, Any], receipt: Mapping[str, Any]) -> bool:
+    if receipt.get("case_transport_status") != "COMPLETE":
+        return False
+    declaration = canonical_entry["declaration"]
+    expected_keys = set(declaration["anchors"])
+    items = receipt.get("anchors")
+    if not isinstance(items, list) or len(items) != len(expected_keys):
+        return False
+    observed: dict[str, Mapping[str, Any]] = {}
+    for item in items:
+        if not isinstance(item, Mapping):
+            return False
+        key = str(item.get("anchor_key"))
+        if key in observed:
+            return False
+        observed[key] = item
+    if set(observed) != expected_keys:
+        return False
+    for key in expected_keys:
+        row = observed[key]
+        span = row.get("candidate_span")
+        digest = row.get("candidate_slice_sha256")
+        if row.get("realization_status") != "ROLE_COMPATIBLE":
+            return False
+        if not isinstance(span, list) or len(span) != 4 or any(type(value) is not int for value in span):
+            return False
+        if not isinstance(digest, str) or len(digest) != 64:
+            return False
+    slots = receipt.get("binding_slots")
+    if not isinstance(slots, Mapping):
+        return False
+    for slot in ("expected_coordinate", "current_coordinate"):
+        row = slots.get(slot)
+        declared = declaration["binding_slots"][slot]
+        if not isinstance(row, Mapping) or row.get("status") != "AVAILABLE":
+            return False
+        try:
+            if int(row["operand_index"]) != int(declared["operand_index"]):
+                return False
+        except (KeyError, TypeError, ValueError):
+            return False
+    return True
+
+
+'''
+          primary=replace_once(primary,
+'''def heldout_row(*, cell_id: str, language: str, source_path: str, source: bytes, receipt: Mapping[str, Any], anchor_entry: Mapping[str, Any], signature: Mapping[str, Any], go_helper: Path) -> dict[str, Any]:
+''',
+primary_helper+'''def heldout_row(*, cell_id: str, language: str, source_path: str, source: bytes, receipt: Mapping[str, Any], anchor_entry: Mapping[str, Any], signature: Mapping[str, Any], go_helper: Path) -> dict[str, Any]:
+''','primary-eligibility-helper')
+
+          primary=replace_once(primary,
+'''    if receipt.get("case_transport_status") != "COMPLETE":
+        return {
+''',
+'''    if not strict_transport_eligible(anchor_entry, receipt):
+        return {
+''','primary-failclosed-guard')
+
+          primary=replace_once(primary,
+'''    contract, contract_sha = projected_contract(anchor_entry, receipt, source_path, text)
+''',
+'''    contract, contract_sha = projected_contract(anchor_entry, receipt, source_path, text, language)
+''','primary-projected-contract-call')
+
+          primary=replace_once(primary,
+'''        if anchor is None or signature is None:
+            raise ValueError("missing canonical seed authority")
+        row = heldout_row(
+            cell_id=cell_id,
+            language=str(receipt["language"]),
+''',
+'''        if anchor is None or signature is None:
+            raise ValueError("missing canonical seed authority")
+        language = language_from_source_path(source_path)
+        canonical_language = str(anchor["declaration"]["source"]["language"])
+        if language != canonical_language:
+            raise ValueError("selected source/canonical language mismatch")
+        row = heldout_row(
+            cell_id=cell_id,
+            language=language,
+''','primary-run-language')
+
+          independent_helper='''def strict_transport_eligible_independent(seed_contract: Mapping[str, Any], receipt: Mapping[str, Any]) -> bool:
+    if str(receipt.get("case_transport_status")) != "COMPLETE":
+        return False
+    declaration = seed_contract["declaration"]
+    required = sorted(declaration["anchors"])
+    rows = receipt.get("anchors")
+    if type(rows) is not list:
+        return False
+    by_key: dict[str, Mapping[str, Any]] = {}
+    for row in rows:
+        if not isinstance(row, Mapping):
+            return False
+        key = row.get("anchor_key")
+        if type(key) is not str or key in by_key:
+            return False
+        by_key[key] = row
+    if sorted(by_key) != required:
+        return False
+    for key in required:
+        row = by_key[key]
+        if row.get("realization_status") != "ROLE_COMPATIBLE":
+            return False
+        span = row.get("candidate_span")
+        if type(span) is not list or len(span) != 4 or not all(type(part) is int for part in span):
+            return False
+        slice_hash = row.get("candidate_slice_sha256")
+        if type(slice_hash) is not str or len(slice_hash) != 64:
+            return False
+    slots = receipt.get("binding_slots")
+    if not isinstance(slots, Mapping):
+        return False
+    for slot in ("current_coordinate", "expected_coordinate"):
+        observed = slots.get(slot)
+        declared = declaration["binding_slots"][slot]
+        if not isinstance(observed, Mapping) or observed.get("status") != "AVAILABLE":
+            return False
+        try:
+            same_index = int(observed["operand_index"]) == int(declared["operand_index"])
+        except (KeyError, TypeError, ValueError):
+            return False
+        if not same_index:
+            return False
+    return True
+
+
+'''
+          independent=replace_once(independent,
+'''def one_heldout_row(cell_id: str, language: str, logical_path: str, raw: bytes, receipt: Mapping[str, Any], seed_contract: Mapping[str, Any], signature: Mapping[str, Any], helper: Path) -> dict[str, Any]:
+''',
+independent_helper+'''def one_heldout_row(cell_id: str, language: str, logical_path: str, raw: bytes, receipt: Mapping[str, Any], seed_contract: Mapping[str, Any], signature: Mapping[str, Any], helper: Path) -> dict[str, Any]:
+''','independent-eligibility-helper')
+
+          independent=replace_once(independent,
+'''    if receipt.get("case_transport_status") != "COMPLETE":
+        return {
+''',
+'''    if not strict_transport_eligible_independent(seed_contract, receipt):
+        return {
+''','independent-failclosed-guard')
+
+          forbidden=('expected_truth','expected_e2','operator_id','operator_name','operator_class','M_PLUS','M_ZERO','M_QUESTION')
+          for label,text in [('primary',primary),('independent',independent)]:
+            for token in forbidden:
+              if token in text: raise SystemExit(f'FORBIDDEN_SPECIALIZATION_TOKEN:{label}:{token}')
+
+          root=pathlib.Path('/tmp/adapter-v2'); root.mkdir(parents=True,exist_ok=True)
+          p=root/'primary_v2.py'; i=root/'independent_v2.py'; p.write_text(primary); i.write_text(independent)
+          py_compile.compile(str(p),doraise=True); py_compile.compile(str(i),doraise=True)
+
+          branch=api('/branches/'+TARGET)
+          if branch['commit']['sha']!=PARENT: raise SystemExit('TARGET_HEAD_MOVED')
+          base_tree=branch['commit']['commit']['tree']['sha']
+          p_blob=api('/git/blobs','POST',{'content':base64.b64encode(primary.encode()).decode(),'encoding':'base64'})['sha']
+          i_blob=api('/git/blobs','POST',{'content':base64.b64encode(independent.encode()).decode(),'encoding':'base64'})['sha']
+          tree=api('/git/trees','POST',{'base_tree':base_tree,'tree':[
+            {'path':OUT_PRIMARY,'mode':'100644','type':'blob','sha':p_blob},
+            {'path':OUT_INDEPENDENT,'mode':'100644','type':'blob','sha':i_blob}
+          ]})['sha']
+          commit=api('/git/commits','POST',{'message':'e2: add fail-closed selected-48 adapter v2 pair','tree':tree,'parents':[PARENT]})['sha']
+          api('/git/refs/heads/'+TARGET,'PATCH',{'sha':commit,'force':False})
+          print(json.dumps({'status':'COMMITTED','commit':commit,'primary_blob':p_blob,'independent_blob':i_blob},sort_keys=True,separators=(',',':')))
+          PY
