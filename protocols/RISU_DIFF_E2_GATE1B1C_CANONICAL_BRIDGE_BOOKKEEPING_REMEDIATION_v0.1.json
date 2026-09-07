@@ -1,0 +1,17 @@
+{
+  "schema":"risu.e2-gate1b1c-canonical-bridge-bookkeeping-remediation-protocol/v0.1",
+  "status":"FROZEN_BEFORE_BOOKKEEPING_REMEDIATION_EXECUTION",
+  "third_failure_freeze_commit":"38132d4cca31d851998d5affb75db97adf34d08f",
+  "diagnosis_git_blob":"92591378cd051aebd06f28b217854971c1e3b009",
+  "allowed_changes":["Preserve the scientific bridge child implementation unchanged as risu_e2_semantic/bridge_cli_v1.py and wrap canonical result bookkeeping so correctly-false forbidden-event observations are asserted as positive invariants.","Change only workflow PASS aggregation keys from forbidden_event=false to forbidden_event_not_observed=true."],
+  "frozen_scientific_bridge_cli_git_blob":"7d84272e8f34f999dfccd1e529acb2dd0c40c0c2",
+  "bookkeeping_wrapper_git_blob":"9b19361b56ff196f3d4d8befade4719ad87b4603",
+  "remediated_workflow_git_blob":"547541bf237e8ab32b95b4fff32929d59a56d479",
+  "canonical_bridge_logic_changed":false,
+  "finite_world_logic_changed":false,
+  "primary_adapter_logic_changed":false,
+  "closed_read_set_logic_changed":false,
+  "expected_scientific_outputs_changed":false,
+  "rerun_rule":"Execute the exact canonical-only gates again, upload all evidence before assertion, require byte-identical repeats, and promote only if every positive pass invariant is true.",
+  "scientific_firewall":{"candidate58_read":false,"truth_read":false,"operator_metadata_read":false,"fresh_target_read":false,"a3_a4_verdict_executed":false}
+}

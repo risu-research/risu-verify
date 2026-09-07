@@ -1,0 +1,13 @@
+{
+  "schema":"risu.e2-gate1b1c-canonical-bridge-third-failure-diagnosis/v0.1",
+  "status":"FROZEN_DIAGNOSIS_AFTER_THIRD_FAIL_FREEZE",
+  "third_failure_freeze_commit":"38132d4cca31d851998d5affb75db97adf34d08f",
+  "workflow_run_id":34086512527,
+  "artifact_id":10005381678,
+  "artifact_digest":"sha256:0eb8c427bb2e5a63dc8ca13810c18514daac77b3216e9a1a1fc144f63f1359a5",
+  "classification":"NON_SCIENTIFIC_BOOLEAN_BOOKKEEPING_DEFECT",
+  "observed_scientific_checks":{"public_signature_byte_identity":true,"canonical_signature_bundle_digest_exact":true,"seed_count":true,"control_forms_5_direct_1_helper":true,"SYN_PY_02_PROVED_INVERTED_FLIP1":true,"no_target_rho_stored":true,"closed_read_set":true,"two_runs_byte_identical":true},
+  "cause":"Both inner and outer PASS aggregators included correctly-false forbidden-event observations in all(checks.values()), making a clean firewall state force FAIL.",
+  "scientific_semantics_change_required":false,
+  "scientific_firewall":{"candidate58_read":false,"truth_read":false,"operator_metadata_read":false,"fresh_target_read":false,"a3_a4_verdict_executed":false}
+}
