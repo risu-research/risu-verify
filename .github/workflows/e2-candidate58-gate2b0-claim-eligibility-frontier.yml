@@ -15,11 +15,14 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  GATE2B0_PARENT: 0bca4d3456f51498a5ea0a98e2bf2eb2c785e369
+  GATE2B0_PARENT: 625385347731bfd9037c8c288e795a71391c9614
   GATE2A_FREEZE: afcf9ce67d93be612f1004c6a2031e819f0ea12d
   MACHINE_FREEZE: 2ece1023252a8e9100a34d74079493040441e1e2
   MACHINE_PATH: experiments/risu-diff-e2/qualification/candidate58/first-complete-machine/E2_CANDIDATE58_FIRST_COMPLETE_MACHINE_PREDICTION_MATRIX.json
+  MACHINE_BLOB: 60b27d641682693cb3df654d8aa4f064cc48455d
   MACHINE_SHA256: 7273ce4034d06e67989a33540f5b22fef3190cf311a8981474413b538e43472d
+  MACHINE_FREEZE_RECEIPT_PATH: experiments/risu-diff-e2/qualification/candidate58/first-complete-machine/E2_CANDIDATE58_FIRST_COMPLETE_MACHINE_IMMUTABLE_FREEZE_RECEIPT.json
+  MACHINE_FREEZE_RECEIPT_BLOB: 2700e8002551a8fa161c076cde81498054f3a200
   PROTOCOL_BLOB: 861165bba33e40f95271853fa8bd4a01ec2ed165
   ANALYZER_BLOB: e9c96246288aee7b868a714910b5f5ff7f88b8d5
   IMPLEMENTATION_FREEZE_BLOB: 9dffa1b30e5d01a88b3a140cf70cb47e362a9b2c
@@ -42,13 +45,15 @@ jobs:
           test "$(git rev-parse HEAD^)" = "$GATE2B0_PARENT"
           test "$(git diff --name-only HEAD^ HEAD)" = ".github/workflows/e2-candidate58-gate2b0-claim-eligibility-frontier.yml"
           git merge-base --is-ancestor "$GATE2A_FREEZE" HEAD
-          test "$(git rev-parse "$MACHINE_FREEZE:$MACHINE_PATH")" = "60b27d641682693cb3df654d8aa4f064cc48455d"
+          test "$(git hash-object "$MACHINE_PATH")" = "$MACHINE_BLOB"
+          test "$(git hash-object "$MACHINE_FREEZE_RECEIPT_PATH")" = "$MACHINE_FREEZE_RECEIPT_BLOB"
           test "$(git hash-object protocols/RISU_DIFF_E2_CANDIDATE58_GATE2B0_CLAIM_ELIGIBILITY_FRONTIER_PROTOCOL_v0.1.json)" = "$PROTOCOL_BLOB"
           test "$(git hash-object tools/e2_candidate58_gate2b0_claim_eligibility_frontier.py)" = "$ANALYZER_BLOB"
           test "$(git hash-object protocols/RISU_DIFF_E2_CANDIDATE58_GATE2B0_IMPLEMENTATION_FREEZE_v0.1.json)" = "$IMPLEMENTATION_FREEZE_BLOB"
           echo "$MACHINE_SHA256  $MACHINE_PATH" | sha256sum -c -
           python - <<'PY'
-          import subprocess
+          import json, subprocess
+          from pathlib import Path
           expected={
             'protocols/RISU_DIFF_E2_CANDIDATE58_GATE2B0_CLAIM_ELIGIBILITY_FRONTIER_PROTOCOL_v0.1.json',
             'tools/e2_candidate58_gate2b0_claim_eligibility_frontier.py',
@@ -57,7 +62,12 @@ jobs:
           }
           names=set(subprocess.check_output(['git','diff','--name-only','afcf9ce67d93be612f1004c6a2031e819f0ea12d..HEAD'],text=True).splitlines())
           assert names==expected, (names, expected)
+          receipt=json.loads(Path('experiments/risu-diff-e2/qualification/candidate58/first-complete-machine/E2_CANDIDATE58_FIRST_COMPLETE_MACHINE_IMMUTABLE_FREEZE_RECEIPT.json').read_text())
+          assert receipt['first_complete_identity']['machine_matrix_sha256']=='7273ce4034d06e67989a33540f5b22fef3190cf311a8981474413b538e43472d'
+          assert receipt['first_complete_identity']['case_count']==58
+          assert receipt['status']=='FIRST_COMPLETE_MACHINE_ONLY_IMMUTABLY_FROZEN_NOT_GOLD_JOINED'
           print('GATE2B0_POST_GATE2A_ADDITIVE_FIREWALL=PASS')
+          print('GATE2B0_FIRST_ORCHESTRATION_FAILURE_PRESERVED=RUN_34142742515_PRE_MATRIX')
           PY
 
       - name: Set up exact Python runtime
@@ -203,6 +213,10 @@ jobs:
             'truth_or_operator_read':False,
             'semantic_engine_or_c1_rerun':False,
             'remediation_performed':False,
+            'first_orchestration_attempt_preserved':True,
+            'first_orchestration_attempt_run_id':'34142742515',
+            'first_orchestration_attempt_classification':'PRE_MATRIX_HISTORICAL_GIT_PATH_ASSERTION_FAILURE',
+            'first_orchestration_attempt_matrix_executed':False,
             'immutability_rule':{
               'this_first_complete_gate2b0_result_may_not_be_replaced':True,
               'later_deeper_diagnostics_must_be_additive':True,
