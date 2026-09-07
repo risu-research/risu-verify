@@ -1,0 +1,112 @@
+name: E2 Gate2C5 Implementation Qualification
+
+on:
+  push:
+    branches: [e2-development]
+    paths:
+      - ".github/workflows/e2-gate2c5-implementation-qualification.yml"
+
+permissions:
+  contents: read
+
+env:
+  EXPECTED_PARENT: d11190deba4442c46a070728af398e897086dc2e
+  PROTOCOL: protocols/RISU_DIFF_E2_GATE2C5_CANONICAL_OPAQUE_PROJECTION_IDENTITY_PROTOCOL_v0.1.json
+  RESOLUTION: protocols/RISU_DIFF_E2_GATE2C5_CANONICAL_GUARD_ANCHOR_RESOLUTION_v0.1.json
+  BUILDER: tools/e2_gate2c5_build_canonical_projection_identity.py
+  CHECKER: tools/e2_gate2c5_check_canonical_projection_identity.py
+  TEST: tests/test_e2_gate2c5_canonical_projection_identity.py
+  PROTOCOL_BLOB: 08160ca443a2952b159353b16c7684b9e5601f49
+  RESOLUTION_BLOB: cbc213250fa205d6e57f223fe52de54a1be707d8
+  BUILDER_BLOB: 3561696beaebdf385a9f6c1d3ae89f8f1cd97857
+  CHECKER_BLOB: ceeb87931c8597afff49fc399dcc4117a7c66454
+  TEST_BLOB: cae99ba003e6114238b9f9aab7679c3d02e47de2
+
+jobs:
+  synthetic-qualification:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact qualification revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 2
+      - name: Prove implementation-only qualification boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "$EXPECTED_PARENT"
+          test "$(git diff --name-only HEAD^ HEAD)" = ".github/workflows/e2-gate2c5-implementation-qualification.yml"
+          test "$(git hash-object "$PROTOCOL")" = "$PROTOCOL_BLOB"
+          test "$(git hash-object "$RESOLUTION")" = "$RESOLUTION_BLOB"
+          test "$(git hash-object "$BUILDER")" = "$BUILDER_BLOB"
+          test "$(git hash-object "$CHECKER")" = "$CHECKER_BLOB"
+          test "$(git hash-object "$TEST")" = "$TEST_BLOB"
+          test ! -e experiments/risu-diff-e2/qualification/candidate58/gate2c5-canonical-opaque-projection-identity/first-complete
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          p=json.loads(Path(os.environ['PROTOCOL']).read_text());r=json.loads(Path(os.environ['RESOLUTION']).read_text())
+          assert p['status']=='PROSPECTIVE_SEALED_BEFORE_GATE2C5_CANONICAL_SEED_CONTENT_READ'
+          assert r['status']=='RESOLVED_AFTER_PROTOCOL_SEAL_BEFORE_GATE2C5_BUILDER_IMPLEMENTATION_OR_CANONICAL_EXECUTION'
+          assert r['selected_contract']['guard']['span']==[20,7,20,40]
+          assert r['selected_contract']['binding_slots']['expected_coordinate']['operand_index']==0
+          assert r['selected_contract']['binding_slots']['current_coordinate']['operand_index']==1
+          print('GATE2C5_IMPLEMENTATION_BOUNDARY=PASS')
+          PY
+      - name: Set up exact Python runtime
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.13.5"
+      - name: Audit stdlib-only and checker independence
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import ast,os,sys
+          from pathlib import Path
+          for key in ('BUILDER','CHECKER'):
+              p=Path(os.environ[key]); tree=ast.parse(p.read_text()); roots=[]
+              for n in ast.walk(tree):
+                  if isinstance(n,ast.Import): roots.extend(a.name.split('.',1)[0] for a in n.names)
+                  elif isinstance(n,ast.ImportFrom) and n.module: roots.append(n.module.split('.',1)[0])
+              bad=[x for x in roots if x not in sys.stdlib_module_names and x!='__future__']
+              assert not bad,(key,bad)
+          checker=Path(os.environ['CHECKER']).read_text()
+          assert 'e2_gate2c5_build_canonical_projection_identity' not in checker
+          assert 'gate2c5_builder' not in checker
+          assert '.'.join(map(str,sys.version_info[:3]))=='3.13.5'
+          print('GATE2C5_STDLIB_AND_CHECKER_INDEPENDENCE=PASS')
+          PY
+      - name: Execute adversarial synthetic qualification twice
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile "$BUILDER" "$CHECKER" "$TEST"
+          python "$TEST" > "$RUNNER_TEMP/t1.txt" 2>&1
+          python "$TEST" > "$RUNNER_TEMP/t2.txt" 2>&1
+          cmp "$RUNNER_TEMP/t1.txt" "$RUNNER_TEMP/t2.txt"
+          grep -q 'Ran 11 tests' "$RUNNER_TEMP/t1.txt"
+          grep -q '^OK$' "$RUNNER_TEMP/t1.txt"
+          echo GATE2C5_SYNTHETIC_DUAL_REPLAY=PASS
+      - name: Materialize qualification receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/gate2c5-qualification"; export OUT; mkdir -p "$OUT"
+          python - <<'PY'
+          import hashlib,json,os,platform
+          from pathlib import Path
+          h=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          r={'schema':'risu.e2-gate2c5-implementation-qualification/v0.1','status':'SYNTHETICALLY_QUALIFIED_NOT_CANONICAL_EXECUTED','workflow_run_id':os.environ['GITHUB_RUN_ID'],'workflow_sha':os.environ['GITHUB_SHA'],'python_version':platform.python_version(),'protocol_git_blob':os.environ['PROTOCOL_BLOB'],'resolution_git_blob':os.environ['RESOLUTION_BLOB'],'builder_git_blob':os.environ['BUILDER_BLOB'],'checker_git_blob':os.environ['CHECKER_BLOB'],'test_git_blob':os.environ['TEST_BLOB'],'builder_sha256':h(os.environ['BUILDER']),'checker_sha256':h(os.environ['CHECKER']),'test_sha256':h(os.environ['TEST']),'synthetic_test_count':11,'synthetic_dual_replay_identical':True,'stdlib_only':True,'checker_imports_builder':False,'negative_tests':{'same_root_same_depth_different_attribute_mismatch':True,'same_root_same_depth_different_subscript_mismatch':True,'same_root_extra_projection_mismatch':True,'wrong_root_fail_closed':True,'wrong_operand_index_fail_closed':True,'ambiguous_alias_fail_closed':True,'dynamic_subscript_fail_closed':True,'profile_shape_mismatch_fail_closed':True,'wrong_frozen_span_no_fallback':True},'alias_spelling_excluded_from_fingerprint':True,'canonical_execution_performed':False,'candidate_bytes_read':False,'truth_read':False,'epistemic10_read':False,'remediation':False}
+          Path(os.environ['OUT'],'E2_GATE2C5_IMPLEMENTATION_QUALIFICATION_RECEIPT.json').write_text(json.dumps(r,sort_keys=True,separators=(',',':'))+'\n')
+          PY
+      - name: Upload qualification receipt before implementation freeze
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-gate2c5-implementation-qualification
+          path: ${{ runner.temp }}/gate2c5-qualification/E2_GATE2C5_IMPLEMENTATION_QUALIFICATION_RECEIPT.json
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
