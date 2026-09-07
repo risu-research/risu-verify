@@ -1,0 +1,253 @@
+name: E2 Candidate58 Gate2B0 Claim Eligibility Frontier
+
+on:
+  push:
+    branches: [e2-development]
+    paths:
+      - ".github/workflows/e2-candidate58-gate2b0-claim-eligibility-frontier.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: e2-candidate58-gate2b0-first-complete
+  cancel-in-progress: false
+
+env:
+  GATE2B0_PARENT: 0bca4d3456f51498a5ea0a98e2bf2eb2c785e369
+  GATE2A_FREEZE: afcf9ce67d93be612f1004c6a2031e819f0ea12d
+  MACHINE_FREEZE: 2ece1023252a8e9100a34d74079493040441e1e2
+  MACHINE_PATH: experiments/risu-diff-e2/qualification/candidate58/first-complete-machine/E2_CANDIDATE58_FIRST_COMPLETE_MACHINE_PREDICTION_MATRIX.json
+  MACHINE_SHA256: 7273ce4034d06e67989a33540f5b22fef3190cf311a8981474413b538e43472d
+  PROTOCOL_BLOB: 861165bba33e40f95271853fa8bd4a01ec2ed165
+  ANALYZER_BLOB: e9c96246288aee7b868a714910b5f5ff7f88b8d5
+  IMPLEMENTATION_FREEZE_BLOB: 9dffa1b30e5d01a88b3a140cf70cb47e362a9b2c
+
+jobs:
+  first-complete-gate2b0:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact Gate2B0 orchestration revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 12
+
+      - name: Prove additive post-Gate2A diagnostic boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "$GATE2B0_PARENT"
+          test "$(git diff --name-only HEAD^ HEAD)" = ".github/workflows/e2-candidate58-gate2b0-claim-eligibility-frontier.yml"
+          git merge-base --is-ancestor "$GATE2A_FREEZE" HEAD
+          test "$(git rev-parse "$MACHINE_FREEZE:$MACHINE_PATH")" = "60b27d641682693cb3df654d8aa4f064cc48455d"
+          test "$(git hash-object protocols/RISU_DIFF_E2_CANDIDATE58_GATE2B0_CLAIM_ELIGIBILITY_FRONTIER_PROTOCOL_v0.1.json)" = "$PROTOCOL_BLOB"
+          test "$(git hash-object tools/e2_candidate58_gate2b0_claim_eligibility_frontier.py)" = "$ANALYZER_BLOB"
+          test "$(git hash-object protocols/RISU_DIFF_E2_CANDIDATE58_GATE2B0_IMPLEMENTATION_FREEZE_v0.1.json)" = "$IMPLEMENTATION_FREEZE_BLOB"
+          echo "$MACHINE_SHA256  $MACHINE_PATH" | sha256sum -c -
+          python - <<'PY'
+          import subprocess
+          expected={
+            'protocols/RISU_DIFF_E2_CANDIDATE58_GATE2B0_CLAIM_ELIGIBILITY_FRONTIER_PROTOCOL_v0.1.json',
+            'tools/e2_candidate58_gate2b0_claim_eligibility_frontier.py',
+            'protocols/RISU_DIFF_E2_CANDIDATE58_GATE2B0_IMPLEMENTATION_FREEZE_v0.1.json',
+            '.github/workflows/e2-candidate58-gate2b0-claim-eligibility-frontier.yml',
+          }
+          names=set(subprocess.check_output(['git','diff','--name-only','afcf9ce67d93be612f1004c6a2031e819f0ea12d..HEAD'],text=True).splitlines())
+          assert names==expected, (names, expected)
+          print('GATE2B0_POST_GATE2A_ADDITIVE_FIREWALL=PASS')
+          PY
+
+      - name: Set up exact Python runtime
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.13.5"
+
+      - name: Qualify frozen frontier classifier before matrix execution
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(python - <<'PY'
+          import platform
+          print(platform.python_version())
+          PY
+          )" = "3.13.5"
+          python tools/e2_candidate58_gate2b0_claim_eligibility_frontier.py --self-test
+
+      - name: Execute first deterministic Gate2B0 diagnostic replay
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/gate2b0/replay1"
+          python tools/e2_candidate58_gate2b0_claim_eligibility_frontier.py \
+            --protocol protocols/RISU_DIFF_E2_CANDIDATE58_GATE2B0_CLAIM_ELIGIBILITY_FRONTIER_PROTOCOL_v0.1.json \
+            --matrix "$MACHINE_PATH" \
+            --output-dir "$RUNNER_TEMP/gate2b0/replay1"
+          test "$(find "$RUNNER_TEMP/gate2b0/replay1" -maxdepth 1 -type f | wc -l)" -eq 3
+          (cd "$RUNNER_TEMP/gate2b0/replay1" && find . -type f -print0 | sort -z | xargs -0 sha256sum) > "$RUNNER_TEMP/gate2b0/replay1.logical-tree.sha256"
+
+      - name: Execute mandatory second deterministic Gate2B0 diagnostic replay
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/gate2b0/replay2"
+          python tools/e2_candidate58_gate2b0_claim_eligibility_frontier.py \
+            --protocol protocols/RISU_DIFF_E2_CANDIDATE58_GATE2B0_CLAIM_ELIGIBILITY_FRONTIER_PROTOCOL_v0.1.json \
+            --matrix "$MACHINE_PATH" \
+            --output-dir "$RUNNER_TEMP/gate2b0/replay2"
+          test "$(find "$RUNNER_TEMP/gate2b0/replay2" -maxdepth 1 -type f | wc -l)" -eq 3
+          (cd "$RUNNER_TEMP/gate2b0/replay2" && find . -type f -print0 | sort -z | xargs -0 sha256sum) > "$RUNNER_TEMP/gate2b0/replay2.logical-tree.sha256"
+
+      - name: Require exact logical byte identity and diagnostic firewall
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmp "$RUNNER_TEMP/gate2b0/replay1.logical-tree.sha256" "$RUNNER_TEMP/gate2b0/replay2.logical-tree.sha256"
+          diff -qr "$RUNNER_TEMP/gate2b0/replay1" "$RUNNER_TEMP/gate2b0/replay2"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          r=Path(os.environ['RUNNER_TEMP'])/'gate2b0/replay1'
+          ledger=json.loads((r/'E2_CANDIDATE58_GATE2B0_FRONTIER_LEDGER.json').read_text())
+          summary=json.loads((r/'E2_CANDIDATE58_GATE2B0_FRONTIER_SUMMARY.json').read_text())
+          receipt=json.loads((r/'E2_CANDIDATE58_GATE2B0_DIAGNOSTIC_RECEIPT.json').read_text())
+          assert ledger['case_count']==58 and len(ledger['rows'])==58
+          assert summary['case_count']==58 and sum(summary['frontier_counts'].values())==58
+          assert summary['partition_complete'] is True
+          assert receipt['status']=='FIRST_COMPLETE_GATE2B0_LOGICAL_OUTPUT'
+          assert receipt['integrity']['partition_total']==58
+          assert receipt['integrity']['unique_case_count']==58
+          assert receipt['integrity']['classifier_view_only'] is True
+          assert receipt['scientific_firewall']=={
+            'semantic_engine_rerun':False,
+            'c1_checker_rerun':False,
+            'gate2a_joined_ledger_read':False,
+            'gate2a_metrics_read':False,
+            'truth_or_operator_read':False,
+            'candidate_source_read':False,
+            'semantic_slice_content_read':False,
+            'certificate_content_read':False,
+            'c1_report_content_read':False,
+            'fresh_heldout_read':False,
+            'remediation':False,
+            'semantic_rule_change':False,
+          }
+          assert summary['interpretation_boundary']['frontier_is_not_semantic_root_cause'] is True
+          print('GATE2B0_TWO_REPLAY_LOGICAL_BYTE_IDENTITY=PASS')
+          print('GATE2B0_FRONTIER_COUNTS='+json.dumps(summary['frontier_counts'],sort_keys=True,separators=(',',':')))
+          PY
+
+      - name: Upload both exact Gate2B0 replays before repository freeze
+        id: evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-candidate58-gate2b0-first-complete-dual-replay
+          path: |
+            ${{ runner.temp }}/gate2b0/replay1
+            ${{ runner.temp }}/gate2b0/replay2
+            ${{ runner.temp }}/gate2b0/replay1.logical-tree.sha256
+            ${{ runner.temp }}/gate2b0/replay2.logical-tree.sha256
+          if-no-files-found: error
+          retention-days: 90
+          overwrite: false
+
+      - name: Materialize exact first-complete Gate2B0 repository freeze payload
+        shell: bash
+        env:
+          ARTIFACT_ID: ${{ steps.evidence.outputs.artifact-id }}
+          ARTIFACT_DIGEST: ${{ steps.evidence.outputs.artifact-digest }}
+        run: |
+          set -euo pipefail
+          SRC="$RUNNER_TEMP/gate2b0/replay1"
+          D="experiments/risu-diff-e2/qualification/candidate58/gate2b0-claim-eligibility-frontier"
+          test ! -e "$D"
+          mkdir -p "$D"
+          cp "$SRC/E2_CANDIDATE58_GATE2B0_FRONTIER_LEDGER.json" "$D/"
+          cp "$SRC/E2_CANDIDATE58_GATE2B0_FRONTIER_SUMMARY.json" "$D/"
+          cp "$SRC/E2_CANDIDATE58_GATE2B0_DIAGNOSTIC_RECEIPT.json" "$D/"
+          cp "$RUNNER_TEMP/gate2b0/replay1.logical-tree.sha256" "$D/E2_CANDIDATE58_GATE2B0_LOGICAL_TREE.sha256"
+          export D ARTIFACT_ID ARTIFACT_DIGEST
+          python - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          d=Path(os.environ['D'])
+          h=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          summary=json.loads((d/'E2_CANDIDATE58_GATE2B0_FRONTIER_SUMMARY.json').read_text())
+          freeze={
+            'schema':'risu.e2-candidate58-gate2b0-first-complete-immutable-freeze/v0.1',
+            'status':'FIRST_COMPLETE_GATE2B0_DIAGNOSTIC_IMMUTABLY_FROZEN_BY_CONTAINING_COMMIT',
+            'repository':'risu-research/risu-verify',
+            'branch':'e2-development',
+            'workflow_trigger_commit':os.environ['GITHUB_SHA'],
+            'workflow_run_id':os.environ['GITHUB_RUN_ID'],
+            'workflow_run_attempt':os.environ['GITHUB_RUN_ATTEMPT'],
+            'hosted_artifact_id':os.environ['ARTIFACT_ID'],
+            'hosted_artifact_digest':os.environ['ARTIFACT_DIGEST'],
+            'gate2a_first_complete_freeze_commit':'afcf9ce67d93be612f1004c6a2031e819f0ea12d',
+            'first_complete_machine_freeze_commit':'2ece1023252a8e9100a34d74079493040441e1e2',
+            'machine_matrix_sha256':'7273ce4034d06e67989a33540f5b22fef3190cf311a8981474413b538e43472d',
+            'gate2b0_protocol_git_blob':'861165bba33e40f95271853fa8bd4a01ec2ed165',
+            'gate2b0_analyzer_git_blob':'e9c96246288aee7b868a714910b5f5ff7f88b8d5',
+            'gate2b0_implementation_freeze_git_blob':'9dffa1b30e5d01a88b3a140cf70cb47e362a9b2c',
+            'frontier_ledger_sha256':h(d/'E2_CANDIDATE58_GATE2B0_FRONTIER_LEDGER.json'),
+            'frontier_summary_sha256':h(d/'E2_CANDIDATE58_GATE2B0_FRONTIER_SUMMARY.json'),
+            'diagnostic_receipt_sha256':h(d/'E2_CANDIDATE58_GATE2B0_DIAGNOSTIC_RECEIPT.json'),
+            'logical_tree_manifest_sha256':h(d/'E2_CANDIDATE58_GATE2B0_LOGICAL_TREE.sha256'),
+            'frontier_counts':summary['frontier_counts'],
+            'case_count':58,
+            'two_replay_logical_byte_identity':True,
+            'taxonomy_frozen_before_observed_frontier_counts':True,
+            'diagnostic_only':True,
+            'truth_or_operator_read':False,
+            'semantic_engine_or_c1_rerun':False,
+            'remediation_performed':False,
+            'immutability_rule':{
+              'this_first_complete_gate2b0_result_may_not_be_replaced':True,
+              'later_deeper_diagnostics_must_be_additive':True,
+              'gate2a_and_first_machine_artifacts_remain_immutable':True,
+            },
+          }
+          (d/'E2_CANDIDATE58_GATE2B0_FIRST_COMPLETE_IMMUTABLE_FREEZE_RECEIPT.json').write_bytes((json.dumps(freeze,sort_keys=True,separators=(',',':'))+'\n').encode())
+          PY
+          echo "$MACHINE_SHA256  $MACHINE_PATH" | sha256sum -c -
+
+      - name: Create one immutable Gate2B0 result commit and push fast-forward only
+        shell: bash
+        run: |
+          set -euo pipefail
+          D="experiments/risu-diff-e2/qualification/candidate58/gate2b0-claim-eligibility-frontier"
+          git config user.name "risu-research-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -- "$D"
+          python - <<'PY'
+          import subprocess
+          p='experiments/risu-diff-e2/qualification/candidate58/gate2b0-claim-eligibility-frontier/'
+          expected={
+            p+'E2_CANDIDATE58_GATE2B0_FRONTIER_LEDGER.json',
+            p+'E2_CANDIDATE58_GATE2B0_FRONTIER_SUMMARY.json',
+            p+'E2_CANDIDATE58_GATE2B0_DIAGNOSTIC_RECEIPT.json',
+            p+'E2_CANDIDATE58_GATE2B0_LOGICAL_TREE.sha256',
+            p+'E2_CANDIDATE58_GATE2B0_FIRST_COMPLETE_IMMUTABLE_FREEZE_RECEIPT.json',
+          }
+          names=set(subprocess.check_output(['git','diff','--cached','--name-only'],text=True).splitlines())
+          assert names==expected, (names, expected)
+          print('GATE2B0_FREEZE_COMMIT_DELTA_FIREWALL=PASS')
+          PY
+          REMOTE_HEAD="$(git ls-remote origin refs/heads/e2-development | awk '{print $1}')"
+          test "$REMOTE_HEAD" = "$GITHUB_SHA"
+          git commit -m "Freeze first complete Candidate58 Gate2B0 diagnostic frontier"
+          FREEZE_SHA="$(git rev-parse HEAD)"
+          git push origin HEAD:e2-development
+          echo "GATE2B0_FIRST_COMPLETE_FREEZE_COMMIT=$FREEZE_SHA"
+
+      - name: Post-push immutable-boundary verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          REMOTE_HEAD="$(git ls-remote origin refs/heads/e2-development | awk '{print $1}')"
+          test "$REMOTE_HEAD" = "$(git rev-parse HEAD)"
+          test "$(git diff-tree --no-commit-id --name-only -r HEAD | grep -v '^$' | wc -l)" -eq 5
+          echo "$MACHINE_SHA256  $MACHINE_PATH" | sha256sum -c -
+          echo "GATE2B0_FIRST_COMPLETE_REPOSITORY_FREEZE=PASS"
