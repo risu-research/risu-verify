@@ -115,18 +115,33 @@ def _normalize_compare_operator(raw: str) -> str | None:
     return None
 
 
-def _guard_operator(overlay: Mapping[str,Any], transported_guard_id: str) -> str | None:
-    rows=[]
+def _guard_operator(overlay: Mapping[str,Any], transported_guard_id: str, expected_operand_indices: Sequence[int]) -> str | None:
+    """Resolve comparator authority only from canonical comparison-operand roles.
+
+    Negative or otherwise non-canonical operand indices remain valid graph evidence but
+    are non-authoritative for EQ/NE semantics. Missing canonical operands, malformed
+    authoritative rows, unsupported tokens, or disagreement all fail closed.
+    """
+    expected={int(x) for x in expected_operand_indices}
+    if not expected:
+        return None
+    rows=[]; seen=set()
     for e in overlay.get("edges",[]) or []:
         if e.get("kind")!="COMPARES" or str(e.get("target"))!=transported_guard_id:
             continue
-        ops=e.get("attrs",{}).get("operators",[]) or []
-        if len(ops)!=1:
+        attrs=e.get("attrs",{}) or []; idx=attrs.get("operand_index") if isinstance(attrs,Mapping) else None
+        if type(idx) is not int or idx not in expected:
+            continue
+        seen.add(idx)
+        ops=attrs.get("operators",[]) or []
+        if not isinstance(ops,list) or len(ops)!=1:
             return None
         op=_normalize_compare_operator(str(ops[0]))
         if op is None:
             return None
         rows.append(op)
+    if seen != expected:
+        return None
     return rows[0] if rows and len(set(rows))==1 else None
 
 

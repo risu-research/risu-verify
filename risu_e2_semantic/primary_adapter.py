@@ -45,7 +45,8 @@ def adapt_primary(*, case_id: str, language: str, source_path: str,
     guard_scope=str(nodes.get(anchors.get("GUARD_COMPARISON",""),{}).get("attrs",{}).get("scope") or "")
     if not guard_scope: unresolved.append("GUARD_SCOPE_UNRESOLVED")
     source_roles=canonical_profile.get("source_roles",{}) or {}
-    guard_operator=_guard_operator(overlay,anchors.get("GUARD_COMPARISON",""))
+    expected_guard_operand_indices=sorted({int(spec["operand_index"]) for spec in exec_sig["required_bindings"] if spec.get("kind")=="guard_operand"})
+    guard_operator=_guard_operator(overlay,anchors.get("GUARD_COMPARISON",""),expected_guard_operand_indices)
     if guard_operator is None: unresolved.append("GUARD_OPERATOR_UNRESOLVED")
     bindings=[]; binding_role_roots={}
     for spec in exec_sig["required_bindings"]:

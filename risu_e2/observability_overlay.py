@@ -9,6 +9,12 @@ from .overlay_source import _augment_python_field_binds, _call_argument_index
 
 OVERLAY_SCHEMA = "risu.e2-observability-overlay/v0.1"
 
+
+def _unique_anchor_scope(controls: Mapping[str,Mapping[str,Any]], span: Tuple[int,int,int,int]) -> str | None:
+    """Return structured-control scope authority only when exactly one scope contains the anchor."""
+    matches=sorted(str(name) for name,row in controls.items() if _contains(tuple(row["span"]),span))
+    return matches[0] if len(matches)==1 else None
+
 def build_overlay(*, path: str, source: str, source_sha256: str, language: str,
                   facts: Sequence[Mapping[str,Any]], base_ir: Mapping[str,Any],
                   anchor_contract: Mapping[str,Any], anchor_contract_sha256: str) -> Dict[str,Any]:
@@ -51,7 +57,12 @@ def build_overlay(*, path: str, source: str, source_sha256: str, language: str,
             elif role=="EFFECT_BOUNDARY": kind="EFFECT"
             elif role in {"SUCCESS_OUTCOME","REJECTION_NO_EFFECT_OUTCOME"}: kind="OUTCOME"
             else: raise ValueError(f"unsupported anchor role:{role}")
-            n=g.node(kind,f"anchor:{aname}:{role}",sp,anchor_name=aname,anchor_role=role,anchor_contract_sha256=anchor_contract_sha256,syntax_kind=a["syntax_kind"])
+            node_attrs={"anchor_name":aname,"anchor_role":role,"anchor_contract_sha256":anchor_contract_sha256,"syntax_kind":a["syntax_kind"]}
+            if role=="GUARD_COMPARISON":
+                scope=_unique_anchor_scope(controls,sp)
+                if scope is not None:
+                    node_attrs["scope"]=scope
+            n=g.node(kind,f"anchor:{aname}:{role}",sp,**node_attrs)
             g.evidenced(n,sp,"frozen_consequence_anchor",**evattrs)
             anchored_nodes[(aname,role)]=n
 
