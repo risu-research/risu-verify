@@ -1,0 +1,114 @@
+{
+  "schema": "risu.e2-a3-a4-frozen48-helper-polarity-requalification/v0.1",
+  "status": "PROSPECTIVELY_FROZEN_POST_DIAGNOSIS_BEFORE_REQUALIFICATION_ADAPTERS_AND_RERUN",
+  "classification": "NON_PROSPECTIVE_POST_DIAGNOSIS_REMEDIATION_REQUALIFICATION",
+  "authority": {
+    "repository": "risu-research/risu-verify",
+    "branch": "e2-development",
+    "historical_first_complete_freeze_commit": "92e7b9630e363c591a424c3ed730b7760e74babd",
+    "historical_first_complete_official_status": "FROZEN_FAIL",
+    "historical_primary_qualified_count": 26,
+    "historical_independent_qualified_count": 26,
+    "postfreeze_diagnosis_freeze_commit": "7b84979e9c010400706d1ae16d7f31e87caee953",
+    "helper_polarity_new_corpus_prospective_pass_commit": "f1403fece2c6815228240be4533e72ccfd9ad12b",
+    "canonical_integration_pass_commit": "8033ab369a32c635549684f5d8fc6c17a23805c5",
+    "public_nonregression_pass_commit": "fe370064dad75a3e901ae846d9b4e0386eb7f25f",
+    "predicate_polarity_v1_git_blob": "de0b188dda16cacf842bc5539066681d01a4f9b3",
+    "path_observability_v2_git_blob": "e3d0b19fd87d3b5ff0a3344e0915b56bcb342bb9",
+    "frozen_transport_bundle_sha256": "222f0341836a0ae6487471444a82914c30d61ca3896a88cadf4de2bfa9487f2a"
+  },
+  "historical_result_immutability": {
+    "statement": "The original selected-48 first-complete result remains permanently FROZEN_FAIL at 26/48. This new protocol does not replace, reinterpret as PASS, or weaken that historical gate.",
+    "historical_commit_must_remain_unchanged": true,
+    "historical_zip_must_remain_unchanged": true,
+    "historical_receipt_must_remain_unchanged": true
+  },
+  "frozen_postdiagnosis_partition": {
+    "selected_case_count": 48,
+    "strict_transport_eligible_count": 31,
+    "strict_transport_ineligible_count": 17,
+    "transport_ineligible_cells": [
+      "Q001","Q004","Q011","Q012","Q016","Q021","Q022","Q023","Q024","Q026","Q033","Q040","Q041","Q045","Q052","Q053","Q056"
+    ],
+    "previously_qualified_count": 26,
+    "diagnosed_helper_polarity_cells": ["Q013","Q014","Q015","Q017","Q018"],
+    "partition_may_not_change_during_requalification": true
+  },
+  "scientific_change_scope": {
+    "allowed": [
+      "Route Python helper-control path analysis through frozen path_observability_v2.",
+      "Consume frozen predicate_polarity_v1 certificates only through path_observability_v2.",
+      "Emit additive polarity certificate metadata and transported_guard_truth for proved helper-control paths."
+    ],
+    "forbidden": [
+      "Change frontend_js_v3.",
+      "Change frontend_python_v2.",
+      "Change ir_v3.",
+      "Change observability overlay construction.",
+      "Change frozen transport engine or transport receipts.",
+      "Loosen strict_transport_eligible.",
+      "Change selected-48 membership.",
+      "Case-ID, seed-ID, source-hash, mutation-label, or literal-helper-name branching.",
+      "Use mutation truth, mutation operator metadata, expected E2 predictions, candidate-58, epistemic-10, or raw blind-58 transport."
+    ]
+  },
+  "adapter_contract": {
+    "new_primary_adapter_allowed": "tools/e2_frozen48_helper_polarity_requalification_primary.py",
+    "new_independent_adapter_allowed": "tools/e2_frozen48_helper_polarity_requalification_independent.py",
+    "derivation_rule": "Adapters must be minimal deterministic derivatives of frozen adapter-v2. The strict transport admission, source binding, frontend/IR, overlay, canonical row fields, and fail-closed transport row must remain semantically identical. Only the path-observability call may route to path_observability_v2 and additive certificate evidence may be recorded outside the frozen canonical row projection.",
+    "primary_independent_may_not_import_each_other": true
+  },
+  "two_axis_pass_gate": {
+    "axis_A_transport_conservative_safety": {
+      "required": "17_OF_17_FROZEN_TRANSPORT_INELIGIBLE_REMAIN_FAIL_CLOSED",
+      "required_reason": "OBSERVABILITY_INCOMPLETE_TRANSPORT",
+      "base_ir_must_remain": "NOT_EVALUATED",
+      "no_ineligible_row_may_be_promoted": true
+    },
+    "axis_B_observability_given_frozen_transport_admission": {
+      "required": "31_OF_31_STRICT_TRANSPORT_ELIGIBLE_OBSERVABILITY_QUALIFIED",
+      "previously_qualified_26_must_remain_qualified": true,
+      "diagnosed_five_must_be_qualified": true,
+      "diagnosed_five_required_effective_guard_form": "HELPER_CONTROL",
+      "diagnosed_five_required_polarity_certificate_status": "PROVED"
+    }
+  },
+  "exact_regression_requirements": {
+    "selected_identity_set": "EXACT_48_UNCHANGED",
+    "strict_transport_partition": "EXACT_31_PLUS_17_UNCHANGED",
+    "primary_case_count": 48,
+    "independent_case_count": 48,
+    "primary_independent_exact_frozen_canonical_row_agreement": "48_OF_48",
+    "checker_mismatch_cell_ids": [],
+    "repeat_each_checker_twice_byte_identical": true,
+    "previously_qualified_26_canonical_rows_unchanged": true,
+    "transport_ineligible_17_canonical_rows_unchanged": true,
+    "only_expected_canonical_status_delta_cells": ["Q013","Q014","Q015","Q017","Q018"]
+  },
+  "expected_nonprospective_remediation_delta": {
+    "old_qualified_count": 26,
+    "new_qualified_count_if_generic_remediation_integrates_correctly": 31,
+    "old_nonqualified_count": 22,
+    "new_nonqualified_count_if_correct": 17,
+    "allowed_status_delta_count": 5,
+    "allowed_status_delta": "OBSERVABILITY_INCOMPLETE -> OBSERVABILITY_QUALIFIED_FOR_A3_A4_EXECUTION",
+    "note": "These five expectations are post-diagnosis remediation targets and therefore are not prospective held-out evidence. The scientific generality evidence comes from the separately frozen new 32-case prospective corpus and canonical integration regression."
+  },
+  "result_naming": {
+    "if_gate_passes": "REMEDIATION_REQUALIFICATION_PASS",
+    "mandatory_coverage_statement": "31/48 strict-transport eligible; 31/31 observability-qualified given admission; 17/17 conservative transport exclusions preserved.",
+    "forbidden_claim": "48/48 observability qualified",
+    "historical_status_must_still_be_reported": "ORIGINAL_FIRST_COMPLETE_FROZEN_FAIL_26_OF_48"
+  },
+  "first_complete_rule": "The first complete remediation-requalification bundle must be archived unchanged before any diagnosis, adapter modification, gate modification, or further rerun.",
+  "firewall": {
+    "candidate58_read": false,
+    "epistemic10_read": false,
+    "raw_blind58_transport_read": false,
+    "mutation_truth_or_operator_metadata_read": false,
+    "expected_e2_prediction_read": false,
+    "fresh_target_bytes_read": false,
+    "a3_a4_semantic_verdict_execution": false
+  },
+  "next_boundary": "Create and freeze the minimal Primary/Independent requalification adapters plus a sealed rerun workflow. Do not modify predicate_polarity_v1 or path_observability_v2. Candidate-58 remains sealed."
+}
