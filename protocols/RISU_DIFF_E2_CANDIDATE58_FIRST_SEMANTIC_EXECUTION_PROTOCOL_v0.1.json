@@ -1,0 +1,216 @@
+{
+  "schema": "risu.e2-candidate58-first-semantic-execution-protocol/v0.1",
+  "protocol_id": "RISU_DIFF_E2_CANDIDATE58_FIRST_SEMANTIC_EXECUTION_PROTOCOL_v0.1",
+  "status": "PROSPECTIVE_SEALED_NOT_EXECUTED",
+  "gate": "GATE_1D_FIRST_SEMANTIC_EXECUTION_SEAL",
+  "purpose": "Authorize exactly one first-complete Candidate-58 semantic prediction exercise under the already-frozen Gate1B/1C semantics and C1 trust boundary, while keeping truth/operator/expected-prediction and Epistemic-10 channels sealed until the complete machine-only bundle is immutably frozen.",
+  "scientific_noninterference": {
+    "changes_CTV_v0_1_semantics": false,
+    "changes_A3_A4_witness_or_preservation_rules": false,
+    "changes_existing_gold": false,
+    "changes_historical_machine_bytes": false,
+    "changes_frozen48_history": false,
+    "authorizes_candidate58_truth_join_before_first_complete_freeze": false,
+    "authorizes_epistemic10": false,
+    "authorizes_fresh_heldout": false,
+    "authorizes_target_specific_rules": false
+  },
+  "production_stack_lock": {
+    "repository": "risu-research/risu-verify",
+    "branch": "e2-development",
+    "pre_protocol_freeze_head": "3469c36e638d152e14e52216d5f1046108fbe32e",
+    "pre_protocol_freeze_tree": "4038c43b329a8174e85837ccfb01621a1fb323b9",
+    "candidate58_semantic_bridge_freeze_commit": "f6d274af108a1b779b3aec4f9f8125de630f72f4",
+    "gate1b1c_kernel_c1_commit": "7b7cafacb7a7aa32b2ce8ee25acbb050d4ec8f02",
+    "canonical_bridge_pass_freeze_commit": "3469c36e638d152e14e52216d5f1046108fbe32e"
+  },
+  "normative_protocol_lock": {
+    "CTV_META_THEORY_v0.1": "gitblob:c53766c7bb1b322b4b706ddac5e90d957eb8e397",
+    "CTV_META_THEORY_v0.1_AMENDMENT_001": "gitblob:7ca86d42fa56a4aecb67c7ca1c9fc4418ec4c716",
+    "E2_A3_A4_VERDICT_PREREGISTRATION_v0.1": "gitblob:8926d0b32a1c48addb5e341c3b8bdeb258fc7f85",
+    "E2_GATE1B1C_MINIMAL_SEMANTIC_FRAGMENT_v0.1": "gitblob:abb06d4b71a66100b04b225d1d3c0d5ac22e887c",
+    "E2_CERTIFICATE_TRUST_BOUNDARY_v0.1": "gitblob:30a2330babc28a012acbd2eee5e0b7b020495755",
+    "E2_CANDIDATE58_SEMANTIC_VERDICT_PROTOCOL_v0.1": "gitblob:8b69568fdb4c0ffe66a46562ba2673ea8d9f19ae",
+    "E2_GATE1B1C_IMPLEMENTATION_FREEZE_v0.1": "gitblob:24724a44a7a200e7f069e4e62b5ee16df673dcf2"
+  },
+  "implementation_lock": {
+    "semantic_engine": {"path":"risu_e2_semantic/kernel.py","git_blob":"e91e51397f4cc201452b1a0f80d130265dca2ea0"},
+    "certificate_producer": {"path":"risu_e2_semantic/certificate.py","git_blob":"0006f4134f130fe1c3d8305f8f007d09b08ffc65"},
+    "primary_adapter": {"path":"risu_e2_semantic/primary_adapter.py","git_blob":"c1b5d5e666bdd1b8f9bb1e041f76368f7f7a741c"},
+    "adapter_support": {"path":"risu_e2_semantic/adapter_support.py","git_blob":"5558d4bc91a0e51c4f836b4ae6db69bcf6abafe7"},
+    "canonical_bridge_scientific_v1": {"path":"risu_e2_semantic/canonical_bridge_v1.py","git_blob":"9e3ceeca756d76f0bc913ffc685a413936966aa6"},
+    "canonical_bridge_scope_wrapper": {"path":"risu_e2_semantic/canonical_bridge.py","git_blob":"a0e6f9654b09feb4cca8e1503340bc9078b58851"},
+    "canonical_worlds": {"path":"risu_e2_semantic/canonical_worlds.py","git_blob":"0044b7594a2ae2409c778625933aaca21f763b0d"},
+    "closed_read_set": {"path":"risu_e2_semantic/closed_read_set.py","git_blob":"5d98c4708e2bcab376d9fc67f660809c93c6e499"},
+    "bridge_cli_scientific_v1": {"path":"risu_e2_semantic/bridge_cli_v1.py","git_blob":"7d84272e8f34f999dfccd1e529acb2dd0c40c0c2"},
+    "bridge_cli_bookkeeping_wrapper": {"path":"risu_e2_semantic/bridge_cli.py","git_blob":"9b19361b56ff196f3d4d8befade4719ad87b4603"},
+    "bridge_tool": {"path":"tools/e2_gate1b1c_bridge.py","git_blob":"2bf4e4d72b4af860c9525388d86e0d00eea219bf"},
+    "c1_rechecker": {"path":"risu_e2_c1/rechecker.py","git_blob":"ec7e782c88fb8786eb5b3d267e44d81885707728"},
+    "c1_semantics": {"path":"risu_e2_c1/semantics.py","git_blob":"17d7d614130897abdebf85a3fb0cda3b9d59574b"},
+    "c1_source_extract": {"path":"risu_e2_c1/source_extract.py","git_blob":"aadbe082e7d4f97a7b524a70c3cd1a2fbf448682"},
+    "c1_source_python": {"path":"risu_e2_c1/source_python.py","git_blob":"97c20c76b09de42af21df9b2f531da9e28c055af"},
+    "c1_common": {"path":"risu_e2_c1/common.py","git_blob":"65957407cd21f3940c2d0311b0fe6494f754192b"}
+  },
+  "primary_e2_authority_lock": {
+    "model_git_blob": "64baf95a4939f168881627830134b314a6ee6098",
+    "ir_git_blob": "d7edac40d4eeda86be74e5785bde3bfc28d4cf5e",
+    "control_extractor_git_blob": "00e06b85d91ce9f75676476c5dc47d15d51d2d35",
+    "overlay_implementation_git_blob": "77be5ea1dad30aa6daa889e0753ce7d1aaa6f07a",
+    "overlay_schema_git_blob": "05f627ec23191b9bb3a7fe86b95a5201c534a53f",
+    "mutation_blind_anchor_transport_protocol_git_blob": "7da7d3ac536d5edda56aa2c2636db1c8b02569b3"
+  },
+  "runtime_lock": {
+    "implementation": "CPython",
+    "python_major": 3,
+    "python_minor": 13,
+    "python_micro": 5,
+    "parser": "python_stdlib_ast",
+    "third_party_runtime_dependencies_for_semantic_kernel_and_c1": []
+  },
+  "canonical_authority_lock": {
+    "canonical_signature_path": "experiments/risu-diff-e2/qualification/a3-a4/E2_A3_A4_CANONICAL_SEED_CONSEQUENCE_SIGNATURES_v0.1.json",
+    "canonical_signature_git_blob": "cfa7d78707599177afe690c3aad7faaa22cb1930",
+    "canonical_signature_file_sha256": "7a652a508d53960dc0fcdb8860b9d358165f6a6c96b050e6b962edccc2a4549f",
+    "public_signature_bundle_digest_sha256": "ce4502a3f8bb2cf9e2d16138b44e4165b7884737e74e8289883c81e6a7e89a1e",
+    "execution_profiles": {"path":"experiments/risu-diff-e2/qualification/gate1b1c-canonical-bridge/E2_GATE1B1C_CANONICAL_EXECUTION_PROFILES.json","git_blob":"02c6e01d1a86167a15823cf14b61bfa37212d700","sha256":"ab6cefe49670cb41213b924907d5170b0ce20b81cd14abe657701371d00b0d2b"},
+    "declared_finite_worlds": {"path":"experiments/risu-diff-e2/qualification/gate1b1c-canonical-bridge/E2_GATE1B1C_DECLARED_FINITE_WORLDS.json","git_blob":"24547f8e88c670fcb1b6e3d2f4d971634198fb90","sha256":"1254c3dfda6c69a51dd7b923c290287119d9a265e6896b57c00929c2dbdd0c80","target_rho_stored":false},
+    "canonical_read_policy": {"path":"experiments/risu-diff-e2/qualification/gate1b1c-canonical-bridge/E2_GATE1B1C_CANONICAL_READ_POLICY.json","git_blob":"eb11429a20820b3ec6fbb1e2bbd0ea962f061c35","sha256":"4b4bc906b1bad77da849dc3b53b57c509b43376648156d1bdf2cd5ceb28c9f99"},
+    "canonical_bridge_pass_receipt_git_blob": "d2af63c461f9dad2691d147d12d96c3d10842f88"
+  },
+  "candidate58_input_lock": {
+    "admission_manifest": {
+      "path": "experiments/risu-diff-e2/qualification/anchor-transport/admission/E2_SANITIZED_OPAQUE_58_ADMISSION_MANIFEST.json",
+      "git_blob": "f2fc78439d4bfadce5941bf71aadd15ec292bcb1",
+      "sha256": "847d85c2274cd6b94a83eefe0f6153a8fb183dbad758efa75118a4fd368623e4",
+      "case_count": 58,
+      "unique_transport_case_ids": 58,
+      "language_counts": {"go":19,"python":20,"typescript_javascript":19},
+      "allowed_identity_fields": ["transport_case_id","candidate_source_sha256","language","seed_id"],
+      "semantic_authority": false
+    },
+    "admission_freeze_receipt_git_blob": "2c2ea8b9f6ca72c2262ffe6294287ee2e58fc00f",
+    "materialized_cells_tree_git_sha": "34a30574c7420728bff57958c815194979a622ab",
+    "blind58_transport": {
+      "bundle_path": "experiments/risu-diff-e2/qualification/anchor-transport/blind58/E2_BLIND_58_ANCHOR_TRANSPORT_BUNDLE.json",
+      "bundle_sha256": "78c5f024c1af7a353844120879d3ec4487b5f56fb443bc6e063530f836a9f74c",
+      "freeze_receipt_path": "experiments/risu-diff-e2/qualification/anchor-transport/blind58/E2_BLIND_58_ANCHOR_TRANSPORT_FREEZE_RECEIPT.json",
+      "freeze_receipt_git_blob": "1c97eb8df5bafcfd8523ee6aba0c5a2b981b5df0",
+      "complete_cases": 41,
+      "transport_incomplete_cases": 17,
+      "semantic_authority": false
+    },
+    "identity_rule": "The exact 58-case set is the complete set of entries in the pinned sanitized manifest. No case may be added, removed, replaced, duplicated, or selected by outcome."
+  },
+  "runtime_read_policy": {
+    "canonical_json_sha256": "06bd3826c89c398e6edb64ad1c57cc76b61b6fec9a9a398f526295e071587ce4",
+    "policy": {
+      "schema": "risu.e2-candidate58-runtime-read-policy/v0.1",
+      "closed": true,
+      "candidate_identity_authority": {
+        "manifest_path": "experiments/risu-diff-e2/qualification/anchor-transport/admission/E2_SANITIZED_OPAQUE_58_ADMISSION_MANIFEST.json",
+        "manifest_git_blob": "f2fc78439d4bfadce5941bf71aadd15ec292bcb1",
+        "manifest_sha256": "847d85c2274cd6b94a83eefe0f6153a8fb183dbad758efa75118a4fd368623e4",
+        "admission_freeze_receipt_git_blob": "2c2ea8b9f6ca72c2262ffe6294287ee2e58fc00f",
+        "materialized_cells_tree_git_sha": "34a30574c7420728bff57958c815194979a622ab",
+        "case_count": 58,
+        "unique_transport_case_ids": 58,
+        "language_counts": {"go":19,"python":20,"typescript_javascript":19}
+      },
+      "allowed_runtime_reads": [
+        "pinned normative protocols and implementation files named by this execution protocol",
+        "pinned canonical six-seed public consequence-signature bundle",
+        "pinned canonical execution-profile bundle",
+        "pinned declared finite-world bundle with target rho absent",
+        "pinned canonical closed-read policy and its frozen qualification receipt",
+        "the sanitized opaque 58-case admission manifest pinned above",
+        "candidate source bytes only when resolved from the frozen materialized-cells tree and their SHA-256 exactly matches the manifest entry selected by opaque transport_case_id",
+        "the frozen blind-58 transport bundle and freeze receipt pinned by this protocol",
+        "candidate A2/D1/D2/D3 intermediate outputs generated only by the already-frozen E2 authorities transitively pinned by the A3/A4 preregistration, with per-output content digests recorded in the execution receipt",
+        "new semantic slices, tentative kernel results, certificates, C1 reports, and execution receipts produced during this execution"
+      ],
+      "forbidden_runtime_reads": [
+        "M_PLUS/M_ZERO/M_QUESTION class or any equivalent class label",
+        "canonical truth/gold class for Candidate-58",
+        "expected E2 prediction",
+        "mutation operator id/name/class/description/repair metadata",
+        "post-freeze truth-joined qualification material",
+        "truth-oracle output",
+        "epistemic-10 bytes or labels",
+        "fresh heldout target bytes or gold evidence",
+        "original cell id or original path as semantic authority",
+        "any target-specific repo/org/path/symbol/hash lookup used to choose a verdict"
+      ],
+      "receipt_rule": "Every file/content read must be emitted with role, purpose, SHA-256, and path or opaque content identity; any forbidden read or unreceipted claim-critical read invalidates the execution before definitive prediction."
+    }
+  },
+  "supported_fragment_lock": {
+    "definitive_assurance_floor": "VALID_C1",
+    "current_c1_v0_1": "Python + DIRECT_CONTROL + frozen simple local direct-control model only.",
+    "explicitly_nondefinitive_under_current_c1_v0_1": ["Go","TypeScript/JavaScript","HELPER_CONTROL","loops or unbounded cycles","claim-material try/exception control","multiple semantic branch points in target scope","dynamic or unresolved assignment/call/alias semantics","multiple non-equivalent effect paths","any construct outside the frozen C1 v0.1 local model"],
+    "hard_rule": "Unsupported does not count as semantic failure and cannot be promoted. It must remain E2_PREDICTED_ASSURANCE_INCOMPLETE unless a separately prospective C1 extension is frozen before any Candidate-58 semantic prediction. Once execution begins, no such extension may replace the first complete."
+  },
+  "epistemic_partition": {
+    "epistemic10_authorized": false,
+    "rule": "Epistemic-10 remains sealed and is evaluated only in the separate post-Candidate58 epistemic gate."
+  },
+  "prediction_namespace": {
+    "allowed_machine_labels": ["E2_PREDICTED_REGRESSION_WITNESS","E2_PREDICTED_PRESERVATION_EVIDENCE","E2_PREDICTED_ASSURANCE_INCOMPLETE","INFRASTRUCTURE_INVALID_BEFORE_PREDICTION"],
+    "canonical_gold_labels_forbidden_before_freeze": true,
+    "definitive_labels": ["E2_PREDICTED_REGRESSION_WITNESS","E2_PREDICTED_PRESERVATION_EVIDENCE"],
+    "definitive_requires": "VALID_C1"
+  },
+  "output_contract": {
+    "canonical_json": true,
+    "required_per_case_artifacts": {
+      "semantic_slice": "risu.e2-semantic-slice/v0.1",
+      "kernel_result": "risu.e2-semantic-kernel-result/v0.1",
+      "certificate": "risu.e2-semantic-certificate/v0.1",
+      "c1_report": "risu.e2-c1-recheck/v0.1",
+      "read_receipt": "risu.e2-closed-runtime-read-receipt/v0.1"
+    },
+    "required_complete_bundle_artifacts": {
+      "machine_prediction_matrix": "risu.e2-candidate58-machine-prediction-matrix/v0.1",
+      "certificate_index": "risu.e2-candidate58-certificate-index/v0.1",
+      "c1_index": "risu.e2-candidate58-c1-index/v0.1",
+      "execution_receipt": "risu.e2-candidate58-first-semantic-execution-receipt/v0.1",
+      "first_complete_freeze_receipt": "risu.e2-candidate58-first-semantic-execution-freeze-receipt/v0.1"
+    },
+    "bundle_must_cover_exactly_58_manifest_entries": true,
+    "every_case_requires_terminal_machine_label": true
+  },
+  "execution_order": [
+    "verify protocol/implementation/runtime/canonical/candidate identity locks before any Candidate-58 source or blind-transport content read",
+    "acquire only the pinned sanitized manifest, frozen blind-58 transport material, and source bytes matching manifest hashes under the closed read policy",
+    "produce or verify primary E2 A2/D1/D2/D3 candidate evidence using only frozen authorities and emit digests/receipts",
+    "project through the ultra-thin primary adapter to a semantic slice",
+    "run the frozen semantic kernel for a tentative machine prediction",
+    "produce the proof-bearing certificate",
+    "run the independent C1 raw-source rechecker for every tentative definitive claim",
+    "downgrade every unsupported, invalid, or materially disagreed definitive claim to the preregistered nondefinitive state",
+    "write a complete 58-entry machine-only bundle with certificates, C1 reports, and read receipts",
+    "repeat the complete machine-only execution once and require byte identity of all canonical logical outputs",
+    "archive/upload both replay outputs and the complete machine-only bundle before any final PASS assertion",
+    "immutably freeze the first complete machine-only bytes regardless of favorability",
+    "only after the immutable freeze may the separately authorized truth/gold join begin"
+  ],
+  "epistemic_and_failure_semantics": {
+    "authority_digest_or_schema_mismatch": "INFRASTRUCTURE_INVALID_BEFORE_PREDICTION",
+    "candidate_source_hash_mismatch": "INFRASTRUCTURE_INVALID_BEFORE_PREDICTION",
+    "forbidden_or_unreceipted_claim_critical_read": "INFRASTRUCTURE_INVALID_BEFORE_PREDICTION",
+    "transport_incomplete_or_ambiguous": "E2_PREDICTED_ASSURANCE_INCOMPLETE",
+    "unsupported_C1_fragment": "E2_PREDICTED_ASSURANCE_INCOMPLETE",
+    "invalid_C1_certificate_or_material_primary_C1_disagreement": "E2_PREDICTED_ASSURANCE_INCOMPLETE",
+    "two_replay_logical_byte_mismatch": "INFRASTRUCTURE_INVALID_BEFORE_PREDICTION",
+    "hard_precedence": "No constructive witness or producer-side preservation claim may override transport incompleteness, unsupported C1, invalid C1, forbidden reads, or identity/runtime mismatch."
+  },
+  "first_complete_immutability": {
+    "first_complete_is_never_replaced": true,
+    "no_outcome_driven_repair_before_freeze": true,
+    "no_case_reselection": true,
+    "no_threshold_or_witness_rule_tuning_after_any_prediction_output": true,
+    "postfreeze_remediation": "Allowed only as a separately labeled later development run that preserves and reports the first complete unchanged."
+  },
+  "postfreeze_gold_join_metrics_already_frozen": ["unsafe false stability","regression recall","selective coverage","conditional correctness among definitive claims","stable resolution","epistemic calibration","C1 disagreement or invalid-certificate rate","supported-fragment coverage"],
+  "hard_prohibitions": ["no target-specific repo/org/path/symbol/hash verdict rule","no identifier spelling as semantic role authority","no truth/operator/expected-prediction read before first-complete machine-only freeze","no Epistemic-10 read in this gate","no fresh-heldout read in this gate","no outcome-based replacement or exclusion","no weakening abstention after seeing results","no population/generalization claim from Candidate-58"],
+  "next_authorized_action": "Implement only the mechanical Candidate-58 execution harness/read-receipt plumbing needed to realize this sealed protocol without adding or changing semantic rules; freeze that exact harness identity, then execute the first complete machine-only Candidate-58 lane exactly once with the mandatory deterministic replay before any truth join."
+}
