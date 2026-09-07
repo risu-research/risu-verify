@@ -1,0 +1,363 @@
+{
+  "schema": "risu.e2-a3-a4-helper-polarity-prospective-corpus/v0.1",
+  "status": "FROZEN_BEFORE_IMPLEMENTATION",
+  "protocol_commit": "826a27a26f5d0f584bd9dbda1a0d3d10a7b5ce26",
+  "language": "python",
+  "case_count": 32,
+  "base_case_count": 16,
+  "metamorphic_pair_count": 16,
+  "outcome_counts": {"PROVED_SAME": 8, "PROVED_INVERTED": 8, "UNKNOWN": 16},
+  "rules": {
+    "transported_comparison_text_must_be_unique": true,
+    "scientific_code_may_not_branch_on_case_id": true,
+    "scientific_code_may_not_branch_on_source_hash": true,
+    "unknown_must_fail_closed": true
+  },
+  "cases": [
+    {
+      "case_id": "HPB01_DIRECT_PRESERVE",
+      "pair_id": "HP01",
+      "variant": "BASE",
+      "transported_comparison_text": "left == right",
+      "expected_status": "PROVED",
+      "expected_relation": "SAME",
+      "expected_integration_form": "HELPER_CONTROL",
+      "source": "def allow(left, right):\n    return left == right\n\ndef run(left, right):\n    if allow(left, right):\n        return 1\n    return 0\n"
+    },
+    {
+      "case_id": "HPM01_DIRECT_PRESERVE_ALPHA",
+      "pair_id": "HP01",
+      "variant": "METAMORPH",
+      "transported_comparison_text": "alpha == beta",
+      "expected_status": "PROVED",
+      "expected_relation": "SAME",
+      "expected_integration_form": "HELPER_CONTROL",
+      "source": "def check(alpha, beta):\n    return ((alpha == beta))\n\ndef run(alpha, beta):\n    if (check(alpha, beta)):\n        return 1\n    return 0\n"
+    },
+    {
+      "case_id": "HPB02_CALLER_NEGATION",
+      "pair_id": "HP02",
+      "variant": "BASE",
+      "transported_comparison_text": "left == right",
+      "expected_status": "PROVED",
+      "expected_relation": "INVERTED",
+      "expected_integration_form": "HELPER_CONTROL",
+      "source": "def allow(left, right):\n    return left == right\n\ndef run(left, right):\n    if not allow(left, right):\n        return 0\n    return 1\n"
+    },
+    {
+      "case_id": "HPM02_CALLER_NEGATION_ALPHA",
+      "pair_id": "HP02",
+      "variant": "METAMORPH",
+      "transported_comparison_text": "alpha == beta",
+      "expected_status": "PROVED",
+      "expected_relation": "INVERTED",
+      "expected_integration_form": "HELPER_CONTROL",
+      "source": "def check(alpha, beta):\n    return ((alpha == beta))\n\ndef run(alpha, beta):\n    if not (check(alpha, beta)):\n        return 0\n    return 1\n"
+    },
+    {
+      "case_id": "HPB03_HELPER_NEGATION",
+      "pair_id": "HP03",
+      "variant": "BASE",
+      "transported_comparison_text": "left == right",
+      "expected_status": "PROVED",
+      "expected_relation": "INVERTED",
+      "expected_integration_form": "HELPER_CONTROL",
+      "source": "def allow(left, right):\n    return not (left == right)\n\ndef run(left, right):\n    if allow(left, right):\n        return 0\n    return 1\n"
+    },
+    {
+      "case_id": "HPM03_HELPER_NEGATION_ALPHA",
+      "pair_id": "HP03",
+      "variant": "METAMORPH",
+      "transported_comparison_text": "alpha == beta",
+      "expected_status": "PROVED",
+      "expected_relation": "INVERTED",
+      "expected_integration_form": "HELPER_CONTROL",
+      "source": "def check(alpha, beta):\n    return not (((alpha == beta)))\n\ndef run(alpha, beta):\n    if (check(alpha, beta)):\n        return 0\n    return 1\n"
+    },
+    {
+      "case_id": "HPB04_DOUBLE_NEGATION_ACROSS_BOUNDARY",
+      "pair_id": "HP04",
+      "variant": "BASE",
+      "transported_comparison_text": "left == right",
+      "expected_status": "PROVED",
+      "expected_relation": "SAME",
+      "expected_integration_form": "HELPER_CONTROL",
+      "source": "def allow(left, right):\n    return not (left == right)\n\ndef run(left, right):\n    if not allow(left, right):\n        return 1\n    return 0\n"
+    },
+    {
+      "case_id": "HPM04_DOUBLE_NEGATION_ACROSS_BOUNDARY_ALPHA",
+      "pair_id": "HP04",
+      "variant": "METAMORPH",
+      "transported_comparison_text": "alpha == beta",
+      "expected_status": "PROVED",
+      "expected_relation": "SAME",
+      "expected_integration_form": "HELPER_CONTROL",
+      "source": "def check(alpha, beta):\n    return not (((alpha == beta)))\n\ndef run(alpha, beta):\n    if not (check(alpha, beta)):\n        return 1\n    return 0\n"
+    },
+    {
+      "case_id": "HPB05_ASSIGNED_PRESERVE",
+      "pair_id": "HP05",
+      "variant": "BASE",
+      "transported_comparison_text": "left == right",
+      "expected_status": "PROVED",
+      "expected_relation": "SAME",
+      "expected_integration_form": "HELPER_CONTROL",
+      "source": "def allow(left, right):\n    return left == right\n\ndef run(left, right):\n    decision = allow(left, right)\n    if decision:\n        return 1\n    return 0\n"
+    },
+    {
+      "case_id": "HPM05_ASSIGNED_PRESERVE_ALPHA",
+      "pair_id": "HP05",
+      "variant": "METAMORPH",
+      "transported_comparison_text": "alpha == beta",
+      "expected_status": "PROVED",
+      "expected_relation": "SAME",
+      "expected_integration_form": "HELPER_CONTROL",
+      "source": "def check(alpha, beta):\n    return ((alpha == beta))\n\ndef run(alpha, beta):\n    verdict = check(alpha, beta)\n    if (verdict):\n        return 1\n    return 0\n"
+    },
+    {
+      "case_id": "HPB06_ASSIGNED_INVERT",
+      "pair_id": "HP06",
+      "variant": "BASE",
+      "transported_comparison_text": "left == right",
+      "expected_status": "PROVED",
+      "expected_relation": "INVERTED",
+      "expected_integration_form": "HELPER_CONTROL",
+      "source": "def allow(left, right):\n    return left == right\n\ndef run(left, right):\n    decision = allow(left, right)\n    if not decision:\n        return 0\n    return 1\n"
+    },
+    {
+      "case_id": "HPM06_ASSIGNED_INVERT_ALPHA",
+      "pair_id": "HP06",
+      "variant": "METAMORPH",
+      "transported_comparison_text": "alpha == beta",
+      "expected_status": "PROVED",
+      "expected_relation": "INVERTED",
+      "expected_integration_form": "HELPER_CONTROL",
+      "source": "def check(alpha, beta):\n    return ((alpha == beta))\n\ndef run(alpha, beta):\n    verdict = check(alpha, beta)\n    if not (verdict):\n        return 0\n    return 1\n"
+    },
+    {
+      "case_id": "HPB07_HELPER_DOUBLE_NOT",
+      "pair_id": "HP07",
+      "variant": "BASE",
+      "transported_comparison_text": "left == right",
+      "expected_status": "PROVED",
+      "expected_relation": "SAME",
+      "expected_integration_form": "HELPER_CONTROL",
+      "source": "def allow(left, right):\n    return not (not (left == right))\n\ndef run(left, right):\n    if allow(left, right):\n        return 1\n    return 0\n"
+    },
+    {
+      "case_id": "HPM07_HELPER_DOUBLE_NOT_ALPHA",
+      "pair_id": "HP07",
+      "variant": "METAMORPH",
+      "transported_comparison_text": "alpha == beta",
+      "expected_status": "PROVED",
+      "expected_relation": "SAME",
+      "expected_integration_form": "HELPER_CONTROL",
+      "source": "def check(alpha, beta):\n    return not (not (((alpha == beta))))\n\ndef run(alpha, beta):\n    if (check(alpha, beta)):\n        return 1\n    return 0\n"
+    },
+    {
+      "case_id": "HPB08_TRIPLE_PARITY",
+      "pair_id": "HP08",
+      "variant": "BASE",
+      "transported_comparison_text": "left == right",
+      "expected_status": "PROVED",
+      "expected_relation": "INVERTED",
+      "expected_integration_form": "HELPER_CONTROL",
+      "source": "def allow(left, right):\n    return not (not (left == right))\n\ndef run(left, right):\n    if not allow(left, right):\n        return 0\n    return 1\n"
+    },
+    {
+      "case_id": "HPM08_TRIPLE_PARITY_ALPHA",
+      "pair_id": "HP08",
+      "variant": "METAMORPH",
+      "transported_comparison_text": "alpha == beta",
+      "expected_status": "PROVED",
+      "expected_relation": "INVERTED",
+      "expected_integration_form": "HELPER_CONTROL",
+      "source": "def check(alpha, beta):\n    return not (not (((alpha == beta))))\n\ndef run(alpha, beta):\n    if not (check(alpha, beta)):\n        return 0\n    return 1\n"
+    },
+    {
+      "case_id": "HPB09_UNKNOWN_AND",
+      "pair_id": "HP09",
+      "variant": "BASE",
+      "transported_comparison_text": "left == right",
+      "expected_status": "UNKNOWN",
+      "expected_relation": "UNKNOWN",
+      "expected_integration_form": "UNPROVEN",
+      "source": "def allow(left, right, ready):\n    return (left == right) and ready\n\ndef run(left, right, ready):\n    if allow(left, right, ready):\n        return 1\n    return 0\n"
+    },
+    {
+      "case_id": "HPM09_UNKNOWN_AND_ALPHA",
+      "pair_id": "HP09",
+      "variant": "METAMORPH",
+      "transported_comparison_text": "alpha == beta",
+      "expected_status": "UNKNOWN",
+      "expected_relation": "UNKNOWN",
+      "expected_integration_form": "UNPROVEN",
+      "source": "def check(alpha, beta, flag):\n    return (((alpha == beta)) and flag)\n\ndef run(alpha, beta, flag):\n    if (check(alpha, beta, flag)):\n        return 1\n    return 0\n"
+    },
+    {
+      "case_id": "HPB10_UNKNOWN_OR",
+      "pair_id": "HP10",
+      "variant": "BASE",
+      "transported_comparison_text": "left == right",
+      "expected_status": "UNKNOWN",
+      "expected_relation": "UNKNOWN",
+      "expected_integration_form": "UNPROVEN",
+      "source": "def allow(left, right, ready):\n    return (left == right) or ready\n\ndef run(left, right, ready):\n    if allow(left, right, ready):\n        return 1\n    return 0\n"
+    },
+    {
+      "case_id": "HPM10_UNKNOWN_OR_ALPHA",
+      "pair_id": "HP10",
+      "variant": "METAMORPH",
+      "transported_comparison_text": "alpha == beta",
+      "expected_status": "UNKNOWN",
+      "expected_relation": "UNKNOWN",
+      "expected_integration_form": "UNPROVEN",
+      "source": "def check(alpha, beta, flag):\n    return (((alpha == beta)) or flag)\n\ndef run(alpha, beta, flag):\n    if (check(alpha, beta, flag)):\n        return 1\n    return 0\n"
+    },
+    {
+      "case_id": "HPB11_UNKNOWN_BOOL_EQUALITY",
+      "pair_id": "HP11",
+      "variant": "BASE",
+      "transported_comparison_text": "left == right",
+      "expected_status": "UNKNOWN",
+      "expected_relation": "UNKNOWN",
+      "expected_integration_form": "UNPROVEN",
+      "source": "def allow(left, right):\n    return left == right\n\ndef run(left, right):\n    if allow(left, right) == True:\n        return 1\n    return 0\n"
+    },
+    {
+      "case_id": "HPM11_UNKNOWN_BOOL_EQUALITY_ALPHA",
+      "pair_id": "HP11",
+      "variant": "METAMORPH",
+      "transported_comparison_text": "alpha == beta",
+      "expected_status": "UNKNOWN",
+      "expected_relation": "UNKNOWN",
+      "expected_integration_form": "UNPROVEN",
+      "source": "def check(alpha, beta):\n    return ((alpha == beta))\n\ndef run(alpha, beta):\n    if ((check(alpha, beta)) == True):\n        return 1\n    return 0\n"
+    },
+    {
+      "case_id": "HPB12_UNKNOWN_BOOL_IDENTITY",
+      "pair_id": "HP12",
+      "variant": "BASE",
+      "transported_comparison_text": "left == right",
+      "expected_status": "UNKNOWN",
+      "expected_relation": "UNKNOWN",
+      "expected_integration_form": "UNPROVEN",
+      "source": "def allow(left, right):\n    return left == right\n\ndef run(left, right):\n    if allow(left, right) is False:\n        return 0\n    return 1\n"
+    },
+    {
+      "case_id": "HPM12_UNKNOWN_BOOL_IDENTITY_ALPHA",
+      "pair_id": "HP12",
+      "variant": "METAMORPH",
+      "transported_comparison_text": "alpha == beta",
+      "expected_status": "UNKNOWN",
+      "expected_relation": "UNKNOWN",
+      "expected_integration_form": "UNPROVEN",
+      "source": "def check(alpha, beta):\n    return ((alpha == beta))\n\ndef run(alpha, beta):\n    if ((check(alpha, beta)) is False):\n        return 0\n    return 1\n"
+    },
+    {
+      "case_id": "HPB13_UNKNOWN_CONDITIONAL_RETURN",
+      "pair_id": "HP13",
+      "variant": "BASE",
+      "transported_comparison_text": "left == right",
+      "expected_status": "UNKNOWN",
+      "expected_relation": "UNKNOWN",
+      "expected_integration_form": "UNPROVEN",
+      "source": "def allow(left, right, enabled):\n    return (left == right) if enabled else False\n\ndef run(left, right, enabled):\n    if allow(left, right, enabled):\n        return 1\n    return 0\n"
+    },
+    {
+      "case_id": "HPM13_UNKNOWN_CONDITIONAL_RETURN_ALPHA",
+      "pair_id": "HP13",
+      "variant": "METAMORPH",
+      "transported_comparison_text": "alpha == beta",
+      "expected_status": "UNKNOWN",
+      "expected_relation": "UNKNOWN",
+      "expected_integration_form": "UNPROVEN",
+      "source": "def check(alpha, beta, enabled):\n    return ((alpha == beta)) if enabled else False\n\ndef run(alpha, beta, enabled):\n    if (check(alpha, beta, enabled)):\n        return 1\n    return 0\n"
+    },
+    {
+      "case_id": "HPB14_UNKNOWN_OPAQUE_WRAPPER",
+      "pair_id": "HP14",
+      "variant": "BASE",
+      "transported_comparison_text": "left == right",
+      "expected_status": "UNKNOWN",
+      "expected_relation": "UNKNOWN",
+      "expected_integration_form": "UNPROVEN",
+      "source": "def normalize(value):\n    return bool(value)\n\ndef allow(left, right):\n    return normalize(left == right)\n\ndef run(left, right):\n    if allow(left, right):\n        return 1\n    return 0\n"
+    },
+    {
+      "case_id": "HPM14_UNKNOWN_OPAQUE_WRAPPER_ALPHA",
+      "pair_id": "HP14",
+      "variant": "METAMORPH",
+      "transported_comparison_text": "alpha == beta",
+      "expected_status": "UNKNOWN",
+      "expected_relation": "UNKNOWN",
+      "expected_integration_form": "UNPROVEN",
+      "source": "def normalize(value):\n    return bool(value)\n\ndef check(alpha, beta):\n    return normalize(((alpha == beta)))\n\ndef run(alpha, beta):\n    if (check(alpha, beta)):\n        return 1\n    return 0\n"
+    },
+    {
+      "case_id": "HPB15_UNKNOWN_MULTI_SOURCE_BRANCH",
+      "pair_id": "HP15",
+      "variant": "BASE",
+      "transported_comparison_text": "left == right",
+      "expected_status": "UNKNOWN",
+      "expected_relation": "UNKNOWN",
+      "expected_integration_form": "UNPROVEN",
+      "source": "def allow(left, right):\n    return left == right\n\ndef ready():\n    return True\n\ndef run(left, right):\n    if allow(left, right) and ready():\n        return 1\n    return 0\n"
+    },
+    {
+      "case_id": "HPM15_UNKNOWN_MULTI_SOURCE_BRANCH_ALPHA",
+      "pair_id": "HP15",
+      "variant": "METAMORPH",
+      "transported_comparison_text": "alpha == beta",
+      "expected_status": "UNKNOWN",
+      "expected_relation": "UNKNOWN",
+      "expected_integration_form": "UNPROVEN",
+      "source": "def check(alpha, beta):\n    return ((alpha == beta))\n\ndef ready():\n    return True\n\ndef run(alpha, beta):\n    if ((check(alpha, beta)) and ready()):\n        return 1\n    return 0\n"
+    },
+    {
+      "case_id": "HPB16_UNKNOWN_ALIAS_CALL",
+      "pair_id": "HP16",
+      "variant": "BASE",
+      "transported_comparison_text": "left == right",
+      "expected_status": "UNKNOWN",
+      "expected_relation": "UNKNOWN",
+      "expected_integration_form": "UNPROVEN",
+      "source": "def allow(left, right):\n    return left == right\n\ndef run(left, right):\n    alias = allow\n    if alias(left, right):\n        return 1\n    return 0\n"
+    },
+    {
+      "case_id": "HPM16_UNKNOWN_ALIAS_CALL_ALPHA",
+      "pair_id": "HP16",
+      "variant": "METAMORPH",
+      "transported_comparison_text": "alpha == beta",
+      "expected_status": "UNKNOWN",
+      "expected_relation": "UNKNOWN",
+      "expected_integration_form": "UNPROVEN",
+      "source": "def check(alpha, beta):\n    return ((alpha == beta))\n\ndef run(alpha, beta):\n    alias = check\n    if (alias(alpha, beta)):\n        return 1\n    return 0\n"
+    }
+  ],
+  "metamorphic_pairs": [
+    ["HPB01_DIRECT_PRESERVE", "HPM01_DIRECT_PRESERVE_ALPHA"],
+    ["HPB02_CALLER_NEGATION", "HPM02_CALLER_NEGATION_ALPHA"],
+    ["HPB03_HELPER_NEGATION", "HPM03_HELPER_NEGATION_ALPHA"],
+    ["HPB04_DOUBLE_NEGATION_ACROSS_BOUNDARY", "HPM04_DOUBLE_NEGATION_ACROSS_BOUNDARY_ALPHA"],
+    ["HPB05_ASSIGNED_PRESERVE", "HPM05_ASSIGNED_PRESERVE_ALPHA"],
+    ["HPB06_ASSIGNED_INVERT", "HPM06_ASSIGNED_INVERT_ALPHA"],
+    ["HPB07_HELPER_DOUBLE_NOT", "HPM07_HELPER_DOUBLE_NOT_ALPHA"],
+    ["HPB08_TRIPLE_PARITY", "HPM08_TRIPLE_PARITY_ALPHA"],
+    ["HPB09_UNKNOWN_AND", "HPM09_UNKNOWN_AND_ALPHA"],
+    ["HPB10_UNKNOWN_OR", "HPM10_UNKNOWN_OR_ALPHA"],
+    ["HPB11_UNKNOWN_BOOL_EQUALITY", "HPM11_UNKNOWN_BOOL_EQUALITY_ALPHA"],
+    ["HPB12_UNKNOWN_BOOL_IDENTITY", "HPM12_UNKNOWN_BOOL_IDENTITY_ALPHA"],
+    ["HPB13_UNKNOWN_CONDITIONAL_RETURN", "HPM13_UNKNOWN_CONDITIONAL_RETURN_ALPHA"],
+    ["HPB14_UNKNOWN_OPAQUE_WRAPPER", "HPM14_UNKNOWN_OPAQUE_WRAPPER_ALPHA"],
+    ["HPB15_UNKNOWN_MULTI_SOURCE_BRANCH", "HPM15_UNKNOWN_MULTI_SOURCE_BRANCH_ALPHA"],
+    ["HPB16_UNKNOWN_ALIAS_CALL", "HPM16_UNKNOWN_ALIAS_CALL_ALPHA"]
+  ],
+  "firewall": {
+    "frozen48_cases_used_as_prospective_evidence": false,
+    "candidate58_read": false,
+    "epistemic10_read": false,
+    "mutation_truth_or_operator_metadata_read": false,
+    "a3_a4_semantic_verdict_execution": false
+  }
+}
