@@ -1,0 +1,112 @@
+{
+  "schema": "risu.e2-a3-a4-frozen48-postfreeze-22-diagnosis-protocol/v0.1",
+  "status": "PROSPECTIVELY_FROZEN_POSTFREEZE_DIAGNOSIS_PROTOCOL",
+  "authority": {
+    "repository": "risu-research/risu-verify",
+    "branch": "e2-development",
+    "first_complete_freeze_commit": "92e7b9630e363c591a424c3ed730b7760e74babd",
+    "first_complete_zip_git_blob": "85f72ed0e6a5a553265129d34ee600315238d21d",
+    "first_complete_zip_sha256": "53874b0cd28a7fd434c599acb79fe6ebf19751e26a86a8b0c374fb268798e1e6",
+    "first_complete_freeze_receipt_git_blob": "e84ad3fffd80b7cbb6260c1eb10a696689c47c64",
+    "primary_v2_git_blob": "57c537cbf3ba43aa5ff6fdb35a3651652fd1743f",
+    "independent_v2_git_blob": "a018c76fcb30af419b15f0fe49aba41464d9b1d6",
+    "frozen_transport_bundle_sha256": "222f0341836a0ae6487471444a82914c30d61ca3896a88cadf4de2bfa9487f2a"
+  },
+  "immutable_observation": {
+    "official_status": "FROZEN_FAIL",
+    "case_count": 48,
+    "primary_qualified_count": 26,
+    "independent_qualified_count": 26,
+    "nonqualified_count": 22,
+    "exact_named_canonical_agreement": true,
+    "mismatch_cell_ids": [],
+    "rule": "Diagnosis may explain this observation but must never amend, relabel, suppress, recompute, or overwrite the first-complete result."
+  },
+  "diagnostic_order": [
+    "LAYER_1_ARCHIVED_OUTPUT_ONLY",
+    "LAYER_2_FROZEN_SELECTED48_SOURCE_ONLY_IF_NEEDED_FOR_UNRESOLVED_ROWS",
+    "REPORT_AND_FREEZE"
+  ],
+  "layer_1_inputs": {
+    "allowed": [
+      "primary_run1.json",
+      "independent_run1.json",
+      "cross_check.json",
+      "transport_bundle.json",
+      "runtime_admission.json",
+      "execution_provenance.json"
+    ],
+    "rule": "Start from the exact archived first-complete ZIP. Do not consult mutation truth, operator metadata, expected E2 predictions, candidate-58, epistemic-10, or raw blind-58 transport."
+  },
+  "layer_2_selected_source_rule": {
+    "allowed_only_if_layer_1_cannot_explain_a_transport_eligible_nonqualified_row": true,
+    "scope": "Only the exact frozen selected-48 source Git blobs already read by the first-complete hosted execution may be inspected.",
+    "forbidden": [
+      "epistemic-10 source bytes",
+      "candidate-58 bytes",
+      "mutation truth",
+      "mutation operator metadata",
+      "expected E2 predictions",
+      "raw blind-58 transport",
+      "fresh target bytes"
+    ]
+  },
+  "strict_transport_eligibility": {
+    "definition": "A row is transport-eligible only when case_transport_status is COMPLETE, parser_status is PASS, exactly one guard anchor exists and is role-compatible, and exactly one effect anchor exists and is role-compatible.",
+    "transport_ineligible_interpretation": "EXPECTED_CONSERVATIVE_REJECTION_BY_FROZEN_TRANSPORT_ADMISSION_UNLESS_EVIDENCE_ESTABLISHES_A_TRANSPORT_IMPLEMENTATION_DEFECT",
+    "no_attempt_to_force_eligibility": true
+  },
+  "taxonomy": {
+    "D0_EXPECTED_TRANSPORT_CONSERVATIVE_REJECTION": "Strict frozen transport eligibility is false; adapter correctly emits the existing fail-closed incomplete-transport row. This is not by itself a v0.3 scientific frontend failure.",
+    "D1_TRANSPORT_IMPLEMENTATION_DEFECT": "Frozen transport output is internally inconsistent with its own frozen contract or exact selected source/anchor authorities.",
+    "D2_BASE_IR_OR_LANGUAGE_FRONTEND_LIMITATION": "Transport is eligible but the frozen v0.3 IR/frontend cannot construct the required base IR surface.",
+    "D3_ANCHOR_USABILITY_OR_OVERLAY_LIMITATION": "Transport is eligible and base IR succeeds, but transported anchors cannot be safely bound into the frozen observability overlay.",
+    "D4_CONTROL_GUARD_LINKAGE_LIMITATION": "Transport and overlay succeed but complete control scope/effective guard observability fails.",
+    "D5_PATH_EFFECT_DATAFLOW_LIMITATION": "Transport/control prerequisites succeed but path-level dataflow, effect-surface uniqueness, ordering/outcome, representation closure, or witness-precondition observability fails.",
+    "D6_CHECKER_DISAGREEMENT": "Primary and Independent disagree on the canonical row or diagnosis-relevant frozen fields.",
+    "D7_UNRESOLVED_WITH_FROZEN_EVIDENCE": "Available frozen evidence is insufficient for a narrower classification without consulting forbidden information."
+  },
+  "required_per_row_record": [
+    "cell_id",
+    "primary_qualification_status",
+    "independent_qualification_status",
+    "canonical_agreement",
+    "transport_status",
+    "strict_transport_eligible",
+    "base_ir_status",
+    "anchor_usability",
+    "overlay_status",
+    "control_scope_completeness",
+    "effective_guard_form",
+    "path_dataflow_correlation",
+    "effect_surface_status",
+    "ordering_outcome_observability",
+    "representation_closure_status",
+    "witness_precondition_observability",
+    "sorted_reasons",
+    "diagnosis_class",
+    "diagnosis_basis",
+    "selected_source_inspected"
+  ],
+  "aggregate_requirements": {
+    "partition_all_22_exactly_once": true,
+    "report_transport_ineligible_count": true,
+    "report_transport_eligible_nonqualified_count": true,
+    "report_reason_frequency": true,
+    "report_language_and_seed_distribution_without_using_truth_or_operator_labels": true,
+    "separate_expected_conservative_rejection_from_scientific_surface_limitations": true,
+    "checker_disagreement_must_be_reported_even_if_zero": true
+  },
+  "change_firewall": {
+    "scientific_code_change": false,
+    "transport_engine_change": false,
+    "adapter_change": false,
+    "selection_change": false,
+    "gate_change": false,
+    "first_complete_artifact_change": false,
+    "candidate58_read": false,
+    "epistemic10_read": false,
+    "a3_a4_semantic_verdict_execution": false
+  },
+  "next_boundary": "After the diagnosis report is immutably frozen, decide separately whether the five-or-more transport-eligible nonqualified rows justify a new scientific remediation experiment. Do not authorize candidate-58 merely because diagnosis is complete."
+}
