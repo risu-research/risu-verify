@@ -1,0 +1,15 @@
+{
+  "schema": "risu.e2-helper-polarity-first-complete-artifact-identity/v0.1",
+  "status": "HOSTED_ARTIFACT_IDENTITY_BOUND",
+  "run_id": 34074861924,
+  "job_id": 101598873169,
+  "artifact_id": 10001682095,
+  "artifact_name": "e2-helper-polarity-v1-first-complete",
+  "zip_bytes": 10488,
+  "zip_sha256": "a50c40f5ac043b51433fcf51d96d4cec328215bfb6384e2666424bd9a54722c8",
+  "github_reported_digest": "sha256:a50c40f5ac043b51433fcf51d96d4cec328215bfb6384e2666424bd9a54722c8",
+  "downloaded_and_independently_verified": true,
+  "inner_file_count": 7,
+  "result": "FROZEN_PASS",
+  "note": "The authoritative logical outputs and their exact hashes are enumerated in E2_A3_A4_HELPER_POLARITY_V0_1_FIRST_COMPLETE_FREEZE_RECEIPT.json. This identity file avoids manual binary transcription risk while binding the immutable GitHub Actions artifact by exact digest."
+}
