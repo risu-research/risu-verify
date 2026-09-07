@@ -1,0 +1,105 @@
+name: E2 Gate2C4 Implementation Qualification
+
+on:
+  push:
+    branches: [e2-development]
+    paths:
+      - ".github/workflows/e2-gate2c4-implementation-qualification.yml"
+
+permissions:
+  contents: read
+
+env:
+  EXPECTED_PARENT: a2d08b5cdafa8884f6e626c8dd9e88e85685ee52
+  PROTOCOL: protocols/RISU_DIFF_E2_GATE2C4_PROJECTION_SHAPE_TRIANGULATION_PROTOCOL_v0.1.json
+  AMEND1: protocols/RISU_DIFF_E2_GATE2C4_PROJECTION_SHAPE_TRIANGULATION_PROTOCOL_AMENDMENT_001.json
+  AMEND2: protocols/RISU_DIFF_E2_GATE2C4_PROJECTION_SHAPE_TRIANGULATION_PROTOCOL_AMENDMENT_002.json
+  ANALYZER: tools/e2_gate2c4_projection_shape_triangulation.py
+  TEST: tests/test_e2_gate2c4_projection_shape_triangulation.py
+  PROTOCOL_BLOB: 1b3d3c4f29e9ff754e40f41444882177f8adfb3f
+  AMEND1_BLOB: 0d64325d21a9068287ade17871febd5093cb2779
+  AMEND2_BLOB: 1128cbd05a492df96cdb8ff66caae7e3eab32bf4
+  ANALYZER_BLOB: 87d75d242af14e8ac2b1ed6aba20b3fb815fc5c1
+  TEST_BLOB: 127227a21b3b550e879401d423d56ed20c8fac07
+
+jobs:
+  synthetic-qualification:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact qualification revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 3
+      - name: Prove pre-confirmatory implementation boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "$EXPECTED_PARENT"
+          test "$(git diff --name-only HEAD^ HEAD)" = ".github/workflows/e2-gate2c4-implementation-qualification.yml"
+          test "$(git hash-object "$PROTOCOL")" = "$PROTOCOL_BLOB"
+          test "$(git hash-object "$AMEND1")" = "$AMEND1_BLOB"
+          test "$(git hash-object "$AMEND2")" = "$AMEND2_BLOB"
+          test "$(git hash-object "$ANALYZER")" = "$ANALYZER_BLOB"
+          test "$(git hash-object "$TEST")" = "$TEST_BLOB"
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          p=json.loads(Path(os.environ['PROTOCOL']).read_text());a1=json.loads(Path(os.environ['AMEND1']).read_text());a2=json.loads(Path(os.environ['AMEND2']).read_text())
+          assert p['status']=='PROSPECTIVE_CONFIRMATORY_TAXONOMY_SEALED_BEFORE_SIX_CONFIRMATORY_PRIMARY_LINEAGES_OPENED'
+          assert a1['status']=='SEALED_BEFORE_SIX_CONFIRMATORY_PRIMARY_SEMANTIC_SLICES_OPENED'
+          assert a2['status']=='SEALED_BEFORE_ANY_GATE2C4_REAL_EXECUTION_OR_SIX_CONFIRMATORY_PRIMARY_SLICE_READ'
+          print('GATE2C4_PRECONFIRMATORY_BOUNDARY=PASS')
+          PY
+      - name: Set up exact Python runtime
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.13.5"
+      - name: Audit stdlib-only surface and effective taxonomy
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import ast,importlib.util,json,os,sys
+          from pathlib import Path
+          p=Path(os.environ['ANALYZER']);tree=ast.parse(p.read_text());roots=[]
+          for n in ast.walk(tree):
+              if isinstance(n,ast.Import):roots.extend(a.name.split('.',1)[0] for a in n.names)
+              elif isinstance(n,ast.ImportFrom) and n.module:roots.append(n.module.split('.',1)[0])
+          bad=[x for x in roots if x not in sys.stdlib_module_names and x!='__future__'];assert not bad,bad
+          spec=importlib.util.spec_from_file_location('g2c4',p);m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
+          a2=json.loads(Path(os.environ['AMEND2']).read_text());assert m.TAXONOMY==a2['effective_taxonomy_precedence']
+          assert '.'.join(map(str,sys.version_info[:3]))=='3.13.5'
+          print('GATE2C4_INDEPENDENCE_AND_TAXONOMY=PASS')
+          PY
+      - name: Execute adversarial synthetic qualification twice
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile "$ANALYZER" "$TEST"
+          python "$TEST" > "$RUNNER_TEMP/t1.txt" 2>&1
+          python "$TEST" > "$RUNNER_TEMP/t2.txt" 2>&1
+          cmp "$RUNNER_TEMP/t1.txt" "$RUNNER_TEMP/t2.txt"
+          grep -q '^OK$' "$RUNNER_TEMP/t1.txt"
+          echo GATE2C4_SYNTHETIC_DUAL_REPLAY=PASS
+      - name: Materialize qualification receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/gate2c4-qualification";export OUT;mkdir -p "$OUT"
+          python - <<'PY'
+          import hashlib,json,os,platform
+          from pathlib import Path
+          h=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          r={'schema':'risu.e2-gate2c4-implementation-qualification/v0.1','status':'SYNTHETICALLY_QUALIFIED_NOT_REAL_EXECUTED','workflow_run_id':os.environ['GITHUB_RUN_ID'],'workflow_sha':os.environ['GITHUB_SHA'],'python_version':platform.python_version(),'protocol_git_blob':os.environ['PROTOCOL_BLOB'],'amendment1_git_blob':os.environ['AMEND1_BLOB'],'amendment2_git_blob':os.environ['AMEND2_BLOB'],'analyzer_git_blob':os.environ['ANALYZER_BLOB'],'test_git_blob':os.environ['TEST_BLOB'],'analyzer_sha256':h(os.environ['ANALYZER']),'test_sha256':h(os.environ['TEST']),'taxonomy_branch_suite':True,'pilot_confirmatory_separation_suite':True,'synthetic_dual_replay_identical':True,'stdlib_only':True,'confirmatory_primary_slices_read':False,'raw_source_read':False,'truth_read':False,'epistemic10_read':False,'remediation':False}
+          Path(os.environ['OUT'],'E2_GATE2C4_IMPLEMENTATION_QUALIFICATION_RECEIPT.json').write_text(json.dumps(r,sort_keys=True,separators=(',',':'))+'\n')
+          PY
+      - name: Upload qualification receipt before implementation freeze
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-gate2c4-implementation-qualification
+          path: ${{ runner.temp }}/gate2c4-qualification/E2_GATE2C4_IMPLEMENTATION_QUALIFICATION_RECEIPT.json
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
