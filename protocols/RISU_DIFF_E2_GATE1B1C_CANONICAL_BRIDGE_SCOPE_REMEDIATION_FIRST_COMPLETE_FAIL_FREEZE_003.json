@@ -1,0 +1,14 @@
+{
+  "schema":"risu.e2-gate1b1c-canonical-bridge-scope-remediation-first-complete-freeze/v0.1",
+  "status":"FROZEN_FAIL_UNDIAGNOSED",
+  "qualification_commit":"181aa64469f4cb7d75c0bfd7723f5d34e8ab4464",
+  "workflow_run_id":34086512527,
+  "workflow_run_number":4,
+  "artifact":{"id":10005381678,"name":"e2-gate1b1c-canonical-bridge-first-complete-001","size_in_bytes":23398,"digest":"sha256:0eb8c427bb2e5a63dc8ca13810c18514daac77b3216e9a1a1fc144f63f1359a5","expired":false},
+  "first_complete_execution_step_conclusion":"success",
+  "artifact_upload_step_conclusion":"success",
+  "post_upload_assertion_conclusion":"failure",
+  "diagnosis_performed_before_freeze":false,
+  "production_branch_modified":false,
+  "scientific_firewall":{"candidate58_bytes_read":false,"epistemic10_read":false,"raw_blind58_transport_read":false,"mutation_truth_read":false,"mutation_operator_metadata_read":false,"expected_e2_prediction_read":false,"fresh_target_bytes_read":false,"a3_a4_semantic_verdicts_executed":false}
+}
