@@ -26,7 +26,7 @@ jobs:
           set -euo pipefail
           python --version | grep -F 'Python 3.13.5'
           ! grep -R --line-number -E '[0-9a-f]{64}\.overlay\.json|[0-9a-f]{64}\.path\.json' tools/e2_candidate58_gate2b3_guard_scope_provenance_attribution.py tests/test_e2_candidate58_gate2b3_guard_scope_provenance_attribution.py
-          ! grep -R --line-number -E 'TRUTH_ORACLE|Epistemic10|gate2a-first-complete-truth-join' tests/test_e2_candidate58_gate2b3_guard_scope_provenance_attribution.py .github/workflows/e2-candidate58-gate2b3-synthetic-qualification.yml
+          ! grep -R --line-number -E 'TRUTH_ORACLE|Epistemic10|gate2a-first-complete-truth-join' tools/e2_candidate58_gate2b3_guard_scope_provenance_attribution.py tests/test_e2_candidate58_gate2b3_guard_scope_provenance_attribution.py
       - name: Synthetic adversarial replay 1
         run: >-
           python tests/test_e2_candidate58_gate2b3_guard_scope_provenance_attribution.py
