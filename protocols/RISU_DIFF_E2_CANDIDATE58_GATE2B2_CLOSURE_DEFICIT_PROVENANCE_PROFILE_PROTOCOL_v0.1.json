@@ -1,0 +1,237 @@
+{
+  "schema": "risu.e2-candidate58-gate2b2-closure-deficit-provenance-profile-protocol/v0.1",
+  "protocol_id": "RISU_DIFF_E2_CANDIDATE58_GATE2B2_CLOSURE_DEFICIT_PROVENANCE_PROFILE_PROTOCOL_v0.1",
+  "status": "POST_GATE2B1_PROVENANCE_TAXONOMY_FROZEN_BEFORE_GATE2B2_AGGREGATION",
+  "gate": "GATE_2B2_CANDIDATE58_CLOSURE_DEFICIT_PROVENANCE_PROFILE",
+  "purpose": "Decompose the exact already-frozen Gate2B1 F-closure deficits into producer-site provenance classes without rerunning semantics, rereading source, or inferring semantic root cause. The scientific observation is the immutable Gate2B1 admission-profile ledger. Frozen producer code is used only to define where each unresolved token can be emitted; it is not executed.",
+  "authority": {
+    "repository": "risu-research/risu-verify",
+    "branch": "e2-development",
+    "gate2b1_first_complete_freeze_commit": "bb9174f33d4c199e26b079ccebc2845c91fa2826",
+    "gate2b1_admission_profile_ledger": {
+      "path": "experiments/risu-diff-e2/qualification/candidate58/gate2b1-frozen-kernel-nondefinitive-admission-profile/E2_CANDIDATE58_GATE2B1_ADMISSION_PROFILE_LEDGER.json",
+      "git_blob": "7c5684ffdb7f3c6050e7c385fcbf407bd8bf63dd",
+      "sha256": "e487cfdcac7e6ed4d024086e989560bdf8054e4d5181c7a5929af1187801fa63"
+    },
+    "gate2b1_summary": {
+      "path": "experiments/risu-diff-e2/qualification/candidate58/gate2b1-frozen-kernel-nondefinitive-admission-profile/E2_CANDIDATE58_GATE2B1_ADMISSION_PROFILE_SUMMARY.json",
+      "git_blob": "fd62dd62ff07d5abf10fe1085324a1edee62f6cb",
+      "sha256": "c41e17b964fbf3877c66842c44c22c6b9662a69647ac00a1752d8afbc27c822e"
+    },
+    "gate2b1_freeze_receipt": {
+      "path": "experiments/risu-diff-e2/qualification/candidate58/gate2b1-frozen-kernel-nondefinitive-admission-profile/E2_CANDIDATE58_GATE2B1_FIRST_COMPLETE_IMMUTABLE_FREEZE_RECEIPT.json",
+      "git_blob": "1cb3696d6dc7caa2e6db0637b11fd376d14cb32f"
+    },
+    "frozen_unresolved_producers": {
+      "primary_adapter": {
+        "path": "risu_e2_semantic/primary_adapter.py",
+        "git_blob": "c1b5d5e666bdd1b8f9bb1e041f76368f7f7a741c"
+      },
+      "adapter_support": {
+        "path": "risu_e2_semantic/adapter_support.py",
+        "git_blob": "5558d4bc91a0e51c4f836b4ae6db69bcf6abafe7"
+      },
+      "frozen_kernel": {
+        "path": "risu_e2_semantic/kernel.py",
+        "git_blob": "e91e51397f4cc201452b1a0f80d130265dca2ea0"
+      }
+    }
+  },
+  "prior_visibility_disclosure": {
+    "gate2b1_reporting_previously_exposed_some_exact_F_UNRESOLVED_atoms": true,
+    "gate2b2_does_not_claim_blindness_to_atom_existence": true,
+    "anti_posthoc_control": "The provenance map below is frozen from the complete set of literal unresolved append sites in the exact frozen producer blobs, not from frequency or performance in the 39-case ledger. Any unresolved atom prefix not in this exhaustive map fails closed rather than being merged post hoc."
+  },
+  "population_lock": {
+    "selector": "Use exactly all 39 rows of the immutable Gate2B1 ledger; require each row to have failed admission F and top_level_incomplete_branch WORLD_INTERPRETATION_INCOMPLETE exactly as frozen.",
+    "expected_case_count": 39,
+    "case_reselection_allowed": false,
+    "case_dropping_allowed": false,
+    "language_seed_truth_operator_stratification_allowed": false
+  },
+  "read_surface": {
+    "allowed_scientific_content_reads": [
+      "exact immutable Gate2B1 admission-profile ledger",
+      "exact immutable Gate2B1 summary",
+      "exact immutable Gate2B1 freeze receipt"
+    ],
+    "producer_code_role": "Blob identities and frozen taxonomy authority only. The Gate2B2 analyzer must not import or execute producer, kernel, semantic, or C1 code.",
+    "forbidden_content_reads": [
+      "Candidate source bytes",
+      "semantic_slice.json",
+      "kernel_result.json or machine bundle ZIP",
+      "adapter receipts",
+      "certificates or C1 reports",
+      "Gate2A truth-joined ledger or metrics",
+      "truth oracle or expected labels",
+      "mutation operator metadata",
+      "fresh heldout material"
+    ]
+  },
+  "closure_reason_contract": {
+    "kernel_wrapper_reason": "F_SCOPE_NOT_COMPLETE",
+    "producer_atom_reason_prefix": "F_UNRESOLVED:",
+    "scope_flag_reason_prefix": "F_FLAG_FALSE:",
+    "kernel_wrapper_is_not_a_producer_atom": true,
+    "scope_flag_deficits_are_profiled_separately_from_unresolved_producer_atoms": true,
+    "exact_full_reason_strings_remain_authoritative": true,
+    "atom_prefix_rule": "For an F_UNRESOLVED payload, atom_prefix is the substring before its first colon, or the whole payload when no colon exists. Suffixes remain preserved as exact atom instances but never affect provenance-class assignment."
+  },
+  "producer_provenance_taxonomy": {
+    "mapping_is_exhaustive_for_literal_unresolved_append_sites_in_frozen_producer_blobs": true,
+    "unknown_atom_prefix_policy": "FAIL_CLOSED_GATE2B2_INVALID",
+    "classes": [
+      {
+        "id": "ADAPTER_ANCHOR_GUARD_REALIZATION",
+        "producer_site": "primary_adapter.adapt_primary anchor/effective-guard/scope/operator projection",
+        "primitive": true,
+        "atom_prefixes": [
+          "DUPLICATE_ANCHOR",
+          "MISSING_ANCHOR",
+          "EFFECTIVE_GUARD_FORM_MISMATCH",
+          "EFFECTIVE_GUARD_UNRESOLVED",
+          "EFFECTIVE_GUARD_NOT_BRANCH_BEARING_UNIQUE",
+          "GUARD_SCOPE_UNRESOLVED",
+          "GUARD_OPERATOR_UNRESOLVED"
+        ]
+      },
+      {
+        "id": "BINDING_PROVENANCE_CLOSURE",
+        "producer_site": "primary_adapter.adapt_primary binding provenance projection",
+        "primitive": true,
+        "atom_prefixes": [
+          "BINDING_PROVENANCE_NOT_UNIQUE",
+          "CANONICAL_ORIGIN_RELATION_OUTSIDE_ADAPTER_V0_1"
+        ]
+      },
+      {
+        "id": "CONTROL_PATH_REALIZATION",
+        "producer_site": "primary_adapter.adapt_primary structured control-path projection",
+        "primitive": true,
+        "atom_prefixes": [
+          "MULTIPLE_EFFECTIVE_GUARD_DECISIONS",
+          "NO_PRIMARY_LEAF_PATHS"
+        ]
+      },
+      {
+        "id": "HELPER_POLARITY_PROOF",
+        "producer_site": "primary_adapter.adapt_primary helper-polarity certificate projection",
+        "primitive": true,
+        "atom_prefixes": ["HELPER_POLARITY_NOT_PROVED"]
+      },
+      {
+        "id": "EFFECT_SURFACE_REALIZATION",
+        "producer_site": "primary_adapter.adapt_primary effect-binding-surface projection",
+        "primitive": true,
+        "atom_prefixes": ["EFFECT_SURFACE_NOT_UNIQUE"]
+      },
+      {
+        "id": "SOURCE_CONTRACT_LOCALIZATION",
+        "producer_site": "primary_adapter.adapt_primary source-contract structured-If localization",
+        "primitive": true,
+        "atom_prefixes": ["EFFECTIVE_IF_SPAN_UNRESOLVED"]
+      },
+      {
+        "id": "WORLD_OPERAND_BINDING",
+        "producer_site": "adapter_support._derive_worlds guard-operand origin/index binding",
+        "primitive": true,
+        "atom_prefixes": [
+          "WORLD_GUARD_OPERAND_ORIGIN_NOT_UNIQUE",
+          "WORLD_REQUIRES_EXACT_TWO_GUARD_OPERANDS"
+        ]
+      },
+      {
+        "id": "WORLD_HELPER_POLARITY",
+        "producer_site": "adapter_support._derive_worlds helper-polarity transfer",
+        "primitive": true,
+        "atom_prefixes": ["WORLD_HELPER_POLARITY_UNPROVEN"]
+      },
+      {
+        "id": "WORLD_DECLARATION_ROLE_VALUE_REALIZATION",
+        "producer_site": "adapter_support._derive_worlds declared-world and role-value realization",
+        "primitive": true,
+        "atom_prefixes": [
+          "WORLD_DECLARATION_INCOMPLETE",
+          "WORLD_DECLARATION_MUST_NOT_SUPPLY_RHO",
+          "WORLD_ROLE_VALUE_MISSING"
+        ]
+      },
+      {
+        "id": "WORLD_TARGET_OUTCOME_REALIZATION",
+        "producer_site": "adapter_support._derive_worlds target branch/outcome realization",
+        "primitive": true,
+        "atom_prefixes": ["WORLD_TARGET_REALIZATION_NOT_UNIQUE"]
+      },
+      {
+        "id": "WORLD_CARDINALITY_CLOSURE_WRAPPER",
+        "producer_site": "primary_adapter.adapt_primary post-_derive_worlds realized-world cardinality check",
+        "primitive": false,
+        "wrapper": true,
+        "atom_prefixes": ["FINITE_WORLD_TARGET_REALIZATION_INCOMPLETE"]
+      }
+    ]
+  },
+  "wrapper_leaf_separation": {
+    "FINITE_WORLD_TARGET_REALIZATION_INCOMPLETE_is_summary_wrapper": true,
+    "F_SCOPE_NOT_COMPLETE_is_kernel_wrapper": true,
+    "neither_wrapper_may_be_called_semantic_root_cause": true,
+    "primitive_leaf_profile_excludes_both_wrappers": true,
+    "wrapper_without_any_primitive_leaf_is_reported_not_repaired_or_reinterpreted": true,
+    "primitive_leaf_without_cardinality_wrapper_is_reported_not_assumed_invalid": true
+  },
+  "per_case_outputs": [
+    "opaque case_id",
+    "Gate2B1 failed_admission_signature",
+    "exact F admission reasons",
+    "exact F_UNRESOLVED atom instances",
+    "atom prefixes",
+    "primitive atom prefixes",
+    "wrapper atom prefixes",
+    "primitive provenance classes",
+    "primitive provenance-class signature in frozen class order",
+    "primitive atom-prefix signature in lexicographic order",
+    "scope flag deficits",
+    "primitive atom count",
+    "wrapper atom count",
+    "finite-world-cardinality-wrapper present boolean"
+  ],
+  "aggregate_outputs": [
+    "exact atom-prefix counts",
+    "exact full atom-instance counts",
+    "primitive provenance-class counts",
+    "primitive provenance-class signature counts",
+    "primitive atom-prefix signature counts",
+    "primitive atom-count distribution",
+    "wrapper atom counts",
+    "scope-flag deficit counts",
+    "primitive provenance-class pairwise co-occurrence matrix",
+    "Gate2B1 admission-signature by primitive-provenance-signature counts",
+    "finite-world-cardinality-wrapper by primitive-provenance-signature counts",
+    "wrapper-without-primitive count",
+    "primitive-without-cardinality-wrapper count",
+    "exact population total 39"
+  ],
+  "interpretation_boundary": {
+    "development_qualification_only": true,
+    "provenance_class_is_emission_site_not_semantic_cause": true,
+    "cooccurrence_is_not_causality": true,
+    "wrapper_leaf_relation_is_not_counterfactual_dominance": true,
+    "missing_evidence_and_actual_semantic_defect_are_not_distinguished_here": true,
+    "no_counterfactual_coverage_gain": true,
+    "no_remediation_priority": true,
+    "no claim that fixing any one class would make a case definitive": true,
+    "Gate2A_Gate2B0_Gate2B1_results_remain_immutable": true,
+    "fresh_heldout_remains_unopened": true
+  },
+  "determinism_and_freeze": {
+    "stdlib_only_analyzer": true,
+    "analyzer_self_test_before_first_real_Gate2B2_aggregation": true,
+    "freeze_exact_analyzer_identity_before_first_real_Gate2B2_execution": true,
+    "run_exact_diagnostic_twice": true,
+    "require_exact_logical_byte_identity": true,
+    "upload_both_replays_before_repository_result_freeze": true,
+    "first_complete_Gate2B2_result_is_additive_and_immutable": true,
+    "later remediation or source-level provenance tracing must be a separate additive gate": true
+  },
+  "next_authorized_action": "Implement a standard-library-only Gate2B2 analyzer over only the frozen Gate2B1 ledger/summary/freeze receipt, freeze its exact identity, self-test the exhaustive producer-prefix map, execute two deterministic provenance profiles, require exact byte identity and zero unmapped producer atoms, upload both replays, then immutably freeze the first complete Gate2B2 result without changing any prior scientific artifact."
+}
