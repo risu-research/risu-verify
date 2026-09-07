@@ -1,0 +1,142 @@
+{
+  "schema": "risu.e2-a3-a4-helper-polarity-remediation-protocol/v0.1",
+  "status": "PROSPECTIVELY_FROZEN_BEFORE_NEW_CORPUS_AND_CODE",
+  "authority": {
+    "repository": "risu-research/risu-verify",
+    "branch": "e2-development",
+    "diagnosis_freeze_commit": "7b84979e9c010400706d1ae16d7f31e87caee953",
+    "first_complete_frozen48_status": "FROZEN_FAIL",
+    "diagnosed_generic_gap": "GENERIC_NEGATED_HELPER_PREDICATE_POLARITY_COMPOSITION_GAP",
+    "frozen_path_observability_blob": "6eae3403f53b86f85bac47a31e751d28508e7225"
+  },
+  "scientific_question": "Can RISU prove the truth-polarity relationship between a transported comparison and a downstream helper-controlled branch through a bounded chain of semantics-preserving Boolean provenance steps, while failing closed for Boolean transformations whose polarity is not uniquely provable?",
+  "hypotheses": {
+    "H1": "Transparent provenance steps preserve polarity.",
+    "H2": "Logical negation flips polarity; an even number of proved flips preserves polarity and an odd number inverts it.",
+    "H3": "Arbitrary conjunction, disjunction, equality-to-Boolean, conditional expressions, multi-source predicates, opaque calls, or unsupported transforms must produce UNKNOWN rather than guessed polarity.",
+    "H4": "A helper-controlled branch may be classified HELPER_CONTROL only when a unique provenance path from the transported comparison to the branch predicate has a complete polarity certificate with final relation SAME or INVERTED.",
+    "H5": "Direct-control behavior and previously qualified public behavior must remain unchanged."
+  },
+  "polarity_algebra": {
+    "domain": ["SAME", "INVERTED", "UNKNOWN"],
+    "identity": "SAME",
+    "preserve": {"SAME": "SAME", "INVERTED": "INVERTED", "UNKNOWN": "UNKNOWN"},
+    "flip": {"SAME": "INVERTED", "INVERTED": "SAME", "UNKNOWN": "UNKNOWN"},
+    "join_rule": "Multiple distinct candidate provenance paths are admissible only if every complete path proves the same non-UNKNOWN final relation; otherwise result is UNKNOWN.",
+    "fail_closed": true
+  },
+  "initial_language_scope": {
+    "proof_extractor": "PYTHON_AST_V0_1",
+    "reason": "The frozen-48 transport-eligible scientific failures are all Python helper-control cases. The algebra is language-neutral, but the first proof extractor is intentionally language-scoped rather than pretending cross-language proof coverage that is not yet implemented.",
+    "non_python_behavior": "UNCHANGED_FROZEN_PATH_OBSERVABILITY_BEHAVIOR"
+  },
+  "allowed_proved_steps": [
+    "TRANSPORTED_COMPARISON_AS_ROOT",
+    "PARENTHESIS_TRANSPARENT",
+    "BOOLEAN_NOT_FLIP",
+    "FUNCTION_RETURN_PRESERVE",
+    "FUNCTION_RETURN_TO_CALL_RESULT_PRESERVE",
+    "CALL_RESULT_TO_LOCAL_ASSIGNMENT_PRESERVE",
+    "LOCAL_ASSIGNMENT_TO_BRANCH_REFERENCE_PRESERVE",
+    "DIRECT_HELPER_CALL_IN_BRANCH_PRESERVE"
+  ],
+  "mandatory_unknown_steps": [
+    "AND_OR_BOOLEAN_COMPOSITION",
+    "BOOLEAN_EQUALITY_OR_IDENTITY_TEST",
+    "CONDITIONAL_EXPRESSION",
+    "ARITHMETIC_OR_BITWISE_TRANSFORM",
+    "MULTIPLE_DISTINCT_SOURCE_PREDICATES",
+    "OPAQUE_NONTRANSPARENT_CALL",
+    "UNRESOLVED_ASSIGNMENT_OR_ALIAS",
+    "MULTIPLE_PROVENANCE_PATHS_WITH_DIFFERENT_POLARITY",
+    "UNSUPPORTED_AST_FORM"
+  ],
+  "certificate_contract": {
+    "required_fields": [
+      "status",
+      "language",
+      "transported_comparison_span",
+      "helper_function",
+      "branch_consumer_span",
+      "steps",
+      "flip_count",
+      "final_relation",
+      "reason"
+    ],
+    "status_values": ["PROVED", "UNKNOWN"],
+    "proved_requires": "Every step is explicitly admitted, source/target relation is unique, and final_relation is SAME or INVERTED.",
+    "unknown_requires": "reason is nonempty and no HELPER_CONTROL qualification may be emitted from this certificate."
+  },
+  "integration_contract": {
+    "new_module_allowed": "risu_e2/predicate_polarity_v1.py",
+    "new_path_module_allowed": "risu_e2/path_observability_v2.py",
+    "frozen_v1_path_module_must_remain_unchanged": true,
+    "direct_control_semantics_must_remain_unchanged": true,
+    "helper_control_output_extension": [
+      "polarity_certificate_status",
+      "polarity_to_transported_guard",
+      "polarity_certificate_digest"
+    ],
+    "qualification_rule": "HELPER_CONTROL requires a PROVED polarity certificate. UNKNOWN remains HELPER_PREDICATE_POLARITY_UNPROVEN."
+  },
+  "prospective_evidence_plan": {
+    "phase_A_new_microcorpus": "Freeze a wholly new 32-case Python corpus before implementation: 16 base cases plus 16 metamorphic variants, with a balanced mix of proved SAME, proved INVERTED, and mandatory UNKNOWN controls.",
+    "phase_B_implementation": "Implement only after corpus and preregistration receipt are frozen.",
+    "phase_C_primary_independent": "Run separate primary and independent checkers. The independent checker must independently derive expected polarity outcomes and must not import primary checker logic.",
+    "phase_D_public_regression": "Only after new-corpus first-complete PASS, run the already-public v0.3-24 and v0.2-24 regression surfaces; no frozen-48 use as prospective evidence.",
+    "phase_E_frozen48_requalification": "Only after phases A-D are immutably frozen PASS may the already-seen frozen-48 be rerun as non-prospective regression/requalification evidence."
+  },
+  "new_microcorpus_required_coverage": {
+    "proved_same": [
+      "direct helper equality with direct branch",
+      "double negation across helper and caller",
+      "assigned helper result with even negation parity",
+      "parenthesis and alpha-renaming metamorphs"
+    ],
+    "proved_inverted": [
+      "direct equality helper with negated caller",
+      "negated helper predicate with direct caller",
+      "assigned helper result with odd negation parity",
+      "parenthesis and alpha-renaming metamorphs"
+    ],
+    "mandatory_unknown": [
+      "and/or composition",
+      "comparison of helper result to True/False",
+      "conditional expression",
+      "two helper predicate sources",
+      "opaque wrapper call",
+      "unsupported aliasing",
+      "non-Boolean transform",
+      "ambiguous provenance"
+    ]
+  },
+  "prospective_pass_gates": {
+    "new_case_count": 32,
+    "all_cases_expected_outcome_exact": true,
+    "all_16_metamorphic_pairs_invariant": true,
+    "primary_32_of_32": true,
+    "independent_32_of_32": true,
+    "exact_per_case_canonical_agreement": true,
+    "negative_controls_fail_closed": true,
+    "specialization_scan": "No fixture IDs, source hashes, diagnosis cell IDs, seed IDs, or literal helper names may influence scientific branching.",
+    "determinism": "Two executions of each checker must be byte-identical."
+  },
+  "forbidden": {
+    "use_Q013_Q014_Q015_Q017_Q018_as_prospective_test_cases": true,
+    "case_specific_branching": true,
+    "source_hash_branching": true,
+    "fixture_id_branching": true,
+    "loosening_transport_admission": true,
+    "changing_frozen48_first_complete_result": true,
+    "candidate58_read": true,
+    "epistemic10_read": true,
+    "mutation_truth_or_operator_metadata_read": true,
+    "a3_a4_semantic_verdict_execution": true
+  },
+  "stop_rules": {
+    "first_complete_new_microcorpus_failure": "Freeze before diagnosis or remediation.",
+    "checker_disagreement": "Freeze as failure; do not canonicalize post hoc without a separately frozen checker-only protocol.",
+    "unknown_transform": "Prefer false negative / UNKNOWN over unsound polarity inference."
+  },
+  "next_authorized_step": "Author and freeze the entirely new 32-case helper-polarity prospective corpus. Do not implement predicate_polarity_v1.py or path_observability_v2.py before that corpus and a preimplementation receipt are frozen."
+}
