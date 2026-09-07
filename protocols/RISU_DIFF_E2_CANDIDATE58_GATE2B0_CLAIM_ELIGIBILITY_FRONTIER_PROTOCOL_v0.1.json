@@ -1,0 +1,137 @@
+{
+  "schema": "risu.e2-candidate58-gate2b0-claim-eligibility-frontier-protocol/v0.1",
+  "protocol_id": "RISU_DIFF_E2_CANDIDATE58_GATE2B0_CLAIM_ELIGIBILITY_FRONTIER_PROTOCOL_v0.1",
+  "status": "POSTRESULT_DIAGNOSTIC_TAXONOMY_FROZEN_BEFORE_GATE2B0_EXECUTION",
+  "gate": "GATE_2B0_CANDIDATE58_CLAIM_ELIGIBILITY_FRONTIER",
+  "purpose": "Locate the earliest observable claim-eligibility boundary reached by each already-frozen Candidate-58 machine record. This slice is descriptive diagnosis only: it does not infer semantic root cause, does not rerun the engine or C1, does not use truth/operator metadata, and cannot modify or reinterpret Gate2A scoring.",
+  "authority": {
+    "repository": "risu-research/risu-verify",
+    "branch": "e2-development",
+    "gate2a_first_complete_freeze_commit": "afcf9ce67d93be612f1004c6a2031e819f0ea12d",
+    "gate2a_first_complete_freeze_receipt_git_blob": "63e23581a3243e6af5b7dbe8664d80d15124cad8",
+    "first_complete_machine_freeze_commit": "2ece1023252a8e9100a34d74079493040441e1e2",
+    "machine_matrix_path": "experiments/risu-diff-e2/qualification/candidate58/first-complete-machine/E2_CANDIDATE58_FIRST_COMPLETE_MACHINE_PREDICTION_MATRIX.json",
+    "machine_matrix_git_blob": "60b27d641682693cb3df654d8aa4f064cc48455d",
+    "machine_matrix_sha256": "7273ce4034d06e67989a33540f5b22fef3190cf311a8981474413b538e43472d",
+    "machine_freeze_receipt_git_blob": "2700e8002551a8fa161c076cde81498054f3a200",
+    "frozen_harness_implementation_commit": "246044c6c2a8b68f31965955d04828f4ed04b29b",
+    "frozen_harness_implementation_freeze_git_blob": "2b681ecec8fa052d87a2ce3adcab1e20e1c5ba8a"
+  },
+  "read_surface": {
+    "allowed_scientific_input": [
+      "the exact frozen 58-row machine prediction matrix above"
+    ],
+    "allowed_protocol_input": [
+      "this Gate2B0 protocol"
+    ],
+    "forbidden": [
+      "Gate2A truth-joined ledger",
+      "Gate2A metrics as a classifier input",
+      "truth oracle or expanded truth",
+      "mutation operator id/name/class",
+      "canonical expected labels or gold verdicts",
+      "materialized CELL.json truth metadata",
+      "candidate source bytes",
+      "semantic-slice contents",
+      "adapter-receipt contents",
+      "kernel-result contents beyond the already-frozen tentative label copied into the machine record",
+      "certificate contents",
+      "C1-report contents beyond the already-frozen checker-output and assurance fields copied into the machine record",
+      "fresh heldout material"
+    ]
+  },
+  "classifier_view_allowlist": [
+    "case_id",
+    "machine_prediction",
+    "tentative_kernel_prediction",
+    "c1_checker_output",
+    "assurance_level",
+    "promotion_reasons"
+  ],
+  "label_lock": {
+    "regression": "E2_PREDICTED_REGRESSION_WITNESS",
+    "preservation": "E2_PREDICTED_PRESERVATION_EVIDENCE",
+    "incomplete": "E2_PREDICTED_ASSURANCE_INCOMPLETE",
+    "infrastructure_invalid": "INFRASTRUCTURE_INVALID_BEFORE_PREDICTION",
+    "valid_c1": "VALID_C1",
+    "unsupported_c1": "UNSUPPORTED_CERTIFICATE"
+  },
+  "frontier_taxonomy": {
+    "ordered_rules": [
+      {
+        "frontier": "UPSTREAM_TRANSPORT_PRECEDENCE",
+        "predicate": "promotion_reasons is exactly [FROZEN_TRANSPORT_INCOMPLETE_PRECEDENCE]",
+        "interpretation": "The frozen production driver terminated the case before primary adapter/C1 entry because frozen transport was incomplete. This is an observed execution boundary, not a semantic root-cause claim."
+      },
+      {
+        "frontier": "UPSTREAM_PRIMARY_PREPARATION_INCOMPLETE",
+        "predicate": "promotion_reasons contains exactly one string beginning PRIMARY_EVIDENCE_INCOMPLETE: and no other reason",
+        "interpretation": "The frozen production driver terminated the case before primary adapter/C1 entry because primary evidence preparation failed closed. The exception type is retained only as mechanical provenance, not semantic diagnosis."
+      },
+      {
+        "frontier": "KERNEL_NONDEFINITIVE",
+        "predicate": "promotion_reasons is empty and tentative_kernel_prediction is E2_PREDICTED_ASSURANCE_INCOMPLETE",
+        "interpretation": "The case reached the primary semantic chain, but the frozen kernel emitted no definitive claim. Gate2B0 does not inspect the semantic slice to say which A-F obligation caused that result."
+      },
+      {
+        "frontier": "KERNEL_INFRASTRUCTURE_INVALID",
+        "predicate": "promotion_reasons is exactly [KERNEL_INFRASTRUCTURE_INVALID] and tentative_kernel_prediction is INFRASTRUCTURE_INVALID_BEFORE_PREDICTION",
+        "interpretation": "The kernel itself emitted infrastructure-invalid before a semantic claim."
+      },
+      {
+        "frontier": "POST_KERNEL_PROMOTION_BLOCK",
+        "predicate": "tentative_kernel_prediction is definitive, machine_prediction is E2_PREDICTED_ASSURANCE_INCOMPLETE, and promotion_reasons is one of the frozen definitive-block promotion reason forms",
+        "interpretation": "A definitive kernel result existed but was not eligible for final promotion. This category names the boundary only; later slices may separate C1 support from disagreement."
+      },
+      {
+        "frontier": "DEFINITIVE_CLAIM_REACHED",
+        "predicate": "machine_prediction is definitive and equals tentative_kernel_prediction with VALID_C1 assurance",
+        "interpretation": "The frozen chain reached a definitive final claim; this is a reference category, not a failure."
+      }
+    ],
+    "fail_closed": "Every matrix row must match exactly one ordered frontier rule. Zero matches, multiple matches, unknown reason atoms, malformed labels, or contradictory machine fields invalidate Gate2B0 instead of being assigned post hoc."
+  },
+  "diagnostic_outputs": {
+    "per_case": [
+      "opaque case_id",
+      "frontier",
+      "exact frozen promotion_reasons",
+      "tentative and final machine labels",
+      "C1 checker-output and assurance fields as consistency-only observables"
+    ],
+    "aggregate": [
+      "exact count per frontier",
+      "exact partition total",
+      "upstream-total versus semantic-chain-entered total",
+      "post-kernel-promotion-block total",
+      "no truth/operator/language strata in this first slice"
+    ],
+    "forbidden_interpretation": [
+      "calling a frontier a semantic root cause",
+      "claiming a remediation would fix a case",
+      "ranking obligations A-F before reading a separately authorized diagnostic surface",
+      "recomputing Gate2A accuracy, recall, coverage, or calibration",
+      "using truth favorability to choose or merge frontier categories"
+    ]
+  },
+  "scientific_firewall": {
+    "semantic_engine_rerun": false,
+    "c1_checker_rerun": false,
+    "machine_artifact_modification": false,
+    "gate2a_artifact_modification": false,
+    "truth_or_operator_read": false,
+    "candidate_source_read": false,
+    "fresh_heldout_read": false,
+    "remediation": false,
+    "semantic_rule_change": false
+  },
+  "determinism_and_freeze": {
+    "stdlib_only_analyzer": true,
+    "import_risu_semantic_or_c1_packages": false,
+    "run_twice": true,
+    "require_exact_logical_byte_identity": true,
+    "first_complete_gate2b0_result_must_be_additively_immutable": true,
+    "later_obligation_level_diagnostics_must_be_separate_additive_slices": true
+  },
+  "next_authorized_action": "Implement a standard-library-only analyzer over only the exact frozen machine matrix and this protocol, freeze its exact blob identity, run two deterministic replays, require exact byte identity, and immutably commit the first complete frontier partition before opening any deeper semantic-slice diagnostic."
+}
