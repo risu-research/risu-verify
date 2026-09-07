@@ -6,6 +6,7 @@ on:
     paths:
       - "risu_e2_semantic/candidate58_harness.py"
       - "tools/e2_candidate58_execution_harness.py"
+      - "tools/e2_candidate58_stage_sources.py"
       - "tools/e2_candidate58_prepare_execution.py"
       - "tools/e2_candidate58_execution_harness_v2.py"
       - "tests/test_e2_candidate58_execution_harness.py"
@@ -44,6 +45,7 @@ jobs:
           allowed={
             'risu_e2_semantic/candidate58_harness.py',
             'tools/e2_candidate58_execution_harness.py',
+            'tools/e2_candidate58_stage_sources.py',
             'tools/e2_candidate58_prepare_execution.py',
             'tools/e2_candidate58_execution_harness_v2.py',
             'tests/test_e2_candidate58_execution_harness.py',
@@ -77,6 +79,7 @@ jobs:
           python -m py_compile \
             risu_e2_semantic/candidate58_harness.py \
             tools/e2_candidate58_execution_harness.py \
+            tools/e2_candidate58_stage_sources.py \
             tools/e2_candidate58_prepare_execution.py \
             tools/e2_candidate58_execution_harness_v2.py \
             tests/test_e2_candidate58_execution_harness.py
