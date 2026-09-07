@@ -1,0 +1,17 @@
+{
+  "schema":"risu.e2-gate1b1c-canonical-bridge-failure-diagnosis/v0.1",
+  "status":"FROZEN_DIAGNOSIS_AFTER_FIRST_COMPLETE_FAIL_FREEZE",
+  "first_complete_freeze_commit":"a84f516514a719f09593f53887b34b02515f4f4b",
+  "workflow_run_id":34086147580,
+  "artifact_id":10005264686,
+  "artifact_digest":"sha256:2ef9061c8b54db470c51d24ddda8d3f667e8bb8a0d46e07aae1b60a95586c9a9",
+  "observed_stage_exit_codes":{"compile":0,"unit_tests":0,"overlay_run1":0,"overlay_run2":0,"overlay_identity":0,"policy_generation":0,"bridge_run1":1,"bridge_run2":1,"repeat_identity":2,"audit_hook_probe":0},
+  "primary_failure":"ModuleNotFoundError: No module named 'risu_e2_semantic'",
+  "classification":"NON_SCIENTIFIC_CLI_BOOTSTRAP_IMPORT_PATH_DEFECT",
+  "cause":"Invoking python tools/e2_gate1b1c_bridge.py makes tools/ the script import root; the repository root was not inserted into sys.path before package imports.",
+  "scientific_logic_executed_by_failed_bridge_runs":false,
+  "evidence_before_failure":{"canonical_overlay_exact_replay":true,"unit_adversarial_tests":true,"closed_read_policy_generation":true,"audit_hook_negative_probe":true},
+  "forbidden_diagnoses":["canonical signature semantic mismatch","finite-world semantic mismatch","adapter semantic mismatch"],
+  "reason_for_forbidden_diagnoses":"The bridge process failed during module import before those computations executed.",
+  "scientific_firewall":{"candidate58_read":false,"truth_read":false,"operator_metadata_read":false,"fresh_target_read":false,"a3_a4_verdict_executed":false}
+}

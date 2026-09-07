@@ -1,0 +1,17 @@
+{
+  "schema":"risu.e2-gate1b1c-canonical-bridge-cli-remediation-protocol/v0.1",
+  "status":"FROZEN_BEFORE_REMEDIATION_EXECUTION",
+  "failure_freeze_commit":"a84f516514a719f09593f53887b34b02515f4f4b",
+  "diagnosis_git_blob":"a3ae5796b3841dce427ff8c72b65f84c6ed1f3ec",
+  "classification":"NON_SCIENTIFIC_CLI_BOOTSTRAP_IMPORT_PATH_DEFECT",
+  "allowed_change":"Move the already-frozen production driver implementation blob 7d84272e8f34f999dfccd1e529acb2dd0c40c0c2 unchanged to risu_e2_semantic/bridge_cli.py and replace tools/e2_gate1b1c_bridge.py with a minimal repository-root sys.path bootstrap wrapper blob 2bf4e4d72b4af860c9525388d86e0d00eea219bf.",
+  "scientific_bytes_changed":false,
+  "canonical_signature_derivation_changed":false,
+  "finite_world_derivation_changed":false,
+  "primary_adapter_changed":false,
+  "closed_read_set_semantics_changed":false,
+  "test_expectations_changed":false,
+  "workflow_gate_logic_changed":false,
+  "rerun_rule":"Rerun the exact same branch-scoped first-complete workflow. Archive evidence before assertion. Promotion requires all original gates PASS.",
+  "scientific_firewall":{"candidate58_read":false,"truth_read":false,"operator_metadata_read":false,"fresh_target_read":false,"a3_a4_verdict_executed":false}
+}
