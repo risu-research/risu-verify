@@ -1,0 +1,115 @@
+{
+  "schema": "risu.e2-a3-a4-selected48-adapter-v2-rerun-preregistration-receipt/v0.1",
+  "status": "PREREGISTERED_ADAPTER_V2_RERUN_READY_BUT_NOT_EXECUTED",
+  "authority_chain": {
+    "repository": "risu-research/risu-verify",
+    "branch": "e2-development",
+    "precomplete_archive_commit": "7deeb8d094e064a2afd8d84d0864443a5b735af5",
+    "adapter_remediation_protocol_commit": "5db59d8bf0f033af818acb9d4516a3912ab2ce90",
+    "adapter_v2_commit": "5e732483d552ca327e55c095a1eb5b13d82e0005",
+    "workflow_freeze_commit": "1b03c72bbff97c6d1331daa57b560f3cab0cf07e",
+    "receipt_commit_binding_rule": "The exact commit that adds only this preregistration receipt is the preregistration_authority_commit required by the frozen rerun workflow. Its SHA is external to this file's own bytes and must not be backfilled by amending this receipt."
+  },
+  "frozen_precomplete_evidence": {
+    "classification": "PRE_COMPLETE_EXECUTION_FAILURE_NOT_FIRST_COMPLETE_SCIENTIFIC_RESULT",
+    "archive_zip_git_blob": "e2b5d94b4fd9456a83df804cb6ad5ebd979f89bd",
+    "archive_zip_sha256": "5d2b8f200fb4e98f01f4e08e63c07342e349b4407cea81444125cedc2eb2010d",
+    "archive_freeze_receipt_git_blob": "fcb2fbc753aedfcb6aa0ceeca523eb7afac0a7b8",
+    "transport_bundle_sha256": "222f0341836a0ae6487471444a82914c30d61ca3896a88cadf4de2bfa9487f2a",
+    "transport_bundle_internal_digest_sha256": "eeb2bb84ada34c78fa3b2e92a91605d03fa0ebd6a54bbfb97637e10fb323145f",
+    "selected48_first_exact_blob_read_completed": true,
+    "primary_complete_outputs_observed": 0,
+    "independent_complete_outputs_observed": 0,
+    "first_complete_scientific_bundle_observed": false
+  },
+  "adapter_v2_freeze": {
+    "primary": {
+      "path": "tools/e2_frozen48_requalification_primary_v2.py",
+      "git_blob": "57c537cbf3ba43aa5ff6fdb35a3651652fd1743f"
+    },
+    "independent": {
+      "path": "tools/e2_frozen48_requalification_independent_v2.py",
+      "git_blob": "a018c76fcb30af419b15f0fe49aba41464d9b1d6"
+    },
+    "compile_check": "PASS",
+    "scientific_semantics_changed": false,
+    "transport_engine_changed": false,
+    "case_status_predicate_changed": false,
+    "canonical_projection_changed": false,
+    "selection_changed": false,
+    "repair_scope": "NON_SCIENTIFIC_INTERFACE_AND_FAIL_CLOSED_CONTROL_FLOW_ONLY"
+  },
+  "prospectively_frozen_transport_control_flow": {
+    "observed_transport_receipt_count": 48,
+    "strict_transport_eligible_count": 31,
+    "strict_transport_ineligible_count": 17,
+    "transport_incomplete_count": 15,
+    "complete_but_strictly_ineligible_count": 2,
+    "complete_but_strictly_ineligible_cells": [
+      "Q026",
+      "Q045"
+    ],
+    "rule": "These counts describe the already-frozen pre-complete transport evidence and only determine whether the adapter may enter the unchanged scientific observability path or must emit the pre-existing canonical OBSERVABILITY_INCOMPLETE_TRANSPORT row. They are not expected scientific outcome labels and do not authorize any case-specific branching.",
+    "strictly_ineligible_action": "EMIT_CANONICAL_FAIL_CLOSED_ROW_WITHOUT_EXCEPTION",
+    "strictly_eligible_action": "CONTINUE_UNCHANGED_FROZEN_SCIENTIFIC_PATH"
+  },
+  "workflow_freeze": {
+    "path": ".github/workflows/e2-a3-a4-selected48-adapter-v2-rerun.yml",
+    "git_blob": "ab9383dbb860373e82905305353150e14c2b9037",
+    "commit": "1b03c72bbff97c6d1331daa57b560f3cab0cf07e",
+    "parent": "5e732483d552ca327e55c095a1eb5b13d82e0005",
+    "commit_file_count": 1,
+    "trigger": "workflow_dispatch_only",
+    "automatic_push_trigger": false,
+    "automatic_pull_request_trigger": false,
+    "automatic_schedule_trigger": false,
+    "actions_checkout_present": false,
+    "artifact_name": "e2-selected48-adapter-v2-rerun-first-complete",
+    "artifact_upload_precedes_final_gate_assertion": true
+  },
+  "unchanged_frozen_authorities": {
+    "selected48_manifest_git_blob": "8336a8e33e189e373a8a59cca57c4cab20fdc5f7",
+    "selected48_manifest_digest_sha256": "1e044134302a52bc5c53f4028fc327bd495ba110e6e6d19546252e0e717bdd61",
+    "cells_tree_git_sha": "34a30574c7420728bff57958c815194979a622ab",
+    "orchestrator_git_blob": "189e51b80aa7630064fc0164efe0ada30c324963",
+    "canonical_anchor_bundle_git_blob": "ec8d8b287a80b87c815f0362be366be076d2b091",
+    "canonical_signature_bundle_git_blob": "cfa7d78707599177afe690c3aad7faaa22cb1930",
+    "frontend_js_v3_git_blob": "13ffb1b149150b7e730591de7acf47e9322bdf02",
+    "frontend_python_v2_git_blob": "8b7e4d0e2bb9ef6487ef2b90d2390b55ced55ea9",
+    "ir_v3_git_blob": "1d95cfcb2e76563aa5d3ceb65815043eb8b2884a",
+    "frozen_transport_archive_sha256": "7e08347694e82210bdcf53a8cec3f0684dcda5089020ad0d33e21b144fb88278",
+    "frozen_transport_engine_sha256": "3b626fc83fe76a1dfafdcf896efc8a16440bbeec062cfb1dbb86badd23b7af4c"
+  },
+  "rerun_contract": {
+    "exact_selected_case_count": 48,
+    "same_selected_source_git_blob_allowlist": true,
+    "same_transport_recomputation": true,
+    "primary_runs": 2,
+    "independent_runs": 2,
+    "repeat_byte_identity_required": true,
+    "canonical_cross_check_required": true,
+    "no_case_dropping": true,
+    "first_complete_pass_or_fail_must_be_archived_before_any_further_change": true,
+    "raw_selected_source_upload_forbidden": true
+  },
+  "firewall": {
+    "candidate58_bytes_read": false,
+    "epistemic10_source_bytes_read": false,
+    "raw_blind58_transport_read": false,
+    "mutation_truth_read": false,
+    "mutation_operator_metadata_read": false,
+    "expected_e2_prediction_read": false,
+    "fresh_target_bytes_read": false,
+    "a3_a4_semantic_verdicts_executed": false,
+    "scientific_code_change_authorized": false,
+    "transport_change_authorized": false,
+    "gate_relaxation_authorized": false
+  },
+  "authorization": {
+    "user_authorized_selected48_execution_and_immediate_continuation": true,
+    "authorization_phrase": "AUTHORIZE_EXACT_SELECTED48_FIRST_READ",
+    "launch_authority_commit": "1b03c72bbff97c6d1331daa57b560f3cab0cf07e",
+    "preregistration_authority_commit": "USE_THE_EXACT_COMMIT_SHA_THAT_ADDS_ONLY_THIS_RECEIPT",
+    "next_step": "Register the exact workflow blob on the default branch solely for GitHub workflow_dispatch discovery, then dispatch the rerun against e2-development with the exact three frozen inputs."
+  }
+}
