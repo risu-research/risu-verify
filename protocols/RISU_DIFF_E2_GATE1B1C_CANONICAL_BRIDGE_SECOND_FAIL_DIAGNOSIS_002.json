@@ -1,0 +1,15 @@
+{
+  "schema":"risu.e2-gate1b1c-canonical-bridge-second-failure-diagnosis/v0.1",
+  "status":"FROZEN_DIAGNOSIS_AFTER_SECOND_FAIL_FREEZE",
+  "second_failure_freeze_commit":"f6e3174b9edadb63ac0def20157a16cf30ac5ad9",
+  "workflow_run_id":34086329196,
+  "artifact_id":10005322806,
+  "artifact_digest":"sha256:6f81019cfe426b081ceb722bef6e2dd0bc639dcd4796525f30d539ed174edfba",
+  "primary_failure":"ValueError: canonical guard scope unresolved",
+  "classification":"NON_SEMANTIC_EXECUTION_PROFILE_SCOPE_BINDING_ASSUMPTION_DEFECT",
+  "cause":"The canonical GUARD_COMPARISON overlay node does not itself carry attrs.scope. The canonical overlay already exposes COMPLETE control_completeness rows with function_span and internal scope join keys; the guard span can be bound to the unique smallest containing COMPLETE function span without making scope spelling semantic authority.",
+  "public_signature_mismatch_observed":false,
+  "finite_world_mismatch_observed":false,
+  "candidate_execution_performed":false,
+  "scientific_firewall":{"candidate58_read":false,"truth_read":false,"operator_metadata_read":false,"fresh_target_read":false,"a3_a4_verdict_executed":false}
+}

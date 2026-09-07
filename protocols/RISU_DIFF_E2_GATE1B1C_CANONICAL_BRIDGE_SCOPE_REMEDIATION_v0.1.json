@@ -1,0 +1,17 @@
+{
+  "schema":"risu.e2-gate1b1c-canonical-bridge-scope-remediation-protocol/v0.1",
+  "status":"FROZEN_BEFORE_SECOND_REMEDIATION_EXECUTION",
+  "second_failure_freeze_commit":"f6e3174b9edadb63ac0def20157a16cf30ac5ad9",
+  "diagnosis_git_blob":"960ca7de28a292c47b6130f6505ed8b8fc86c334",
+  "allowed_change":"Preserve the original canonical bridge implementation byte-for-byte as risu_e2_semantic/canonical_bridge_v1.py and place a narrow wrapper at canonical_bridge.py that changes only execution-profile guard-scope discovery: missing node attrs.scope is resolved by the unique smallest COMPLETE control_completeness.function_span containing the canonical guard span.",
+  "original_bridge_git_blob":"9e3ceeca756d76f0bc913ffc685a413936966aa6",
+  "scope_wrapper_git_blob":"a0e6f9654b09feb4cca8e1503340bc9078b58851",
+  "scope_spelling_semantic_authority":false,
+  "public_signature_derivation_changed":false,
+  "finite_world_semantics_changed":false,
+  "adapter_semantics_changed":false,
+  "closed_read_set_semantics_changed":false,
+  "workflow_gates_changed":false,
+  "rerun_rule":"Execute the exact same canonical-only qualification workflow; archive evidence before assertion; do not promote unless every original gate passes.",
+  "scientific_firewall":{"candidate58_read":false,"truth_read":false,"operator_metadata_read":false,"fresh_target_read":false,"a3_a4_verdict_executed":false}
+}
