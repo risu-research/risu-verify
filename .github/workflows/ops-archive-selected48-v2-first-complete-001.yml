@@ -1,0 +1,135 @@
+name: OPS Archive Selected48 Adapter V2 First Complete 001
+
+on:
+  push:
+    branches: [ops/archive-selected48-v2-first-complete-001]
+    paths: [.github/workflows/ops-archive-selected48-v2-first-complete-001.yml]
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  archive:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Verify exact first-complete artifact and atomically archive ZIP plus receipt
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import base64,hashlib,io,json,os,urllib.error,urllib.request,zipfile
+          REPO='risu-research/risu-verify'; TARGET='e2-development'; PARENT='a3fa881a50beb9e787f17c929e568894ad823d58'
+          RUN_ID=34071215238; JOB_ID=101588799686; ARTIFACT_ID=10000525201
+          ZIP_BYTES=60180; ZIP_SHA='53874b0cd28a7fd434c599acb79fe6ebf19751e26a86a8b0c374fb268798e1e6'
+          BASE='experiments/risu-diff-e2/qualification/a3-a4/frozen-48-requalification/selected-48-execution/adapter-v2-rerun/first-complete'
+          ZIP_PATH=BASE+'/e2-selected48-adapter-v2-rerun-first-complete.zip'
+          RECEIPT_PATH=BASE+'/E2_A3_A4_SELECTED_48_ADAPTER_V2_FIRST_COMPLETE_FREEZE_RECEIPT.json'
+          EXPECT={
+            'authority_preflight.json':(655,'38c51533637400a48ddbb12dfbcc79314977f8a5b4d84743e41c2b7020f480cd'),
+            'cross_check.json':(900,'6e3b9a302d0beac7ba700e87a18677b45283a340e4f5c14b66d96493805b020f'),
+            'execution_provenance.json':(2203,'e801f852b41eb161f55a67634bd79ff11f31fef7ce1cccbf8d7cda52e0cb7e1a'),
+            'exit_codes.json':(77,'fea0c9e3c796e66c72ead264b5eca81ce698f3b04d68f737aa62fe0c88429401'),
+            'independent_run1.json':(91427,'c93b085beeefbcafeeadeb3e46a7d59d36b56f553065dfce3f4ac08ba74d660a'),
+            'independent_run2.json':(91427,'c93b085beeefbcafeeadeb3e46a7d59d36b56f553065dfce3f4ac08ba74d660a'),
+            'primary_run1.json':(91423,'dcd45a4cc0b5153591da29c59a880171df39f484ebb364af413f15efc4148f7c'),
+            'primary_run2.json':(91423,'dcd45a4cc0b5153591da29c59a880171df39f484ebb364af413f15efc4148f7c'),
+            'repeat_check.json':(290,'ef481f87c3da246640300c1f5a07c5352a55bcb74c07647ce6d5994897c7188a'),
+            'runtime_admission.json':(8639,'a716ba6b9b924193dc8f5088dd065219dfb4828e5ddb18213270b3ceb15612ea'),
+            'selected_source_fetch_receipt.json':(313,'52eae170fee1855909a616a986bde6f1b81d6067a3ddf6ffdad362b4a39bc612'),
+            'transport_bundle.json':(247011,'222f0341836a0ae6487471444a82914c30d61ca3896a88cadf4de2bfa9487f2a')
+          }
+          token=os.environ['GH_TOKEN']; H={'Authorization':'Bearer '+token,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','User-Agent':'risu-selected48-v2-firstcomplete-archive'}
+          def api(path,method='GET',payload=None):
+            data=None if payload is None else json.dumps(payload,separators=(',',':')).encode(); h=dict(H)
+            if data is not None: h['Content-Type']='application/json'
+            req=urllib.request.Request('https://api.github.com/repos/'+REPO+path,data=data,method=method,headers=h)
+            with urllib.request.urlopen(req,timeout=60) as r:
+              raw=r.read(); return json.loads(raw) if raw else None
+          class NoRedirect(urllib.request.HTTPRedirectHandler):
+            def redirect_request(self,req,fp,code,msg,headers,newurl): return None
+          opener=urllib.request.build_opener(NoRedirect)
+          req=urllib.request.Request(f'https://api.github.com/repos/{REPO}/actions/artifacts/{ARTIFACT_ID}/zip',headers=H)
+          try:
+            opener.open(req,timeout=60); raise SystemExit('EXPECTED_REDIRECT_NOT_OBSERVED')
+          except urllib.error.HTTPError as e:
+            if e.code not in (301,302,303,307,308): raise
+            signed=e.headers.get('Location')
+            if not signed: raise SystemExit('SIGNED_LOCATION_MISSING')
+          with urllib.request.urlopen(urllib.request.Request(signed,headers={'User-Agent':'risu-selected48-v2-signed-download'}),timeout=60) as r:
+            zip_bytes=r.read()
+          if len(zip_bytes)!=ZIP_BYTES or hashlib.sha256(zip_bytes).hexdigest()!=ZIP_SHA: raise SystemExit('ZIP_IDENTITY_MISMATCH')
+          with zipfile.ZipFile(io.BytesIO(zip_bytes)) as z:
+            names=z.namelist()
+            if len(names)!=12 or set(names)!=set(EXPECT): raise SystemExit('INNER_FILE_SET_MISMATCH')
+            observed={}; docs={}
+            for name in sorted(names):
+              raw=z.read(name); pair=(len(raw),hashlib.sha256(raw).hexdigest())
+              if pair!=EXPECT[name]: raise SystemExit('INNER_FILE_IDENTITY_MISMATCH:'+name)
+              observed[name]={'bytes':pair[0],'sha256':pair[1]}; docs[name]=json.loads(raw)
+          prov=docs['execution_provenance.json']; repeat=docs['repeat_check.json']; cross=docs['cross_check.json']; codes=docs['exit_codes.json']; p=docs['primary_run1.json']; i=docs['independent_run1.json']
+          if prov.get('status')!='FIRST_COMPLETE_OBSERVED' or prov.get('complete_scientific_bundle') is not True: raise SystemExit('NOT_FIRST_COMPLETE')
+          if repeat.get('status')!='PASS' or not repeat.get('primary_byte_identical') or not repeat.get('independent_byte_identical'): raise SystemExit('REPEAT_NOT_PASS')
+          if p.get('case_count')!=48 or i.get('case_count')!=48: raise SystemExit('CASE_COUNT_MISMATCH')
+          if p.get('qualified_count')!=26 or i.get('qualified_count')!=26: raise SystemExit('QUALIFIED_COUNT_MISMATCH')
+          if p.get('status')!='FAIL' or i.get('status')!='FAIL': raise SystemExit('CHECKER_STATUS_MISMATCH')
+          if cross.get('case_count')!=48 or cross.get('same_identity_set') is not True or cross.get('exact_named_canonical_agreement') is not True or cross.get('mismatch_cell_ids')!=[]: raise SystemExit('CANONICAL_AGREEMENT_MISMATCH')
+          if cross.get('status')!='FAIL' or cross.get('primary_qualified_count')!=26 or cross.get('independent_qualified_count')!=26: raise SystemExit('CROSS_STATUS_MISMATCH')
+          if codes!={'independent_run1':1,'independent_run2':1,'primary_run1':1,'primary_run2':1}: raise SystemExit('EXIT_CODES_MISMATCH')
+          branch=api('/branches/'+TARGET)
+          if branch['commit']['sha']!=PARENT: raise SystemExit('TARGET_BRANCH_MOVED_BEFORE_ARCHIVE')
+          base_tree=branch['commit']['commit']['tree']['sha']
+          zip_blob=api('/git/blobs','POST',{'content':base64.b64encode(zip_bytes).decode(),'encoding':'base64'})['sha']
+          receipt={
+            'schema':'risu.e2-a3-a4-selected48-adapter-v2-first-complete-freeze-receipt/v0.1',
+            'status':'FROZEN_FAIL',
+            'classification':'FIRST_COMPLETE_FROZEN_48_REQUALIFICATION_RESULT',
+            'authority':{
+              'repository':REPO,'branch':TARGET,'pre_archive_head':PARENT,
+              'adapter_remediation_protocol_commit':'5db59d8bf0f033af818acb9d4516a3912ab2ce90',
+              'adapter_v2_commit':'5e732483d552ca327e55c095a1eb5b13d82e0005',
+              'primary_v2_git_blob':'57c537cbf3ba43aa5ff6fdb35a3651652fd1743f',
+              'independent_v2_git_blob':'a018c76fcb30af419b15f0fe49aba41464d9b1d6',
+              'workflow_freeze_commit':'1b03c72bbff97c6d1331daa57b560f3cab0cf07e',
+              'workflow_git_blob':'ab9383dbb860373e82905305353150e14c2b9037',
+              'preregistration_commit':PARENT
+            },
+            'hosted_run':{
+              'run_id':RUN_ID,'job_id':JOB_ID,'artifact_id':ARTIFACT_ID,
+              'runner_version':'2.337.0','runner_image':'ubuntu-24.04','runner_image_version':'20260831.293.1',
+              'hosted_compute_agent_version':'20260828.587','python':'3.13.15','go':'1.23.2',
+              'azure_region':'westus','worker_id':'e566a669-c5c5-4205-b821-de19121ea6b4'
+            },
+            'artifact':{'path':ZIP_PATH,'git_blob':zip_blob,'zip_bytes':ZIP_BYTES,'zip_sha256':ZIP_SHA,'files':observed},
+            'first_complete_result':{
+              'provenance_status':'FIRST_COMPLETE_OBSERVED','complete_scientific_bundle':True,
+              'primary_status':'FAIL','primary_case_count':48,'primary_qualified_count':26,
+              'independent_status':'FAIL','independent_case_count':48,'independent_qualified_count':26,
+              'primary_repeat_byte_identical':True,'independent_repeat_byte_identical':True,
+              'canonical_cross_check_status':'FAIL','same_identity_set':True,
+              'exact_named_canonical_agreement':True,'mismatch_cell_ids':[],
+              'official_overall_status':'FROZEN_FAIL'
+            },
+            'execution_boundary':{
+              'selected48_exact_blob_fetch':'PASS_48_OF_48','transport_recomputed_with_frozen_engine':True,
+              'primary_runs_completed':2,'independent_runs_completed':2,'canonical_cross_check_completed':True,
+              'artifact_uploaded_before_final_gate':True,'raw_selected_source_artifact_firewall':'PASS'
+            },
+            'firewall':{
+              'epistemic10_source_bytes_read':False,'candidate58_bytes_read':False,'raw_blind58_transport_read':False,
+              'mutation_truth_read':False,'mutation_operator_metadata_read':False,'expected_e2_prediction_read':False,
+              'fresh_target_bytes_read':False,'a3_a4_semantic_verdicts_emitted':False
+            },
+            'immutability':{
+              'archive_before_any_post_first_complete_change':True,'scientific_bytes_changed_before_archive':False,
+              'selection_changed_before_archive':False,'transport_changed_before_archive':False,'gate_relaxed_before_archive':False
+            },
+            'next_boundary':'POST-FREEZE DIAGNOSIS MAY NOW EXPLAIN THE 22 NON-QUALIFIED ROWS AND DETERMINE WHETHER ANY FURTHER WORK IS SCIENTIFIC, TRANSPORT, OR EXPECTED CONSERVATIVE REJECTION. DO NOT ALTER THIS FIRST-COMPLETE RESULT. CANDIDATE58 REMAINS SEALED.'
+          }
+          receipt_bytes=(json.dumps(receipt,sort_keys=True,separators=(',',':'))+'\n').encode()
+          receipt_blob=api('/git/blobs','POST',{'content':base64.b64encode(receipt_bytes).decode(),'encoding':'base64'})['sha']
+          tree=api('/git/trees','POST',{'base_tree':base_tree,'tree':[{'path':ZIP_PATH,'mode':'100644','type':'blob','sha':zip_blob},{'path':RECEIPT_PATH,'mode':'100644','type':'blob','sha':receipt_blob}]})['sha']
+          commit=api('/git/commits','POST',{'message':'e2: freeze selected-48 adapter-v2 first-complete result','tree':tree,'parents':[PARENT]})['sha']
+          api('/git/refs/heads/'+TARGET,'PATCH',{'sha':commit,'force':False})
+          print(json.dumps({'status':'ARCHIVED','commit':commit,'zip_blob':zip_blob,'receipt_blob':receipt_blob},sort_keys=True,separators=(',',':')))
+          PY
