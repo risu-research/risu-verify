@@ -1,0 +1,93 @@
+{
+  "schema": "risu.e2-a3-a4-helper-polarity-public-nonregression/v0.1",
+  "status": "FROZEN_BEFORE_PUBLIC_NONREGRESSION_EXECUTION",
+  "classification": "NON_PROSPECTIVE_ALREADY_PUBLIC_EVIDENCE_REGRESSION",
+  "authority": {
+    "repository": "risu-research/risu-verify",
+    "branch": "e2-development",
+    "helper_polarity_prospective_pass_commit": "f1403fece2c6815228240be4533e72ccfd9ad12b",
+    "canonical_integration_pass_commit": "8033ab369a32c635549684f5d8fc6c17a23805c5",
+    "predicate_polarity_v1_git_blob": "de0b188dda16cacf842bc5539066681d01a4f9b3",
+    "path_observability_v2_git_blob": "e3d0b19fd87d3b5ff0a3344e0915b56bcb342bb9",
+    "frontend_js_v3_git_blob": "13ffb1b149150b7e730591de7acf47e9322bdf02",
+    "frontend_python_v2_git_blob": "8b7e4d0e2bb9ef6487ef2b90d2390b55ced55ea9",
+    "ir_v3_git_blob": "1d95cfcb2e76563aa5d3ceb65815043eb8b2884a"
+  },
+  "surface_A_v0_3_24": {
+    "claim_scope": "RERUN_OF_ALREADY_PUBLIC_V0_3_PROSPECTIVE_SURFACE;_NOT_NEW_PROSPECTIVE_EVIDENCE",
+    "corpus_path": "experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/remediation-v0.3/E2_A3_A4_CANDIDATE_OBSERVABILITY_REMEDIATION_V0_3_PROSPECTIVE_CORPUS.json",
+    "corpus_git_blob": "0a930443990366a09671ddaa4e1fa63dbd658381",
+    "protocol_git_blob": "64357f2671ad5bab89bc39dd78cb85374c494787",
+    "primary_checker_git_blob": "f8775fbcb6d88f7a3c565433c71d7abed2eff479",
+    "independent_checker_git_blob": "e5785ef7a359ef4bee9b3accc5b70fbfb4b8d640",
+    "required": {
+      "primary_case_count": 24,
+      "primary_passed_count": 24,
+      "independent_case_count": 24,
+      "independent_passed_count": 24,
+      "primary_variant_pair_failures": 0,
+      "independent_variant_pair_failures": 0,
+      "exact_per_case_and_signature_agreement": true,
+      "primary_specialization_scan": "PASS",
+      "independent_specialization_scan": "PASS",
+      "two_runs_each_byte_identical": true
+    }
+  },
+  "surface_B_frozen_v0_2_24": {
+    "claim_scope": "NON_PROSPECTIVE_REGRESSION_ONLY",
+    "corpus_path": "experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/remediation-v0.2/E2_A3_A4_CANDIDATE_OBSERVABILITY_REMEDIATION_V0_2_MICROQUALIFICATION_CORPUS.json",
+    "corpus_git_blob": "a0036c02826d54ac9ac22501b7eb341a600d1607",
+    "regression_protocol_git_blob": "1433c5d8cfa2ddfb32129552c672c3e1877e44ef",
+    "primary_checker_git_blob": "b91c1d3a62ff93e50380e29113e5ef0b20fb51c4",
+    "independent_checker_git_blob": "cc2290599861664750ba1bdd06f6a066acc1cbf5",
+    "checker_only_adjudicator_git_blob": "013900eb4a40e43829e53920350ba64555d9c145",
+    "immutable_historical_primary": {
+      "bytes": 17310,
+      "sha256": "b1b4d70e773058264c2d0e810f3a0ce6e66d3f7f0bf9091fabca70bd4d9b3f9f"
+    },
+    "immutable_historical_independent": {
+      "bytes": 8440,
+      "sha256": "0a62f4eb71d3e036b838f4385eb9dcd944a03f8f2cd5d90da81f9fa592f42005"
+    },
+    "required": {
+      "primary_case_count": 24,
+      "primary_passed_count": 24,
+      "independent_case_count": 24,
+      "independent_passed_count": 24,
+      "primary_old_variant_errors": 0,
+      "independent_old_variant_pair_failures": 0,
+      "primary_output_byte_identical_to_historical_first_complete": true,
+      "independent_output_byte_identical_to_historical_first_complete": true,
+      "checker_only_canonical_agreement": "24_OF_24_PASS",
+      "adjudicator_self_tests": "9_OF_9_PASS"
+    }
+  },
+  "interpretation_boundary": {
+    "what_this_can_establish": "Adding predicate_polarity_v1 and path_observability_v2 did not alter the already-public v0.3 extraction qualification surface or the frozen-v0.2-24 v3 regression surface under exact frozen frontend/IR/checker authorities.",
+    "what_this_does_not_establish": "This public nonregression does not independently test path_observability_v2; that integration is separately covered by the pre-existing canonical-seed integration regression. It does not convert frozen-48 into prospective evidence and does not authorize candidate-58."
+  },
+  "specialization_firewall": {
+    "new_scientific_modules_may_not_contain": [
+      "HPB",
+      "HPM",
+      "Q013",
+      "Q014",
+      "Q015",
+      "Q017",
+      "Q018",
+      "SYN-PY-02",
+      "source_sha256 branching",
+      "fixture_id branching"
+    ],
+    "old_v3_scientific_blobs_must_match_frozen_authorities": true
+  },
+  "first_complete_rule": "The first complete combined public nonregression bundle must be archived unchanged before any diagnosis or remediation, PASS or FAIL.",
+  "firewall": {
+    "frozen48_source_rerun": false,
+    "candidate58_read": false,
+    "epistemic10_read": false,
+    "mutation_truth_or_operator_metadata_read": false,
+    "a3_a4_semantic_verdict_execution": false
+  },
+  "next_boundary_if_pass": "Prospectively freeze a new post-diagnosis frozen-48 remediation requalification protocol. That protocol must preserve the historical 26/48 FROZEN_FAIL and treat the 17 frozen transport-ineligible rows as conservative exclusions rather than silently weakening the original gate. Candidate-58 remains sealed."
+}
