@@ -1,0 +1,68 @@
+{
+  "schema": "risu.e2-a3-a4-helper-polarity-canonical-integration-regression/v0.1",
+  "status": "FROZEN_BEFORE_INTEGRATION_EXECUTION",
+  "classification": "NON_PROSPECTIVE_PREEXISTING_CANONICAL_SEED_REGRESSION",
+  "authority": {
+    "repository": "risu-research/risu-verify",
+    "branch": "e2-development",
+    "integration_code_commit": "0097c2574e37a3facacff60648f424ffe8a4cec8",
+    "path_observability_v1_git_blob": "6eae3403f53b86f85bac47a31e751d28508e7225",
+    "predicate_polarity_v1_git_blob": "de0b188dda16cacf842bc5539066681d01a4f9b3",
+    "canonical_seed_catalog_git_blob": "2a0c01ad5850d3a701fb243d307ff441e9cae358",
+    "canonical_signature_bundle_git_blob": "cfa7d78707599177afe690c3aad7faaa22cb1930",
+    "canonical_anchor_bundle_git_blob": "ec8d8b287a80b87c815f0362be366be076d2b091",
+    "authoritative_a2o_overlay_artifact_id": 9982044088,
+    "authoritative_a2o_overlay_artifact_zip_sha256": "0696dae0e416ff936b7f3a443509b92698e5493b626e250d5113725630f025be",
+    "canonical_overlay_file_sha256": "2d231b9eae523d7fb84925c302398c4913670b765cb10e2c4f76dc988cc5ea36"
+  },
+  "scope": {
+    "seeds": ["SYN-PY-01", "SYN-PY-02"],
+    "reason": "These two Python canonical seeds were frozen before E2 implementation. SYN-PY-01 is a direct-control preservation control; SYN-PY-02 is the pre-existing canonical helper-control witness. No frozen-48 mutation cell is used as integration evidence.",
+    "semantic_authority": false
+  },
+  "frozen_expectations": {
+    "SYN-PY-01": {
+      "canonical_effective_guard_form": "DIRECT_CONTROL",
+      "v1_expected_form": "DIRECT_CONTROL",
+      "v2_expected_form": "DIRECT_CONTROL",
+      "v2_polarity_certificate_status": "NOT_APPLICABLE",
+      "required_regression": "After removing only v2 schema/digest/additive polarity metadata, the v2 path document must equal the v1 path document exactly."
+    },
+    "SYN-PY-02": {
+      "canonical_effective_guard_form": "HELPER_CONTROL",
+      "v1_expected_form": "UNPROVEN",
+      "v1_expected_reason": "HELPER_PREDICATE_POLARITY_UNPROVEN",
+      "v2_expected_form": "HELPER_CONTROL",
+      "v2_polarity_certificate_status": "PROVED",
+      "v2_polarity_to_transported_guard": "INVERTED",
+      "v2_expected_flip_count": 1,
+      "required_normalized_truth": {
+        "rejection_path_transported_guard_truth": false,
+        "effect_path_transported_guard_truth": true
+      }
+    }
+  },
+  "pass_gates": {
+    "authoritative_overlay_exact_hash_verified": true,
+    "canonical_seed_source_git_blobs_verified": true,
+    "frontend_python_v2_status_pass_for_both": true,
+    "v1_and_v2_execute_without_exception": true,
+    "SYN_PY_01_full_core_regression_identity": true,
+    "SYN_PY_02_helper_control_recovered": true,
+    "SYN_PY_02_polarity_certificate_exact": true,
+    "SYN_PY_02_normalized_rejection_effect_truth_consistent": true,
+    "two_runs_byte_identical": true
+  },
+  "forbidden": {
+    "frozen48_used_as_integration_test": true,
+    "candidate58_read": true,
+    "epistemic10_read": true,
+    "mutation_truth_or_operator_metadata_read": true,
+    "changing_canonical_seed_or_signature_expectations": true,
+    "changing_predicate_polarity_v1_before_first_complete_integration_result_freeze": true,
+    "changing_path_observability_v2_before_first_complete_integration_result_freeze": true,
+    "a3_a4_semantic_verdict_execution": true
+  },
+  "first_complete_rule": "The first complete canonical integration regression result must be archived unchanged before any diagnosis or remediation, whether PASS or FAIL.",
+  "next_boundary_if_pass": "Run the already-public v0.3-24 plus frozen-v0.2-24 nonregression surfaces under unchanged scientific blobs, then prospectively freeze a frozen-48 v2 requalification protocol. Candidate-58 remains sealed."
+}
