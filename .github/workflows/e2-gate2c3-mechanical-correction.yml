@@ -54,7 +54,7 @@ jobs:
           set -euo pipefail
           export CORRECTION_PARENT="$GITHUB_SHA"
           python - <<'PY'
-          import os, subprocess
+          import os
           from pathlib import Path
           p=Path(os.environ['REAL_WORKFLOW'])
           before=p.read_text()
@@ -68,8 +68,8 @@ jobs:
           assert len(a)==len(b)
           changed=[(i,x,y) for i,(x,y) in enumerate(zip(b,a),1) if x!=y]
           assert changed==[
-            (13, f"  EXPECTED_PARENT: {os.environ['OLD_PARENT']}", f"  EXPECTED_PARENT: {os.environ['CORRECTION_PARENT']}"),
-            (25, f"  MATRIX_SHA: {os.environ['OLD_MATRIX_SHA']}", f"  MATRIX_SHA: {os.environ['NEW_MATRIX_SHA']}"),
+            (14, f"  EXPECTED_PARENT: {os.environ['OLD_PARENT']}", f"  EXPECTED_PARENT: {os.environ['CORRECTION_PARENT']}"),
+            (26, f"  MATRIX_SHA: {os.environ['OLD_MATRIX_SHA']}", f"  MATRIX_SHA: {os.environ['NEW_MATRIX_SHA']}"),
           ], changed
           p.write_text(after)
           PY
