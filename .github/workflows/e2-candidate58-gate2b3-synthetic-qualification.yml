@@ -1,0 +1,57 @@
+name: E2 Candidate58 Gate2B3 Synthetic Qualification
+on:
+  push:
+    branches: [e2-development]
+    paths:
+      - tools/e2_candidate58_gate2b3_guard_scope_provenance_attribution.py
+      - tests/test_e2_candidate58_gate2b3_guard_scope_provenance_attribution.py
+      - protocols/RISU_DIFF_E2_CANDIDATE58_GATE2B3_GUARD_SCOPE_PROVENANCE_ATTRIBUTION_PROTOCOL_v0.1.json
+      - .github/workflows/e2-candidate58-gate2b3-synthetic-qualification.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-qualification:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout exact trigger revision
+        uses: actions/checkout@v4
+        with: {ref: '${{ github.sha }}', fetch-depth: 1}
+      - name: Set up exact Python
+        uses: actions/setup-python@v5
+        with: {python-version: '3.13.5'}
+      - name: Scientific read-surface firewall
+        shell: bash
+        run: |
+          set -euo pipefail
+          python --version | grep -F 'Python 3.13.5'
+          ! grep -R --line-number -E '[0-9a-f]{64}\.overlay\.json|[0-9a-f]{64}\.path\.json' tools/e2_candidate58_gate2b3_guard_scope_provenance_attribution.py tests/test_e2_candidate58_gate2b3_guard_scope_provenance_attribution.py
+          ! grep -R --line-number -E 'TRUTH_ORACLE|Epistemic10|gate2a-first-complete-truth-join' tests/test_e2_candidate58_gate2b3_guard_scope_provenance_attribution.py .github/workflows/e2-candidate58-gate2b3-synthetic-qualification.yml
+      - name: Synthetic adversarial replay 1
+        run: >-
+          python tests/test_e2_candidate58_gate2b3_guard_scope_provenance_attribution.py
+          --protocol protocols/RISU_DIFF_E2_CANDIDATE58_GATE2B3_GUARD_SCOPE_PROVENANCE_ATTRIBUTION_PROTOCOL_v0.1.json
+          --output /tmp/selftest1.json
+      - name: Synthetic adversarial replay 2
+        run: >-
+          python tests/test_e2_candidate58_gate2b3_guard_scope_provenance_attribution.py
+          --protocol protocols/RISU_DIFF_E2_CANDIDATE58_GATE2B3_GUARD_SCOPE_PROVENANCE_ATTRIBUTION_PROTOCOL_v0.1.json
+          --output /tmp/selftest2.json
+      - name: Exact byte identity and implementation hashes
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmp /tmp/selftest1.json /tmp/selftest2.json
+          mkdir -p /tmp/qualification
+          cp /tmp/selftest1.json /tmp/qualification/E2_CANDIDATE58_GATE2B3_SYNTHETIC_SELFTEST_RECEIPT.json
+          sha256sum /tmp/selftest1.json > /tmp/qualification/E2_CANDIDATE58_GATE2B3_SYNTHETIC_SELFTEST.sha256
+          sha256sum tools/e2_candidate58_gate2b3_guard_scope_provenance_attribution.py tests/test_e2_candidate58_gate2b3_guard_scope_provenance_attribution.py > /tmp/qualification/E2_CANDIDATE58_GATE2B3_IMPLEMENTATION_FILES.sha256
+      - name: Python bytecode sanity
+        run: python -m py_compile tools/e2_candidate58_gate2b3_guard_scope_provenance_attribution.py tests/test_e2_candidate58_gate2b3_guard_scope_provenance_attribution.py
+      - name: Upload synthetic qualification before implementation freeze
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2-candidate58-gate2b3-synthetic-qualification
+          path: /tmp/qualification
+          if-no-files-found: error
+          compression-level: 0
