@@ -1,0 +1,151 @@
+name: OPS Archive Selected48 Precomplete 001B
+
+on:
+  push:
+    branches:
+      - ops/archive-selected48-precomplete-001b
+    paths:
+      - .github/workflows/ops-archive-selected48-precomplete-001b.yml
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  archive:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Verify exact artifact and atomically archive ZIP plus receipt
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import base64, hashlib, io, json, os, urllib.request, urllib.error, zipfile
+
+          REPO='risu-research/risu-verify'
+          TARGET_BRANCH='e2-development'
+          EXPECTED_PARENT='6793b7468cf986aa4954f0bba00c3808fa32d735'
+          RUN_ID=34070199608
+          JOB_ID=101586010208
+          ARTIFACT_ID=10000204673
+          EXPECTED_ZIP_SHA='5d2b8f200fb4e98f01f4e08e63c07342e349b4407cea81444125cedc2eb2010d'
+          EXPECTED_ZIP_BYTES=34831
+          ARCHIVE_PATH='experiments/risu-diff-e2/qualification/a3-a4/frozen-48-requalification/selected-48-execution/pre-complete-001/e2-selected48-only-transport-heldout-execution.zip'
+          RECEIPT_PATH='experiments/risu-diff-e2/qualification/a3-a4/frozen-48-requalification/selected-48-execution/pre-complete-001/E2_A3_A4_SELECTED_48_PRE_COMPLETE_001_FREEZE_RECEIPT.json'
+          EXPECTED_FILES={
+            'authority_preflight.json':(655,'5b5cb6396999df3677de9e5180e8752b9f8e02f78c6c8bbeb1f7e649b1e7f7e8'),
+            'execution_provenance.json':(1651,'1590f849d002df13fa4cc9d886e4bbe4d6bc7d75653b57ca46bfbbead6eb91d9'),
+            'exit_codes.json':(77,'fea0c9e3c796e66c72ead264b5eca81ce698f3b04d68f737aa62fe0c88429401'),
+            'repeat_check.json':(296,'ea9d60cf7f943327c4e5df3ea997761fd9a6e56b92a2b8099ec8e2c9813a17ee'),
+            'runtime_admission.json':(8639,'a716ba6b9b924193dc8f5088dd065219dfb4828e5ddb18213270b3ceb15612ea'),
+            'selected_source_fetch_receipt.json':(313,'52eae170fee1855909a616a986bde6f1b81d6067a3ddf6ffdad362b4a39bc612'),
+            'transport_bundle.json':(247011,'222f0341836a0ae6487471444a82914c30d61ca3896a88cadf4de2bfa9487f2a'),
+          }
+
+          token=os.environ['GH_TOKEN']
+          api_headers={
+            'Authorization':'Bearer '+token,
+            'Accept':'application/vnd.github+json',
+            'X-GitHub-Api-Version':'2022-11-28',
+            'User-Agent':'risu-selected48-precomplete-archive',
+          }
+          def api_json(path, method='GET', payload=None):
+            data=None if payload is None else json.dumps(payload,separators=(',',':')).encode()
+            headers=dict(api_headers)
+            if data is not None: headers['Content-Type']='application/json'
+            req=urllib.request.Request('https://api.github.com/repos/'+REPO+path,data=data,method=method,headers=headers)
+            with urllib.request.urlopen(req,timeout=60) as r:
+              raw=r.read()
+              return json.loads(raw) if raw else None
+
+          class NoRedirect(urllib.request.HTTPRedirectHandler):
+            def redirect_request(self, req, fp, code, msg, headers, newurl):
+              return None
+          opener=urllib.request.build_opener(NoRedirect)
+          artifact_req=urllib.request.Request(
+            f'https://api.github.com/repos/{REPO}/actions/artifacts/{ARTIFACT_ID}/zip',
+            headers=api_headers,
+          )
+          try:
+            opener.open(artifact_req,timeout=60)
+            raise SystemExit('EXPECTED_ARTIFACT_REDIRECT_NOT_OBSERVED')
+          except urllib.error.HTTPError as e:
+            if e.code not in (301,302,303,307,308): raise
+            signed=e.headers.get('Location')
+            if not signed: raise SystemExit('ARTIFACT_REDIRECT_LOCATION_MISSING')
+          signed_req=urllib.request.Request(signed,headers={'User-Agent':'risu-selected48-precomplete-signed-download'})
+          with urllib.request.urlopen(signed_req,timeout=60) as r:
+            zip_bytes=r.read()
+
+          if len(zip_bytes)!=EXPECTED_ZIP_BYTES: raise SystemExit('ZIP_SIZE_MISMATCH')
+          if hashlib.sha256(zip_bytes).hexdigest()!=EXPECTED_ZIP_SHA: raise SystemExit('ZIP_SHA256_MISMATCH')
+          with zipfile.ZipFile(io.BytesIO(zip_bytes)) as z:
+            names=z.namelist()
+            if set(names)!=set(EXPECTED_FILES) or len(names)!=len(EXPECTED_FILES): raise SystemExit('ZIP_FILE_SET_MISMATCH')
+            observed={}; docs={}
+            for name in sorted(names):
+              raw=z.read(name); pair=(len(raw),hashlib.sha256(raw).hexdigest())
+              if pair!=EXPECTED_FILES[name]: raise SystemExit('INNER_FILE_MISMATCH:'+name)
+              observed[name]={'bytes':pair[0],'sha256':pair[1]}; docs[name]=json.loads(raw)
+
+          prov=docs['execution_provenance.json']
+          if prov.get('status')!='PRE_COMPLETE_EXECUTION_FAILURE' or prov.get('complete_scientific_bundle') is not False: raise SystemExit('PROVENANCE_CLASSIFICATION_MISMATCH')
+          if docs['selected_source_fetch_receipt.json'].get('status')!='PASS' or docs['selected_source_fetch_receipt.json'].get('case_count')!=48: raise SystemExit('FIRST_READ_RECEIPT_MISMATCH')
+          if docs['transport_bundle.json'].get('case_count')!=48: raise SystemExit('TRANSPORT_COUNT_MISMATCH')
+          if docs['exit_codes.json']!={'independent_run1':1,'independent_run2':1,'primary_run1':1,'primary_run2':1}: raise SystemExit('EXIT_CODES_MISMATCH')
+          for absent in ['primary_run1.json','primary_run2.json','independent_run1.json','independent_run2.json','cross_check.json']:
+            if prov['expected_outputs_present'].get(absent) is not False: raise SystemExit('UNEXPECTED_OUTPUT_PRESENCE:'+absent)
+
+          branch=api_json('/branches/'+TARGET_BRANCH)
+          if branch['commit']['sha']!=EXPECTED_PARENT: raise SystemExit('TARGET_BRANCH_MOVED_BEFORE_ARCHIVE')
+          base_tree=branch['commit']['commit']['tree']['sha']
+          zip_blob=api_json('/git/blobs','POST',{'content':base64.b64encode(zip_bytes).decode(),'encoding':'base64'})['sha']
+
+          receipt={
+            'schema':'risu.e2-a3-a4-selected48-pre-complete-freeze-receipt/v0.1',
+            'status':'FROZEN_PRE_COMPLETE_EXECUTION_FAILURE',
+            'classification':'PRE_COMPLETE_EXECUTION_FAILURE_NOT_FIRST_COMPLETE_SCIENTIFIC_RESULT',
+            'authority':{
+              'repository':REPO,'branch':TARGET_BRANCH,'pre_archive_head':EXPECTED_PARENT,
+              'workflow_head':EXPECTED_PARENT,'workflow_git_blob':'af7a8e2a70bcd7cb7000335512530ce9b9886666',
+              'launch_authority_commit':'84bdfdd385e247c2cab7642e9b608683a7ff39a8',
+              'preregistration_authority_commit':'6793b7468cf986aa4954f0bba00c3808fa32d735'
+            },
+            'hosted_run':{
+              'run_id':RUN_ID,'job_id':JOB_ID,'artifact_id':ARTIFACT_ID,'runner_version':'2.337.0',
+              'runner_image':'ubuntu-24.04','runner_image_version':'20260831.293.1','python':'3.13.15','go':'1.23.2',
+              'azure_region':'eastus','worker_id':'2f10fa8a-f76a-4cee-b17e-a7f6592d887d'
+            },
+            'artifact':{'path':ARCHIVE_PATH,'git_blob':zip_blob,'zip_bytes':EXPECTED_ZIP_BYTES,'zip_sha256':EXPECTED_ZIP_SHA,'files':observed},
+            'execution_boundary':{
+              'authorization_preflight':'PASS','adapter_specialization_firewall':'PASS',
+              'selected48_exact_blob_first_read':'PASS_48_OF_48','selected48_source_bytes_read':True,
+              'selected48_transport_recomputation':'COMPLETED_48_RECEIPTS','primary_outputs_completed':0,
+              'independent_outputs_completed':0,'canonical_cross_check_completed':False,'first_complete_scientific_bundle_observed':False
+            },
+            'failure_observation':{
+              'primary_run1':'KeyError: language while reading transport receipt','primary_run2':'KeyError: language while reading transport receipt',
+              'independent_run1':'ValueError: transported anchor not role-compatible','independent_run2':'ValueError: transported anchor not role-compatible',
+              'exit_codes':docs['exit_codes.json'],'repeat_check_status':docs['repeat_check.json']['status'],'cross_check_output_present':False
+            },
+            'firewall':{
+              'epistemic10_source_bytes_read':False,'candidate58_bytes_read':False,'raw_blind58_transport_read':False,
+              'mutation_truth_read':False,'mutation_operator_metadata_read':False,'expected_e2_prediction_read':False,
+              'fresh_target_bytes_read':False,'a3_a4_semantic_verdicts_emitted':False,'raw_selected_source_uploaded':False
+            },
+            'immutability':{
+              'archive_exact_zip_before_any_scientific_adapter_workflow_gate_or_transport_change':True,
+              'scientific_bytes_changed_before_archive':False,'selection_changed_before_archive':False,'gate_relaxed_before_archive':False
+            },
+            'next_boundary':'DIAGNOSE THE PRE-COMPLETE INTERFACE/ROLE-COMPATIBILITY FAILURES FROM THIS FROZEN EVIDENCE. DO NOT CLAIM A FROZEN-48 SCIENTIFIC RESULT. ANY REPAIR MUST BE PROTOCOL-FIRST AND MUST NOT ALTER FROZEN V0.3 SCIENTIFIC BYTES, THE 48 SELECTION, OR SEMANTIC EXPECTATIONS WITHOUT A SEPARATE AMENDMENT.'
+          }
+          receipt_bytes=(json.dumps(receipt,sort_keys=True,separators=(',',':'))+'\n').encode()
+          receipt_blob=api_json('/git/blobs','POST',{'content':base64.b64encode(receipt_bytes).decode(),'encoding':'base64'})['sha']
+          tree=api_json('/git/trees','POST',{'base_tree':base_tree,'tree':[
+            {'path':ARCHIVE_PATH,'mode':'100644','type':'blob','sha':zip_blob},
+            {'path':RECEIPT_PATH,'mode':'100644','type':'blob','sha':receipt_blob}
+          ]})['sha']
+          commit=api_json('/git/commits','POST',{'message':'e2: freeze selected-48 pre-complete heldout execution 001','tree':tree,'parents':[EXPECTED_PARENT]})['sha']
+          api_json('/git/refs/heads/'+TARGET_BRANCH,'PATCH',{'sha':commit,'force':False})
+          print(json.dumps({'status':'ARCHIVED','commit':commit,'zip_blob':zip_blob,'receipt_blob':receipt_blob},sort_keys=True,separators=(',',':')))
+          PY
