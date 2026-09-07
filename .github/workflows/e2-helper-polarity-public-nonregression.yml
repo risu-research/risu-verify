@@ -1,0 +1,169 @@
+name: E2 Helper Polarity Public Nonregression
+
+on:
+  push:
+    branches: [e2-development]
+    paths:
+      - .github/workflows/e2-helper-polarity-public-nonregression.yml
+
+permissions:
+  contents: read
+
+jobs:
+  nonregression:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Materialize exact public regression authorities without checkout
+        env:
+          REPO: risu-research/risu-verify
+          REF: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          mkdir -p sealed/risu_e2 sealed/tools sealed/input/v03 sealed/input/v02 sealed/output
+          printf '' > sealed/risu_e2/__init__.py
+          python3 - <<'PY'
+          import hashlib, os, pathlib, urllib.request
+          repo=os.environ['REPO']; ref=os.environ['REF']
+          files={
+            'protocols/RISU_DIFF_E2_A3_A4_HELPER_POLARITY_PUBLIC_NONREGRESSION_v0.1.json':('sealed/input/public-protocol.json','0dd8d70984b564d9abcb23158436d0920ea86dc0'),
+            'protocols/RISU_DIFF_E2_A3_A4_CANDIDATE_OBSERVABILITY_REMEDIATION_v0.3.json':('sealed/input/v03/protocol.json','64357f2671ad5bab89bc39dd78cb85374c494787'),
+            'experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/remediation-v0.3/E2_A3_A4_CANDIDATE_OBSERVABILITY_REMEDIATION_V0_3_PROSPECTIVE_CORPUS.json':('sealed/input/v03/corpus.json','0a930443990366a09671ddaa4e1fa63dbd658381'),
+            'experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/remediation-v0.3/regression-v0.2-24/E2_A3_A4_V0_3_ON_FROZEN_V0_2_24_REGRESSION_PROTOCOL.json':('sealed/input/v02/protocol.json','1433c5d8cfa2ddfb32129552c672c3e1877e44ef'),
+            'experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/remediation-v0.2/E2_A3_A4_CANDIDATE_OBSERVABILITY_REMEDIATION_V0_2_MICROQUALIFICATION_CORPUS.json':('sealed/input/v02/corpus.json','a0036c02826d54ac9ac22501b7eb341a600d1607'),
+            'experiments/risu-diff-e2/qualification/a3-a4/candidate-observability/remediation-v0.3/regression-v0.2-24/adjudication/E2_A3_A4_V3_ON_V2_24_CROSS_CHECK_ADJUDICATION_PROTOCOL.json':('sealed/input/v02/adjudication-protocol.json','558ebaf3e8cd3e71d8def7cb87c940ba780a7396'),
+            'risu_e2/model.py':('sealed/risu_e2/model.py','64baf95a4939f168881627830134b314a6ee6098'),
+            'risu_e2/acquisition.py':('sealed/risu_e2/acquisition.py','b81aec3803c22a7b74d47fe1cfec5fabe71a3492'),
+            'risu_e2/frontend_go.py':('sealed/risu_e2/frontend_go.py','4fc017fd65c8ede67cf11b5e27200c11bbac9d31'),
+            'risu_e2/frontend_python.py':('sealed/risu_e2/frontend_python.py','e98cc7bbefa80d53b94fec3ef25845a3dbbedd93'),
+            'risu_e2/frontend_js.py':('sealed/risu_e2/frontend_js.py','6f3b6535caf0dcebb3c3c3679d898a23fdd8e795'),
+            'risu_e2/frontend_python_v2.py':('sealed/risu_e2/frontend_python_v2.py','8b7e4d0e2bb9ef6487ef2b90d2390b55ced55ea9'),
+            'risu_e2/frontend_js_v3.py':('sealed/risu_e2/frontend_js_v3.py','13ffb1b149150b7e730591de7acf47e9322bdf02'),
+            'risu_e2/ir.py':('sealed/risu_e2/ir.py','d7edac40d4eeda86be74e5785bde3bfc28d4cf5e'),
+            'risu_e2/ir_v3.py':('sealed/risu_e2/ir_v3.py','1d95cfcb2e76563aa5d3ceb65815043eb8b2884a'),
+            'risu_e2/overlay_common.py':('sealed/risu_e2/overlay_common.py','9975fe509fba30a2bbbbb8606f174faa5912a2f1'),
+            'risu_e2/overlay_control.py':('sealed/risu_e2/overlay_control.py','00e06b85d91ce9f75676476c5dc47d15d51d2d35'),
+            'risu_e2/predicate_polarity_v1.py':('sealed/risu_e2/predicate_polarity_v1.py','de0b188dda16cacf842bc5539066681d01a4f9b3'),
+            'risu_e2/path_observability_v2.py':('sealed/risu_e2/path_observability_v2.py','e3d0b19fd87d3b5ff0a3344e0915b56bcb342bb9'),
+            'tools/e2_go_ir_extract.go':('sealed/tools/e2_go_ir_extract.go','26e752029d1b4a99b47f1c7024740b7b0ae14ef7'),
+            'tools/e2_a3_a4_candidate_observability_remediation_v3_qualify.py':('sealed/tools/v03-primary.py','f8775fbcb6d88f7a3c565433c71d7abed2eff479'),
+            'tools/e2_a3_a4_candidate_observability_remediation_v3_independent.py':('sealed/tools/v03-independent.py','e5785ef7a359ef4bee9b3accc5b70fbfb4b8d640'),
+            'tools/e2_a3_a4_v3_on_v2_24_regression_primary.py':('sealed/tools/v02-primary.py','b91c1d3a62ff93e50380e29113e5ef0b20fb51c4'),
+            'tools/e2_a3_a4_v3_on_v2_24_regression_independent.py':('sealed/tools/v02-independent.py','cc2290599861664750ba1bdd06f6a066acc1cbf5'),
+            'tools/e2_a3_a4_v3_on_v2_24_cross_check_adjudicate.py':('sealed/tools/v02-adjudicate.py','013900eb4a40e43829e53920350ba64555d9c145'),
+          }
+          def git_blob(raw): return hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()
+          for src,(dst,want) in files.items():
+              raw=urllib.request.urlopen(f'https://raw.githubusercontent.com/{repo}/{ref}/{src}',timeout=30).read()
+              got=git_blob(raw)
+              if got!=want: raise SystemExit(f'BLOB_MISMATCH:{src}:{got}:{want}')
+              pathlib.Path(dst).write_bytes(raw)
+          print('PUBLIC_AUTHORITY_MATERIALIZATION_PASS',len(files))
+          PY
+          test "$(find sealed -type f | wc -l)" -eq 26
+          ! find sealed -type f -print | grep -E 'frozen.?48|candidate.?58|blind.?58|truth|operator|prediction'
+
+      - name: Compile exact old surfaces and specialization firewall
+        run: |
+          set -euo pipefail
+          cd sealed
+          python3 -m py_compile \
+            risu_e2/frontend_js_v3.py risu_e2/frontend_python_v2.py risu_e2/ir_v3.py \
+            risu_e2/predicate_polarity_v1.py risu_e2/path_observability_v2.py \
+            tools/v03-primary.py tools/v03-independent.py tools/v02-primary.py tools/v02-independent.py tools/v02-adjudicate.py
+          ! grep -E 'HPB|HPM|Q013|Q014|Q015|Q017|Q018|SYN-PY-02' risu_e2/predicate_polarity_v1.py risu_e2/path_observability_v2.py
+          ! grep -q 'v03-primary' tools/v03-independent.py
+          ! grep -q 'v02-primary' tools/v02-independent.py
+
+      - name: Execute public v0.3-24 surface twice
+        run: |
+          set -u
+          cd sealed
+          export PYTHONPATH="$PWD"
+          set +e
+          python3 tools/v03-primary.py --protocol input/v03/protocol.json --corpus input/v03/corpus.json --scientific-root "$PWD" --go-helper tools/e2_go_ir_extract.go --output output/v03-primary-1.json; p1=$?
+          python3 tools/v03-primary.py --protocol input/v03/protocol.json --corpus input/v03/corpus.json --scientific-root "$PWD" --go-helper tools/e2_go_ir_extract.go --output output/v03-primary-2.json; p2=$?
+          python3 tools/v03-independent.py --protocol input/v03/protocol.json --corpus input/v03/corpus.json --scientific-root "$PWD" --output output/v03-independent-1.json; i1=$?
+          python3 tools/v03-independent.py --protocol input/v03/protocol.json --corpus input/v03/corpus.json --scientific-root "$PWD" --output output/v03-independent-2.json; i2=$?
+          set -e
+          printf '{"primary1":%d,"primary2":%d,"independent1":%d,"independent2":%d}\n' "$p1" "$p2" "$i1" "$i2" > output/v03-exit-codes.json
+          cmp output/v03-primary-1.json output/v03-primary-2.json
+          cmp output/v03-independent-1.json output/v03-independent-2.json
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=json.loads(Path('output/v03-primary-1.json').read_bytes()); i=json.loads(Path('output/v03-independent-1.json').read_bytes())
+          pm={r['fixture_id']:(r['passed'],r['abstract_signature']) for r in p['rows']}; im={r['fixture_id']:(r['passed'],r['abstract_signature']) for r in i['rows']}
+          doc={'surface':'PUBLIC_V0_3_24','status':'PASS' if sorted(pm)==sorted(im) and pm==im and p['status']=='PASS' and i['status']=='PASS' else 'FAIL','case_count':24,'same_fixture_set':sorted(pm)==sorted(im),'exact_per_case_and_signature_agreement':pm==im,'primary_status':p['status'],'independent_status':i['status'],'primary_passed_count':p['passed_case_count'],'independent_passed_count':i['passed_case_count'],'primary_variant_pair_failures':p['variant_pair_failures'],'independent_variant_pair_failures':i['variant_pair_failures'],'primary_sha256':hashlib.sha256(Path('output/v03-primary-1.json').read_bytes()).hexdigest(),'independent_sha256':hashlib.sha256(Path('output/v03-independent-1.json').read_bytes()).hexdigest(),'frozen48_read':False,'candidate58_read':False,'semantic_verdicts_emitted':False}
+          Path('output/v03-cross-check.json').write_text(json.dumps(doc,sort_keys=True,separators=(',',':'))+'\n')
+          PY
+
+      - name: Execute frozen-v0.2-24 regression surface twice and exact-byte adjudication
+        run: |
+          set -u
+          cd sealed
+          export PYTHONPATH="$PWD"
+          set +e
+          python3 tools/v02-primary.py --protocol input/v02/protocol.json --corpus input/v02/corpus.json --scientific-root "$PWD" --go-helper tools/e2_go_ir_extract.go --output output/v02-primary-1.json; p1=$?
+          python3 tools/v02-primary.py --protocol input/v02/protocol.json --corpus input/v02/corpus.json --scientific-root "$PWD" --go-helper tools/e2_go_ir_extract.go --output output/v02-primary-2.json; p2=$?
+          python3 tools/v02-independent.py --protocol input/v02/protocol.json --corpus input/v02/corpus.json --scientific-root "$PWD" --output output/v02-independent-1.json; i1=$?
+          python3 tools/v02-independent.py --protocol input/v02/protocol.json --corpus input/v02/corpus.json --scientific-root "$PWD" --output output/v02-independent-2.json; i2=$?
+          set -e
+          printf '{"primary1":%d,"primary2":%d,"independent1":%d,"independent2":%d}\n' "$p1" "$p2" "$i1" "$i2" > output/v02-exit-codes.json
+          cmp output/v02-primary-1.json output/v02-primary-2.json
+          cmp output/v02-independent-1.json output/v02-independent-2.json
+          test "$(wc -c < output/v02-primary-1.json)" -eq 17310
+          test "$(sha256sum output/v02-primary-1.json | awk '{print $1}')" = "b1b4d70e773058264c2d0e810f3a0ce6e66d3f7f0bf9091fabca70bd4d9b3f9f"
+          test "$(wc -c < output/v02-independent-1.json)" -eq 8440
+          test "$(sha256sum output/v02-independent-1.json | awk '{print $1}')" = "0a62f4eb71d3e036b838f4385eb9dcd944a03f8f2cd5d90da81f9fa592f42005"
+          python3 tools/v02-adjudicate.py --protocol input/v02/adjudication-protocol.json --primary output/v02-primary-1.json --independent output/v02-independent-1.json --output output/v02-adjudication.json
+
+      - name: Build combined first-complete nonregression summary
+        run: |
+          set -euo pipefail
+          cd sealed
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          def doc(n): return json.loads(Path('output/'+n).read_text())
+          def sh(n): return hashlib.sha256(Path('output/'+n).read_bytes()).hexdigest()
+          a=doc('v03-cross-check.json'); b=doc('v02-adjudication.json')
+          v03p=doc('v03-primary-1.json'); v03i=doc('v03-independent-1.json')
+          v02p=doc('v02-primary-1.json'); v02i=doc('v02-independent-1.json')
+          codes03=doc('v03-exit-codes.json'); codes02=doc('v02-exit-codes.json')
+          summary={
+            'schema':'risu.e2-helper-polarity-public-nonregression-first-complete/v0.1',
+            'status':'PASS' if (
+              a['status']=='PASS' and a['case_count']==24 and a['exact_per_case_and_signature_agreement']
+              and v03p['passed_case_count']==24 and v03i['passed_case_count']==24 and not v03p['variant_pair_failures'] and not v03i['variant_pair_failures']
+              and b['status']=='PASS' and b['agreed_case_count']==24 and b['failure_count']==0 and b['self_tests']['count']==9 and b['self_tests']['status']=='PASS'
+              and v02p['passed_case_count']==24 and v02i['passed_case_count']==24 and not v02p['variant_errors'] and not v02i['variant_pair_failures']
+              and all(v==0 for v in codes03.values()) and all(v==0 for v in codes02.values())
+            ) else 'FAIL',
+            'classification':'NON_PROSPECTIVE_ALREADY_PUBLIC_EVIDENCE_REGRESSION',
+            'surface_A_v0_3_24':{'status':a['status'],'primary_passed_count':v03p['passed_case_count'],'independent_passed_count':v03i['passed_case_count'],'exact_agreement':a['exact_per_case_and_signature_agreement'],'primary_sha256':sh('v03-primary-1.json'),'independent_sha256':sh('v03-independent-1.json')},
+            'surface_B_frozen_v0_2_24':{'status':b['status'],'primary_passed_count':v02p['passed_case_count'],'independent_passed_count':v02i['passed_case_count'],'canonical_agreed_count':b['agreed_case_count'],'adjudicator_self_tests':b['self_tests']['count'],'primary_exact_historical_bytes':sh('v02-primary-1.json')=='b1b4d70e773058264c2d0e810f3a0ce6e66d3f7f0bf9091fabca70bd4d9b3f9f','independent_exact_historical_bytes':sh('v02-independent-1.json')=='0a62f4eb71d3e036b838f4385eb9dcd944a03f8f2cd5d90da81f9fa592f42005'},
+            'repeat_byte_identity':{'v03_primary':Path('output/v03-primary-1.json').read_bytes()==Path('output/v03-primary-2.json').read_bytes(),'v03_independent':Path('output/v03-independent-1.json').read_bytes()==Path('output/v03-independent-2.json').read_bytes(),'v02_primary':Path('output/v02-primary-1.json').read_bytes()==Path('output/v02-primary-2.json').read_bytes(),'v02_independent':Path('output/v02-independent-1.json').read_bytes()==Path('output/v02-independent-2.json').read_bytes()},
+            'firewall':{'frozen48_source_rerun':False,'candidate58_read':False,'epistemic10_read':False,'mutation_truth_or_operator_metadata_read':False,'a3_a4_semantic_verdicts_executed':False}
+          }
+          Path('output/combined-summary.json').write_text(json.dumps(summary,sort_keys=True,separators=(',',':'))+'\n')
+          print(json.dumps(summary,sort_keys=True,separators=(',',':')))
+          PY
+
+      - name: Upload first-complete public nonregression evidence before final gate
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2-helper-polarity-public-nonregression-first-complete
+          path: sealed/output/*
+          if-no-files-found: error
+
+      - name: Assert frozen public nonregression gate
+        run: |
+          set -euo pipefail
+          cd sealed
+          python3 - <<'PY'
+          import json
+          s=json.load(open('output/combined-summary.json'))
+          if s['status']!='PASS' or not all(s['repeat_byte_identity'].values()) or not s['surface_B_frozen_v0_2_24']['primary_exact_historical_bytes'] or not s['surface_B_frozen_v0_2_24']['independent_exact_historical_bytes']:
+              raise SystemExit('FIRST_COMPLETE_PUBLIC_NONREGRESSION_FAIL')
+          print('FIRST_COMPLETE_PUBLIC_NONREGRESSION_PASS')
+          PY
