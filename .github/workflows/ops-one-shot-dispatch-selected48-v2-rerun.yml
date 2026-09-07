@@ -1,0 +1,48 @@
+name: OPS One-Shot Dispatch Selected48 Adapter V2 Rerun
+
+on:
+  push:
+    branches: [ops/dispatch-selected48-v2-rerun-20260906]
+    paths: [.github/workflows/ops-one-shot-dispatch-selected48-v2-rerun.yml]
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Dispatch exact frozen selected-48 adapter-v2 rerun
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import json,os,urllib.request
+          repo='risu-research/risu-verify'
+          workflow='e2-a3-a4-selected48-adapter-v2-rerun.yml'
+          payload={
+            'ref':'e2-development',
+            'inputs':{
+              'authorization':'AUTHORIZE_EXACT_SELECTED48_FIRST_READ',
+              'launch_authority_commit':'1b03c72bbff97c6d1331daa57b560f3cab0cf07e',
+              'preregistration_authority_commit':'a3fa881a50beb9e787f17c929e568894ad823d58'
+            }
+          }
+          req=urllib.request.Request(
+            f'https://api.github.com/repos/{repo}/actions/workflows/{workflow}/dispatches',
+            data=json.dumps(payload,separators=(',',':')).encode(),
+            method='POST',
+            headers={
+              'Authorization':'Bearer '+os.environ['GH_TOKEN'],
+              'Accept':'application/vnd.github+json',
+              'X-GitHub-Api-Version':'2022-11-28',
+              'User-Agent':'risu-selected48-v2-one-shot-dispatch',
+              'Content-Type':'application/json'
+            }
+          )
+          with urllib.request.urlopen(req,timeout=30) as response:
+            if response.status!=204:
+              raise SystemExit('UNEXPECTED_DISPATCH_STATUS:'+str(response.status))
+          print('SELECTED48_ADAPTER_V2_EXACT_DISPATCH_POSTED=PASS')
+          PY
