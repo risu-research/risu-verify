@@ -1,0 +1,125 @@
+name: E2 Helper Polarity Canonical Integration Regression
+
+on:
+  push:
+    branches: [e2-development]
+    paths:
+      - .github/workflows/e2-helper-polarity-canonical-integration-regression.yml
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  regression:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Materialize exact frozen authorities without checkout
+        env:
+          REPO: risu-research/risu-verify
+          REF: ${{ github.sha }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p sealed/risu_e2 sealed/tools sealed/data sealed/sources sealed/out
+          printf '' > sealed/risu_e2/__init__.py
+          python3 - <<'PY'
+          import hashlib, io, json, os, pathlib, urllib.error, urllib.request, zipfile
+          repo=os.environ['REPO']; ref=os.environ['REF']; token=os.environ['GH_TOKEN']
+          files={
+            'protocols/RISU_DIFF_E2_A3_A4_HELPER_POLARITY_CANONICAL_INTEGRATION_REGRESSION_v0.1.json':('sealed/data/protocol.json','27c1b25bb5d94b19c82bdcb1023dd11af7fb9f17'),
+            'experiments/risu-diff-e2/qualification/CANONICAL_SYNTHETIC_SEEDS.json':('sealed/data/seeds.json','2a0c01ad5850d3a701fb243d307ff441e9cae358'),
+            'experiments/risu-diff-e2/qualification/a3-a4/E2_A3_A4_CANONICAL_SEED_CONSEQUENCE_SIGNATURES_v0.1.json':('sealed/data/signatures.json','cfa7d78707599177afe690c3aad7faaa22cb1930'),
+            'experiments/risu-diff-e2/qualification/seeds/python/SYN-PY-01.py':('sealed/sources/SYN-PY-01.py','ac730a4896aa260d5cdb78b47e21c3baa2e66458'),
+            'experiments/risu-diff-e2/qualification/seeds/python/SYN-PY-02.py':('sealed/sources/SYN-PY-02.py','3e7a1d1599806e5e46b99f7e953f6b1260d4f931'),
+            'risu_e2/model.py':('sealed/risu_e2/model.py','64baf95a4939f168881627830134b314a6ee6098'),
+            'risu_e2/overlay_common.py':('sealed/risu_e2/overlay_common.py','9975fe509fba30a2bbbbb8606f174faa5912a2f1'),
+            'risu_e2/overlay_control.py':('sealed/risu_e2/overlay_control.py','00e06b85d91ce9f75676476c5dc47d15d51d2d35'),
+            'risu_e2/frontend_python_v2.py':('sealed/risu_e2/frontend_python_v2.py','8b7e4d0e2bb9ef6487ef2b90d2390b55ced55ea9'),
+            'risu_e2/path_observability.py':('sealed/risu_e2/path_observability.py','6eae3403f53b86f85bac47a31e751d28508e7225'),
+            'risu_e2/predicate_polarity_v1.py':('sealed/risu_e2/predicate_polarity_v1.py','de0b188dda16cacf842bc5539066681d01a4f9b3'),
+            'risu_e2/path_observability_v2.py':('sealed/risu_e2/path_observability_v2.py','e3d0b19fd87d3b5ff0a3344e0915b56bcb342bb9'),
+            'tools/e2_helper_polarity_canonical_integration_regression.py':('sealed/tools/regression.py','2a98cf2ee7a5ac9e801f14763895b4df7a6af556'),
+          }
+          def git_blob(raw): return hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()
+          for src,(dst,want) in files.items():
+              raw=urllib.request.urlopen(f'https://raw.githubusercontent.com/{repo}/{ref}/{src}',timeout=30).read()
+              got=git_blob(raw)
+              if got!=want: raise SystemExit(f'BLOB_MISMATCH:{src}:{got}:{want}')
+              pathlib.Path(dst).write_bytes(raw)
+          # Fetch the historical authoritative A2O artifact by exact id; do not reuse current generated overlays.
+          artifact_id=9982044088
+          api_headers={'Authorization':'Bearer '+token,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','User-Agent':'risu-helper-polarity-integration'}
+          class NoRedirect(urllib.request.HTTPRedirectHandler):
+              def redirect_request(self, req, fp, code, msg, headers, newurl): return None
+          opener=urllib.request.build_opener(NoRedirect)
+          req=urllib.request.Request(f'https://api.github.com/repos/{repo}/actions/artifacts/{artifact_id}/zip',headers=api_headers)
+          try:
+              opener.open(req,timeout=60); raise SystemExit('EXPECTED_ARTIFACT_REDIRECT_NOT_OBSERVED')
+          except urllib.error.HTTPError as e:
+              if e.code not in (301,302,303,307,308): raise
+              signed=e.headers.get('Location')
+              if not signed: raise SystemExit('SIGNED_ARTIFACT_LOCATION_MISSING')
+          with urllib.request.urlopen(urllib.request.Request(signed,headers={'User-Agent':'risu-helper-polarity-signed-download'}),timeout=60) as r:
+              archive=r.read()
+          outer=hashlib.sha256(archive).hexdigest()
+          if len(archive)!=223187 or outer!='0696dae0e416ff936b7f3a443509b92698e5493b626e250d5113725630f025be':
+              raise SystemExit('A2O_ARTIFACT_IDENTITY_MISMATCH')
+          with zipfile.ZipFile(io.BytesIO(archive)) as z:
+              raw=z.read('E2_A2O_SEED_OVERLAY_BUNDLE.json')
+          if len(raw)!=677257 or hashlib.sha256(raw).hexdigest()!='2d231b9eae523d7fb84925c302398c4913670b765cb10e2c4f76dc988cc5ea36':
+              raise SystemExit('CANONICAL_OVERLAY_IDENTITY_MISMATCH')
+          pathlib.Path('sealed/data/overlay.json').write_bytes(raw)
+          receipt={'status':'PASS','materialized_file_count':len(files),'historical_artifact_id':artifact_id,'historical_artifact_zip_bytes':len(archive),'historical_artifact_zip_sha256':outer,'canonical_overlay_bytes':len(raw),'canonical_overlay_sha256':hashlib.sha256(raw).hexdigest()}
+          pathlib.Path('sealed/out/authority_preflight.json').write_text(json.dumps(receipt,sort_keys=True,separators=(',',':'))+'\n')
+          print('AUTHORITY_MATERIALIZATION_PASS')
+          PY
+
+      - name: Compile frozen integration surface
+        run: |
+          set -euo pipefail
+          cd sealed
+          python3 -m py_compile risu_e2/model.py risu_e2/overlay_common.py risu_e2/overlay_control.py risu_e2/frontend_python_v2.py risu_e2/path_observability.py risu_e2/predicate_polarity_v1.py risu_e2/path_observability_v2.py tools/regression.py
+
+      - name: Execute integration regression twice
+        run: |
+          set -u
+          cd sealed
+          export PYTHONPATH="$PWD"
+          set +e
+          python3 tools/regression.py --overlay-bundle data/overlay.json --signature-bundle data/signatures.json --seed-catalog data/seeds.json --source-root sources --output out/run1.json; r1=$?
+          python3 tools/regression.py --overlay-bundle data/overlay.json --signature-bundle data/signatures.json --seed-catalog data/seeds.json --source-root sources --output out/run2.json; r2=$?
+          set -e
+          printf '{"run1":%d,"run2":%d}\n' "$r1" "$r2" > out/exit_codes.json
+
+      - name: Freeze repeat evidence
+        run: |
+          set -euo pipefail
+          cd sealed
+          python3 - <<'PY'
+          import hashlib,json,pathlib
+          p=pathlib.Path('out')
+          a=(p/'run1.json').read_bytes(); b=(p/'run2.json').read_bytes()
+          doc={'status':'PASS' if a==b else 'FAIL','byte_identical':a==b,'sha256':hashlib.sha256(a).hexdigest(),'bytes':len(a)}
+          (p/'repeat_check.json').write_text(json.dumps(doc,sort_keys=True,separators=(',',':'))+'\n')
+          PY
+
+      - name: Upload complete integration evidence before assertion
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2-helper-polarity-canonical-integration-first-complete
+          path: sealed/out/*
+          if-no-files-found: error
+
+      - name: Assert frozen integration gate
+        run: |
+          set -euo pipefail
+          cd sealed
+          python3 - <<'PY'
+          import json,pathlib
+          p=pathlib.Path('out')
+          a=json.loads((p/'run1.json').read_text()); r=json.loads((p/'repeat_check.json').read_text()); codes=json.loads((p/'exit_codes.json').read_text())
+          if a.get('status')!='PASS' or r.get('status')!='PASS' or any(v!=0 for v in codes.values()):
+              raise SystemExit('FIRST_COMPLETE_CANONICAL_INTEGRATION_FAIL')
+          print('FIRST_COMPLETE_CANONICAL_INTEGRATION_PASS')
+          PY
