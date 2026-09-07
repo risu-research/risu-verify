@@ -1,0 +1,293 @@
+name: E2 Candidate58 First Machine Execution
+
+on:
+  push:
+    branches: [e2-development]
+    paths:
+      - ".github/workflows/e2-candidate58-first-machine-execution.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: e2-candidate58-first-machine-execution
+  cancel-in-progress: false
+
+jobs:
+  first-machine-only:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout exact frozen implementation authority
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 246044c6c2a8b68f31965955d04828f4ed04b29b
+          fetch-depth: 2
+
+      - name: Set up exact Python runtime
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.13.5"
+
+      - name: Set up historically qualified Go runtime
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff
+        with:
+          go-version: "1.23.2"
+
+      - name: Preflight every frozen authority before Candidate58 source read
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "246044c6c2a8b68f31965955d04828f4ed04b29b"
+          test "$(git hash-object protocols/RISU_DIFF_E2_CANDIDATE58_FIRST_SEMANTIC_EXECUTION_PROTOCOL_v0.1.json)" = "08fdbcf517feafc159f229460eb7d82947a0c71b"
+          test "$(git hash-object protocols/RISU_DIFF_E2_CANDIDATE58_HARNESS_IMPLEMENTATION_FREEZE_v0.1.json)" = "2b681ecec8fa052d87a2ce3adcab1e20e1c5ba8a"
+          test "$(git hash-object protocols/RISU_DIFF_E2_GATE1B1C_IMPLEMENTATION_FREEZE_v0.1.json)" = "24724a44a7a200e7f069e4e62b5ee16df673dcf2"
+          test "$(git hash-object risu_e2_semantic/candidate58_harness.py)" = "4b317fd0afd9e41b92df5f6319af3096063f8143"
+          test "$(git hash-object tools/e2_candidate58_stage_sources.py)" = "da0143b9126a4e506016baa2126c70ae5eb8607c"
+          test "$(git hash-object tools/e2_candidate58_prepare_execution.py)" = "cdbe7c7c86fa10e34e83b90700cabc433a29349e"
+          test "$(git hash-object tools/e2_candidate58_execution_harness_v2.py)" = "38a5e9d93b058ea106ca494701e2400b382891d5"
+          test "$(git hash-object tools/e2_go_ir_extract.go)" = "26e752029d1b4a99b47f1c7024740b7b0ae14ef7"
+          test "$(git hash-object risu_e2_semantic/kernel.py)" = "e91e51397f4cc201452b1a0f80d130265dca2ea0"
+          test "$(git hash-object risu_e2_semantic/certificate.py)" = "0006f4134f130fe1c3d8305f8f007d09b08ffc65"
+          test "$(git hash-object risu_e2_semantic/primary_adapter.py)" = "c1b5d5e666bdd1b8f9bb1e041f76368f7f7a741c"
+          test "$(git hash-object risu_e2_semantic/closed_read_set.py)" = "5d98c4708e2bcab376d9fc67f660809c93c6e499"
+          test "$(git hash-object risu_e2_c1/rechecker.py)" = "ec7e782c88fb8786eb5b3d267e44d81885707728"
+          test "$(git hash-object protocols/RISU_DIFF_E2_CANONICAL_SEED_CONSEQUENCE_ANCHORS_v0.1.json)" = "ec8d8b287a80b87c815f0362be366be076d2b091"
+          test "$(git hash-object experiments/risu-diff-e2/qualification/a3-a4/E2_A3_A4_CANONICAL_SEED_CONSEQUENCE_SIGNATURES_v0.1.json)" = "cfa7d78707599177afe690c3aad7faaa22cb1930"
+          test "$(git hash-object experiments/risu-diff-e2/qualification/gate1b1c-canonical-bridge/E2_GATE1B1C_CANONICAL_EXECUTION_PROFILES.json)" = "02c6e01d1a86167a15823cf14b61bfa37212d700"
+          test "$(git hash-object experiments/risu-diff-e2/qualification/gate1b1c-canonical-bridge/E2_GATE1B1C_DECLARED_FINITE_WORLDS.json)" = "24547f8e88c670fcb1b6e3d2f4d971634198fb90"
+          test "$(git hash-object experiments/risu-diff-e2/qualification/anchor-transport/admission/E2_SANITIZED_OPAQUE_58_ADMISSION_MANIFEST.json)" = "f2fc78439d4bfadce5941bf71aadd15ec292bcb1"
+          test "$(git rev-parse HEAD:experiments/risu-diff-e2/qualification/materialized/cells)" = "34a30574c7420728bff57958c815194979a622ab"
+          echo "847d85c2274cd6b94a83eefe0f6153a8fb183dbad758efa75118a4fd368623e4  experiments/risu-diff-e2/qualification/anchor-transport/admission/E2_SANITIZED_OPAQUE_58_ADMISSION_MANIFEST.json" | sha256sum -c -
+          echo "78c5f024c1af7a353844120879d3ec4487b5f56fb443bc6e063530f836a9f74c  experiments/risu-diff-e2/qualification/anchor-transport/blind58/E2_BLIND_58_ANCHOR_TRANSPORT_BUNDLE.json" | sha256sum -c -
+          echo "7a652a508d53960dc0fcdb8860b9d358165f6a6c96b050e6b962edccc2a4549f  experiments/risu-diff-e2/qualification/a3-a4/E2_A3_A4_CANONICAL_SEED_CONSEQUENCE_SIGNATURES_v0.1.json" | sha256sum -c -
+          echo "ab6cefe49670cb41213b924907d5170b0ce20b81cd14abe657701371d00b0d2b  experiments/risu-diff-e2/qualification/gate1b1c-canonical-bridge/E2_GATE1B1C_CANONICAL_EXECUTION_PROFILES.json" | sha256sum -c -
+          echo "1254c3dfda6c69a51dd7b923c290287119d9a265e6896b57c00929c2dbdd0c80  experiments/risu-diff-e2/qualification/gate1b1c-canonical-bridge/E2_GATE1B1C_DECLARED_FINITE_WORLDS.json" | sha256sum -c -
+          python - <<'PY'
+          import platform, subprocess
+          assert platform.python_implementation() == 'CPython'
+          assert platform.python_version() == '3.13.5'
+          gv=subprocess.check_output(['go','version'],text=True).strip()
+          assert 'go1.23.2' in gv, gv
+          print('PRE_SOURCE_READ_AUTHORITY_PREFLIGHT=PASS')
+          print('PYTHON_RUNTIME=CPython-3.13.5')
+          print('GO_RUNTIME='+gv)
+          PY
+
+      - name: Build truth-free capsule then stage exact opaque 58 source bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          S="$RUNNER_TEMP/c58-capsule"
+          mkdir -p "$S/input" "$S/tools" "$S/candidates" "$S/prepared" "$S/replay1" "$S/replay2"
+          cp protocols/RISU_DIFF_E2_CANDIDATE58_FIRST_SEMANTIC_EXECUTION_PROTOCOL_v0.1.json "$S/input/execution-protocol.json"
+          cp protocols/RISU_DIFF_E2_GATE1B1C_IMPLEMENTATION_FREEZE_v0.1.json "$S/input/gate1b1c-implementation-freeze.json"
+          cp protocols/RISU_DIFF_E2_CANONICAL_SEED_CONSEQUENCE_ANCHORS_v0.1.json "$S/input/anchor-bundle.json"
+          cp experiments/risu-diff-e2/qualification/anchor-transport/admission/E2_SANITIZED_OPAQUE_58_ADMISSION_MANIFEST.json "$S/input/admission.json"
+          cp experiments/risu-diff-e2/qualification/anchor-transport/blind58/E2_BLIND_58_ANCHOR_TRANSPORT_BUNDLE.json "$S/input/blind-transport.json"
+          cp experiments/risu-diff-e2/qualification/a3-a4/E2_A3_A4_CANONICAL_SEED_CONSEQUENCE_SIGNATURES_v0.1.json "$S/input/signatures.json"
+          cp experiments/risu-diff-e2/qualification/gate1b1c-canonical-bridge/E2_GATE1B1C_CANONICAL_EXECUTION_PROFILES.json "$S/input/profiles.json"
+          cp experiments/risu-diff-e2/qualification/gate1b1c-canonical-bridge/E2_GATE1B1C_DECLARED_FINITE_WORLDS.json "$S/input/worlds.json"
+          cp tools/e2_go_ir_extract.go "$S/tools/e2_go_ir_extract.go"
+
+          # Seal all qualification metadata before the only scan of the materialized tree.
+          find experiments/risu-diff-e2/qualification -type f \( -name '*.json' -o -name '*.jsonl' \) -exec chmod 000 {} +
+          python tools/e2_candidate58_stage_sources.py \
+            --manifest "$S/input/admission.json" \
+            --cells-dir experiments/risu-diff-e2/qualification/materialized/cells \
+            --output-dir "$S/candidates" \
+            --receipt "$S/staging_receipt.json"
+          test "$(find "$S/candidates" -type f | wc -l)" -eq 58
+
+          # After staging, no original qualification file is readable by preparation/execution.
+          find experiments/risu-diff-e2/qualification -type f -exec chmod 000 {} +
+          chmod 000 experiments/risu-diff-e2/qualification/materialized/cells
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          s=Path(os.environ['RUNNER_TEMP'])/'c58-capsule'
+          r=json.loads((s/'staging_receipt.json').read_text())
+          assert r['status']=='PASS' and r['case_count']==58 and r['source_file_count_read']==58
+          assert r['cell_json_read'] is False and r['mutation_truth_read'] is False
+          assert r['expected_e2_prediction_read'] is False and r['mutation_operator_metadata_read'] is False
+          assert r['original_cell_path_emitted'] is False
+          print('OPAQUE_SOURCE_STAGING=PASS')
+          PY
+
+      - name: Prepare A2 D1 D2 D3 evidence and close exact runtime read policy
+        shell: bash
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+        run: |
+          set -euo pipefail
+          S="$RUNNER_TEMP/c58-capsule"
+          python tools/e2_candidate58_prepare_execution.py \
+            --capsule-root "$S" \
+            --candidate-dir "$S/candidates" \
+            --output-root "$S/prepared" \
+            --execution-protocol-path input/execution-protocol.json \
+            --implementation-freeze-path input/gate1b1c-implementation-freeze.json \
+            --admission-manifest-path input/admission.json \
+            --blind-transport-path input/blind-transport.json \
+            --anchor-bundle-path input/anchor-bundle.json \
+            --signature-bundle-path input/signatures.json \
+            --profile-bundle-path input/profiles.json \
+            --world-bundle-path input/worlds.json \
+            --go-helper tools/e2_go_ir_extract.go
+          test -s "$S/prepared/prepared_execution_plan.json"
+          test -s "$S/prepared/preparation_receipt.json"
+          test -s "$S/prepared/closed_read_policy.json"
+          sha256sum "$S/prepared/prepared_execution_plan.json" "$S/prepared/preparation_receipt.json" "$S/prepared/closed_read_policy.json" > "$S/preparation_file_sha256.txt"
+
+      - name: Execute first complete machine-only replay
+        shell: bash
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+        run: |
+          set -euo pipefail
+          S="$RUNNER_TEMP/c58-capsule"
+          P_SHA="$(sha256sum "$S/prepared/closed_read_policy.json" | awk '{print $1}')"
+          python tools/e2_candidate58_execution_harness_v2.py \
+            --capsule-root "$S" \
+            --read-policy "$S/prepared/closed_read_policy.json" \
+            --read-policy-sha256 "$P_SHA" \
+            --plan-path prepared/prepared_execution_plan.json \
+            --preparation-receipt-path prepared/preparation_receipt.json \
+            --execution-protocol-path input/execution-protocol.json \
+            --implementation-freeze-path input/gate1b1c-implementation-freeze.json \
+            --admission-manifest-path input/admission.json \
+            --blind-transport-path input/blind-transport.json \
+            --signature-bundle-path input/signatures.json \
+            --profile-bundle-path input/profiles.json \
+            --world-bundle-path input/worlds.json \
+            --output-dir "$S/replay1"
+          test -s "$S/replay1/E2_CANDIDATE58_MACHINE_PREDICTION_MATRIX.json"
+          test -s "$S/replay1/E2_CANDIDATE58_EXECUTION_RECEIPT.json"
+          (cd "$S/replay1" && find . -type f -print0 | sort -z | xargs -0 sha256sum) > "$S/replay1.logical-tree.sha256"
+          cp "$S/replay1/E2_CANDIDATE58_MACHINE_PREDICTION_MATRIX.json" "$S/FIRST_COMPLETE_MACHINE_MATRIX.anchor.json"
+          sha256sum "$S/FIRST_COMPLETE_MACHINE_MATRIX.anchor.json" > "$S/FIRST_COMPLETE_MACHINE_MATRIX.anchor.sha256"
+
+      - name: Execute mandatory deterministic second replay
+        shell: bash
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+        run: |
+          set -euo pipefail
+          S="$RUNNER_TEMP/c58-capsule"
+          P_SHA="$(sha256sum "$S/prepared/closed_read_policy.json" | awk '{print $1}')"
+          python tools/e2_candidate58_execution_harness_v2.py \
+            --capsule-root "$S" \
+            --read-policy "$S/prepared/closed_read_policy.json" \
+            --read-policy-sha256 "$P_SHA" \
+            --plan-path prepared/prepared_execution_plan.json \
+            --preparation-receipt-path prepared/preparation_receipt.json \
+            --execution-protocol-path input/execution-protocol.json \
+            --implementation-freeze-path input/gate1b1c-implementation-freeze.json \
+            --admission-manifest-path input/admission.json \
+            --blind-transport-path input/blind-transport.json \
+            --signature-bundle-path input/signatures.json \
+            --profile-bundle-path input/profiles.json \
+            --world-bundle-path input/worlds.json \
+            --output-dir "$S/replay2"
+          test -s "$S/replay2/E2_CANDIDATE58_MACHINE_PREDICTION_MATRIX.json"
+          test -s "$S/replay2/E2_CANDIDATE58_EXECUTION_RECEIPT.json"
+          (cd "$S/replay2" && find . -type f -print0 | sort -z | xargs -0 sha256sum) > "$S/replay2.logical-tree.sha256"
+
+      - name: Require exact logical byte identity and seal run-local machine-only receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          S="$RUNNER_TEMP/c58-capsule"
+          cmp "$S/replay1.logical-tree.sha256" "$S/replay2.logical-tree.sha256"
+          diff -qr "$S/replay1" "$S/replay2"
+          cmp "$S/FIRST_COMPLETE_MACHINE_MATRIX.anchor.json" "$S/replay2/E2_CANDIDATE58_MACHINE_PREDICTION_MATRIX.json"
+          python - <<'PY'
+          import hashlib, json, os, platform
+          from pathlib import Path
+          s=Path(os.environ['RUNNER_TEMP'])/'c58-capsule'
+          h=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          r1=json.loads((s/'replay1/E2_CANDIDATE58_EXECUTION_RECEIPT.json').read_text())
+          r2=json.loads((s/'replay2/E2_CANDIDATE58_EXECUTION_RECEIPT.json').read_text())
+          m1=json.loads((s/'replay1/E2_CANDIDATE58_MACHINE_PREDICTION_MATRIX.json').read_text())
+          assert r1['status']=='MACHINE_ONLY_COMPLETE_NOT_GOLD_JOINED'
+          assert r2['status']=='MACHINE_ONLY_COMPLETE_NOT_GOLD_JOINED'
+          assert r1['case_count']==r2['case_count']==m1['case_count']==58
+          assert r1['scientific_firewall']['truth_join_executed'] is False
+          assert r2['scientific_firewall']['truth_join_executed'] is False
+          assert r1['scientific_firewall']['candidate_truth_or_gold_read'] is False
+          assert r2['scientific_firewall']['candidate_truth_or_gold_read'] is False
+          assert r1['scientific_firewall']['epistemic10_read'] is False
+          assert r2['scientific_firewall']['epistemic10_read'] is False
+          matrix_sha=h(s/'FIRST_COMPLETE_MACHINE_MATRIX.anchor.json')
+          tree_sha=h(s/'replay1.logical-tree.sha256')
+          out={
+            'schema':'risu.e2-candidate58-first-machine-run-local-receipt/v0.1',
+            'status':'FIRST_COMPLETE_MACHINE_ONLY_TWO_REPLAY_IDENTICAL_NOT_REPOSITORY_FROZEN',
+            'frozen_implementation_commit':'246044c6c2a8b68f31965955d04828f4ed04b29b',
+            'case_count':58,
+            'first_complete_machine_matrix_sha256':matrix_sha,
+            'replay1_logical_tree_manifest_sha256':tree_sha,
+            'replay2_logical_tree_manifest_sha256':h(s/'replay2.logical-tree.sha256'),
+            'two_replay_logical_byte_identity':True,
+            'python_runtime':platform.python_version(),
+            'go_runtime':'go1.23.2',
+            'github_run_id':os.environ.get('GITHUB_RUN_ID'),
+            'github_run_attempt':os.environ.get('GITHUB_RUN_ATTEMPT'),
+            'scientific_firewall':{
+              'truth_or_gold_read':False,
+              'expected_e2_prediction_read':False,
+              'mutation_operator_metadata_read':False,
+              'epistemic10_read':False,
+              'fresh_heldout_read':False,
+              'truth_join_executed':False,
+            },
+            'repository_first_complete_freeze_performed':False,
+            'next_required_action':'IMMUTABLY_FREEZE_THIS_EXACT_FIRST_COMPLETE_MACHINE_BUNDLE_BEFORE_ANY_TRUTH_OPERATOR_OR_EXPECTED_PREDICTION_JOIN',
+          }
+          raw=(json.dumps(out,sort_keys=True,separators=(',',':'))+'\n').encode()
+          (s/'E2_CANDIDATE58_FIRST_MACHINE_RUN_LOCAL_RECEIPT.json').write_bytes(raw)
+          print(json.dumps({'status':out['status'],'case_count':58,'matrix_sha256':matrix_sha,'logical_tree_sha256':tree_sha},sort_keys=True,separators=(',',':')))
+          PY
+
+      - name: Upload complete machine-only evidence before any future truth join
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-candidate58-first-machine-only-bundle
+          path: |
+            ${{ runner.temp }}/c58-capsule/staging_receipt.json
+            ${{ runner.temp }}/c58-capsule/preparation_file_sha256.txt
+            ${{ runner.temp }}/c58-capsule/prepared
+            ${{ runner.temp }}/c58-capsule/replay1
+            ${{ runner.temp }}/c58-capsule/replay2
+            ${{ runner.temp }}/c58-capsule/replay1.logical-tree.sha256
+            ${{ runner.temp }}/c58-capsule/replay2.logical-tree.sha256
+            ${{ runner.temp }}/c58-capsule/FIRST_COMPLETE_MACHINE_MATRIX.anchor.json
+            ${{ runner.temp }}/c58-capsule/FIRST_COMPLETE_MACHINE_MATRIX.anchor.sha256
+            ${{ runner.temp }}/c58-capsule/E2_CANDIDATE58_FIRST_MACHINE_RUN_LOCAL_RECEIPT.json
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Final machine-only boundary assertion after artifact upload
+        shell: bash
+        run: |
+          set -euo pipefail
+          S="$RUNNER_TEMP/c58-capsule"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          s=Path(os.environ['RUNNER_TEMP'])/'c58-capsule'
+          r=json.loads((s/'E2_CANDIDATE58_FIRST_MACHINE_RUN_LOCAL_RECEIPT.json').read_text())
+          assert r['status']=='FIRST_COMPLETE_MACHINE_ONLY_TWO_REPLAY_IDENTICAL_NOT_REPOSITORY_FROZEN'
+          assert r['case_count']==58 and r['two_replay_logical_byte_identity'] is True
+          assert r['scientific_firewall']=={
+            'truth_or_gold_read':False,
+            'expected_e2_prediction_read':False,
+            'mutation_operator_metadata_read':False,
+            'epistemic10_read':False,
+            'fresh_heldout_read':False,
+            'truth_join_executed':False,
+          }
+          assert r['repository_first_complete_freeze_performed'] is False
+          print('FIRST_MACHINE_ONLY_ATOMIC_RUN=PASS_READY_FOR_IMMUTABLE_FREEZE')
+          PY
