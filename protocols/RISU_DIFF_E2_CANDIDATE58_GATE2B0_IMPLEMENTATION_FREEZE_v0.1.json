@@ -1,0 +1,68 @@
+{
+  "schema": "risu.e2-candidate58-gate2b0-implementation-freeze/v0.1",
+  "freeze_id": "RISU_DIFF_E2_CANDIDATE58_GATE2B0_IMPLEMENTATION_FREEZE_v0.1",
+  "status": "GATE2B0_DIAGNOSTIC_IMPLEMENTATION_FROZEN_BEFORE_FIRST_MATRIX_EXECUTION",
+  "repository": "risu-research/risu-verify",
+  "branch": "e2-development",
+  "scientific_parent": {
+    "gate2a_first_complete_freeze_commit": "afcf9ce67d93be612f1004c6a2031e819f0ea12d",
+    "first_complete_machine_freeze_commit": "2ece1023252a8e9100a34d74079493040441e1e2",
+    "pre_freeze_head": "334ace4ec758ee03189cba0fa8f7de0be920f3ef"
+  },
+  "implementation_lock": {
+    "diagnostic_protocol": {
+      "path": "protocols/RISU_DIFF_E2_CANDIDATE58_GATE2B0_CLAIM_ELIGIBILITY_FRONTIER_PROTOCOL_v0.1.json",
+      "git_blob": "861165bba33e40f95271853fa8bd4a01ec2ed165"
+    },
+    "stdlib_only_analyzer": {
+      "path": "tools/e2_candidate58_gate2b0_claim_eligibility_frontier.py",
+      "git_blob": "e9c96246288aee7b868a714910b5f5ff7f88b8d5",
+      "imports_risu_semantic_or_c1_code": false,
+      "classification_input_fields": [
+        "case_id",
+        "machine_prediction",
+        "tentative_kernel_prediction",
+        "c1_checker_output",
+        "assurance_level",
+        "promotion_reasons"
+      ]
+    }
+  },
+  "exact_scientific_input": {
+    "path": "experiments/risu-diff-e2/qualification/candidate58/first-complete-machine/E2_CANDIDATE58_FIRST_COMPLETE_MACHINE_PREDICTION_MATRIX.json",
+    "git_blob": "60b27d641682693cb3df654d8aa4f064cc48455d",
+    "sha256": "7273ce4034d06e67989a33540f5b22fef3190cf311a8981474413b538e43472d",
+    "case_count": 58
+  },
+  "taxonomy_frozen_before_observed_frontier_counts": true,
+  "observed_frontier_counts_present_in_this_freeze": false,
+  "scientific_firewall": {
+    "gate2a_truth_joined_ledger_is_input": false,
+    "gate2a_metrics_are_classifier_input": false,
+    "truth_or_operator_is_input": false,
+    "candidate_source_bytes_are_input": false,
+    "semantic_slice_contents_are_input": false,
+    "certificate_or_c1_report_contents_are_input": false,
+    "semantic_engine_rerun": false,
+    "c1_checker_rerun": false,
+    "remediation": false,
+    "fresh_heldout_read": false,
+    "gate2a_or_machine_artifact_rewrite": false
+  },
+  "execution_rule": {
+    "run_analyzer_self_test_before_matrix_execution": true,
+    "run_exact_matrix_diagnostic_twice": true,
+    "require_exact_logical_byte_identity": true,
+    "upload_both_replays_before_repository_result_freeze": true,
+    "first_complete_result_must_be_additive_and_immutable": true,
+    "unknown_or_contradictory_machine_record_fails_closed": true
+  },
+  "interpretation_boundary": {
+    "frontier_is_not_root_cause": true,
+    "does_not_rank_A_through_F_obligations": true,
+    "does_not_authorize_remediation": true,
+    "does_not_recompute_or_replace_Gate2A_metrics": true,
+    "purpose": "Determine where the frozen claim pipeline first ceased to be eligible for a definitive claim, before any deeper semantic-slice diagnosis."
+  },
+  "next_authorized_action": "Create one sealed workflow at the next commit, verify that the only post-Gate2A changes are the Gate2B0 protocol/analyzer/freeze/workflow, execute the frozen analyzer twice on the exact machine matrix, require byte identity, upload both replays, and immutably freeze the first complete Gate2B0 frontier result."
+}
