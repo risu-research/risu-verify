@@ -1,0 +1,102 @@
+{
+  "schema": "risu.e2-candidate58-gate2a-truth-join-protocol/v0.1",
+  "protocol_id": "RISU_DIFF_E2_CANDIDATE58_GATE2A_TRUTH_JOIN_PROTOCOL_v0.1",
+  "status": "PROSPECTIVE_FROZEN_BEFORE_GATE2A_JOIN_EXECUTION",
+  "gate": "GATE_2A_CANDIDATE58_POSTFREEZE_TRUTH_JOIN",
+  "purpose": "Join the already-immutable first-complete Candidate-58 machine-only prediction matrix to the already-frozen synthetic truth universe for descriptive development scoring, without rerunning or modifying semantic/harness code and without opening any fresh heldout target.",
+  "authority": {
+    "repository": "risu-research/risu-verify",
+    "branch": "e2-development",
+    "first_complete_machine_freeze_commit": "2ece1023252a8e9100a34d74079493040441e1e2",
+    "first_complete_machine_matrix_path": "experiments/risu-diff-e2/qualification/candidate58/first-complete-machine/E2_CANDIDATE58_FIRST_COMPLETE_MACHINE_PREDICTION_MATRIX.json",
+    "first_complete_machine_matrix_sha256": "7273ce4034d06e67989a33540f5b22fef3190cf311a8981474413b538e43472d",
+    "first_complete_machine_matrix_git_blob": "60b27d641682693cb3df654d8aa4f064cc48455d",
+    "first_complete_machine_freeze_receipt_git_blob": "2700e8002551a8fa161c076cde81498054f3a200",
+    "candidate58_verdict_protocol_git_blob": "8b69568fdb4c0ffe66a46562ba2673ea8d9f19ae",
+    "a3_a4_verdict_preregistration_git_blob": "8926d0b32a1c48addb5e341c3b8bdeb258fc7f85",
+    "first_semantic_execution_protocol_git_blob": "08fdbcf517feafc159f229460eb7d82947a0c71b"
+  },
+  "truth_authority": {
+    "truth_oracle_contract": {"path":"experiments/risu-diff-e2/qualification/TRUTH_ORACLE_CONTRACT.json","git_blob":"98e53e13472c9d1287c3114734464994a6693778"},
+    "truth_oracle": {"path":"tools/e2_mutation_truth_oracle.py","git_blob":"1e5fe69f302df6fdd367797649b17eb3c4ea5950","sha256":"103a0310bf294d6b3034ebcd94b9e23d9f31de65ada32f3549db6f7623f83778"},
+    "seed_catalog": {"path":"experiments/risu-diff-e2/qualification/CANONICAL_SYNTHETIC_SEEDS.json","git_blob":"2a0c01ad5850d3a701fb243d307ff441e9cae358"},
+    "mutation_matrix": {"path":"experiments/risu-diff-e2/qualification/MUTATION_QUALIFICATION_MATRIX.json","git_blob":"b6d7d9c4d172a6e38ab59e93ae9748fafefc9fd0"},
+    "expanded_truth": {"path":"experiments/risu-diff-e2/qualification/MUTATION_QUALIFICATION_MATRIX_EXPANDED.jsonl","git_blob":"0ab0c31377d7e03bc279943af151c687f51ffc93","sha256":"afd681d308a6f4ec8c183edd9b139c6b914fe501936cf84e5845a6a1c0d6b7cb","row_count":58},
+    "sanitized_admission": {"path":"experiments/risu-diff-e2/qualification/anchor-transport/admission/E2_SANITIZED_OPAQUE_58_ADMISSION_MANIFEST.json","git_blob":"f2fc78439d4bfadce5941bf71aadd15ec292bcb1","sha256":"847d85c2274cd6b94a83eefe0f6153a8fb183dbad758efa75118a4fd368623e4"},
+    "materialized_cells_tree_git_sha": "34a30574c7420728bff57958c815194979a622ab",
+    "frozen_postfreeze_transport_qualification_sha256": "bbc7d72fded307b23f6e0d20609b85662e63013cc06cd05b0c3c30269ba71749",
+    "frozen_postfreeze_transport_freeze_receipt_git_blob": "5ad86d4067f94e51301a90c79cf3cec521ae3446"
+  },
+  "join_identity_rule": {
+    "steps": [
+      "Independently re-expand the frozen mutation matrix and require exact byte identity with the frozen 58-row expanded JSONL and its SHA-256.",
+      "For each frozen materialized Q001..Q058 cell, locate exactly one non-JSON candidate source file and compute its SHA-256 without consulting CELL.json truth metadata.",
+      "Require candidate source SHA-256 to bijectively identify exactly one entry of the frozen sanitized admission manifest; require seed_id and language consistency.",
+      "Use the materialized directory Q-id only to select the independently rederived frozen truth row.",
+      "Use the admission transport_case_id only to select the already-frozen machine case_id.",
+      "Require a 58-of-58 bijection at every bridge; duplicate, missing, extra, ambiguous, or hash-inconsistent records invalidate Gate2A before scoring."
+    ],
+    "forbidden": [
+      "joining by prediction label",
+      "joining by operator name or truth favorability",
+      "dropping transport-incomplete, unsupported, or infrastructure-invalid cases",
+      "editing any first-complete machine artifact",
+      "rerunning the E2 semantic engine or C1 checker",
+      "using post-join outcomes to alter any denominator or metric definition"
+    ]
+  },
+  "population_lock": {
+    "all_candidate58": 58,
+    "M_PLUS_SEMANTIC_LOSS": 24,
+    "M_ZERO_SEMANTIC_PRESERVING": 24,
+    "M_QUESTION_EPISTEMIC_ADVERSARIAL": 10,
+    "semantic_M_plus_M_zero_denominator": 48,
+    "all_58_cases_must_be_reported": true,
+    "case_exclusion_allowed": false
+  },
+  "label_lock": {
+    "definitive": ["E2_PREDICTED_REGRESSION_WITNESS","E2_PREDICTED_PRESERVATION_EVIDENCE"],
+    "nondefinitive": "E2_PREDICTED_ASSURANCE_INCOMPLETE",
+    "infrastructure": "INFRASTRUCTURE_INVALID_BEFORE_PREDICTION"
+  },
+  "primary_metrics_already_preregistered": {
+    "unsafe_false_stability": "numerator = M_PLUS cases with final machine_prediction E2_PREDICTED_PRESERVATION_EVIDENCE; denominator = 24; zero tolerance",
+    "regression_recall": "numerator = M_PLUS cases with final machine_prediction E2_PREDICTED_REGRESSION_WITNESS; denominator = 24",
+    "selective_coverage": "numerator = M_PLUS or M_ZERO cases with either definitive final label; denominator = 48",
+    "conditional_correctness_among_definitive_claims": "numerator = definitive M_PLUS/M_ZERO cases whose final label equals expected_e2_primary; denominator = number of definitive M_PLUS/M_ZERO cases; if denominator is zero emit rate=null and denominator=0",
+    "stable_resolution": "numerator = M_ZERO cases with final machine_prediction E2_PREDICTED_PRESERVATION_EVIDENCE; denominator = 24",
+    "epistemic_calibration": "numerator = M_QUESTION cases whose final machine_prediction exactly equals frozen expected_e2_primary, including infrastructure-invalid exceptions; denominator = 10",
+    "c1_disagreement_or_invalid_certificate_rate": "report exact count and denominator 58 from frozen C1 output/reason fields; unsupported-C1 is reported separately and is not silently converted into disagreement",
+    "supported_fragment_coverage": "numerator = cases with final definitive prediction backed by assurance_level VALID_C1; denominator = 58; also report semantic denominator 48"
+  },
+  "mandatory_secondary_descriptives": [
+    "overall exact expected-primary match over all 58",
+    "final machine-label counts",
+    "assurance-level counts",
+    "C1 checker-output counts",
+    "semantic assurance-incomplete and infrastructure-invalid counts",
+    "M_ZERO false-regression count",
+    "expected-infrastructure exact-resolution and false-infrastructure counts",
+    "per-language final-label and exact-match strata",
+    "per-operator-class final-label and exact-match strata",
+    "per-operator-id case ledger after first-machine freeze",
+    "tentative-kernel label counts and final-vs-tentative transition counts as secondary diagnostics only"
+  ],
+  "interpretation_boundary": {
+    "candidate58_is_development_qualification_not_fresh_population_sample": true,
+    "no_population_generalization_claim": true,
+    "no_inferential_confidence_interval_required": true,
+    "exact_counts_and_denominators_are_primary": true,
+    "abstention_is_not_counted_as_correct_on_M_PLUS_or_M_ZERO": true,
+    "zero_unsafe_false_stability_with_zero_coverage_cannot_be_described_as_success": true,
+    "conditional_correctness_with_zero_definitive_denominator_must_remain_undefined": true,
+    "fresh_heldout_remains_unopened": true
+  },
+  "determinism_and_freeze": {
+    "run_join_twice": true,
+    "require_exact_logical_byte_identity": true,
+    "first_complete_gate2a_join_must_be_committed_immutably_before_any_remediation": true,
+    "later_diagnostics_or_remediation_must_be_additive": true
+  },
+  "next_authorized_action": "Implement an independent standard-library-only Gate2A joiner that imports neither RISU semantic code nor the C1 checker, freeze its exact identity, execute two deterministic joins, require byte identity, then immutably commit the first complete Gate2A result without changing any machine artifact."
+}
