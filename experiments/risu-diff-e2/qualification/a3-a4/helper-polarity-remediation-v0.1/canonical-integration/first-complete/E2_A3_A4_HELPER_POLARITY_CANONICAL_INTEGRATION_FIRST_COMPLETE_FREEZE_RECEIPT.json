@@ -1,0 +1,92 @@
+{
+  "schema": "risu.e2-helper-polarity-canonical-integration-first-complete-freeze-receipt/v0.1",
+  "status": "FROZEN_PASS",
+  "classification": "NON_PROSPECTIVE_PREEXISTING_CANONICAL_SEED_INTEGRATION_REGRESSION",
+  "authority": {
+    "repository": "risu-research/risu-verify",
+    "branch": "e2-development",
+    "regression_protocol_commit": "4899d5fccf53967e9eb423f1aefca90fc7b0aed1",
+    "regression_protocol_git_blob": "754b5d91510567eaa60086997d34a6df50bb7166",
+    "path_observability_v1_git_blob": "6eae3403f53b86f85bac47a31e751d28508e7225",
+    "predicate_polarity_v1_git_blob": "de0b188dda16cacf842bc5539066681d01a4f9b3",
+    "path_observability_v2_git_blob": "e3d0b19fd87d3b5ff0a3344e0915b56bcb342bb9",
+    "regression_harness_git_blob": "2a98cf2ee7a5ac9e801f14763895b4df7a6af556",
+    "canonical_seed_catalog_git_blob": "2a0c01ad5850d3a701fb243d307ff441e9cae358",
+    "canonical_signature_bundle_git_blob": "cfa7d78707599177afe690c3aad7faaa22cb1930",
+    "historical_a2o_artifact_id": 9982044088,
+    "historical_a2o_artifact_zip_sha256": "0696dae0e416ff936b7f3a443509b92698e5493b626e250d5113725630f025be",
+    "historical_canonical_overlay_sha256": "2d231b9eae523d7fb84925c302398c4913670b765cb10e2c4f76dc988cc5ea36",
+    "first_complete_head": "837f12806e07e186af6f968e3b248dc4d8f132d4"
+  },
+  "precomplete_history": {
+    "run_id": 34075327552,
+    "classification": "PRE_COMPLETE_AUTHORITY_BINDING_FAILURE",
+    "cause": "Protocol Git blob SHA transcription error in workflow authority map.",
+    "scientific_output_created": false,
+    "repair_scope": "workflow authority SHA only",
+    "failure_receipt_commit": "8fb3efff386b92f6c1687c43485b970df15a20a0"
+  },
+  "first_complete_run": {
+    "run_id": 34075397708,
+    "job_id": 101600382457,
+    "artifact_id": 10001848693,
+    "runner_version": "2.337.0",
+    "runner_image": "ubuntu-24.04",
+    "runner_image_version": "20260831.293.1",
+    "hosted_compute_agent_version": "20260828.587",
+    "azure_region": "centralus",
+    "worker_id": "c2e11b7f-99d0-486a-a732-17fce3b7376c"
+  },
+  "artifact": {
+    "zip_bytes": 2422,
+    "zip_sha256": "9092e2cfd837a7c8af24fc09bd7d5dbe2d9ce131a1f0b35fe6dfba18ef6542f7",
+    "github_reported_digest": "sha256:9092e2cfd837a7c8af24fc09bd7d5dbe2d9ce131a1f0b35fe6dfba18ef6542f7",
+    "downloaded_and_independently_verified": true,
+    "files": {
+      "authority_preflight.json": {"bytes": 349, "sha256": "d0adb5fa34c91195c47be3ecb6db4ae7d6fe1a04ed1b814c97b9aec252963e41"},
+      "exit_codes.json": {"bytes": 20, "sha256": "c5146a0daae4d9eb17141177b9ac1131dde0681db890a5aa10a5ae9301285fd5"},
+      "repeat_check.json": {"bytes": 129, "sha256": "ddbdee4137b5997528a8f5fed37b3869d29e553bde6803b3460e41d1c5509d45"},
+      "run1.json": {"bytes": 1471, "sha256": "c72103873ac19eeb978ff48490daf5b38a0249f7294096a320a38211d03697b6"},
+      "run2.json": {"bytes": 1471, "sha256": "c72103873ac19eeb978ff48490daf5b38a0249f7294096a320a38211d03697b6"}
+    }
+  },
+  "result": {
+    "official_status": "PASS",
+    "seed_count": 2,
+    "failed_seed_ids": [],
+    "two_runs_byte_identical": true,
+    "SYN_PY_01": {
+      "v1_form": "DIRECT_CONTROL",
+      "v2_form": "DIRECT_CONTROL",
+      "full_core_regression_identity": true,
+      "polarity_certificate_status": "NOT_APPLICABLE"
+    },
+    "SYN_PY_02": {
+      "canonical_expected_form": "HELPER_CONTROL",
+      "v1_form": "UNPROVEN",
+      "v1_reason": "HELPER_PREDICATE_POLARITY_UNPROVEN",
+      "v2_form": "HELPER_CONTROL",
+      "polarity_certificate_status": "PROVED",
+      "polarity_to_transported_guard": "INVERTED",
+      "flip_count": 1,
+      "rejection_transported_guard_truths": [false],
+      "effect_transported_guard_truths": [true],
+      "success_transported_guard_truths": [true]
+    }
+  },
+  "immutability": {
+    "canonical_seed_bytes_changed": false,
+    "canonical_signature_expectations_changed": false,
+    "predicate_polarity_v1_changed_after_prospective_pass": false,
+    "path_observability_v2_changed_before_first_complete_integration_freeze": false,
+    "historical_overlay_recomputed": false
+  },
+  "firewall": {
+    "frozen48_read": false,
+    "candidate58_read": false,
+    "epistemic10_read": false,
+    "mutation_truth_or_operator_metadata_read": false,
+    "a3_a4_semantic_verdicts_executed": false
+  },
+  "next_boundary": "Run unchanged helper-polarity scientific blobs through the already-public v0.3-24 and frozen-v0.2-24 nonregression surfaces. Only after that result is frozen PASS may a new frozen-48 v2 requalification protocol be prospectively frozen. Candidate-58 remains sealed."
+}
