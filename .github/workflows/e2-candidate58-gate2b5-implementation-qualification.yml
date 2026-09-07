@@ -1,0 +1,93 @@
+name: E2 Candidate58 Gate2B5 Implementation Qualification
+
+on:
+  push:
+    branches: [gate2b5-staging]
+    paths:
+      - ".github/workflows/e2-candidate58-gate2b5-implementation-qualification.yml"
+
+permissions:
+  contents: read
+
+env:
+  EXPECTED_PARENT: ececd1244bb326ff68a3f3109b61965024422eb7
+  PROTOCOL_PATH: protocols/RISU_DIFF_E2_CANDIDATE58_GATE2B5_GUARD_OPERATOR_EVIDENCE_ATTRIBUTION_PROTOCOL_v0.1.json
+  ANALYZER_PATH: tools/e2_candidate58_gate2b5_guard_operator_evidence_attribution.py
+  TEST_PATH: tests/test_e2_candidate58_gate2b5_guard_operator_evidence_attribution.py
+  PROTOCOL_BLOB: 182ab00a5ad35b6751e80b6c180fc9ca0162cd28
+  ANALYZER_BLOB: 68d4938c2dabdf67f527be7462727fe193f79500
+  TEST_BLOB: 11ca31c68dc2d7cac4684a20c68aaff0c8dbb7c8
+
+jobs:
+  synthetic-qualification:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact qualification revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 10
+      - name: Prove prospective implementation boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "$EXPECTED_PARENT"
+          test "$(git diff --name-only HEAD^ HEAD)" = ".github/workflows/e2-candidate58-gate2b5-implementation-qualification.yml"
+          test "$(git hash-object "$PROTOCOL_PATH")" = "$PROTOCOL_BLOB"
+          test "$(git hash-object "$ANALYZER_PATH")" = "$ANALYZER_BLOB"
+          test "$(git hash-object "$TEST_PATH")" = "$TEST_BLOB"
+          echo GATE2B5_SYNTHETIC_PREFLIGHT=PASS
+      - name: Set up exact Python runtime
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.13.5"
+      - name: Audit stdlib-only dependency surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import ast,sys
+          from pathlib import Path
+          p=Path('tools/e2_candidate58_gate2b5_guard_operator_evidence_attribution.py')
+          t=ast.parse(p.read_text())
+          roots=[]
+          for n in ast.walk(t):
+              if isinstance(n,ast.Import): roots += [a.name.split('.',1)[0] for a in n.names]
+              elif isinstance(n,ast.ImportFrom) and n.module: roots.append(n.module.split('.',1)[0])
+          bad=[x for x in roots if x not in sys.stdlib_module_names and x!='__future__']
+          assert not bad,bad
+          assert not [x for x in roots if x.startswith('risu')],roots
+          print('GATE2B5_STDLIB_ONLY_AUDIT=PASS')
+          PY
+      - name: Execute adversarial synthetic qualification twice
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile "$ANALYZER_PATH" "$TEST_PATH"
+          python "$TEST_PATH" > "$RUNNER_TEMP/test1.txt" 2>&1
+          python "$TEST_PATH" > "$RUNNER_TEMP/test2.txt" 2>&1
+          cmp "$RUNNER_TEMP/test1.txt" "$RUNNER_TEMP/test2.txt"
+          grep -q '^OK$' "$RUNNER_TEMP/test1.txt"
+          echo GATE2B5_SYNTHETIC_DUAL_REPLAY=PASS
+      - name: Materialize qualification receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          export OUT="$RUNNER_TEMP/gate2b5-qualification"
+          mkdir -p "$OUT"
+          python - <<'PY'
+          import hashlib,json,os,platform
+          from pathlib import Path
+          h=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          r={'schema':'risu.e2-candidate58-gate2b5-implementation-qualification/v0.1','status':'SYNTHETICALLY_QUALIFIED_NOT_REAL_EXECUTED','workflow_run_id':os.environ['GITHUB_RUN_ID'],'workflow_sha':os.environ['GITHUB_SHA'],'python_version':platform.python_version(),'protocol_git_blob':os.environ['PROTOCOL_BLOB'],'analyzer_git_blob':os.environ['ANALYZER_BLOB'],'test_git_blob':os.environ['TEST_BLOB'],'analyzer_sha256':h(os.environ['ANALYZER_PATH']),'test_sha256':h(os.environ['TEST_PATH']),'synthetic_test_dual_replay_identical':True,'real_gate2b5_overlay_read':False,'semantic_engine_rerun':False,'truth_or_operator_metadata_read':False,'remediation':False}
+          Path(os.environ['OUT'],'E2_CANDIDATE58_GATE2B5_IMPLEMENTATION_QUALIFICATION_RECEIPT.json').write_text(json.dumps(r,sort_keys=True,separators=(',',':'))+'\n')
+          PY
+      - name: Upload qualification receipt
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-candidate58-gate2b5-implementation-qualification
+          path: ${{ runner.temp }}/gate2b5-qualification/E2_CANDIDATE58_GATE2B5_IMPLEMENTATION_QUALIFICATION_RECEIPT.json
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
