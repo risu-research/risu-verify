@@ -1,0 +1,147 @@
+{
+  "schema": "risu.e2-candidate58-harness-implementation-freeze/v0.1",
+  "freeze_id": "RISU_DIFF_E2_CANDIDATE58_HARNESS_IMPLEMENTATION_FREEZE_v0.1",
+  "status": "IMPLEMENTATION_FROZEN_SYNTHETICALLY_QUALIFIED_NOT_CANDIDATE58_EXECUTED",
+  "repository": "risu-research/risu-verify",
+  "branch": "e2-development",
+  "scientific_parent": {
+    "gate1d_execution_seal_commit": "1baafe5059ce015b68740f245d0b9d5a0a9e7634",
+    "gate1d_execution_seal_git_blob": "08fdbcf517feafc159f229460eb7d82947a0c71b",
+    "pre_freeze_head": "cc30f5040ac99bed11a758d02d0ce9fe1346c289",
+    "pre_freeze_tree": "3ad243bd66a3a0a44a40d3d9cb347005e54f37e7"
+  },
+  "mechanical_implementation_lock": {
+    "mechanical_core": {
+      "path": "risu_e2_semantic/candidate58_harness.py",
+      "git_blob": "4b317fd0afd9e41b92df5f6319af3096063f8143",
+      "role": "truth-free orchestration, exact-58 validation, certificate/C1 invocation, VALID_C1 promotion floor, deterministic assembly"
+    },
+    "source_only_stager": {
+      "path": "tools/e2_candidate58_stage_sources.py",
+      "git_blob": "da0143b9126a4e506016baa2126c70ae5eb8607c",
+      "role": "source-only opaque capsule staging by seed/language/SHA256; no original cell path emitted"
+    },
+    "preparation_and_read_policy_builder": {
+      "path": "tools/e2_candidate58_prepare_execution.py",
+      "git_blob": "cdbe7c7c86fa10e34e83b90700cabc433a29349e",
+      "role": "A2/D1/D2/D3 preparation only, per-case fail-closed preparation status, exact content-addressed ClosedReadSet policy production"
+    },
+    "production_driver": {
+      "path": "tools/e2_candidate58_execution_harness_v2.py",
+      "git_blob": "38a5e9d93b058ea106ca494701e2400b382891d5",
+      "role": "machine-only execution with transport/preparation incompleteness terminal before primary adapter or C1"
+    },
+    "historical_precedence_defect_driver_not_authoritative": {
+      "path": "tools/e2_candidate58_execution_harness.py",
+      "git_blob": "f854d6cdfcbe662fa9647d5f669cccc7c8de8e02",
+      "role": "preserved development predecessor; not authorized for first Candidate-58 semantic execution because it downgraded transport-incomplete cases only after semantic-chain entry"
+    },
+    "adversarial_tests": {
+      "path": "tests/test_e2_candidate58_execution_harness.py",
+      "git_blob": "09644e68bdf416de6b99c003a7c020d21a57bfd6"
+    },
+    "qualification_workflow": {
+      "path": ".github/workflows/e2-candidate58-harness-qualification.yml",
+      "git_blob": "037dfbd21acb46add1f4327d2e8494487a7002fd"
+    }
+  },
+  "frozen_semantic_dependencies_reused_not_reimplemented": {
+    "gate1b1c_implementation_freeze": "gitblob:24724a44a7a200e7f069e4e62b5ee16df673dcf2",
+    "semantic_kernel": "gitblob:e91e51397f4cc201452b1a0f80d130265dca2ea0",
+    "certificate_producer": "gitblob:0006f4134f130fe1c3d8305f8f007d09b08ffc65",
+    "primary_adapter": "gitblob:c1b5d5e666bdd1b8f9bb1e041f76368f7f7a741c",
+    "closed_read_set": "gitblob:5d98c4708e2bcab376d9fc67f660809c93c6e499",
+    "c1_raw_source_rechecker": "gitblob:ec7e782c88fb8786eb5b3d267e44d81885707728",
+    "semantic_witness_logic_reimplemented_by_harness": false
+  },
+  "source_staging_boundary": {
+    "historical_precedent_runner_git_blob": "9acd48e66a749c39ac0e648317e19336477b980b",
+    "historical_blind58_workflow_git_blob": "d74aebd6cf2d4a887c96d6c28c5901cff33265c8",
+    "materialized_cells_tree_git_sha": "34a30574c7420728bff57958c815194979a622ab",
+    "admission_manifest_git_blob": "f2fc78439d4bfadce5941bf71aadd15ec292bcb1",
+    "admission_manifest_sha256": "847d85c2274cd6b94a83eefe0f6153a8fb183dbad758efa75118a4fd368623e4",
+    "rule": "Before staging, qualification JSON/JSONL metadata is made unreadable. Exactly 58 source files matching only the frozen six seed basenames are read; resolution is uniquely by seed_id + language + candidate_source_sha256; outputs are named only by opaque transport_case_id.",
+    "original_cell_path_semantic_authority": false
+  },
+  "hard_precedence_and_promotion_rules": {
+    "frozen_transport_incomplete": "E2_PREDICTED_ASSURANCE_INCOMPLETE without entering the primary adapter or C1 lane",
+    "primary_preparation_incomplete": "E2_PREDICTED_ASSURANCE_INCOMPLETE without entering the primary adapter or C1 lane",
+    "c1_unsupported_or_invalid": "E2_PREDICTED_ASSURANCE_INCOMPLETE",
+    "definitive_regression_or_preservation": "requires VALID_C1 and exact producer/C1 prediction agreement",
+    "post_hoc_case_reselection": false,
+    "post_hoc_rule_change_before_first_complete_freeze": false
+  },
+  "read_receipt_contract": {
+    "source_staging_receipt_schema": "risu.e2-candidate58-source-only-staging-receipt/v0.1",
+    "prepared_plan_schema": "risu.e2-candidate58-prepared-execution-plan/v0.1",
+    "preparation_receipt_schema": "risu.e2-candidate58-preparation-receipt/v0.1",
+    "closed_runtime_read_policy_schema": "risu.e2-closed-runtime-read-policy/v0.1",
+    "per_case_closed_read_receipt_schema": "risu.e2-closed-runtime-read-receipt/v0.1",
+    "machine_matrix_schema": "risu.e2-candidate58-machine-prediction-matrix/v0.1",
+    "execution_receipt_schema": "risu.e2-candidate58-first-semantic-execution-receipt/v0.1",
+    "all_scientific_execution_reads_must_be_policy_admitted_and_content_addressed": true,
+    "forbidden_read_invalidates_first_execution": true
+  },
+  "runtime_lock": {
+    "implementation": "CPython",
+    "version": "3.13.5",
+    "parser": "python_stdlib_ast",
+    "third_party_semantic_runtime_dependencies_added_by_harness": []
+  },
+  "hosted_synthetic_qualification": {
+    "status": "PASS",
+    "workflow_run_id": 34136322509,
+    "job_id": 101788039347,
+    "head_sha": "cc30f5040ac99bed11a758d02d0ce9fe1346c289",
+    "runner_version": "2.337.0",
+    "hosted_compute_agent_version": "20260828.587",
+    "runner_image": "ubuntu-24.04",
+    "runner_image_version": "20260831.293.1",
+    "operating_system": "Ubuntu 24.04.4 LTS",
+    "azure_region": "westcentralus",
+    "python": "3.13.5",
+    "adversarial_test_count": 8,
+    "adversarial_tests_passed": 8,
+    "synthetic_case_count": 58,
+    "synthetic_two_replay_byte_identical": true,
+    "synthetic_logical_output_sha256": "ef32ebb04993b61957694c73782d7c459dd59eafccb790ce1210e087d7203b45",
+    "artifact_id": 10024113443,
+    "artifact_zip_bytes": 471,
+    "artifact_zip_sha256": "6d41e4dad4c73bf9c9f532ee941a0b2895c91be0a55e32910dcae85f8ebc6a07",
+    "artifact_uploaded_before_final_assertion": true,
+    "final_assertion_passed": true,
+    "real_candidate58_source_bytes_read": false,
+    "candidate58_truth_or_operator_read": false,
+    "epistemic10_read": false
+  },
+  "preserved_diagnostic_history": {
+    "first_qualification_run_id": 34136001551,
+    "head_sha": "bd2c0677ba8924353781a0448111542e61676ac8",
+    "classification": "QUALIFICATION_PERMISSION_FIREWALL_BOOKKEEPING_FAILURE_BEFORE_ANY_MECHANICAL_TEST",
+    "semantic_test_executed": false,
+    "candidate58_semantic_prediction_executed": false,
+    "disposition": "PRESERVED_NOT_REWRITTEN; minimal chmod bookkeeping repair only"
+  },
+  "scientific_firewall": {
+    "candidate58_semantic_prediction_executed_during_implementation_or_qualification": false,
+    "candidate58_truth_or_gold_read": false,
+    "expected_e2_prediction_read": false,
+    "mutation_operator_metadata_read": false,
+    "epistemic10_read": false,
+    "fresh_heldout_read": false,
+    "CTV_or_A3_A4_semantics_changed": false
+  },
+  "first_execution_authorization_boundary": {
+    "this_freeze_itself_executes_candidate58": false,
+    "authorized_implementation_for_future_first_execution": "mechanical_core + source_only_stager + preparation_and_read_policy_builder + production_driver, at the exact blobs above",
+    "required_before_truth_join": [
+      "build one sealed opaque source-only capsule",
+      "produce one exact prepared plan/preparation receipt/ClosedReadSet policy",
+      "execute two deterministic complete machine-only replays with the exact frozen implementation",
+      "require byte identity of all logical machine outputs",
+      "immutably freeze the first complete 58-case machine matrix, certificates, C1 reports, per-case read receipts, execution receipts, runtime provenance, and replay identity evidence"
+    ],
+    "truth_operator_expected_prediction_join_before_first_complete_freeze": false,
+    "next_allowed_action": "Execute the first complete Candidate-58 machine-only challenge under this exact frozen harness; do not modify semantic or harness code first."
+  }
+}
