@@ -1,0 +1,97 @@
+{
+  "authority": {
+    "branch": "e2-development",
+    "exact_input_blob_ids": "Pinned by protocols/RISU_DIFF_E2_CANDIDATE58_SEMANTIC_FREEZE_v0.1.json in the same atomic freeze commit.",
+    "normative_inputs": [
+      "CTV_META_THEORY_v0.1",
+      "CTV_META_THEORY_v0.1_AMENDMENT_001",
+      "RISU_DIFF_E2_EVALUATION_CONTRACT_v0.1",
+      "RISU_DIFF_E2_DEVELOPMENT_UNIVERSE_v0.1",
+      "RISU_DIFF_E2_A3_A4_VERDICT_PREREGISTRATION_v0.1"
+    ],
+    "pre_freeze_parent_commit": "9f749dbb869d9f5f66176a4d357808dcf242f525",
+    "pre_freeze_parent_tree": "dc0d02f44738b5ee0a4a17530dc332d7b8aa4c80",
+    "repository": "risu-research/risu-verify"
+  },
+  "blind_execution": {
+    "allowed": "Only the closed runtime read set authorized by the frozen A3/A4 preregistration.",
+    "first_complete_immutable": "Seal the complete Candidate-58 machine prediction matrix, certificates, checker outputs, implementation identities, and read-set receipts before any truth join; never replace it regardless of favorability.",
+    "forbidden_before_first_complete_seal": [
+      "M_PLUS/M_ZERO/M_QUESTION class",
+      "canonical truth/gold class",
+      "expected E2 prediction",
+      "operator id/name/class/description/repair",
+      "postfreeze truth-joined qualification material",
+      "truth-oracle output"
+    ],
+    "historical_source_exposure": "ACKNOWLEDGED: Candidate source bytes were previously used for transport/observability qualification. This protocol claims blindness only to truth/operator/expected-prediction information during semantic prediction."
+  },
+  "bridge_contracts": {
+    "certificate_trust_boundary": "protocols/RISU_DIFF_E2_CERTIFICATE_TRUST_BOUNDARY_v0.1.json",
+    "minimal_semantic_fragment": "protocols/RISU_DIFF_E2_GATE1B1C_MINIMAL_SEMANTIC_FRAGMENT_v0.1.json"
+  },
+  "change_control": "Any pre-first-complete change to engine, supported fragment, certificate/checkers, canonical-signature bundle, or metrics requires a new prospective freeze identity. After first complete, remediation is a new labeled development run and cannot replace the first complete.",
+  "contract_id": "RISU_DIFF_E2_CANDIDATE58_SEMANTIC_VERDICT_PROTOCOL_v0.1",
+  "hard_invariants": [
+    "zero tolerance for machine preservation on canonical gold consequence regression",
+    "C0 shared-frontend-conditional checking cannot support a definitive Candidate-58 prediction",
+    "failed independent recomputation blocks definitive prediction",
+    "unsupported or materially ambiguous evidence cannot be promoted",
+    "no target-specific rule",
+    "no outcome-based case replacement",
+    "no fresh heldout opening in this gate"
+  ],
+  "next_allowed_action": "Implement Gate1B/1C strictly inside the frozen minimal semantic fragment and trust boundary, then create the exact implementation/checker execution freeze before any Candidate-58 semantic prediction.",
+  "prediction_namespace": {
+    "canonical_CTV_gold_remains_separate": [
+      "CONSEQUENCE_REGRESSION",
+      "CONSEQUENCE_STABLE_IN_DECLARED_SCOPE",
+      "ASSURANCE_INCOMPLETE",
+      "INFRASTRUCTURE_FAILURE"
+    ],
+    "hard_rule": "No E2_PREDICTED_* label is a canonical CTV gold verdict. Gold is joined only after the complete machine prediction and certificate-check outputs are sealed.",
+    "machine_only": [
+      "E2_PREDICTED_REGRESSION_WITNESS",
+      "E2_PREDICTED_PRESERVATION_EVIDENCE",
+      "E2_PREDICTED_ASSURANCE_INCOMPLETE",
+      "INFRASTRUCTURE_INVALID_BEFORE_PREDICTION"
+    ]
+  },
+  "pre_execution_gate": {
+    "candidate58_semantic_execution_forbidden_until_closed": true,
+    "must_freeze_before_semantic_prediction": [
+      "semantic engine source/commit and content digest",
+      "minimal semantic fragment content digest",
+      "certificate schema/producer source and digest",
+      "C1 independent source-evidence checker source/commit and digest",
+      "independent semantic checker source/commit and digest",
+      "parser/runtime dependencies inside declared syntactic TCB",
+      "canonical consequence-signature bundle/digest from canonical seeds only",
+      "closed runtime read-set policy and receipt schema"
+    ]
+  },
+  "promotion_rule": {
+    "infrastructure_precedence": "INFRASTRUCTURE_INVALID_BEFORE_PREDICTION",
+    "otherwise": "E2_PREDICTED_ASSURANCE_INCOMPLETE",
+    "preservation": "E2_PREDICTED_PRESERVATION_EVIDENCE only if every applicable frozen preservation obligation over the declared complete scope is inside the minimal fragment and its certificate is VALID_C1.",
+    "regression": "E2_PREDICTED_REGRESSION_WITNESS only if the frozen preregistered constructive witness is inside the minimal supported fragment and its certificate is VALID_C1."
+  },
+  "purpose": "Bind the already-frozen CTV semantics, E2 evaluation contract, Candidate-58 development universe, A3/A4 preregistration, the minimal Gate1B/1C semantic fragment, and the certificate trust boundary to one execution rule. Adds no new CTV verdict semantics.",
+  "report_separately": [
+    "regression recall",
+    "selective coverage",
+    "conditional correctness",
+    "stable resolution",
+    "epistemic calibration",
+    "infrastructure-invalid count/reasons"
+  ],
+  "schema": "risu.e2-candidate58-semantic-verdict-protocol/v0.1",
+  "semantic_noninterference": {
+    "candidate58_role": "DEVELOPMENT_MECHANISM_QUALIFICATION_NOT_FRESH_EXTERNAL_HELDOUT",
+    "changes_CTV_v0_1_semantics": false,
+    "changes_candidate58_truth_or_operator_matrix": false,
+    "changes_gold_verdicts": false,
+    "reinterprets_historical_machine_or_gold_bytes": false
+  },
+  "status": "PROSPECTIVE_BRIDGE_FROZEN_BEFORE_FIRST_CANDIDATE58_A3_A4_SEMANTIC_PREDICTION"
+}

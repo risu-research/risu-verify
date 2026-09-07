@@ -1,0 +1,68 @@
+{
+  "blindness_record": {
+    "candidate58_source_bytes_historically_exposed_for_transport_observability": true,
+    "claim": "This freeze is prospective with respect to Candidate-58 A3/A4 semantic prediction and truth/operator/expected-prediction join, not with respect to source-byte novelty.",
+    "truth_operator_expected_prediction_material_accessed_during_this_freeze": false
+  },
+  "branch": "e2-development",
+  "existing_normative_authority": {
+    "CTV_META_THEORY_v0.1": {
+      "git_blob": "c53766c7bb1b322b4b706ddac5e90d957eb8e397",
+      "path": "protocols/CTV_META_THEORY_v0.1.json"
+    },
+    "CTV_META_THEORY_v0.1_AMENDMENT_001": {
+      "git_blob": "7ca86d42fa56a4aecb67c7ca1c9fc4418ec4c716",
+      "path": "protocols/CTV_META_THEORY_v0.1_AMENDMENT_001.json"
+    },
+    "E2_A3_A4_VERDICT_PREREGISTRATION_v0.1": {
+      "git_blob": "8926d0b32a1c48addb5e341c3b8bdeb258fc7f85",
+      "path": "protocols/RISU_DIFF_E2_A3_A4_VERDICT_PREREGISTRATION_v0.1.json"
+    },
+    "E2_DEVELOPMENT_UNIVERSE_v0.1": {
+      "git_blob": "32f5e7bc53b343e1add941cb68f7d05a535b740d",
+      "path": "protocols/RISU_DIFF_E2_DEVELOPMENT_UNIVERSE_v0.1.json"
+    },
+    "E2_EVALUATION_CONTRACT_v0.1": {
+      "git_blob": "3968cd7dcc95290ec7343aa748ca0bc46a3545e6",
+      "path": "protocols/RISU_DIFF_E2_EVALUATION_CONTRACT_v0.1.json"
+    }
+  },
+  "freeze_id": "RISU_DIFF_E2_CANDIDATE58_SEMANTIC_FREEZE_v0.1",
+  "frozen_decisions": [
+    "machine E2_PREDICTED_* namespace remains distinct from canonical CTV gold",
+    "minimal executable Gate1B/1C fragment is fail-closed and does not broaden frozen A3/A4 witness semantics",
+    "C0 shared-frontend-conditional checking is diagnostic only",
+    "C1 independent raw-source evidence re-derivation is the minimum assurance level for definitive Candidate-58 machine prediction",
+    "unsupported/materially ambiguous semantics yield E2_PREDICTED_ASSURANCE_INCOMPLETE"
+  ],
+  "new_frozen_artifacts": {
+    "candidate58_semantic_verdict_protocol": {
+      "git_blob": "8b69568fdb4c0ffe66a46562ba2673ea8d9f19ae",
+      "path": "protocols/RISU_DIFF_E2_CANDIDATE58_SEMANTIC_VERDICT_PROTOCOL_v0.1.json"
+    },
+    "certificate_trust_boundary": {
+      "git_blob": "30a2330babc28a012acbd2eee5e0b7b020495755",
+      "path": "protocols/RISU_DIFF_E2_CERTIFICATE_TRUST_BOUNDARY_v0.1.json"
+    },
+    "gate1b1c_minimal_semantic_fragment": {
+      "git_blob": "abb06d4b71a66100b04b225d1d3c0d5ac22e887c",
+      "path": "protocols/RISU_DIFF_E2_GATE1B1C_MINIMAL_SEMANTIC_FRAGMENT_v0.1.json"
+    }
+  },
+  "next_allowed_action": "Implement Gate1B/1C against these frozen contracts, freeze exact engine/certificate/checker/dependency/read-set identities, then and only then execute the first complete Candidate-58 semantic prediction.",
+  "noninterference": {
+    "changes_CTV_v0_1_semantics": false,
+    "changes_candidate58_truth_or_operator_matrix": false,
+    "changes_existing_gold": false,
+    "changes_historical_machine_bytes": false,
+    "executes_candidate58_semantic_prediction_in_this_freeze": false,
+    "opens_fresh_heldout": false
+  },
+  "pre_freeze_parent": {
+    "commit": "9f749dbb869d9f5f66176a4d357808dcf242f525",
+    "tree": "dc0d02f44738b5ee0a4a17530dc332d7b8aa4c80"
+  },
+  "repository": "risu-research/risu-verify",
+  "schema": "risu.e2-candidate58-semantic-freeze/v0.1",
+  "status": "PROTOCOL_FRAGMENT_TRUST_BOUNDARY_FROZEN_ONLY"
+}

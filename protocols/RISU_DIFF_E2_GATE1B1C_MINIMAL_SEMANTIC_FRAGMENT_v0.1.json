@@ -1,0 +1,78 @@
+{
+  "authority": {
+    "A3_A4_VERDICT_PREREGISTRATION_git_blob": "8926d0b32a1c48addb5e341c3b8bdeb258fc7f85",
+    "CTV_AMENDMENT_001_git_blob": "7ca86d42fa56a4aecb67c7ca1c9fc4418ec4c716",
+    "CTV_META_THEORY_git_blob": "c53766c7bb1b322b4b706ddac5e90d957eb8e397",
+    "pre_freeze_parent_commit": "9f749dbb869d9f5f66176a4d357808dcf242f525"
+  },
+  "contract_id": "RISU_DIFF_E2_GATE1B1C_MINIMAL_SEMANTIC_FRAGMENT_001",
+  "explicitly_unsupported_in_v0_1_unless_a_separately_frozen_exact_local_model_closes_them": [
+    "concurrent or interleaving-dependent material control/effects",
+    "reflection, eval, dynamic code generation, or unresolved metaprogramming",
+    "unresolved dynamic dispatch or callback target sets",
+    "implicit framework guards not represented in the admitted control graph",
+    "cross-process or distributed state dependencies not explicitly represented",
+    "unbounded material loops/cycles without a finite sound summary",
+    "ambiguous multi-resource aliasing",
+    "heterogeneous multi-effect semantics lacking an established equivalence",
+    "unresolved exception/catch/finally flow material to effect or outcome",
+    "swallowed failure or failure-to-success interpretation not explicitly evidenced"
+  ],
+  "fail_closed_rule": "No unsupported construct is a negative finding. If it is material to the requested claim, emit E2_PREDICTED_ASSURANCE_INCOMPLETE with exact unresolved obligations.",
+  "minimum_certificate_units": {
+    "incomplete": "Exact unresolved-obligation codes and provenance; no proof of absence or safety is implied.",
+    "preservation": "The full declared finite world/scope representation plus all evidence needed to independently enumerate/check every applicable preservation obligation and nonempty target consequence interpretation.",
+    "regression": "One concrete violating pair plus all witness-local evidence needed to independently recompute the admitted A3_R*/A4_R* witness."
+  },
+  "required_admissions": {
+    "A_coordinate_resource_identity": [
+      "Every material semantic coordinate, resource role, operand/binding slot, and representation instance is uniquely resolved.",
+      "Semantic role identity is relational/provenance-bearing; identifier spelling, API name, repository identity, or line position is never authority.",
+      "Wrong-resource and wrong-coordinate bindings remain distinguishable."
+    ],
+    "B_carrier_survival": [
+      "Every material hop from canonical semantic source role to guard/effect binding lies in the already-qualified normalized lineage surface DERIVES/CARRIES/BINDS_TO.",
+      "Direct forwarding, argument/keyword/object-property transport, serialization rename, wrapper/call-boundary transfer, and state-read identity are supported only when all material hops are closed and provenance-bearing.",
+      "A may-flow union without realizable path association is insufficient."
+    ],
+    "C_guard_semantics": [
+      "Effective guard is uniquely DIRECT_CONTROL or HELPER_CONTROL under the preregistered definitions.",
+      "HELPER_CONTROL requires a uniquely acquired helper chain with exact net Boolean predicate polarity PRESERVE or FLIP.",
+      "UNKNOWN polarity, ambiguous effective guards, or unresolved helper composition force assurance-incomplete."
+    ],
+    "D_guard_effect_control": [
+      "Every complete ENTRY->EFFECT path material to the claim is accounted for.",
+      "For preservation, the effective guard occurs before and controls every effect-reaching path; the canonical rejection polarity cannot reach EFFECT before rejection/exit.",
+      "For regression, bypass/effect-before-guard/rejection-to-effect/both-polarities/polarity-inversion/rejection-to-success/required-effect-rejected are accepted only under the exact constructive preregistered witness-local completeness rules.",
+      "Textual order or PRECEDES reachability alone is never control-dependence proof."
+    ],
+    "E_effect_and_outcome": [
+      "Exactly one material effect invocation/binding surface is uniquely resolved for the claim slice, or multiple realizations are proven equivalent by an already-frozen rule; otherwise incomplete.",
+      "Effect-success and rejection/no-effect terminal outcomes are explicit and distinct where required.",
+      "Effect-before-success ordering is structurally established; failure/outcome interpretation may not be inferred from names alone."
+    ],
+    "F_closed_scope": [
+      "All scopes material to a witness or preservation proof are COMPLETE under the preregistered completeness model.",
+      "Every material alias, call target, reaching definition, branch, representation slot, effect surface, exception/exit, resource identity, and helper polarity needed by the claim is resolved.",
+      "Any material unresolved fact blocks preservation and blocks any regression witness that depends on it."
+    ]
+  },
+  "role": "A narrow executable profile under frozen CTV v0.1 plus Amendment 001. It does not modify CTV semantics and does not broaden the existing A3/A4 witness calculus.",
+  "schema": "risu.e2-gate1b1c-minimal-semantic-fragment/v0.1",
+  "semantic_core": {
+    "declared_worlds": "Finite, explicitly declared admitted worlds W. A regression certificate may use a concrete pair; preservation must close every admitted world/material realization in the declared scope.",
+    "preservation_relation": "Over the declared finite deterministic slice, ker(rho_T) subseteq ker(kappa_S), with Amendment-001 nonempty interpretation obligations satisfied, instantiated through complete A3_P1-P5 and A4_P1-P7 obligations.",
+    "regression_relation": "A concrete admitted pair w1,w2 with rho_T(w1)=rho_T(w2) and kappa_S(w1)!=kappa_S(w2), instantiated only through an already-preregistered A3_R* or A4_R* constructive witness.",
+    "source_consequence": "kappa_S or the equivalent frozen CTV source interpretation is nonempty on every world used by a definitive claim.",
+    "target_realization": "rho_T or the equivalent frozen deterministic realization is explicit for the supported deterministic slice. Material target consequence interpretations are nonempty."
+  },
+  "status": "FROZEN_MINIMAL_SUPPORTED_FRAGMENT_BEFORE_CANDIDATE58_SEMANTIC_EXECUTION",
+  "supported_boolean_polarity": {
+    "UNKNOWN": "UNSUPPORTED_FOR_DEFINITIVE_HELPER_CONTROL_CLAIM",
+    "composition_rule": "Net polarity is the deterministic composition of every admitted helper transform; one unresolved transform makes the chain UNKNOWN.",
+    "values": [
+      "PRESERVE",
+      "FLIP"
+    ]
+  }
+}

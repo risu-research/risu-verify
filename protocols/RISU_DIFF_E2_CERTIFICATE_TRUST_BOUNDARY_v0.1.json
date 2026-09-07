@@ -1,0 +1,111 @@
+{
+  "TCB_honesty_rule": "A third-party parser used by the independent source-evidence lane is part of the syntactic TCB and must be version-pinned. The project may not claim the extractor is outside the TCB until every claim-critical fact consumed by the certificate checker is independently re-derived from raw bytes.",
+  "assurance_levels": {
+    "C0_SHARED_FRONTEND_CONDITIONAL": {
+      "definition": "A separately implemented checker recomputes semantic aggregation but consumes claim-critical facts that originated from or are shared with the primary frontend/extractor.",
+      "eligible_for_candidate58_definitive_machine_prediction": false,
+      "use": "Diagnostic and regression testing only."
+    },
+    "C1_INDEPENDENT_SOURCE_EVIDENCE": {
+      "definition": "The checker re-derives every claim-critical local source/control/binding fact from exact raw source bytes using a source-evidence extraction implementation not shared with the primary E2 semantic-flow producer, then independently recomputes the supported semantic obligations.",
+      "eligible_for_candidate58_definitive_machine_prediction": true,
+      "use": "Minimum assurance level eligible to support a definitive Candidate-58 E2_PREDICTED_* semantic claim."
+    },
+    "C2_PROOF_OBJECT_CHECKED": {
+      "definition": "Optional future proof-producing symbolic/SMT lane whose proof object is checked by a smaller independent proof checker.",
+      "eligible_for_candidate58_definitive_machine_prediction": true,
+      "use": "Optional stronger lane; not required by v0.1 and must not silently enlarge the supported fragment."
+    }
+  },
+  "authority": {
+    "A3_A4_VERDICT_PREREGISTRATION_git_blob": "8926d0b32a1c48addb5e341c3b8bdeb258fc7f85",
+    "CTV_META_THEORY_git_blob": "c53766c7bb1b322b4b706ddac5e90d957eb8e397",
+    "pre_freeze_parent_commit": "9f749dbb869d9f5f66176a4d357808dcf242f525"
+  },
+  "certificate_envelope_required": [
+    "protocol ids/versions and exact content digests",
+    "case id and exact source/target content hashes",
+    "semantic engine identity/hash",
+    "certificate producer identity/hash",
+    "source-evidence checker identity/hash",
+    "semantic checker identity/hash",
+    "minimal semantic fragment identity/hash",
+    "canonical consequence signature digest",
+    "assurance level",
+    "closed read-set receipt digest",
+    "claim-critical evidence spans/content digests",
+    "verdict-specific payload"
+  ],
+  "checker_independence_rules": {
+    "disagreement": "Any material primary/checker disagreement blocks definitive promotion and yields E2_PREDICTED_ASSURANCE_INCOMPLETE while preserving both outputs.",
+    "must_not_import_or_trust": [
+      "primary final verdict label",
+      "primary verdict aggregation code",
+      "primary support/admission decision",
+      "primary summarized semantic-flow fact as authoritative evidence",
+      "producer-supplied witness truth annotation",
+      "truth/operator/expected-prediction metadata before machine seal"
+    ],
+    "must_recompute": [
+      "authority/hash bindings and closed read set",
+      "minimal-fragment admission for every material claim fact",
+      "claim-critical source spans/AST or structured-control facts from raw bytes",
+      "coordinate/resource/binding-slot identity",
+      "material lineage and helper-polarity composition",
+      "witness-local control/path obligations for regression",
+      "all declared preservation obligations for preservation",
+      "nonempty material consequence interpretations",
+      "final machine prediction from the recomputed obligations"
+    ]
+  },
+  "checker_outputs": {
+    "INVALID_CERTIFICATE": "A claimed fact, hash, obligation, or verdict fails independent recomputation.",
+    "UNSUPPORTED_CERTIFICATE": "The claim requires semantics outside the frozen minimal fragment or evidence unavailable to the checker.",
+    "VALID_C0_CONDITIONAL": "Semantic checker passes only conditional on shared primary/frontend facts; insufficient for definitive Candidate-58 semantic promotion.",
+    "VALID_C1": "All C1 independent-source-evidence and semantic checks pass."
+  },
+  "contract_id": "RISU_DIFF_E2_CERTIFICATE_TRUST_BOUNDARY_001",
+  "minimum_TCB_for_C1": [
+    "exact immutable raw source/target bytes and their cryptographic digests",
+    "frozen canonical seed consequence signature and frozen CTV consequence semantics",
+    "small independent source-evidence rechecker",
+    "small independent semantic certificate checker",
+    "language parser/runtime dependencies actually used by the source-evidence rechecker, with exact versions/digests",
+    "canonical JSON/hash routines used for content addressing"
+  ],
+  "promotion_rule": "For Candidate-58 v0.1, only VALID_C1 or a separately frozen stronger C2 result may support E2_PREDICTED_REGRESSION_WITNESS or E2_PREDICTED_PRESERVATION_EVIDENCE. C0, invalid, unsupported, or disagreement is fail-closed.",
+  "purpose": "Make proof-carrying claims honest by separating the complex E2 producer from the minimum independently rechecked evidence and semantic calculus.",
+  "schema": "risu.e2-certificate-trust-boundary/v0.1",
+  "status": "FROZEN_BEFORE_CANDIDATE58_SEMANTIC_EXECUTION",
+  "untrusted_producer_side": [
+    "primary E2 semantic analyzer",
+    "shared acquisition/frontend/extractor",
+    "normalized IR builder",
+    "alias/lineage resolver",
+    "path/witness search",
+    "support/admission proposal emitted by the producer",
+    "certificate/witness producer",
+    "LLM assistance, generated probes, SMT search, and future repair synthesis"
+  ],
+  "verdict_payloads": {
+    "incomplete": [
+      "exact unresolved obligation/reason codes",
+      "provenance identifying where the proof stopped",
+      "no implication of regression absence or preservation"
+    ],
+    "preservation": [
+      "declared finite admitted worlds/scope or an exact finite enumeration artifact",
+      "nonempty source and target consequence interpretations",
+      "all applicable A3_P1-P5 and A4_P1-P7 obligation results",
+      "evidence sufficient to independently recompute complete-path/lineage/control closure",
+      "explicit declared-scope/coverage statement"
+    ],
+    "regression": [
+      "concrete world pair or canonical pair identifiers",
+      "nonempty source consequence identities/evidence",
+      "target realization/effect-outcome relation needed for the collapse witness",
+      "exact A3_R*/A4_R* witness id",
+      "all witness-local material source/control/binding evidence sufficient for independent recomputation"
+    ]
+  }
+}
