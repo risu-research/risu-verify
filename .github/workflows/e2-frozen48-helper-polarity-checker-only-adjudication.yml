@@ -1,0 +1,131 @@
+name: E2 Frozen48 Helper Polarity Checker Only Adjudication
+
+on:
+  push:
+    paths:
+      - '.github/workflows/e2-frozen48-helper-polarity-checker-only-adjudication.yml'
+
+permissions:
+  contents: read
+
+env:
+  REPO: risu-research/risu-verify
+  TOOL_FREEZE: 37b7ae4bfdcb445a47507d5ff9240711fff31713
+
+jobs:
+  adjudication:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Verify workflow-only child of frozen adjudicator
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CURRENT_SHA: ${{ github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,os,urllib.request
+          repo=os.environ['REPO']; token=os.environ['GH_TOKEN']; sha=os.environ['CURRENT_SHA']
+          headers={'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','User-Agent':'risu-f48-hp-adjudication-lineage'}
+          req=urllib.request.Request(f'https://api.github.com/repos/{repo}/commits/{sha}',headers=headers)
+          with urllib.request.urlopen(req,timeout=30) as r: doc=json.loads(r.read())
+          if [p['sha'] for p in doc.get('parents',[])] != [os.environ['TOOL_FREEZE']]: raise SystemExit('WORKFLOW_NOT_CHILD_OF_TOOL_FREEZE')
+          files=[f['filename'] for f in doc.get('files',[])]
+          if files != ['.github/workflows/e2-frozen48-helper-polarity-checker-only-adjudication.yml']: raise SystemExit('WORKFLOW_COMMIT_NOT_SINGLE_FILE')
+          print('ADJUDICATION_LINEAGE=PASS')
+          PY
+
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.13'
+
+      - name: Materialize exact checker-only authorities without checkout
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          S="$RUNNER_TEMP/f48-hp-adjudication"
+          rm -rf "$S" && mkdir -p "$S/input" "$S/output"
+          export S
+          python3 - <<'PY'
+          import base64,hashlib,json,os,pathlib,urllib.request
+          repo=os.environ['REPO']; token=os.environ['GH_TOKEN']; root=pathlib.Path(os.environ['S'])
+          headers={'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','User-Agent':'risu-f48-hp-adjudication-materialize'}
+          specs={
+            'input/first-complete.zip':'dac2c47fcd07daa8fd0c1d5b82eb932a16c93958',
+            'input/protocol.json':'8f627d049ae99348b21837183db5c84fcfa3346a',
+            'input/erratum.json':'7c30d486099032a5579fe3080f5ed05819b33305',
+            'input/diagnosis.json':'92d603eb738bfbb16248a04cf4101119929d5eda',
+            'input/historical-receipt.json':'e84ad3fffd80b7cbb6260c1eb10a696689c47c64',
+            'adjudicate.py':'e5849df149f16785e84711de6a1afe1681d39c28',
+          }
+          def git_blob(data): return hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
+          for dst,want in specs.items():
+              req=urllib.request.Request(f'https://api.github.com/repos/{repo}/git/blobs/{want}',headers=headers)
+              with urllib.request.urlopen(req,timeout=30) as r: obj=json.loads(r.read())
+              if obj.get('encoding')!='base64': raise SystemExit('BLOB_ENCODING:'+dst)
+              data=base64.b64decode(obj['content'])
+              if git_blob(data)!=want: raise SystemExit('BLOB_IDENTITY:'+dst)
+              p=root/dst; p.parent.mkdir(parents=True,exist_ok=True); p.write_bytes(data)
+          if len(list(root.rglob('*'))) < 8: raise SystemExit('SEALED_MATERIALIZATION_COUNT')
+          print('SEALED_CHECKER_ONLY_AUTHORITIES=PASS')
+          PY
+          test "$(sha256sum "$S/input/first-complete.zip" | awk '{print $1}')" = "c73d0b167edc10fbac7103a93317dc674f57bd0e6e0d699bc8e8a23b5ea6fb23"
+          test "$(wc -c < "$S/input/first-complete.zip")" -eq 78188
+          ! grep -q 'risu_e2' "$S/adjudicate.py"
+          python3 -m py_compile "$S/adjudicate.py"
+          ! find "$S" -type f -print | grep -E 'candidate.?58|epistemic.?10|source-root|truth|operator|prediction'
+
+      - name: Execute checker-only adjudication twice and require byte identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          S="$RUNNER_TEMP/f48-hp-adjudication"
+          python3 "$S/adjudicate.py" \
+            --protocol "$S/input/protocol.json" --erratum "$S/input/erratum.json" \
+            --diagnosis "$S/input/diagnosis.json" --historical-receipt "$S/input/historical-receipt.json" \
+            --zip "$S/input/first-complete.zip" --output "$S/output/adjudication-1.json"
+          python3 "$S/adjudicate.py" \
+            --protocol "$S/input/protocol.json" --erratum "$S/input/erratum.json" \
+            --diagnosis "$S/input/diagnosis.json" --historical-receipt "$S/input/historical-receipt.json" \
+            --zip "$S/input/first-complete.zip" --output "$S/output/adjudication-2.json"
+          cmp "$S/output/adjudication-1.json" "$S/output/adjudication-2.json"
+          cp "$S/output/adjudication-1.json" "$GITHUB_WORKSPACE/E2_A3_A4_FROZEN48_HELPER_POLARITY_CHECKER_ONLY_ADJUDICATION.json"
+
+      - name: Upload first-complete checker-only adjudication before assertion
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-frozen48-helper-polarity-checker-only-adjudication-first-complete
+          path: E2_A3_A4_FROZEN48_HELPER_POLARITY_CHECKER_ONLY_ADJUDICATION.json
+          if-no-files-found: warn
+          retention-days: 90
+
+      - name: Assert adjudication gate only after artifact upload
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          p='E2_A3_A4_FROZEN48_HELPER_POLARITY_CHECKER_ONLY_ADJUDICATION.json'
+          d=json.load(open(p))
+          assert d['status']=='PASS_CLOSED_ADJUDICATED'
+          assert d['original_first_complete_status_preserved']=='FROZEN_FAIL'
+          assert d['failure_count']==0 and d['failures']==[]
+          assert d['strict_transport_eligible_count']==31
+          assert d['strict_transport_ineligible_count']==17
+          assert d['qualified_given_admission_primary']==31
+          assert d['qualified_given_admission_independent']==31
+          assert d['diagnosed_helper_polarity_count']==5
+          assert d['canonical_agreed_count']==48
+          assert d['historical_reproduction']['primary_exact_authoritative_bytes'] is True
+          assert d['historical_reproduction']['independent_exact_authoritative_bytes'] is True
+          assert d['legacy_exit_contract']['exact_match'] is True
+          assert d['repeat_byte_identity']['primary'] is True and d['repeat_byte_identity']['independent'] is True
+          assert d['self_tests']['status']=='PASS' and d['self_tests']['count']==8
+          assert d['scientific_rerun'] is False and d['source_or_transport_execution'] is False
+          assert d['candidate58_read'] is False and d['a3_a4_semantic_verdict_execution'] is False
+          print('CHECKER_ONLY_ADJUDICATION_PASS_CLOSED')
+          PY
