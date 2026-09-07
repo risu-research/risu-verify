@@ -10,7 +10,7 @@ permissions:
   contents: write
 
 env:
-  EXPECTED_PARENT: 86cf41d42e61139775cc64975d040d0b334c6114
+  EXPECTED_PARENT: 6335d6137cc1561975bb7593c9d683d3408ae3e1
   CHARTER_PATH: protocols/RISU_DIFF_E2_GATE2C0_SEMANTIC_CARRIER_ROLE_SEPARATION_REPAIR_CHARTER_v0.1.json
   CHARTER_BLOB: 103d73d20d2e846d1e3fe99a2b6de6210280795d
   PATCHER_PATH: tools/e2_gate2c1_apply_semantic_carrier_repair.py
@@ -79,8 +79,8 @@ jobs:
         run: |
           set -euo pipefail
           python -m py_compile risu_e2/observability_overlay.py risu_e2_semantic/adapter_support.py risu_e2_semantic/primary_adapter.py "$TEST_PATH"
-          python "$TEST_PATH" > "$RUNNER_TEMP/gate2c1-test-1.txt" 2>&1
-          python "$TEST_PATH" > "$RUNNER_TEMP/gate2c1-test-2.txt" 2>&1
+          python -m unittest tests.test_e2_gate2c1_semantic_carrier_role_separation > "$RUNNER_TEMP/gate2c1-test-1.txt" 2>&1
+          python -m unittest tests.test_e2_gate2c1_semantic_carrier_role_separation > "$RUNNER_TEMP/gate2c1-test-2.txt" 2>&1
           cmp "$RUNNER_TEMP/gate2c1-test-1.txt" "$RUNNER_TEMP/gate2c1-test-2.txt"
           grep -q '^OK$' "$RUNNER_TEMP/gate2c1-test-1.txt"
           echo GATE2C1_ADVERSARIAL_SYNTHETIC_DUAL_REPLAY=PASS
@@ -111,7 +111,6 @@ jobs:
           python - <<'PY'
           import hashlib,json,os,platform,subprocess
           from pathlib import Path
-          root=Path('.')
           rels=['risu_e2/observability_overlay.py','risu_e2_semantic/adapter_support.py','risu_e2_semantic/primary_adapter.py']
           sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
           blob=lambda p:subprocess.check_output(['git','hash-object',p],text=True).strip()
@@ -132,6 +131,7 @@ jobs:
             'truth_or_expected_label_used_for_repair':False,
             'kernel_or_certificate_changed':False,
             'c1_changed':False,
+            'historical_failed_attempts':[{'run_id':34159117467,'classification':'PRE_ARTIFACT_SYNTHETIC_TEST_INVOCATION_FAILURE','semantic_commit_created':False,'candidate58_executed':False}],
           }
           out=Path(os.environ['OUT'])/'E2_GATE2C1_MINIMAL_REPAIR_QUALIFICATION_RECEIPT.json'
           out.write_text(json.dumps(receipt,sort_keys=True,separators=(',',':'))+'\n')
