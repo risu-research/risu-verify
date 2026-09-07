@@ -1,0 +1,111 @@
+{
+  "blindness_noninterference": {
+    "candidate_58_bytes_read_during_this_implementation_qualification": false,
+    "candidate_58_semantic_prediction_executed": false,
+    "changes_CTV_semantics": false,
+    "changes_candidate58_truth_operator_matrix": false,
+    "changes_existing_gold": false,
+    "synthetic_qualification_only": true,
+    "truth_operator_expected_prediction_material_read": false
+  },
+  "branch": "e2-development",
+  "content_addressed_identities": {
+    "c1_package_bundle_sha256": "bffd930d802a5734ed8f9e05c32d8c5b37ecd338afe0bb8889a9211602b2dc37",
+    "certificate_producer_identity": "gitblob:0006f4134f130fe1c3d8305f8f007d09b08ffc65",
+    "minimal_semantic_fragment_identity": "gitblob:abb06d4b71a66100b04b225d1d3c0d5ac22e887c",
+    "producer_bundle_sha256": "05d7f5f9db38328586643ef172392cbf0ba00bffebd67187eab0c71675a4da34",
+    "semantic_checker_identity": "gitblob:17d7d614130897abdebf85a3fb0cda3b9d59574b",
+    "semantic_engine_identity": "gitblob:e91e51397f4cc201452b1a0f80d130265dca2ea0",
+    "source_evidence_checker_identity": "sha256:d5953a08cbcafe0de29dedf1750fc972f7dac1a5aceff3f1a16551ecbf7f3a74"
+  },
+  "definitive_c1_requirements": [
+    "exact certificate and semantic-slice content digests",
+    "exact frozen protocol digest set",
+    "exact frozen implementation identities",
+    "exact CPython 3.13.5 plus python_stdlib_ast parser identity",
+    "closed read-set receipt with no forbidden reads",
+    "exact raw-source content hashes and source set",
+    "exact canonical consequence-signature digest",
+    "independent raw-source reconstruction of every C1-required evidence receipt",
+    "independent semantic recomputation",
+    "no material producer/C1 prediction or regression-witness disagreement"
+  ],
+  "executable_profile_v0_1": {
+    "c1_raw_source_rechecker": "Independent Python raw-byte lane using stdlib ast; it re-derives claim-critical coordinate/resource/binding, lineage, direct guard, complete branch/effect/outcome, evidence-span, and finite-world realization facts, then recomputes semantics without importing primary E2 or producer-kernel code.",
+    "certificate_producer": "Untrusted C0 producer that binds exact source hashes, evidence spans, protocol/implementation identities, canonical-signature digest, closed read-set receipt, semantic slice, and producer-kernel result.",
+    "producer_kernel": "Pure deterministic finite semantic-slice evaluator for admissions A-F, preregistered A3/A4 constructive witnesses, preservation obligations, and finite CTV world relation. It parses no source and is untrusted for C1."
+  },
+  "execution_boundary": {
+    "candidate58_execution_allowed_by_this_freeze_alone": false,
+    "still_required_before_first_candidate58_semantic_prediction": [
+      "production primary-to-semantic-slice adapter identity and qualification",
+      "canonical consequence-signature bundle derived only from frozen canonical seeds",
+      "production closed read-set policy/receipt and exact execution harness",
+      "prospectively frozen C1 local models for any helper-control or non-Python coverage intentionally claimed",
+      "single exact Candidate-58 execution freeze binding all of the above"
+    ],
+    "this_is_candidate58_execution_freeze": false
+  },
+  "explicitly_unsupported_by_c1_v0_1": [
+    "HELPER_CONTROL",
+    "Go source",
+    "TypeScript/JavaScript source",
+    "loops or unbounded cycles",
+    "try/exception control material to the claim",
+    "multiple semantic branch points in the target scope",
+    "dynamic or unresolved assignment/call/alias semantics",
+    "multiple non-equivalent effect paths",
+    "any construct outside the frozen direct-control local model"
+  ],
+  "fail_closed_rule": "Unsupported or materially unresolved source semantics cannot yield VALID_C1 and cannot support definitive preservation/regression; they produce assurance-incomplete/unsupported instead.",
+  "freeze_id": "RISU_DIFF_E2_GATE1B1C_IMPLEMENTATION_FREEZE_v0.1",
+  "implementation_blobs": {
+    "c1_independent": {
+      "risu_e2_c1/__init__.py": "8c0e46f39ad7034a3081a617c381a04f4b19b22d",
+      "risu_e2_c1/common.py": "65957407cd21f3940c2d0311b0fe6494f754192b",
+      "risu_e2_c1/rechecker.py": "ec7e782c88fb8786eb5b3d267e44d81885707728",
+      "risu_e2_c1/semantics.py": "17d7d614130897abdebf85a3fb0cda3b9d59574b",
+      "risu_e2_c1/source_extract.py": "aadbe082e7d4f97a7b524a70c3cd1a2fbf448682",
+      "risu_e2_c1/source_python.py": "97c20c76b09de42af21df9b2f531da9e28c055af"
+    },
+    "producer": {
+      "risu_e2_semantic/__init__.py": "4af68a147f4a6c6f10cc65d81fd35b4edcd78c31",
+      "risu_e2_semantic/certificate.py": "0006f4134f130fe1c3d8305f8f007d09b08ffc65",
+      "risu_e2_semantic/kernel.py": "e91e51397f4cc201452b1a0f80d130265dca2ea0"
+    },
+    "qualification": {
+      ".github/workflows/e2-gate1b1c-kernel-c1.yml": "3e8a023b01879bb2181a53cb6bbf1f0c8961a3e9",
+      "tests/run_e2_gate1b1c_qualification.py": "575110e0b7921981e476d4fceec2143f5a0b0d94",
+      "tests/test_e2_c1_rechecker.py": "8e6027b3f5cdeaf36fc7a147c36973aabc64945f",
+      "tests/test_e2_semantic_kernel.py": "61a777ac25a163a17d55943d400c509d68256de2"
+    }
+  },
+  "normative_authority": {
+    "a3_a4_verdict_preregistration_git_blob": "8926d0b32a1c48addb5e341c3b8bdeb258fc7f85",
+    "candidate58_semantic_verdict_protocol_git_blob": "8b69568fdb4c0ffe66a46562ba2673ea8d9f19ae",
+    "certificate_trust_boundary_git_blob": "30a2330babc28a012acbd2eee5e0b7b020495755",
+    "minimal_semantic_fragment_git_blob": "abb06d4b71a66100b04b225d1d3c0d5ac22e887c"
+  },
+  "parent_commit": "f6d274af108a1b779b3aec4f9f8125de630f72f4",
+  "qualification": {
+    "c1_package_import_boundary_status": "PASS",
+    "compileall_status": "PASS",
+    "local_runtime": "CPython 3.13.5",
+    "local_test_status": "PASS",
+    "stable_prediction": "E2_PREDICTED_PRESERVATION_EVIDENCE",
+    "stable_replay_sha256": "7e75332c5872f460684accbf687c8cc7eeb270fc3f29c5af062533a48a4a3766",
+    "synthetic_two_replay_byte_identity": true,
+    "unit_and_adversarial_test_count": 19,
+    "wrong_carrier_prediction": "E2_PREDICTED_REGRESSION_WITNESS",
+    "wrong_carrier_replay_sha256": "dda2d63573281e6afee3b44a9fe61a8f2bded7b550e05b8c40f473eb0f90be06"
+  },
+  "repository": "risu-research/risu-verify",
+  "runtime_qualification": {
+    "exact_version": "3.13.5",
+    "implementation": "CPython",
+    "parser": "python_stdlib_ast",
+    "third_party_runtime_dependencies": []
+  },
+  "schema": "risu.e2-gate1b1c-implementation-freeze/v0.1",
+  "status": "IMPLEMENTATION_FROZEN_SYNTHETICALLY_QUALIFIED_NOT_CANDIDATE58_EXECUTION_FREEZE"
+}

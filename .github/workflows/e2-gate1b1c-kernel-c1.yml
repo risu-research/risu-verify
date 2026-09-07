@@ -1,0 +1,71 @@
+name: E2 Gate1B1C Kernel C1 Qualification
+
+on:
+  push:
+    branches: [e2-development]
+    paths:
+      - "risu_e2_semantic/**"
+      - "risu_e2_c1/**"
+      - "tests/test_e2_semantic_kernel.py"
+      - "tests/test_e2_c1_rechecker.py"
+      - "tests/run_e2_gate1b1c_qualification.py"
+      - ".github/workflows/e2-gate1b1c-kernel-c1.yml"
+      - "protocols/RISU_DIFF_E2_GATE1B1C_IMPLEMENTATION_FREEZE_v0.1.json"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-qualification-only:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.13.5"
+      - name: Verify exact runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import platform
+          assert platform.python_implementation() == "CPython"
+          assert platform.python_version() == "3.13.5"
+          print(platform.python_implementation(), platform.python_version())
+          PY
+      - name: Compile and unit/adversarial tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m compileall -q risu_e2_semantic risu_e2_c1 tests
+          python -m unittest -v tests.test_e2_semantic_kernel tests.test_e2_c1_rechecker
+      - name: Independent-import boundary check
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import ast
+          from pathlib import Path
+          forbidden=[]
+          for path in sorted(Path("risu_e2_c1").glob("*.py")):
+              tree=ast.parse(path.read_text())
+              for n in ast.walk(tree):
+                  if isinstance(n,ast.Import):
+                      forbidden += [f"{path.name}:{a.name}" for a in n.names if a.name=="risu_e2" or a.name.startswith("risu_e2.") or a.name=="risu_e2_semantic" or a.name.startswith("risu_e2_semantic.")]
+                  if isinstance(n,ast.ImportFrom) and n.module and (n.module=="risu_e2" or n.module.startswith("risu_e2.") or n.module=="risu_e2_semantic" or n.module.startswith("risu_e2_semantic.")):
+                      forbidden.append(f"{path.name}:{n.module}")
+          assert not forbidden, forbidden
+          print("C1_IMPORT_BOUNDARY_PASS")
+          PY
+      - name: Two-replay synthetic qualification
+        shell: bash
+        run: |
+          set -euo pipefail
+          python tests/run_e2_gate1b1c_qualification.py
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-gate1b1c-synthetic-qualification
+          path: gate1b1c-qualification.json
+          if-no-files-found: error
+          retention-days: 30
