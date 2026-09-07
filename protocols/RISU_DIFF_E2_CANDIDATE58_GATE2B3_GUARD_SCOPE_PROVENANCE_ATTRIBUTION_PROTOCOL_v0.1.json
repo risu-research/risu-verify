@@ -1,0 +1,195 @@
+{
+  "schema": "risu.e2-candidate58-gate2b3-guard-scope-provenance-attribution-protocol/v0.1",
+  "protocol_id": "RISU_DIFF_E2_CANDIDATE58_GATE2B3_GUARD_SCOPE_PROVENANCE_ATTRIBUTION_PROTOCOL_v0.1",
+  "status": "PROSPECTIVE_SEALED_BEFORE_DETAILED_39_CASE_PROVENANCE_TRACE",
+  "gate": "GATE_2B3_CANDIDATE58_GUARD_SCOPE_PROVENANCE_ATTRIBUTION",
+  "purpose": "Test, on the exact immutable Gate2B2 39-case population and without rerunning semantics or reading source/truth, whether each already-known GUARD_SCOPE_UNRESOLVED deficit is attributable to a specific guard-scope carrier survival failure: structured control provenance uniquely determines a material scope while the exact frozen GUARD_COMPARISON anchor consumed by the primary adapter carries no scope. This gate attributes only the GUARD_SCOPE_UNRESOLVED mechanism; co-occurring Gate2B2 deficits remain separate and are not repaired or causally collapsed.",
+  "prospective_boundary": {
+    "prospective_parent_commit": "3cd22bdcf596407c2e8076b024af832311264779",
+    "prospective_parent_tree": "cf9bdb3d9fd4c79fd9da884d63f669d863934cef",
+    "claim": "The detailed per-case prepared/evidence/{case_id}.overlay.json and prepared/evidence/{case_id}.path.json contents for the frozen 39-case Gate2B2 population have not been opened for Gate2B3 causal attribution before this protocol is sealed.",
+    "already_visible_before_freeze": [
+      "Gate2B2 case population and exact closure-deficit labels",
+      "Gate2B2 aggregate counts, including GUARD_SCOPE_UNRESOLVED=39",
+      "Frozen implementation source needed to define graph/path semantics",
+      "Guard-Scope Persistence Lemma derived from frozen implementation"
+    ],
+    "blindness_not_claimed_to": [
+      "existence of GUARD_SCOPE_UNRESOLVED in the 39 Gate2B2 rows",
+      "Gate2B2 producer-site provenance classes",
+      "Gate2B2 co-occurring unresolved-token counts"
+    ]
+  },
+  "authority": {
+    "repository": "risu-research/risu-verify",
+    "branch": "e2-development",
+    "candidate58_first_complete_machine_freeze_commit": "2ece1023252a8e9100a34d74079493040441e1e2",
+    "candidate58_machine_matrix_sha256": "7273ce4034d06e67989a33540f5b22fef3190cf311a8981474413b538e43472d",
+    "candidate58_first_complete_bundle_zip_sha256": "d77caaf74bf4dc8e94cf769d10092f8413595ac93422042e8a374f76c343f42d",
+    "candidate58_first_complete_logical_tree_sha256": "59eae5c1747042d7a2a860c28dcbbdef1a0c6fb891af212330801e3b40a5903d",
+    "candidate58_bundle_content_manifest": {
+      "path": "experiments/risu-diff-e2/qualification/candidate58/first-complete-machine/E2_CANDIDATE58_FIRST_COMPLETE_BUNDLE_CONTENT_MANIFEST.json",
+      "git_blob": "3ff712eab14dab6686267f9a790909c78f384c14",
+      "sha256": "c5030f084936c186b1d320b02ad8bf1e1648bbc9e97ad78b33db81fb9a6bd217",
+      "file_count": 946
+    },
+    "gate2b2_first_complete_freeze_commit": "3cd22bdcf596407c2e8076b024af832311264779",
+    "gate2b2_closure_provenance_ledger": {
+      "path": "experiments/risu-diff-e2/qualification/candidate58/gate2b2-closure-deficit-provenance-profile/E2_CANDIDATE58_GATE2B2_CLOSURE_PROVENANCE_LEDGER.json",
+      "git_blob": "97d9e0b0a8f9155d77f3a556bdc53a3306957142",
+      "sha256": "da53c72af39adba927b56fbeaf52922245bb503f8b6b5a14c45ce157fed5e2a2",
+      "case_count": 39
+    },
+    "gate2b2_closure_provenance_summary": {
+      "path": "experiments/risu-diff-e2/qualification/candidate58/gate2b2-closure-deficit-provenance-profile/E2_CANDIDATE58_GATE2B2_CLOSURE_PROVENANCE_SUMMARY.json",
+      "git_blob": "1c66412fe4e24563c5c4688e655a9fc9a9a6b1b0",
+      "sha256": "5f29e79506f49f6456b5af4a13943181c13217be92b5b853663202e998f748f3"
+    },
+    "gate2b2_freeze_receipt": {
+      "path": "experiments/risu-diff-e2/qualification/candidate58/gate2b2-closure-deficit-provenance-profile/E2_CANDIDATE58_GATE2B2_FIRST_COMPLETE_IMMUTABLE_FREEZE_RECEIPT.json",
+      "git_blob": "30fa3a7c4a8a3a59aecb07c4c436d7a49dee7418"
+    },
+    "frozen_semantic_implementation": {
+      "observability_overlay": {"path": "risu_e2/observability_overlay.py", "git_blob": "77be5ea1dad30aa6daa889e0753ce7d1aaa6f07a"},
+      "overlay_graph": {"path": "risu_e2/overlay_common.py", "git_blob": "9975fe509fba30a2bbbbb8606f174faa5912a2f1"},
+      "path_observability": {"path": "risu_e2/path_observability.py", "git_blob": "6eae3403f53b86f85bac47a31e751d28508e7225"},
+      "primary_adapter": {"path": "risu_e2_semantic/primary_adapter.py", "git_blob": "c1b5d5e666bdd1b8f9bb1e041f76368f7f7a741c"}
+    }
+  },
+  "pre_freeze_structural_knowledge": {
+    "guard_scope_persistence_lemma": "Under frozen observability_overlay 77be5ea... and overlay_graph 9975fe5..., a frozen GUARD_COMPARISON anchor is initially materialized without attrs.scope; OverlayGraph.node content-addresses attrs rather than merging them; later construction reuses the anchor id and does not rematerialize it with scope; edge/evidence attachment and final validation do not backfill scope. Therefore that exact anchor cannot acquire scope later.",
+    "adapter_scope_consumption_rule": "Frozen primary_adapter c1b5d5e... reads guard_scope only from the exact GUARD_COMPARISON anchor node attrs.scope and appends GUARD_SCOPE_UNRESOLVED when that value is absent/falsey; no name-based or path-scope fallback exists.",
+    "path_scope_rule": "Frozen path_observability 6eae340... records structured path states with scope and STRUCTURED_BRANCH transitions, computes effective_guard_observability, and records control-scope completeness. These already-frozen outputs may therefore test whether material structured scope was uniquely available in the primary evidence substrate.",
+    "hypothesis_not_result": "Some, all, or none of the 39 known GUARD_SCOPE_UNRESOLVED cases may satisfy the preregistered carrier-survival predicate. The 39-case outcome is unknown at protocol freeze and no all-cases attribution is assumed."
+  },
+  "population_lock": {
+    "selector": "Use exactly every row in the immutable Gate2B2 closure-provenance ledger. Require case_count=39 and require GUARD_SCOPE_UNRESOLVED to occur in every selected row exactly as frozen; otherwise Gate2B3 is invalid rather than reselected.",
+    "expected_case_count": 39,
+    "known_gate2b2_guard_scope_unresolved_count": 39,
+    "case_reselection_allowed": false,
+    "case_dropping_allowed": false,
+    "case_substitution_allowed": false,
+    "stratification_for_primary_attribution_allowed": false
+  },
+  "read_surface_after_protocol_seal": {
+    "allowed_scientific_content_reads": [
+      "Exact immutable Gate2B2 closure-provenance ledger, summary, and freeze receipt",
+      "Exact immutable Candidate58 bundle-content manifest",
+      "For each exact selected opaque case_id only: prepared/evidence/{case_id}.overlay.json",
+      "For each exact selected opaque case_id only: prepared/evidence/{case_id}.path.json",
+      "Frozen implementation blobs listed in this protocol, only to validate the preregistered structural predicates"
+    ],
+    "member_resolution_rule": "For each selected case_id, resolve exactly one manifest member at prepared/evidence/{case_id}.overlay.json and exactly one at prepared/evidence/{case_id}.path.json. Verify each member byte SHA256 against the immutable content manifest before parsing. Missing, duplicate, wrong-path, or digest-mismatched evidence fails closed.",
+    "forbidden_content_reads": [
+      "Candidate source bytes",
+      "Any original materialized-cell source or metadata",
+      "semantic_slice.json",
+      "adapter receipts",
+      "kernel_result.json",
+      "machine records beyond the already-frozen Gate2B2 selection authority",
+      "certificates or C1 reports",
+      "Gate2A truth-joined ledger or metrics",
+      "truth oracle or expected labels",
+      "mutation operator metadata",
+      "Epistemic10",
+      "fresh heldout material"
+    ],
+    "source_identifier_or_variable_spelling_as_semantic_authority": false
+  },
+  "input_integrity_contract": {
+    "overlay_schema": "risu.e2-observability-overlay/v0.1",
+    "path_schema_allowed": ["risu.e2-path-observability/v0.1", "risu.e2-path-observability/v0.2"],
+    "require_path_base_overlay_digest_matches_overlay_digest": true,
+    "require_exact_manifest_member_sha256": true,
+    "require_case_id_opaque_64_lower_hex": true,
+    "any_integrity_failure_policy": "TRACE_EVIDENCE_INCOMPLETE"
+  },
+  "deterministic_predicates": {
+    "P_GATE2B2_SCOPE_DEFICIT": "The exact Gate2B2 row contains primitive atom prefix GUARD_SCOPE_UNRESOLVED and an exact F_UNRESOLVED:GUARD_SCOPE_UNRESOLVED admission reason.",
+    "P_TRACE_COMPLETE": "Both exact manifest-bound overlay/path members exist uniquely, byte digests match, schemas validate, and path.base_overlay_digest_sha256 equals overlay.overlay_digest_sha256.",
+    "P_ANCHORED_GUARD_EXISTS_UNIQUE": "Exactly one overlay node has attrs.anchor_role == GUARD_COMPARISON.",
+    "P_ANCHORED_GUARD_SCOPE_ABSENT": "For that exact anchored guard node, attrs.scope is missing, null, or the empty string.",
+    "P_EFFECTIVE_GUARD_ASSOCIATION_UNIQUE": "Let E be path.effective_guard_observability. If E.form==DIRECT_CONTROL, require nonempty E.guard_id equal to the anchored guard id and require that guard to be branch-bearing via GUARDS edges with both boolean polarities. If E.form==HELPER_CONTROL, independently replay only the frozen graph-reachability relation defined by path_observability 6eae340...: from the transported anchored guard traverse DERIVES edges only when derivation is one of comparison_result_to_return,function_return_to_call_result,call_result_to_assignment,call_result, and traverse BINDS_TO only when binding==call_argument_to_parameter; collect COMPARES targets that are branch-bearing. Require exactly one reachable consumer, no disallowed transform encountered, and require it to equal nonempty E.guard_id. Any other E.form, empty guard_id, disagreement, ambiguity, or bad transform makes this predicate false.",
+    "P_UPSTREAM_STRUCTURED_SCOPE_UNIQUE": "Using only frozen path.path_states, select states whose transition.kind==STRUCTURED_BRANCH and transition.guard_id equals the effective guard id proven above. Require at least one state, exactly one nonempty state.scope value, exactly one nonempty transition.statement_span value, branch polarities collectively exactly {true,false}, path.control_scope_completeness[that scope]==COMPLETE, and path.material_control_complete==true. Also require exactly one overlay.control_completeness row for that scope with status==COMPLETE.",
+    "P_NO_EARLIER_SCOPE_AMBIGUITY": "P_EFFECTIVE_GUARD_ASSOCIATION_UNIQUE and P_UPSTREAM_STRUCTURED_SCOPE_UNIQUE are true, with no conflicting nonempty structured scope or statement span among the selected branch states.",
+    "P_GUARD_SCOPE_CARRIER_SURVIVAL_FAILURE": "P_GATE2B2_SCOPE_DEFICIT AND P_TRACE_COMPLETE AND P_ANCHORED_GUARD_EXISTS_UNIQUE AND P_ANCHORED_GUARD_SCOPE_ABSENT AND P_EFFECTIVE_GUARD_ASSOCIATION_UNIQUE AND P_UPSTREAM_STRUCTURED_SCOPE_UNIQUE AND P_NO_EARLIER_SCOPE_AMBIGUITY."
+  },
+  "causal_taxonomy": {
+    "mutually_exclusive": true,
+    "first_match_order": [
+      {"id": "TRACE_EVIDENCE_INCOMPLETE", "rule": "NOT P_TRACE_COMPLETE."},
+      {"id": "FROZEN_CHAIN_INCONSISTENT", "rule": "P_TRACE_COMPLETE but P_GATE2B2_SCOPE_DEFICIT is false, or the unique exact anchor carries a nonempty scope despite the frozen Gate2B2 GUARD_SCOPE_UNRESOLVED observation and exact frozen adapter-consumption rule."},
+      {"id": "ANCHOR_IDENTITY_OR_EFFECTIVE_GUARD_ASSOCIATION_UNRESOLVED", "rule": "P_TRACE_COMPLETE and not FROZEN_CHAIN_INCONSISTENT, but P_ANCHORED_GUARD_EXISTS_UNIQUE or P_EFFECTIVE_GUARD_ASSOCIATION_UNIQUE is false."},
+      {"id": "UPSTREAM_STRUCTURED_SCOPE_UNRESOLVED_OR_AMBIGUOUS", "rule": "P_TRACE_COMPLETE, exact anchor is unique and scope-absent, effective-guard association is unique, but P_UPSTREAM_STRUCTURED_SCOPE_UNIQUE or P_NO_EARLIER_SCOPE_AMBIGUITY is false."},
+      {"id": "GUARD_SCOPE_CARRIER_SURVIVAL_FAILURE", "rule": "P_GUARD_SCOPE_CARRIER_SURVIVAL_FAILURE is true."},
+      {"id": "ATTRIBUTION_INCOMPLETE_NO_CAUSAL_CLAIM", "rule": "Deterministic residue for a trace-complete case satisfying none of the preceding classes; no OTHER bucket may be invented later."}
+    ]
+  },
+  "per_case_output_contract": [
+    "opaque case_id",
+    "exact Gate2B2 primitive atom prefixes and exact unresolved instances copied without reinterpretation",
+    "manifest-bound overlay path and SHA256",
+    "manifest-bound path-observability path and SHA256",
+    "anchored guard id and anchor-scope presence boolean",
+    "effective guard form and id",
+    "effective-guard association predicate result",
+    "structured branch scope values, statement spans, and polarities",
+    "upstream structured-scope uniqueness predicate result",
+    "all preregistered predicate booleans",
+    "exact one causal_taxonomy id"
+  ],
+  "aggregate_output_contract": [
+    "exact population total 39",
+    "count for every frozen causal_taxonomy id including zeros",
+    "count and fraction satisfying P_GUARD_SCOPE_CARRIER_SURVIVAL_FAILURE",
+    "count with complete trace evidence",
+    "count with unique effective-guard association",
+    "count with unique upstream structured scope",
+    "exact sorted opaque case-id lists for every taxonomy bucket",
+    "no unregistered post-hoc bucket, metric, or exclusion"
+  ],
+  "interpretation_boundary": {
+    "development_qualification_only": true,
+    "scope_of_causal_claim": "Only the already-known GUARD_SCOPE_UNRESOLVED mechanism in the exact frozen Gate2B2 39-case population.",
+    "cooccurring_deficits_are_not_explained_by_scope_attribution": true,
+    "representation_scope_survival_failure_may_be_claimed_per_case_only_when_full_preregistered_conjunction_holds": true,
+    "all_39_representation_failure_claim_requires_exact_39_of_39": true,
+    "less_than_39_must_be_reported_as_exact_subset_without_generalization": true,
+    "no_population_safety_claim": true,
+    "no_counterfactual_remediation_gain": true,
+    "no_claim_that_adding_scope_alone_would_make_any_case_definitive": true,
+    "no_remediation_priority": true,
+    "no_truth_accuracy_or_performance_metric": true,
+    "Gate2A_Gate2B0_Gate2B1_Gate2B2_results_remain_immutable": true
+  },
+  "scientific_firewall": {
+    "candidate_source_read_before_or_during_gate2b3": false,
+    "truth_or_operator_read": false,
+    "gate2a_truth_join_input_read": false,
+    "epistemic10_read": false,
+    "fresh_heldout_read": false,
+    "semantic_slice_adapter_receipt_kernel_certificate_c1_read": false,
+    "semantic_engine_kernel_adapter_or_c1_rerun": false,
+    "candidate58_machine_challenge_rerun": false,
+    "semantic_or_harness_rule_change": false,
+    "remediation": false,
+    "case_reselection_or_replacement": false
+  },
+  "determinism_and_freeze": {
+    "future_analyzer_must_be_standard_library_only": true,
+    "future_analyzer_must_read_only_protocol_allowed_surfaces": true,
+    "analyzer_adversarial_self_test_before_first_real_39_case_trace": true,
+    "freeze_exact_analyzer_identity_before_first_real_39_case_trace": true,
+    "run_exact_trace_twice": true,
+    "require_exact_logical_byte_identity": true,
+    "first_complete_gate2b3_result_additive_and_immutable": true,
+    "later_remediation_must_be_separate_gate": true
+  },
+  "expected_output_files": [
+    "E2_CANDIDATE58_GATE2B3_CASE_PROVENANCE_ATTRIBUTION.json",
+    "E2_CANDIDATE58_GATE2B3_AGGREGATE_PROVENANCE_ATTRIBUTION.json",
+    "E2_CANDIDATE58_GATE2B3_INPUT_MANIFEST.json",
+    "E2_CANDIDATE58_GATE2B3_READ_RECEIPT.json"
+  ],
+  "next_authorized_action": "Implement a standard-library-only Gate2B3 analyzer that encodes exactly these predicates and no remediation logic; adversarially self-test it on synthetic traces; freeze its exact identity before reading any of the 39 detailed overlay/path evidence pairs; then run the frozen analyzer twice over exactly the manifest-bound 39 pairs, require logical byte identity, and immutably archive the first complete Gate2B3 result."
+}
