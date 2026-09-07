@@ -1,0 +1,195 @@
+{
+  "schema": "risu.e2-a3-a4-selected48-precomplete-adapter-remediation-protocol/v0.1",
+  "protocol_id": "RISU_DIFF_E2_A3_A4_SELECTED_48_PRECOMPLETE_ADAPTER_REMEDIATION_001",
+  "status": "FROZEN_BEFORE_ADAPTER_REMEDIATION",
+  "purpose": "Repair only the non-scientific heldout adapter interface/fail-closed behavior exposed by pre-complete selected-48 execution 001, without changing the frozen v0.3 scientific surface, selected 48, frozen transport engine, semantic admission predicate, canonical projection, or expected outcomes.",
+  "authority": {
+    "repository": "risu-research/risu-verify",
+    "branch": "e2-development",
+    "pre_protocol_head": "7deeb8d094e064a2afd8d84d0864443a5b735af5",
+    "precomplete_archive_commit": "7deeb8d094e064a2afd8d84d0864443a5b735af5",
+    "precomplete_zip_git_blob": "e2b5d94b4fd9456a83df804cb6ad5ebd979f89bd",
+    "precomplete_zip_sha256": "5d2b8f200fb4e98f01f4e08e63c07342e349b4407cea81444125cedc2eb2010d",
+    "precomplete_freeze_receipt_git_blob": "fcb2fbc753aedfcb6aa0ceeca523eb7afac0a7b8",
+    "selected48_transport_bundle_sha256": "222f0341836a0ae6487471444a82914c30d61ca3896a88cadf4de2bfa9487f2a",
+    "selected48_transport_bundle_internal_digest_sha256": "eeb2bb84ada34c78fa3b2e92a91605d03fa0ebd6a54bbfb97637e10fb323145f",
+    "old_primary_adapter_git_blob": "56ad7ec667f59f962585c6d5ed81b5dc98a363e2",
+    "old_independent_adapter_git_blob": "8a68cd1b80e2abeac68a3ca7aed6ab7cfc28c105",
+    "old_dispatch_workflow_git_blob": "af7a8e2a70bcd7cb7000335512530ce9b9886666",
+    "selected48_manifest_git_blob": "8336a8e33e189e373a8a59cca57c4cab20fdc5f7",
+    "cells_tree_git_sha": "34a30574c7420728bff57958c815194979a622ab"
+  },
+  "frozen_prechange_diagnosis": {
+    "classification": "PRE_COMPLETE_ADAPTER_INTERFACE_AND_FAIL_CLOSED_CONTROL_FLOW_DEFECTS",
+    "not_a_first_complete_scientific_result": true,
+    "selected48_source_fetch": "PASS_48_OF_48",
+    "selected48_transport_receipt_count": 48,
+    "transport_parser_status_counts": {
+      "PARSE_OK": 48
+    },
+    "transport_case_status_counts": {
+      "COMPLETE": 33,
+      "TRANSPORT_INCOMPLETE": 15
+    },
+    "strict_transport_eligibility_count": 31,
+    "strict_transport_ineligibility_count": 17,
+    "complete_but_strictly_ineligible_cells": [
+      "Q026",
+      "Q045"
+    ],
+    "transport_incomplete_cells": [
+      "Q001",
+      "Q004",
+      "Q011",
+      "Q012",
+      "Q016",
+      "Q021",
+      "Q022",
+      "Q023",
+      "Q024",
+      "Q033",
+      "Q040",
+      "Q041",
+      "Q052",
+      "Q053",
+      "Q056"
+    ],
+    "anchor_aggregate": {
+      "guard_comparison": {
+        "lineage": {
+          "TRANSPORT_PRESENT_EXACT": 29,
+          "TRANSPORT_PRESENT_EDIT_DESCENDANT": 8,
+          "TRANSPORT_UNRESOLVED": 6,
+          "TRANSPORT_AMBIGUOUS_MULTIPLE_CANDIDATES": 4,
+          "TRANSPORT_AMBIGUOUS_WITNESS_DISAGREEMENT": 1
+        },
+        "realization": {
+          "ROLE_COMPATIBLE": 34,
+          "NOT_EVALUATED": 11,
+          "ROLE_INCOMPATIBLE": 3
+        }
+      },
+      "rejection_no_effect": {
+        "lineage": {
+          "TRANSPORT_PRESENT_EXACT": 32,
+          "TRANSPORT_PRESENT_EDIT_DESCENDANT": 5,
+          "TRANSPORT_UNRESOLVED": 11
+        },
+        "realization": {
+          "ROLE_COMPATIBLE": 37,
+          "NOT_EVALUATED": 11
+        }
+      },
+      "effect_applied": {
+        "lineage": {
+          "TRANSPORT_PRESENT_EXACT": 46,
+          "TRANSPORT_UNRESOLVED": 2
+        },
+        "realization": {
+          "ROLE_COMPATIBLE": 46,
+          "NOT_EVALUATED": 2
+        }
+      }
+    },
+    "binding_slot_status_counts": {
+      "current_coordinate": {
+        "AVAILABLE": 34,
+        "BINDING_SLOT_UNAVAILABLE": 14
+      },
+      "expected_coordinate": {
+        "AVAILABLE": 34,
+        "BINDING_SLOT_UNAVAILABLE": 14
+      }
+    },
+    "primary_failure": {
+      "runs": 2,
+      "error": "KeyError: language",
+      "cause": "The selected48 transport wrapper intentionally carries no top-level language field, while old Primary run_heldout/projected_contract dereference receipt[language]. Language is already independently bound by the sanitized runtime-admission source suffix and canonical seed anchor declaration; this is an adapter interface defect, not a scientific observation."
+    },
+    "independent_failure": {
+      "runs": 2,
+      "error": "ValueError: transported anchor not role-compatible",
+      "cause": "The old Independent adapter fail-closes only when case_transport_status is not COMPLETE. Two receipts, Q026 and Q045, are COMPLETE while still containing a ROLE_INCOMPATIBLE guard plus unavailable coordinate slots. More generally, transport eligibility must be evaluated from the required anchor and slot conditions themselves before contract projection. Throwing an exception prevents a complete fail-closed row from being emitted."
+    }
+  },
+  "strict_transport_eligibility_contract": {
+    "required_case_transport_status": "COMPLETE",
+    "required_anchor_keys": [
+      "guard_comparison",
+      "rejection_no_effect",
+      "effect_applied"
+    ],
+    "per_required_anchor": {
+      "realization_status": "ROLE_COMPATIBLE",
+      "candidate_span_shape": "LIST_OF_EXACTLY_4_INTEGERS",
+      "candidate_slice_sha256_required": true
+    },
+    "required_binding_slots": [
+      "expected_coordinate",
+      "current_coordinate"
+    ],
+    "per_required_binding_slot": {
+      "status": "AVAILABLE",
+      "operand_index_must_equal_frozen_canonical_anchor_declaration": true
+    },
+    "if_any_condition_fails": {
+      "qualification_status": "OBSERVABILITY_INCOMPLETE",
+      "sorted_reasons": [
+        "OBSERVABILITY_INCOMPLETE_TRANSPORT"
+      ],
+      "base_ir_status": "NOT_EVALUATED",
+      "overlay_status": "NOT_EVALUATED",
+      "path_observability_status": "NOT_EVALUATED",
+      "anchor_usability": "INCOMPLETE",
+      "semantic_authority": false
+    }
+  },
+  "allowed_adapter_changes": {
+    "primary": [
+      "derive language from the exact sanitized runtime-admission source path suffix and independently require agreement with the canonical seed anchor declaration language",
+      "pass that independently derived language into projected_contract rather than reading a nonexistent top-level transport receipt language field",
+      "evaluate strict transport eligibility before contract projection and emit the existing canonical OBSERVABILITY_INCOMPLETE transport row when ineligible"
+    ],
+    "independent": [
+      "evaluate strict transport eligibility before bind_transported_contract and emit the existing canonical OBSERVABILITY_INCOMPLETE transport row when ineligible"
+    ],
+    "shared_rule": "Primary and Independent must implement the strict transport-eligibility test independently; no new shared checker helper is authorized."
+  },
+  "forbidden_changes": [
+    "change frozen transport engine bytes or its receipts",
+    "change any selected source bytes or the 48-cell selection",
+    "change frontend_js_v3, frontend_python_v2, ir_v3, overlay, path-observability, or other scientific/support semantic bytes",
+    "change case_status or independent_admission semantic predicate",
+    "change canonical row projection fields or canonicalization rules",
+    "change expected outcomes or introduce mutation class, truth, operator metadata, source hash, source path identity, cell ID, or known prior result as a scientific branch",
+    "drop any of the 48 selected cells",
+    "reinterpret any transport-ineligible cell as transport-eligible",
+    "change the 31 already strictly transport-eligible cases' scientific execution path",
+    "read candidate58, epistemic10, raw blind58 transport, mutation truth, mutation operator metadata, expected E2 predictions, or fresh target bytes",
+    "execute A3/A4 semantic verdict logic"
+  ],
+  "prospective_postrepair_checks": {
+    "exact_case_count": 48,
+    "primary_and_independent_each_must_emit_48_rows": true,
+    "strict_transport_ineligible_cells_must_emit_fail_closed_rows_not_exceptions": true,
+    "strict_transport_eligible_cells_must_continue_into_the_unchanged_scientific_path": true,
+    "primary_and_independent_must_run_twice_each": true,
+    "repeat_byte_identity_required": true,
+    "canonical_named_field_cross_check_required": true,
+    "artifact_upload_before_final_gate_required": true,
+    "first_complete_bundle_pass_or_fail_must_be_archived_before_any_further_change": true
+  },
+  "scientific_firewall": {
+    "candidate58_bytes_read": false,
+    "epistemic10_source_bytes_read": false,
+    "raw_blind58_transport_read": false,
+    "mutation_truth_read": false,
+    "mutation_operator_metadata_read": false,
+    "expected_e2_prediction_read": false,
+    "fresh_target_bytes_read": false,
+    "a3_a4_semantic_verdicts_executed": false,
+    "scientific_code_change_authorized": false,
+    "gate_relaxation_authorized": false
+  },
+  "next_authorized_step": "Implement only the frozen adapter changes above, then freeze their exact blobs and a new dispatch-only workflow before rerunning the exact same selected 48. The rerun's first complete bundle must be archived unchanged before any further remediation, regardless of PASS or FAIL."
+}
