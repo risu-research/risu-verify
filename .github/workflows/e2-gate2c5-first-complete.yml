@@ -1,0 +1,199 @@
+name: E2 Gate2C5 First Complete
+
+on:
+  push:
+    branches: [e2-development]
+    paths:
+      - ".github/workflows/e2-gate2c5-first-complete.yml"
+
+permissions:
+  contents: write
+  actions: read
+
+env:
+  EXPECTED_PARENT: b523b8b2877a5e9c342d3dae21d481f8b9534041
+  PROTOCOL: protocols/RISU_DIFF_E2_GATE2C5_CANONICAL_OPAQUE_PROJECTION_IDENTITY_PROTOCOL_v0.1.json
+  RESOLUTION: protocols/RISU_DIFF_E2_GATE2C5_CANONICAL_GUARD_ANCHOR_RESOLUTION_v0.1.json
+  IMPL_FREEZE: protocols/RISU_DIFF_E2_GATE2C5_IMPLEMENTATION_FREEZE_v0.1.json
+  BUILDER: tools/e2_gate2c5_build_canonical_projection_identity.py
+  CHECKER: tools/e2_gate2c5_check_canonical_projection_identity.py
+  TEST: tests/test_e2_gate2c5_canonical_projection_identity.py
+  SOURCE: experiments/risu-diff-e2/qualification/seeds/python/SYN-PY-01.py
+  SEED_CATALOG: experiments/risu-diff-e2/qualification/CANONICAL_SYNTHETIC_SEEDS.json
+  ANCHOR_BUNDLE: protocols/RISU_DIFF_E2_CANONICAL_SEED_CONSEQUENCE_ANCHORS_v0.1.json
+  SIGNATURES: experiments/risu-diff-e2/qualification/a3-a4/E2_A3_A4_CANONICAL_SEED_CONSEQUENCE_SIGNATURES_v0.1.json
+  PROFILES: experiments/risu-diff-e2/qualification/gate1b1c-canonical-bridge/E2_GATE1B1C_CANONICAL_EXECUTION_PROFILES.json
+  RESULT_DIR: experiments/risu-diff-e2/qualification/candidate58/gate2c5-canonical-opaque-projection-identity/first-complete
+  PROTOCOL_BLOB: 08160ca443a2952b159353b16c7684b9e5601f49
+  RESOLUTION_BLOB: cbc213250fa205d6e57f223fe52de54a1be707d8
+  IMPL_FREEZE_BLOB: 41222a5e58f62161816131369a3f00e660aebe7a
+  BUILDER_BLOB: 3561696beaebdf385a9f6c1d3ae89f8f1cd97857
+  CHECKER_BLOB: ceeb87931c8597afff49fc399dcc4117a7c66454
+  TEST_BLOB: cae99ba003e6114238b9f9aab7679c3d02e47de2
+  SOURCE_BLOB: ac730a4896aa260d5cdb78b47e21c3baa2e66458
+  SOURCE_SHA256: f44afc11c76e0bf3b794d7286f14349e3026cfc6741e86459e3e734fb077090d
+  SEED_CATALOG_BLOB: 2a0c01ad5850d3a701fb243d307ff441e9cae358
+  ANCHOR_BUNDLE_BLOB: ec8d8b287a80b87c815f0362be366be076d2b091
+  SIGNATURES_BLOB: cfa7d78707599177afe690c3aad7faaa22cb1930
+  PROFILES_BLOB: 02c6e01d1a86167a15823cf14b61bfa37212d700
+  ARTIFACT_NAME: e2-gate2c5-first-complete
+
+jobs:
+  first-complete:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exact first canonical execution revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 2
+      - name: Prove frozen canonical boundary and empty result slot
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "$EXPECTED_PARENT"
+          test "$(git diff --name-only HEAD^ HEAD)" = ".github/workflows/e2-gate2c5-first-complete.yml"
+          test "$(git hash-object "$PROTOCOL")" = "$PROTOCOL_BLOB"
+          test "$(git hash-object "$RESOLUTION")" = "$RESOLUTION_BLOB"
+          test "$(git hash-object "$IMPL_FREEZE")" = "$IMPL_FREEZE_BLOB"
+          test "$(git hash-object "$BUILDER")" = "$BUILDER_BLOB"
+          test "$(git hash-object "$CHECKER")" = "$CHECKER_BLOB"
+          test "$(git hash-object "$TEST")" = "$TEST_BLOB"
+          test "$(git hash-object "$SOURCE")" = "$SOURCE_BLOB"
+          test "$(git hash-object "$SEED_CATALOG")" = "$SEED_CATALOG_BLOB"
+          test "$(git hash-object "$ANCHOR_BUNDLE")" = "$ANCHOR_BUNDLE_BLOB"
+          test "$(git hash-object "$SIGNATURES")" = "$SIGNATURES_BLOB"
+          test "$(git hash-object "$PROFILES")" = "$PROFILES_BLOB"
+          test "$(sha256sum "$SOURCE" | awk '{print $1}')" = "$SOURCE_SHA256"
+          test ! -e "$RESULT_DIR"
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          f=json.loads(Path(os.environ['IMPL_FREEZE']).read_text())
+          assert f['status']=='IMPLEMENTATION_FROZEN_SYNTHETICALLY_QUALIFIED_BEFORE_FIRST_CANONICAL_EXECUTION'
+          assert f['canonical_execution_lock']['guard_span']==[20,7,20,40]
+          assert f['canonical_execution_lock']['expected_parameter_index']==1
+          assert f['canonical_execution_lock']['current_parameter_index']==0
+          assert f['canonical_execution_lock']['expected_operand_index']==0
+          assert f['canonical_execution_lock']['current_operand_index']==1
+          assert f['canonical_execution_lock']['expected_projection_shape']==['DERIVES']
+          assert f['canonical_execution_lock']['current_projection_shape']==[]
+          print('GATE2C5_CANONICAL_PREFLIGHT=PASS')
+          PY
+      - name: Set up exact Python runtime
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.13.5"
+      - name: Execute first and second canonical builder derivations
+        shell: bash
+        run: |
+          set -euo pipefail
+          R1="$RUNNER_TEMP/gate2c5/replay1"; R2="$RUNNER_TEMP/gate2c5/replay2"; export R1 R2
+          mkdir -p "$R1" "$R2"
+          for OUT in "$R1" "$R2"; do
+            python "$BUILDER" --protocol "$PROTOCOL" --resolution "$RESOLUTION" --anchor-bundle "$ANCHOR_BUNDLE" --seed-catalog "$SEED_CATALOG" --signatures "$SIGNATURES" --profiles "$PROFILES" --source "$SOURCE" --output "$OUT/E2_GATE2C5_CANONICAL_OPAQUE_PROJECTION_IDENTITY.json"
+          done
+          cmp "$R1/E2_GATE2C5_CANONICAL_OPAQUE_PROJECTION_IDENTITY.json" "$R2/E2_GATE2C5_CANONICAL_OPAQUE_PROJECTION_IDENTITY.json"
+          echo GATE2C5_BUILDER_DUAL_REPLAY=PASS
+      - name: Execute independent checker twice and require agreement
+        shell: bash
+        run: |
+          set -euo pipefail
+          R1="$RUNNER_TEMP/gate2c5/replay1"; R2="$RUNNER_TEMP/gate2c5/replay2"
+          python "$CHECKER" --authority "$R1/E2_GATE2C5_CANONICAL_OPAQUE_PROJECTION_IDENTITY.json" --resolution "$RESOLUTION" --anchor-bundle "$ANCHOR_BUNDLE" --seed-catalog "$SEED_CATALOG" --signatures "$SIGNATURES" --profiles "$PROFILES" --source "$SOURCE" --output "$R1/E2_GATE2C5_INDEPENDENT_PROJECTION_IDENTITY_CHECK.json"
+          python "$CHECKER" --authority "$R2/E2_GATE2C5_CANONICAL_OPAQUE_PROJECTION_IDENTITY.json" --resolution "$RESOLUTION" --anchor-bundle "$ANCHOR_BUNDLE" --seed-catalog "$SEED_CATALOG" --signatures "$SIGNATURES" --profiles "$PROFILES" --source "$SOURCE" --output "$R2/E2_GATE2C5_INDEPENDENT_PROJECTION_IDENTITY_CHECK.json"
+          cmp "$R1/E2_GATE2C5_INDEPENDENT_PROJECTION_IDENTITY_CHECK.json" "$R2/E2_GATE2C5_INDEPENDENT_PROJECTION_IDENTITY_CHECK.json"
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          root=Path(os.environ['RUNNER_TEMP'])/'gate2c5'/'replay1'
+          a=json.loads((root/'E2_GATE2C5_CANONICAL_OPAQUE_PROJECTION_IDENTITY.json').read_text())
+          c=json.loads((root/'E2_GATE2C5_INDEPENDENT_PROJECTION_IDENTITY_CHECK.json').read_text())
+          assert c['status']=='PASS',c
+          ar={x['root_role']:x['fingerprint_sha256'] for x in a['roles']}
+          assert ar==c['rederived_fingerprints']
+          assert set(ar)=={'BOUND_VALUE:expected_coordinate','BOUND_VALUE:current_coordinate'}
+          assert a['raw_source_bytes_emitted'] is False and a['raw_projection_tokens_emitted'] is False
+          assert c['raw_projection_tokens_emitted'] is False
+          print('GATE2C5_INDEPENDENT_FINGERPRINT_AGREEMENT=PASS')
+          PY
+      - name: Materialize pre-freeze canonical execution package
+        shell: bash
+        run: |
+          set -euo pipefail
+          PKG="$RUNNER_TEMP/gate2c5/package"; export PKG; mkdir -p "$PKG"
+          cp "$RUNNER_TEMP/gate2c5/replay1/E2_GATE2C5_CANONICAL_OPAQUE_PROJECTION_IDENTITY.json" "$PKG/"
+          cp "$RUNNER_TEMP/gate2c5/replay1/E2_GATE2C5_INDEPENDENT_PROJECTION_IDENTITY_CHECK.json" "$PKG/"
+          python - <<'PY'
+          import hashlib,json,os,platform
+          from pathlib import Path
+          pkg=Path(os.environ['PKG']); h=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          authority=pkg/'E2_GATE2C5_CANONICAL_OPAQUE_PROJECTION_IDENTITY.json'; check=pkg/'E2_GATE2C5_INDEPENDENT_PROJECTION_IDENTITY_CHECK.json'
+          receipt={'schema':'risu.e2-gate2c5-first-real-canonical-execution/v0.1','status':'CANONICAL_DERIVATION_AND_INDEPENDENT_CHECK_PASS_PRE_REPOSITORY_FREEZE','workflow_run_id':os.environ['GITHUB_RUN_ID'],'trigger_commit':os.environ['GITHUB_SHA'],'python_version':platform.python_version(),'builder_git_blob':os.environ['BUILDER_BLOB'],'checker_git_blob':os.environ['CHECKER_BLOB'],'protocol_git_blob':os.environ['PROTOCOL_BLOB'],'resolution_git_blob':os.environ['RESOLUTION_BLOB'],'implementation_freeze_git_blob':os.environ['IMPL_FREEZE_BLOB'],'source_git_blob':os.environ['SOURCE_BLOB'],'source_sha256':os.environ['SOURCE_SHA256'],'builder_dual_replay_byte_identical':True,'checker_dual_replay_byte_identical':True,'independent_checker_status':'PASS','builder_checker_fingerprint_agreement':True,'authority_sha256':h(authority),'independent_check_sha256':h(check),'candidate_bytes_read':False,'truth_read':False,'epistemic10_read':False,'c1_rerun':False,'remediation':False}
+          (pkg/'E2_GATE2C5_FIRST_REAL_EXECUTION_RECEIPT.json').write_text(json.dumps(receipt,sort_keys=True,separators=(',',':'))+'\n')
+          tree={'schema':'risu.e2-gate2c5-logical-tree/v0.1','files':{p.name:h(p) for p in sorted(pkg.iterdir()) if p.is_file()}}
+          (pkg/'E2_GATE2C5_LOGICAL_TREE.json').write_text(json.dumps(tree,sort_keys=True,separators=(',',':'))+'\n')
+          PY
+      - name: Upload canonical execution package before repository freeze
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-gate2c5-first-complete
+          path: ${{ runner.temp }}/gate2c5/package/
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+      - name: Bind hosted artifact metadata and materialize immutable repository payload
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          META="$RUNNER_TEMP/gate2c5/artifacts.json"; export META
+          for i in $(seq 1 12); do
+            curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts?name=$ARTIFACT_NAME" > "$META"
+            if [ "$(jq -r '.total_count' "$META")" = "1" ]; then break; fi
+            sleep 1
+          done
+          test "$(jq -r '.total_count' "$META")" = "1"
+          ARTIFACT_ID="$(jq -r '.artifacts[0].id' "$META")"; export ARTIFACT_ID
+          ARTIFACT_DIGEST="$(jq -r '.artifacts[0].digest' "$META")"; ARTIFACT_DIGEST="${ARTIFACT_DIGEST#sha256:}"; export ARTIFACT_DIGEST
+          test -n "$ARTIFACT_ID"; test "$ARTIFACT_DIGEST" != "null"; test "${#ARTIFACT_DIGEST}" = "64"
+          mkdir -p "$RESULT_DIR"
+          cp "$RUNNER_TEMP/gate2c5/package/E2_GATE2C5_CANONICAL_OPAQUE_PROJECTION_IDENTITY.json" "$RESULT_DIR/"
+          cp "$RUNNER_TEMP/gate2c5/package/E2_GATE2C5_INDEPENDENT_PROJECTION_IDENTITY_CHECK.json" "$RESULT_DIR/"
+          cp "$RUNNER_TEMP/gate2c5/package/E2_GATE2C5_FIRST_REAL_EXECUTION_RECEIPT.json" "$RESULT_DIR/"
+          cp "$RUNNER_TEMP/gate2c5/package/E2_GATE2C5_LOGICAL_TREE.json" "$RESULT_DIR/"
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          rdir=Path(os.environ['RESULT_DIR']); h=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          a=json.loads((rdir/'E2_GATE2C5_CANONICAL_OPAQUE_PROJECTION_IDENTITY.json').read_text()); c=json.loads((rdir/'E2_GATE2C5_INDEPENDENT_PROJECTION_IDENTITY_CHECK.json').read_text())
+          fps={x['root_role']:x['fingerprint_sha256'] for x in a['roles']}
+          freeze={'schema':'risu.e2-gate2c5-first-complete-immutable-freeze/v0.1','status':'FIRST_COMPLETE_GATE2C5_CANONICAL_OPAQUE_PROJECTION_IDENTITY_IMMUTABLY_FROZEN_BY_CONTAINING_COMMIT','repository':os.environ['GITHUB_REPOSITORY'],'branch':'e2-development','trigger_commit':os.environ['GITHUB_SHA'],'workflow_run_id':os.environ['GITHUB_RUN_ID'],'hosted_artifact':{'id':int(os.environ['ARTIFACT_ID']),'name':os.environ['ARTIFACT_NAME'],'digest_sha256':os.environ['ARTIFACT_DIGEST'],'uploaded_before_repository_freeze':True},'execution':{'builder_dual_replay_byte_identical':True,'checker_dual_replay_byte_identical':True,'independent_checker_status':c['status'],'builder_checker_fingerprint_agreement':fps==c['rederived_fingerprints'],'role_count':len(fps),'raw_projection_tokens_emitted':False,'first_complete_result_may_not_be_replaced':True},'frozen_files_sha256':{p.name:h(p) for p in sorted(rdir.iterdir()) if p.is_file()},'scientific_firewall':{'candidate_or_mutant_bytes_read':False,'gate2c4_primary_slices_reopened':False,'truth_or_mutation_operator_read':False,'epistemic10_read':False,'fresh_target_read':False,'c1_rerun':False,'semantic_engine_rerun':False,'kernel_rerun':False,'remediation':False,'repair_soundness_inferred':False},'claim_boundary':'Canonical SYN-PY-01 opaque structural projection identities only; no candidate normalization or C1 repair soundness claim.'}
+          assert freeze['execution']['independent_checker_status']=='PASS' and freeze['execution']['builder_checker_fingerprint_agreement']
+          (rdir/'E2_GATE2C5_FIRST_COMPLETE_IMMUTABLE_FREEZE_RECEIPT.json').write_text(json.dumps(freeze,sort_keys=True,separators=(',',':'))+'\n')
+          PY
+      - name: Commit and fast-forward push exact five-file first-complete freeze
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "RISU Evidence Freeze"
+          git config user.email "risu-evidence-freeze@users.noreply.github.com"
+          git add "$RESULT_DIR"
+          test "$(git diff --cached --name-only | wc -l)" = "5"
+          test "$(git diff --cached --name-only | grep -c "^$RESULT_DIR/")" = "5"
+          git commit -m "Freeze first complete Gate2C5 canonical projection identity authority"
+          RESULT_COMMIT="$(git rev-parse HEAD)"; export RESULT_COMMIT
+          test "$(git rev-parse HEAD^)" = "$GITHUB_SHA"
+          git push origin HEAD:e2-development
+          echo "RESULT_COMMIT=$RESULT_COMMIT" >> "$GITHUB_ENV"
+      - name: Post-push exact remote verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          REMOTE="$(git ls-remote origin refs/heads/e2-development | cut -f1)"
+          test "$REMOTE" = "$RESULT_COMMIT"
+          test "$(git diff --name-only "$GITHUB_SHA" "$RESULT_COMMIT" | wc -l)" = "5"
+          test "$(git diff --name-only "$GITHUB_SHA" "$RESULT_COMMIT" | grep -c "^$RESULT_DIR/")" = "5"
+          echo GATE2C5_FIRST_COMPLETE_REMOTE_FREEZE=PASS
