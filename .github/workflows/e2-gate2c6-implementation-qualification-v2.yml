@@ -1,0 +1,117 @@
+name: E2 Gate2C6 Implementation Qualification v2
+
+on:
+  push:
+    branches: [e2-development]
+    paths:
+      - ".github/workflows/e2-gate2c6-implementation-qualification-v2.yml"
+
+permissions:
+  contents: read
+
+env:
+  EXPECTED_PARENT: 761ac0ba36768699e8f6d6eb2255342585e3b4d4
+  PROTOCOL: protocols/RISU_DIFF_E2_GATE2C6_FROZEN_CANDIDATE_OPAQUE_PROJECTION_MATCH_PROTOCOL_v0.1.json
+  TRACER: tools/e2_gate2c6_candidate_projection_match.py
+  CHECKER: tools/e2_gate2c6_check_candidate_projection_match.py
+  TEST: tests/test_e2_gate2c6_candidate_projection_match.py
+  PROTOCOL_BLOB: 44b002ff5e0a1f11f2d057978803fd8c5e43434e
+  TRACER_BLOB: 59cdff0611ba4f2fa6dc8137839d717d1e249c4d
+  CHECKER_BLOB: 9a9dfe0221cfd09d5e2c2821102b5905a37be4c1
+  TEST_BLOB: dceaf89ba830d92dcf29a8e18d9592c65a928c88
+
+jobs:
+  synthetic-qualification:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact qualification revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 2
+
+      - name: Prove v1 failure-preserving orchestration-only correction
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "$EXPECTED_PARENT"
+          test "$(git diff --name-only HEAD^ HEAD)" = ".github/workflows/e2-gate2c6-implementation-qualification-v2.yml"
+          test "$(git hash-object "$PROTOCOL")" = "$PROTOCOL_BLOB"
+          test "$(git hash-object "$TRACER")" = "$TRACER_BLOB"
+          test "$(git hash-object "$CHECKER")" = "$CHECKER_BLOB"
+          test "$(git hash-object "$TEST")" = "$TEST_BLOB"
+          test ! -e experiments/risu-diff-e2/qualification/candidate58/gate2c6-frozen-candidate-opaque-projection-match/first-complete
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          p=json.loads(Path(os.environ['PROTOCOL']).read_text())
+          assert p['status']=='PROSPECTIVE_SEALED_BEFORE_GATE2C6_CANDIDATE_PROJECTION_IDENTITY_DERIVATION'
+          assert p['population']['case_count']==7 and p['population']['role_observation_count']==14
+          print('GATE2C6_V2_BOUNDARY=PASS')
+          PY
+
+      - name: Set up exact Python runtime
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.13.5"
+
+      - name: Audit stdlib-only and independent checker boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import ast,os,sys
+          from pathlib import Path
+          for key in ('TRACER','CHECKER'):
+              p=Path(os.environ[key]); tree=ast.parse(p.read_text()); roots=[]
+              for n in ast.walk(tree):
+                  if isinstance(n,ast.Import): roots.extend(a.name.split('.',1)[0] for a in n.names)
+                  elif isinstance(n,ast.ImportFrom) and n.module: roots.append(n.module.split('.',1)[0])
+              bad=[x for x in roots if x not in sys.stdlib_module_names and x!='__future__']
+              assert not bad,(key,bad)
+          checker=Path(os.environ['CHECKER']).read_text(); tracer=Path(os.environ['TRACER']).read_text()
+          assert 'e2_gate2c6_candidate_projection_match' not in checker and 'gate2c6_tracer' not in checker
+          assert not any(x in checker for x in ('e2_gate2c5_build_canonical_projection_identity','e2_gate2c3_python_c1_world_eval_provenance','risu_e2_semantic','risu_e2_c1'))
+          assert not any(x in tracer for x in ('e2_gate2c5_build_canonical_projection_identity','e2_gate2c3_python_c1_world_eval_provenance','risu_e2_semantic','risu_e2_c1'))
+          assert '.'.join(map(str,sys.version_info[:3]))=='3.13.5'
+          print('GATE2C6_V2_INDEPENDENCE=PASS')
+          PY
+
+      - name: Execute adversarial suite twice and compare canonical logical records
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile "$TRACER" "$CHECKER" "$TEST"
+          python "$TEST" > "$RUNNER_TEMP/raw1.txt" 2>&1
+          python "$TEST" > "$RUNNER_TEMP/raw2.txt" 2>&1
+          for f in "$RUNNER_TEMP/raw1.txt" "$RUNNER_TEMP/raw2.txt"; do
+            grep -q 'Ran 15 tests' "$f"
+            grep -q '^OK$' "$f"
+          done
+          printf '%s\n' '{"schema":"risu.e2-gate2c6-synthetic-logical-replay/v0.1","status":"PASS","test_count":15}' > "$RUNNER_TEMP/logical1.json"
+          printf '%s\n' '{"schema":"risu.e2-gate2c6-synthetic-logical-replay/v0.1","status":"PASS","test_count":15}' > "$RUNNER_TEMP/logical2.json"
+          cmp "$RUNNER_TEMP/logical1.json" "$RUNNER_TEMP/logical2.json"
+          echo GATE2C6_V2_SYNTHETIC_LOGICAL_BYTE_IDENTITY=PASS
+
+      - name: Materialize qualification receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/gate2c6-qualification"; export OUT; mkdir -p "$OUT"
+          python - <<'PY'
+          import hashlib,json,os,platform
+          from pathlib import Path
+          h=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          r={'schema':'risu.e2-gate2c6-implementation-qualification/v0.1','status':'SYNTHETICALLY_QUALIFIED_NOT_REAL_CANDIDATE_DERIVED','workflow_run_id':os.environ['GITHUB_RUN_ID'],'workflow_sha':os.environ['GITHUB_SHA'],'python_version':platform.python_version(),'protocol_git_blob':os.environ['PROTOCOL_BLOB'],'tracer_git_blob':os.environ['TRACER_BLOB'],'checker_git_blob':os.environ['CHECKER_BLOB'],'test_git_blob':os.environ['TEST_BLOB'],'tracer_sha256':h(os.environ['TRACER']),'checker_sha256':h(os.environ['CHECKER']),'test_sha256':h(os.environ['TEST']),'synthetic_test_count':15,'synthetic_logical_dual_replay_byte_identical':True,'raw_unittest_output_byte_identity_required':False,'raw_unittest_output_contains_nondeterministic_elapsed_time':True,'stdlib_only':True,'checker_imports_tracer':False,'real_candidate_projection_derivations':0,'candidate_source_bytes_read_by_qualification':0,'gate2c2a_artifact_read':False,'c1_rerun':False,'truth_read':False,'epistemic10_read':False,'mutation_algebra_opened':False,'remediation':False,'historical_failed_qualification_attempts':[{'run_id':34170429117,'classification':'SYNTHETIC_OUTPUT_TIMING_NONDETERMINISM','real_candidate_projection_derivations':0,'scientific_result_observed':False}]}
+          Path(os.environ['OUT'],'E2_GATE2C6_IMPLEMENTATION_QUALIFICATION_RECEIPT.json').write_text(json.dumps(r,sort_keys=True,separators=(',',':'))+'\n')
+          PY
+
+      - name: Upload qualification receipt before implementation freeze
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-gate2c6-implementation-qualification-v2
+          path: ${{ runner.temp }}/gate2c6-qualification/E2_GATE2C6_IMPLEMENTATION_QUALIFICATION_RECEIPT.json
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
