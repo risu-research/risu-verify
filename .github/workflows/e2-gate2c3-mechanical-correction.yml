@@ -1,0 +1,103 @@
+name: E2 Gate2C3 Mechanical Correction
+
+on:
+  push:
+    branches: [e2-development]
+    paths:
+      - ".github/workflows/e2-gate2c3-mechanical-correction.yml"
+
+permissions:
+  contents: write
+
+env:
+  REAL_WORKFLOW: .github/workflows/e2-gate2c3-first-real-execution.yml
+  EXPECTED_REAL_BLOB: c2235f2bb3889039962b1bc4dee3f3619200efce
+  OLD_PARENT: 7e8c36b10ed57ef382529e291d173152b3a21506
+  OLD_MATRIX_SHA: 7072eb4685946440aff38b45472737337b0c8f1a5506870914e8a62baf25feb6
+  NEW_MATRIX_SHA: da8cb707a5cc71b36881eafc01a377ba040bb5148ae3d3997ecd95f7572138d3
+
+jobs:
+  correct-two-bookkeeping-literals:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout exact correction revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 3
+
+      - name: Prove pre-correction boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git diff --name-only HEAD^ HEAD)" = ".github/workflows/e2-gate2c3-mechanical-correction.yml"
+          test "$(git hash-object "$REAL_WORKFLOW")" = "$EXPECTED_REAL_BLOB"
+          test "$(git ls-remote origin refs/heads/e2-development | cut -f1)" = "$GITHUB_SHA"
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          p=Path(os.environ['REAL_WORKFLOW'])
+          s=p.read_text()
+          old_parent=f"  EXPECTED_PARENT: {os.environ['OLD_PARENT']}\n"
+          old_matrix=f"  MATRIX_SHA: {os.environ['OLD_MATRIX_SHA']}\n"
+          new_matrix=f"  MATRIX_SHA: {os.environ['NEW_MATRIX_SHA']}\n"
+          assert s.count(old_parent)==1
+          assert s.count(old_matrix)==1
+          assert s.count(new_matrix)==0
+          print('GATE2C3_MECHANICAL_PRECHECK=PASS')
+          PY
+
+      - name: Replace exactly two bookkeeping literals
+        shell: bash
+        run: |
+          set -euo pipefail
+          export CORRECTION_PARENT="$GITHUB_SHA"
+          python - <<'PY'
+          import os, subprocess
+          from pathlib import Path
+          p=Path(os.environ['REAL_WORKFLOW'])
+          before=p.read_text()
+          old_parent=f"  EXPECTED_PARENT: {os.environ['OLD_PARENT']}\n"
+          new_parent=f"  EXPECTED_PARENT: {os.environ['CORRECTION_PARENT']}\n"
+          old_matrix=f"  MATRIX_SHA: {os.environ['OLD_MATRIX_SHA']}\n"
+          new_matrix=f"  MATRIX_SHA: {os.environ['NEW_MATRIX_SHA']}\n"
+          after=before.replace(old_parent,new_parent,1).replace(old_matrix,new_matrix,1)
+          assert after!=before
+          b=before.splitlines(); a=after.splitlines()
+          assert len(a)==len(b)
+          changed=[(i,x,y) for i,(x,y) in enumerate(zip(b,a),1) if x!=y]
+          assert changed==[
+            (13, f"  EXPECTED_PARENT: {os.environ['OLD_PARENT']}", f"  EXPECTED_PARENT: {os.environ['CORRECTION_PARENT']}"),
+            (25, f"  MATRIX_SHA: {os.environ['OLD_MATRIX_SHA']}", f"  MATRIX_SHA: {os.environ['NEW_MATRIX_SHA']}"),
+          ], changed
+          p.write_text(after)
+          PY
+          test "$(git diff --name-only)" = "$REAL_WORKFLOW"
+          test "$(git diff --numstat | awk '{print $1,$2,$3}')" = "2 2 $REAL_WORKFLOW"
+          grep -Fx "  EXPECTED_PARENT: $GITHUB_SHA" "$REAL_WORKFLOW"
+          grep -Fx "  MATRIX_SHA: $NEW_MATRIX_SHA" "$REAL_WORKFLOW"
+          echo GATE2C3_MECHANICAL_TWO_LINE_DIFF=PASS
+
+      - name: Commit and fast-forward push correction
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git ls-remote origin refs/heads/e2-development | cut -f1)" = "$GITHUB_SHA"
+          git add "$REAL_WORKFLOW"
+          test "$(git diff --cached --name-only)" = "$REAL_WORKFLOW"
+          git config user.name "RISU Mechanical Correction"
+          git config user.email "risu-mechanical-correction@users.noreply.github.com"
+          git commit -m "Correct Gate2C3 preflight bookkeeping literals"
+          git push origin HEAD:e2-development
+
+      - name: Verify remote correction shape
+        shell: bash
+        run: |
+          set -euo pipefail
+          LOCAL=$(git rev-parse HEAD); REMOTE=$(git ls-remote origin refs/heads/e2-development | cut -f1)
+          test "$LOCAL" = "$REMOTE"
+          test "$(git rev-parse HEAD^)" = "$GITHUB_SHA"
+          test "$(git diff --name-only HEAD^ HEAD)" = "$REAL_WORKFLOW"
+          test "$(git diff --numstat HEAD^ HEAD | awk '{print $1,$2,$3}')" = "2 2 $REAL_WORKFLOW"
+          echo GATE2C3_MECHANICAL_CORRECTION_REMOTE=PASS
