@@ -27,7 +27,7 @@ jobs:
           import hashlib, io, json, os, pathlib, urllib.error, urllib.request, zipfile
           repo=os.environ['REPO']; ref=os.environ['REF']; token=os.environ['GH_TOKEN']
           files={
-            'protocols/RISU_DIFF_E2_A3_A4_HELPER_POLARITY_CANONICAL_INTEGRATION_REGRESSION_v0.1.json':('sealed/data/protocol.json','27c1b25bb5d94b19c82bdcb1023dd11af7fb9f17'),
+            'protocols/RISU_DIFF_E2_A3_A4_HELPER_POLARITY_CANONICAL_INTEGRATION_REGRESSION_v0.1.json':('sealed/data/protocol.json','754b5d91510567eaa60086997d34a6df50bb7166'),
             'experiments/risu-diff-e2/qualification/CANONICAL_SYNTHETIC_SEEDS.json':('sealed/data/seeds.json','2a0c01ad5850d3a701fb243d307ff441e9cae358'),
             'experiments/risu-diff-e2/qualification/a3-a4/E2_A3_A4_CANONICAL_SEED_CONSEQUENCE_SIGNATURES_v0.1.json':('sealed/data/signatures.json','cfa7d78707599177afe690c3aad7faaa22cb1930'),
             'experiments/risu-diff-e2/qualification/seeds/python/SYN-PY-01.py':('sealed/sources/SYN-PY-01.py','ac730a4896aa260d5cdb78b47e21c3baa2e66458'),
@@ -47,7 +47,6 @@ jobs:
               got=git_blob(raw)
               if got!=want: raise SystemExit(f'BLOB_MISMATCH:{src}:{got}:{want}')
               pathlib.Path(dst).write_bytes(raw)
-          # Fetch the historical authoritative A2O artifact by exact id; do not reuse current generated overlays.
           artifact_id=9982044088
           api_headers={'Authorization':'Bearer '+token,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','User-Agent':'risu-helper-polarity-integration'}
           class NoRedirect(urllib.request.HTTPRedirectHandler):
