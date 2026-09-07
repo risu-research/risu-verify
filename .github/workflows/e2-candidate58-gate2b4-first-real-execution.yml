@@ -1,0 +1,178 @@
+name: E2 Candidate58 Gate2B4 First Real Execution
+
+on:
+  push:
+    branches: [e2-development]
+    paths:
+      - ".github/workflows/e2-candidate58-gate2b4-first-real-execution.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: e2-candidate58-gate2b4-first-real
+  cancel-in-progress: false
+
+env:
+  EXPECTED_PARENT: ec21d577e5b110de249dfec8f5356b144b50dcd3
+  PROTOCOL_PATH: protocols/RISU_DIFF_E2_CANDIDATE58_GATE2B4_COUNTERFACTUAL_OBLIGATION_SUFFICIENCY_PROTOCOL_v0.1.json
+  IMPLEMENTATION_FREEZE_PATH: protocols/RISU_DIFF_E2_CANDIDATE58_GATE2B4_IMPLEMENTATION_FREEZE_v0.1.json
+  ANALYZER_PATH: tools/e2_candidate58_gate2b4_counterfactual_obligation_sufficiency.py
+  GATE2B2_LEDGER_PATH: experiments/risu-diff-e2/qualification/candidate58/gate2b2-closure-deficit-provenance-profile/E2_CANDIDATE58_GATE2B2_CLOSURE_PROVENANCE_LEDGER.json
+  GATE2B3_LEDGER_PATH: experiments/risu-diff-e2/qualification/candidate58/gate2b3-guard-scope-provenance-attribution/first-complete/E2_CANDIDATE58_GATE2B3_GUARD_SCOPE_ATTRIBUTION_LEDGER.json
+  PROTOCOL_BLOB: bd5e896feb59a165e210e5c244c442a2bd7a2d9f
+  IMPLEMENTATION_FREEZE_BLOB: 034178180f4b8a3f03ea3da334d6e438eee1abd3
+  ANALYZER_BLOB: 61f9eff43d3e21013aa62754e439bd3ef859b3a7
+  GATE2B2_LEDGER_BLOB: 97d9e0b0a8f9155d77f3a556bdc53a3306957142
+  GATE2B3_LEDGER_BLOB: 8163e16b2ca5769a9cca9c2fdf3a61e4be66a626
+  GATE2B2_LEDGER_SHA256: da53c72af39adba927b56fbeaf52922245bb503f8b6b5a14c45ce157fed5e2a2
+  GATE2B3_LEDGER_SHA256: d911b97fd6b2b466166e472cf2728bc3ebe0fd5b76fac05ce9d76660905799d9
+
+jobs:
+  first-real-gate2b4:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exact Gate2B4 execution revision with full history
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - name: Prove exact frozen execution boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "$EXPECTED_PARENT"
+          test "$(git diff --name-only HEAD^ HEAD)" = ".github/workflows/e2-candidate58-gate2b4-first-real-execution.yml"
+          test "$(git hash-object "$PROTOCOL_PATH")" = "$PROTOCOL_BLOB"
+          test "$(git hash-object "$IMPLEMENTATION_FREEZE_PATH")" = "$IMPLEMENTATION_FREEZE_BLOB"
+          test "$(git hash-object "$ANALYZER_PATH")" = "$ANALYZER_BLOB"
+          test "$(git hash-object "$GATE2B2_LEDGER_PATH")" = "$GATE2B2_LEDGER_BLOB"
+          test "$(git hash-object "$GATE2B3_LEDGER_PATH")" = "$GATE2B3_LEDGER_BLOB"
+          echo "$GATE2B2_LEDGER_SHA256  $GATE2B2_LEDGER_PATH" | sha256sum -c -
+          echo "$GATE2B3_LEDGER_SHA256  $GATE2B3_LEDGER_PATH" | sha256sum -c -
+          test ! -e experiments/risu-diff-e2/qualification/candidate58/gate2b4-counterfactual-obligation-sufficiency/first-complete
+          echo GATE2B4_FROZEN_BOUNDARY_PREFLIGHT=PASS
+      - name: Set up exact Python runtime
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.13.5"
+      - name: Execute first deterministic Gate2B4 replay
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$RUNNER_TEMP/gate2b4"; mkdir -p "$ROOT"
+          python "$ANALYZER_PATH" --protocol "$PROTOCOL_PATH" --gate2b2-ledger "$GATE2B2_LEDGER_PATH" --gate2b3-ledger "$GATE2B3_LEDGER_PATH" --output-dir "$ROOT/replay1"
+          export ROOT
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          d=Path(os.environ['ROOT'])/'replay1'; fs=sorted(p for p in d.iterdir() if p.is_file()); assert len(fs)==3
+          o={'schema':'risu.e2-candidate58-gate2b4-logical-tree/v0.1','files':[{'name':p.name,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in fs]}
+          (Path(os.environ['ROOT'])/'replay1.logical-tree.json').write_text(json.dumps(o,sort_keys=True,separators=(',',':'))+'\n')
+          print('GATE2B4_FIRST_REAL_LOGICAL_OUTPUT_EMITTED=YES')
+          PY
+      - name: Execute mandatory second deterministic Gate2B4 replay
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$RUNNER_TEMP/gate2b4"
+          python "$ANALYZER_PATH" --protocol "$PROTOCOL_PATH" --gate2b2-ledger "$GATE2B2_LEDGER_PATH" --gate2b3-ledger "$GATE2B3_LEDGER_PATH" --output-dir "$ROOT/replay2"
+          export ROOT
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          d=Path(os.environ['ROOT'])/'replay2'; fs=sorted(p for p in d.iterdir() if p.is_file()); assert len(fs)==3
+          o={'schema':'risu.e2-candidate58-gate2b4-logical-tree/v0.1','files':[{'name':p.name,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in fs]}
+          (Path(os.environ['ROOT'])/'replay2.logical-tree.json').write_text(json.dumps(o,sort_keys=True,separators=(',',':'))+'\n')
+          print('GATE2B4_SECOND_REAL_LOGICAL_OUTPUT_EMITTED=YES')
+          PY
+      - name: Require exact logical byte identity before interpretation
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$RUNNER_TEMP/gate2b4"; export ROOT
+          cmp "$ROOT/replay1.logical-tree.json" "$ROOT/replay2.logical-tree.json"
+          diff -qr "$ROOT/replay1" "$ROOT/replay2"
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          root=Path(os.environ['ROOT']); r1=root/'replay1'; r2=root/'replay2'
+          names=sorted(p.name for p in r1.iterdir() if p.is_file()); assert len(names)==3
+          assert names==sorted(p.name for p in r2.iterdir() if p.is_file())
+          for n in names: assert (r1/n).read_bytes()==(r2/n).read_bytes()
+          ledger=json.loads((r1/'E2_CANDIDATE58_GATE2B4_COUNTERFACTUAL_SUFFICIENCY_LEDGER.json').read_text())
+          summary=json.loads((r1/'E2_CANDIDATE58_GATE2B4_COUNTERFACTUAL_SUFFICIENCY_SUMMARY.json').read_text())
+          diag=json.loads((r1/'E2_CANDIDATE58_GATE2B4_DIAGNOSTIC_RECEIPT.json').read_text())
+          assert ledger.get('case_count')==39 and ledger.get('primary_case_count')==32 and ledger.get('secondary_case_count')==7
+          assert summary.get('all_case_count')==39 and summary.get('primary_scope_carrier_failure_case_count')==32 and summary.get('secondary_outside_scope_case_count')==7
+          assert sum(summary.get('taxonomy_counts',{}).values())==39
+          assert diag.get('status')=='FIRST_COMPLETE_GATE2B4_LOGICAL_OUTPUT'
+          h=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          rec={'schema':'risu.e2-candidate58-gate2b4-first-real-execution-receipt/v0.1','status':'FIRST_COMPLETE_REAL_GATE2B4_DUAL_REPLAY_BYTE_IDENTICAL_BEFORE_INTERPRETATION','repository':'risu-research/risu-verify','branch':'e2-development','workflow_trigger_commit':os.environ['GITHUB_SHA'],'workflow_run_id':os.environ['GITHUB_RUN_ID'],'workflow_run_attempt':os.environ['GITHUB_RUN_ATTEMPT'],'frozen_inputs':{'protocol_git_blob':os.environ['PROTOCOL_BLOB'],'implementation_freeze_git_blob':os.environ['IMPLEMENTATION_FREEZE_BLOB'],'analyzer_git_blob':os.environ['ANALYZER_BLOB'],'gate2b2_ledger_sha256':os.environ['GATE2B2_LEDGER_SHA256'],'gate2b3_ledger_sha256':os.environ['GATE2B3_LEDGER_SHA256']},'replay1_outputs_sha256':{n:h(r1/n) for n in names},'replay2_outputs_sha256':{n:h(r2/n) for n in names},'logical_tree_manifest_sha256':h(root/'replay1.logical-tree.json'),'two_replay_exact_logical_byte_identity':True,'case_count_integrity_only_checked_before_freeze':{'all':39,'primary':32,'secondary':7},'counterfactual_outcome_values_printed_or_interpreted_before_freeze':False,'scientific_firewall':diag['scientific_firewall'],'first_complete_policy':{'replay1_bytes_are_first_complete_real_gate2b4_logical_output':True,'later_diagnostics_or_remediation_may_not_replace_these_bytes':True}}
+          (root/'E2_CANDIDATE58_GATE2B4_FIRST_REAL_EXECUTION_RECEIPT.json').write_text(json.dumps(rec,sort_keys=True,separators=(',',':'))+'\n')
+          print('GATE2B4_TWO_REPLAY_EXACT_BYTE_IDENTITY=PASS')
+          PY
+      - name: Upload exact dual replay before repository freeze
+        id: artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-candidate58-gate2b4-first-complete-dual-replay
+          path: |
+            ${{ runner.temp }}/gate2b4/replay1
+            ${{ runner.temp }}/gate2b4/replay2
+            ${{ runner.temp }}/gate2b4/replay1.logical-tree.json
+            ${{ runner.temp }}/gate2b4/replay2.logical-tree.json
+            ${{ runner.temp }}/gate2b4/E2_CANDIDATE58_GATE2B4_FIRST_REAL_EXECUTION_RECEIPT.json
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+      - name: Materialize exact immutable first-complete payload
+        shell: bash
+        env:
+          ARTIFACT_ID: ${{ steps.artifact.outputs.artifact-id }}
+          ARTIFACT_DIGEST: ${{ steps.artifact.outputs.artifact-digest }}
+        run: |
+          set -euo pipefail
+          test -n "$ARTIFACT_ID"; test -n "$ARTIFACT_DIGEST"
+          ROOT="$RUNNER_TEMP/gate2b4"; D="experiments/risu-diff-e2/qualification/candidate58/gate2b4-counterfactual-obligation-sufficiency/first-complete"
+          test ! -e "$D"; mkdir -p "$D"
+          cp "$ROOT/replay1/E2_CANDIDATE58_GATE2B4_COUNTERFACTUAL_SUFFICIENCY_LEDGER.json" "$D/"
+          cp "$ROOT/replay1/E2_CANDIDATE58_GATE2B4_COUNTERFACTUAL_SUFFICIENCY_SUMMARY.json" "$D/"
+          cp "$ROOT/replay1/E2_CANDIDATE58_GATE2B4_DIAGNOSTIC_RECEIPT.json" "$D/"
+          cp "$ROOT/replay1.logical-tree.json" "$D/E2_CANDIDATE58_GATE2B4_LOGICAL_TREE.json"
+          cp "$ROOT/E2_CANDIDATE58_GATE2B4_FIRST_REAL_EXECUTION_RECEIPT.json" "$D/"
+          export D ARTIFACT_ID ARTIFACT_DIGEST
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          d=Path(os.environ['D']); h=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest(); files=sorted(p for p in d.iterdir() if p.is_file()); assert len(files)==5
+          r={'schema':'risu.e2-candidate58-gate2b4-first-complete-immutable-freeze/v0.1','status':'FIRST_COMPLETE_REAL_GATE2B4_COUNTERFACTUAL_DECOMPOSITION_IMMUTABLY_FROZEN_BY_CONTAINING_COMMIT','repository':'risu-research/risu-verify','branch':'e2-development','workflow_trigger_commit':os.environ['GITHUB_SHA'],'workflow_run_id':os.environ['GITHUB_RUN_ID'],'frozen_authority':{'gate2b4_protocol_git_blob':os.environ['PROTOCOL_BLOB'],'gate2b4_implementation_freeze_git_blob':os.environ['IMPLEMENTATION_FREEZE_BLOB'],'gate2b4_analyzer_git_blob':os.environ['ANALYZER_BLOB'],'gate2b2_ledger_sha256':os.environ['GATE2B2_LEDGER_SHA256'],'gate2b3_ledger_sha256':os.environ['GATE2B3_LEDGER_SHA256']},'frozen_files_sha256':{p.name:h(p) for p in files},'two_replay_exact_logical_byte_identity':True,'first_complete_logical_output_is_replay1':True,'hosted_artifact_uploaded_before_repository_freeze':True,'hosted_artifact':{'id':int(os.environ['ARTIFACT_ID']),'name':'e2-candidate58-gate2b4-first-complete-dual-replay','digest':os.environ['ARTIFACT_DIGEST']},'scientific_firewall':{'semantic_engine_rerun':False,'candidate_source_read':False,'overlay_or_path_evidence_read':False,'truth_or_operator_read':False,'fresh_heldout_read':False,'remediation':False},'interpretation_boundary':{'known_primitive_F_closure_only':True,'actual_definitive_verdict_gain_not_inferred':True,'remediation_priority_not_inferred':True},'immutability_rule':{'this_first_complete_real_gate2b4_result_may_not_be_replaced':True,'later_diagnostics_or_remediation_must_be_additive':True}}
+          (d/'E2_CANDIDATE58_GATE2B4_FIRST_COMPLETE_IMMUTABLE_FREEZE_RECEIPT.json').write_text(json.dumps(r,sort_keys=True,separators=(',',':'))+'\n')
+          PY
+      - name: Commit and fast-forward push exact six-file first-complete freeze
+        shell: bash
+        run: |
+          set -euo pipefail
+          D="experiments/risu-diff-e2/qualification/candidate58/gate2b4-counterfactual-obligation-sufficiency/first-complete"
+          test "$(find "$D" -maxdepth 1 -type f | wc -l)" -eq 6
+          git config user.name "RISU Evidence Freeze"; git config user.email "risu-evidence-freeze@users.noreply.github.com"
+          git add "$D"
+          test "$(git diff --cached --name-only | wc -l)" -eq 6
+          test "$(git diff --cached --name-only | grep -c '^experiments/risu-diff-e2/qualification/candidate58/gate2b4-counterfactual-obligation-sufficiency/first-complete/')" -eq 6
+          git commit -m "Freeze first complete Candidate58 Gate2B4 counterfactual decomposition"
+          RESULT_COMMIT="$(git rev-parse HEAD)"
+          test "$(git rev-parse HEAD^)" = "$GITHUB_SHA"
+          test "$(git diff-tree --no-commit-id --name-only -r HEAD | wc -l)" -eq 6
+          git push origin "HEAD:refs/heads/e2-development"
+          echo "GATE2B4_FIRST_COMPLETE_FREEZE_COMMIT=$RESULT_COMMIT"
+      - name: Post-push exact remote verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          RESULT_COMMIT="$(git rev-parse HEAD)"
+          REMOTE="$(git ls-remote origin refs/heads/e2-development | cut -f1)"
+          test "$REMOTE" = "$RESULT_COMMIT"
+          test "$(git rev-parse HEAD^)" = "$GITHUB_SHA"
+          test "$(git diff-tree --no-commit-id --name-only -r HEAD | wc -l)" -eq 6
+          echo GATE2B4_FIRST_COMPLETE_REMOTE_FREEZE_VERIFIED=PASS
