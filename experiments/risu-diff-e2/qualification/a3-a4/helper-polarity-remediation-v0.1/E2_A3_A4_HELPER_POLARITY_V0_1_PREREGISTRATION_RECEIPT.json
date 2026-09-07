@@ -1,0 +1,31 @@
+{
+  "schema": "risu.e2-a3-a4-helper-polarity-preregistration-receipt/v0.1",
+  "status": "PREIMPLEMENTATION_FROZEN",
+  "authority": {
+    "repository": "risu-research/risu-verify",
+    "branch": "e2-development",
+    "diagnosis_freeze_commit": "7b84979e9c010400706d1ae16d7f31e87caee953",
+    "protocol_commit": "826a27a26f5d0f584bd9dbda1a0d3d10a7b5ce26",
+    "protocol_git_blob": "a78d1d0dfea79c1b87ab26a6d6ee92aed1173a2b",
+    "corpus_commit": "368a3e6f17ffaca6465f544a58b6d64df1340155",
+    "corpus_git_blob": "f908c1474ec7ea45ba36e3bd35841990e788fa42"
+  },
+  "preimplementation_absence_checks": {
+    "risu_e2/predicate_polarity_v1.py": "404_NOT_FOUND_AT_CORPUS_COMMIT",
+    "risu_e2/path_observability_v2.py": "404_NOT_FOUND_AT_CORPUS_COMMIT"
+  },
+  "prospective_evidence": {
+    "new_case_count": 32,
+    "metamorphic_pair_count": 16,
+    "frozen48_cases_used_as_prospective_evidence": false,
+    "diagnosed_heldout_cells_used_as_prospective_cases": false
+  },
+  "firewall": {
+    "candidate58_bytes_read": false,
+    "epistemic10_source_bytes_read": false,
+    "mutation_truth_or_operator_metadata_read": false,
+    "a3_a4_semantic_verdict_execution": false
+  },
+  "immutability_rule": "Any implementation or checker result observed after this receipt must not change the frozen protocol, corpus expectations, case membership, or metamorphic pairing before its first-complete result is archived.",
+  "next_authorized_step": "Implement generic predicate polarity science without case IDs, source hashes, seed IDs, or literal helper-name branching; then run the frozen 32-case prospective experiment."
+}
