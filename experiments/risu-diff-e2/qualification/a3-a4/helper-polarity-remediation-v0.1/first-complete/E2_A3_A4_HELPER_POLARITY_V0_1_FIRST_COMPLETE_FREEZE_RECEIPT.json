@@ -1,0 +1,75 @@
+{
+  "schema": "risu.e2-a3-a4-helper-polarity-v1-first-complete-freeze-receipt/v0.1",
+  "status": "FROZEN_PASS",
+  "classification": "FIRST_COMPLETE_PROSPECTIVE_NEW_CORPUS_RESULT",
+  "authority": {
+    "repository": "risu-research/risu-verify",
+    "branch": "e2-development",
+    "protocol_commit": "826a27a26f5d0f584bd9dbda1a0d3d10a7b5ce26",
+    "protocol_git_blob": "a78d1d0dfea79c1b87ab26a6d6ee92aed1173a2b",
+    "corpus_commit": "368a3e6f17ffaca6465f544a58b6d64df1340155",
+    "corpus_git_blob": "f908c1474ec7ea45ba36e3bd35841990e788fa42",
+    "preregistration_commit": "f03961bbe47ab82ca7fe1c7a12c30f5998ee7898",
+    "preregistration_git_blob": "0103d1c4cfadc61411d433880827d9f86f716532",
+    "science_commit": "7348cb133153ee8876b49b2ac3b6e70b5653d8aa",
+    "predicate_polarity_v1_git_blob": "de0b188dda16cacf842bc5539066681d01a4f9b3",
+    "primary_checker_git_blob": "699292db8484be3ea9c18a298c4f32efe7057493",
+    "independent_checker_git_blob": "735a5a13e7d4550d720f73a8b2c5c515416c9d58",
+    "qualification_head": "31f672ad42f0b75cce9c34212d6bd45e1cb641e4"
+  },
+  "hosted_run": {
+    "run_id": 34074861924,
+    "job_id": 101598873169,
+    "artifact_id": 10001682095,
+    "runner_version": "2.337.0",
+    "runner_image": "ubuntu-24.04",
+    "runner_image_version": "20260831.293.1",
+    "hosted_compute_agent_version": "20260828.587",
+    "azure_region": "westcentralus",
+    "worker_id": "1b516746-603d-407e-a16a-34a3096b37f5"
+  },
+  "artifact": {
+    "zip_bytes": 10488,
+    "zip_sha256": "a50c40f5ac043b51433fcf51d96d4cec328215bfb6384e2666424bd9a54722c8",
+    "inner_files": {
+      "cross_check.json": {"bytes": 224, "sha256": "4f36fdfb70b701667663ebcfacc14e5556bfb4ee1bd0367710f6c6e3e02db8e5"},
+      "exit_codes.json": {"bytes": 78, "sha256": "52e019eac966784328654e00228d49b7e1fdb86cd1793fe6b3905aba53e02fda"},
+      "independent_run1.json": {"bytes": 11234, "sha256": "2942064baad7ef8aeb349bdc3e8eaa7c987b21ed9ce790345d14b41defa2cda7"},
+      "independent_run2.json": {"bytes": 11234, "sha256": "2942064baad7ef8aeb349bdc3e8eaa7c987b21ed9ce790345d14b41defa2cda7"},
+      "primary_run1.json": {"bytes": 17004, "sha256": "b69d1fce788a93306589c72a1048899dd1ef6c3e0a0a3e65a6c96ba593552079"},
+      "primary_run2.json": {"bytes": 17004, "sha256": "b69d1fce788a93306589c72a1048899dd1ef6c3e0a0a3e65a6c96ba593552079"},
+      "repeat_check.json": {"bytes": 254, "sha256": "853c35379b02e07afc303d109cd6412f389127bfd14fcae0452a8b95e6865dac"}
+    }
+  },
+  "first_complete_result": {
+    "primary_status": "PASS",
+    "primary_case_count": 32,
+    "primary_passed_count": 32,
+    "independent_status": "PASS",
+    "independent_case_count": 32,
+    "independent_passed_count": 32,
+    "metamorphic_pairs": "16_OF_16_PASS",
+    "negative_controls_fail_closed": true,
+    "primary_repeat_byte_identical": true,
+    "independent_repeat_byte_identical": true,
+    "cross_check_status": "PASS",
+    "exact_named_semantic_agreement": true,
+    "mismatch_case_ids": [],
+    "specialization_scan": "PASS",
+    "official_overall_status": "FROZEN_PASS"
+  },
+  "immutability": {
+    "corpus_changed_after_observation": false,
+    "expectations_changed_after_observation": false,
+    "science_changed_before_freeze": false,
+    "checker_changed_before_freeze": false
+  },
+  "firewall": {
+    "frozen48_used_as_prospective_evidence": false,
+    "candidate58_bytes_read": false,
+    "epistemic10_source_bytes_read": false,
+    "mutation_truth_or_operator_metadata_read": false,
+    "a3_a4_semantic_verdicts_executed": false
+  },
+  "next_boundary": "Implement the additive path_observability_v2 integration against the now-frozen polarity certificate engine, then run public regression surfaces before any frozen-48 rerun. Candidate-58 remains sealed."
+}
