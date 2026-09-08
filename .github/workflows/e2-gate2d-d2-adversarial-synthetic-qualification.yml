@@ -54,7 +54,7 @@ jobs:
           from pathlib import Path
           p=Path("tools/e2_gate2d_d2_independent_oracle.py")
           t=ast.parse(p.read_text())
-          allowed={"argparse","json","hashlib","pathlib"}
+          allowed={"__future__","argparse","json","hashlib","pathlib"}
           seen=set()
           for n in ast.walk(t):
               if isinstance(n,ast.Import):
@@ -69,7 +69,7 @@ jobs:
           python tools/e2_gate2d_d2_preflight.py --root . --out d2_artifact/D2_PREFLIGHT.json
       - name: Generate exact preregistered 30-case matrix
         run: |
-          python tools/e2_gate2d_d2_generate_matrix.py             --constitution protocols/RISU_DIFF_E2_GATE2D_EVALUATION_CONSTITUTION_v0.1.json             --protocol protocols/RISU_DIFF_E2_GATE2D_D2_EXECUTION_PROTOCOL_v0.1.json             --out d2_matrix
+          python tools/e2_gate2d_d2_generate_matrix.py            --constitution protocols/RISU_DIFF_E2_GATE2D_EVALUATION_CONSTITUTION_v0.1.json             --protocol protocols/RISU_DIFF_E2_GATE2D_D2_EXECUTION_PROTOCOL_v0.1.json             --out d2_matrix
       - name: Execute frozen evaluator and checker dual replays
         continue-on-error: true
         run: |
