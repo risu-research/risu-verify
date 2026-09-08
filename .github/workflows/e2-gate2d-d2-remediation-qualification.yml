@@ -1,0 +1,99 @@
+name: E2 Gate2D D2 Remediation Qualification
+
+on:
+  push:
+    branches:
+      - gate2d-d2-remediation-qualification
+    paths:
+      - 'evaluation/gate2d/ABLATION_REGISTRY_v0.2.json'
+      - 'evaluation/gate2d/EVALUATOR_RUNTIME_CONFIG_v0.2.json'
+      - 'evaluation/gate2d/D1_REMEDIATION_IDENTITY_MANIFEST_v0.1.json'
+      - 'tools/e2_gate2d_ablation_shadow_v2.py'
+      - 'tools/e2_gate2d_remediation_preflight.py'
+      - 'tools/e2_gate2d_remediation_execute.py'
+      - '.github/workflows/e2-gate2d-d2-remediation-qualification.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    env:
+      LC_ALL: C.UTF-8
+      PYTHONHASHSEED: '0'
+      TZ: UTC
+      PYTHONPATH: ${{ github.workspace }}
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: '3.13.5'
+      - name: Prospective remediation preflight and executable qualification
+        run: |
+          mkdir -p remediation_artifact
+          python tools/e2_gate2d_remediation_preflight.py --root . --out remediation_artifact/REMEDIATION_PREFLIGHT.json
+      - name: Generate exact original preregistered 30-case matrix
+        run: |
+          python tools/e2_gate2d_d2_generate_matrix.py \
+            --constitution protocols/RISU_DIFF_E2_GATE2D_EVALUATION_CONSTITUTION_v0.1.json \
+            --protocol protocols/RISU_DIFF_E2_GATE2D_D2_EXECUTION_PROTOCOL_v0.1.json \
+            --out d2_matrix
+      - name: Execute frozen evaluator checker and remediated T22 driver
+        continue-on-error: true
+        run: |
+          python tools/e2_gate2d_remediation_execute.py --root . --matrix d2_matrix --out d2_execution
+      - name: Run original independent 30-case oracle
+        continue-on-error: true
+        run: |
+          python tools/e2_gate2d_d2_independent_oracle.py \
+            --constitution protocols/RISU_DIFF_E2_GATE2D_EVALUATION_CONSTITUTION_v0.1.json \
+            --protocol protocols/RISU_DIFF_E2_GATE2D_D2_EXECUTION_PROTOCOL_v0.1.json \
+            --matrix d2_matrix \
+            --execution d2_execution \
+            --out remediation_artifact/D2_INDEPENDENT_ORACLE.json
+      - name: Materialize first remediation-complete artifact
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p remediation_artifact
+          cp -r d2_matrix remediation_artifact/ 2>/dev/null || true
+          cp -r d2_execution remediation_artifact/ 2>/dev/null || true
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          root=Path("remediation_artifact")
+          fs=[]
+          for p in sorted(x for x in root.rglob("*") if x.is_file()):
+              if p.name=="ARTIFACT_FILE_MANIFEST.json": continue
+              b=p.read_bytes();fs.append({"path":str(p.relative_to(root)),"sha256":hashlib.sha256(b).hexdigest(),"size":len(b)})
+          (root/"ARTIFACT_FILE_MANIFEST.json").write_text(json.dumps({"schema":"risu.e2-gate2d-d2-remediation-artifact-manifest/v0.1","files":fs},sort_keys=True,separators=(",",":"))+"\n")
+          PY
+      - name: Upload first remediation-complete artifact before assertion
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-gate2d-d2-remediation-first-complete
+          path: remediation_artifact
+          if-no-files-found: error
+          retention-days: 90
+      - name: Frozen remediation success assertion
+        if: always()
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("remediation_artifact/REMEDIATION_PREFLIGHT.json")
+          q=Path("remediation_artifact/D2_INDEPENDENT_ORACLE.json")
+          if not p.exists(): raise SystemExit("REMEDIATION_PREFLIGHT_MISSING")
+          a=json.loads(p.read_bytes())
+          if a.get("status")!="PASS": raise SystemExit("REMEDIATION_PREFLIGHT_FAIL")
+          if not q.exists(): raise SystemExit("D2_REMEDIATION_RESULT_MISSING")
+          b=json.loads(q.read_bytes())
+          if b.get("status")!="PASS" or b.get("predicate_pass_count")!=30 or b.get("case_count")!=30: raise SystemExit("D2_REMEDIATION_SCIENTIFIC_FAIL")
+          if any(b.get(k) is not False for k in ("epistemic10_read","truth_read","fresh_target_read","mutation_algebra_opened","gate2e_authorized")): raise SystemExit("D2_REMEDIATION_FIREWALL_FAIL")
+          print("GATE2D_D2_REMEDIATION_FIRST_COMPLETE_PASS")
+          PY
