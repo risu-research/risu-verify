@@ -1,0 +1,169 @@
+name: E2 Gate2D D2prime Exact-30 Requalification
+
+on:
+  push:
+    branches:
+      - gate2d-d2prime-qualification
+
+permissions:
+  contents: read
+
+jobs:
+  d2prime:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      LC_ALL: C.UTF-8
+      PYTHONHASHSEED: "0"
+      TZ: UTC
+      PYTHONPATH: ${{ github.workspace }}
+    steps:
+      - name: Checkout exact source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Pin CPython 3.13.5
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13.5"
+
+      - name: Record hosted runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p d2p-artifact
+          python --version
+          python - <<'PY'
+          import json,os,platform
+          from pathlib import Path
+          doc={
+            "schema":"risu.e2-gate2d-d2p-hosted-context/v0.1",
+            "github_sha":os.environ["GITHUB_SHA"],
+            "github_ref":os.environ["GITHUB_REF"],
+            "github_run_id":os.environ["GITHUB_RUN_ID"],
+            "github_run_attempt":os.environ["GITHUB_RUN_ATTEMPT"],
+            "runner_os":os.environ.get("RUNNER_OS"),
+            "runner_arch":os.environ.get("RUNNER_ARCH"),
+            "python":platform.python_version(),
+            "LC_ALL":os.environ.get("LC_ALL"),
+            "PYTHONHASHSEED":os.environ.get("PYTHONHASHSEED"),
+            "TZ":os.environ.get("TZ"),
+            "PYTHONPATH":os.environ.get("PYTHONPATH"),
+            "copilot_semantic_request_count":0
+          }
+          Path("d2p-artifact/HOSTED_CONTEXT.json").write_text(json.dumps(doc,sort_keys=True,separators=(",",":"))+"\n")
+          PY
+
+      - name: Pre-science identity preflight
+        shell: bash
+        run: |
+          set -euo pipefail
+          python tools/e2_gate2d_d2prime_preflight.py --root . --out d2p-artifact/D2P_PREFLIGHT.json
+
+      - name: Regenerate exact historical raw matrix
+        shell: bash
+        run: |
+          set -euo pipefail
+          python tools/e2_gate2d_d2_generate_matrix.py \
+            --constitution protocols/RISU_DIFF_E2_GATE2D_EVALUATION_CONSTITUTION_v0.1.json \
+            --protocol protocols/RISU_DIFF_E2_GATE2D_D2_EXECUTION_PROTOCOL_v0.1.json \
+            --out d2p-artifact/raw_matrix
+          python - <<'PY'
+          import hashlib
+          from pathlib import Path
+          p=Path("d2p-artifact/raw_matrix/matrix_manifest.json")
+          got=hashlib.sha256(p.read_bytes()).hexdigest()
+          want="fe433e55b33da2ff84b74f4c9dd822403984184c3537b6d63a14073ca3154b28"
+          if got!=want: raise SystemExit("RAW_MATRIX_MANIFEST_MISMATCH")
+          print("RAW_MATRIX_MANIFEST_EXACT",got)
+          PY
+
+      - name: Apply mechanical B3 ID substitution with inverse proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          python tools/e2_gate2d_d2prime_transform_matrix.py \
+            --raw d2p-artifact/raw_matrix \
+            --out d2p-artifact/d2prime_matrix \
+            --proof d2p-artifact/D2P_MATRIX_TRANSFORM_PROOF.json
+
+      - name: Execute exact 30-case D2prime challenge
+        shell: bash
+        run: |
+          set -euo pipefail
+          python tools/e2_gate2d_d2prime_execute.py \
+            --root . \
+            --matrix d2p-artifact/d2prime_matrix \
+            --out d2p-artifact/d2prime_execution
+
+      - name: Run frozen independent D2 oracle
+        shell: bash
+        run: |
+          set -euo pipefail
+          python tools/e2_gate2d_d2_independent_oracle.py \
+            --constitution protocols/RISU_DIFF_E2_GATE2D_EVALUATION_CONSTITUTION_v0.1.json \
+            --protocol protocols/RISU_DIFF_E2_GATE2D_D2_EXECUTION_PROTOCOL_v0.1.json \
+            --matrix d2p-artifact/d2prime_matrix \
+            --execution d2p-artifact/d2prime_execution \
+            --out d2p-artifact/D2_INDEPENDENT_ORACLE.json
+
+      - name: Assert first-complete scientific result
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          get=lambda p: json.loads(Path(p).read_bytes())
+          pre=get("d2p-artifact/D2P_PREFLIGHT.json")
+          proof=get("d2p-artifact/D2P_MATRIX_TRANSFORM_PROOF.json")
+          oracle=get("d2p-artifact/D2_INDEPENDENT_ORACLE.json")
+          obs=get("d2p-artifact/d2prime_execution/D2_EXECUTION_OBSERVATION.json")
+          if pre["status"]!="PASS": raise SystemExit("PREFLIGHT_NOT_PASS")
+          if proof["status"]!="PASS" or proof["case_count"]!=30 or proof["evaluation_case_count"]!=27 or proof["policy_case_count"]!=3: raise SystemExit("TRANSFORM_PROOF")
+          if not all(x["inverse_rename_byte_exact"] for x in proof["rows"]): raise SystemExit("INVERSE_PROOF")
+          if oracle["status"]!="PASS" or oracle["case_count"]!=30 or oracle["predicate_pass_count"]!=30 or oracle["matrix_authority_exact"] is not True: raise SystemExit("ORACLE_NOT_30_OF_30")
+          if obs["orchestration_failures"]: raise SystemExit("ORCHESTRATION_FAILURE")
+          ev=[x for x in obs["observations"] if x["kind"]=="evaluation"]
+          pol=[x for x in obs["observations"] if x["kind"]=="consumption"]
+          if len(ev)!=27 or len(pol)!=3: raise SystemExit("OBSERVATION_PARTITION")
+          if not all(x["evaluator_dual_replay_byte_identical"] and x["checker_dual_replay_byte_identical"] and x["d1_independent_checker_pass"] and x["input_unchanged"] for x in ev): raise SystemExit("EVALUATION_REPLAY_OR_CHECK")
+          if not all(x["dual_replay_byte_identical"] and x["input_unchanged"] for x in pol): raise SystemExit("POLICY_REPLAY")
+          t22=next(x for x in ev if x["id"]=="T22_ABLATION_CANNOT_MUTATE_PRIMARY")
+          required=("shadow_ablation_primary_system_exact","shadow_ablation_classification_exact","shadow_tool_a1_input_unchanged","shadow_tool_a1_dual_replay_byte_identical")
+          if not all(t22.get(k) is True for k in required) or t22["primary_input_sha256_before"]!=t22["primary_input_sha256_after"]: raise SystemExit("T22_ISOLATION")
+          raw=Path("d2p-artifact/raw_matrix/matrix_manifest.json").read_bytes()
+          if hashlib.sha256(raw).hexdigest()!="fe433e55b33da2ff84b74f4c9dd822403984184c3537b6d63a14073ca3154b28": raise SystemExit("RAW_MATRIX_IDENTITY")
+          print("GATE2D_D2PRIME_FIRST_COMPLETE_PASS_30_OF_30")
+          PY
+
+      - name: Materialize artifact file manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          root=Path("d2p-artifact")
+          rows=[]
+          for p in sorted(x for x in root.rglob("*") if x.is_file() and x.name!="ARTIFACT_FILE_MANIFEST.json"):
+            b=p.read_bytes()
+            rows.append({"path":p.relative_to(root).as_posix(),"sha256":hashlib.sha256(b).hexdigest(),"size":len(b)})
+          doc={"schema":"risu.e2-gate2d-d2p-artifact-manifest/v0.1","file_count":len(rows),"files":rows}
+          (root/"ARTIFACT_FILE_MANIFEST.json").write_text(json.dumps(doc,sort_keys=True,separators=(",",":"))+"\n")
+          PY
+
+      - name: Upload first-complete artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2-gate2d-d2prime-first-complete
+          path: d2p-artifact
+          if-no-files-found: error
+          compression-level: 6
+
+      - name: Final assertion
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo GATE2D_D2PRIME_FIRST_COMPLETE_PASS
