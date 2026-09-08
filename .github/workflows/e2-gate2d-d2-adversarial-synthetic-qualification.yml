@@ -1,0 +1,119 @@
+name: E2 Gate2D D2 Adversarial Synthetic Evaluator Qualification
+
+on:
+  push:
+    branches:
+      - e2-development
+    paths:
+      - 'protocols/RISU_DIFF_E2_GATE2D_D2_EXECUTION_PROTOCOL_v0.1.json'
+      - 'tools/e2_gate2d_d2_*.py'
+      - '.github/workflows/e2-gate2d-d2-adversarial-synthetic-qualification.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: '3.13.5'
+      - name: Exact runtime and D2 surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(python -c 'import platform; print(platform.python_version())')" = "3.13.5"
+          python - <<'PY'
+          import subprocess
+          base="63e9da4a846e48883935abf35abe60a11cb35610"
+          allowed={
+            "protocols/RISU_DIFF_E2_GATE2D_D2_EXECUTION_PROTOCOL_v0.1.json",
+            "tools/e2_gate2d_d2_generate_matrix.py",
+            "tools/e2_gate2d_d2_preflight.py",
+            "tools/e2_gate2d_d2_execute.py",
+            "tools/e2_gate2d_d2_independent_oracle.py",
+            ".github/workflows/e2-gate2d-d2-adversarial-synthetic-qualification.yml",
+          }
+          got=set(subprocess.check_output(["git","diff","--name-only",base,"HEAD"],text=True).splitlines())
+          if got != allowed:
+              raise SystemExit("D2_SURFACE_MISMATCH:"+repr(sorted(got)))
+          forbidden=[p for p in got if p.startswith("evaluation/gate2d/") or p.startswith("risu_e2") or p.startswith("risu_e2_c1") or p.startswith("risu_e2_semantic")]
+          if forbidden: raise SystemExit("FROZEN_D1_OR_SEMANTIC_MUTATION:"+repr(forbidden))
+          PY
+      - name: Compile frozen D1 and D2 tools
+        run: |
+          python -m py_compile             tools/e2_gate2d_evaluate.py             tools/e2_gate2d_check_evaluation.py             tools/e2_gate2d_consumption_policy.py             tools/e2_gate2d_ablation_shadow.py             tools/e2_gate2d_d2_generate_matrix.py             tools/e2_gate2d_d2_preflight.py             tools/e2_gate2d_d2_execute.py             tools/e2_gate2d_d2_independent_oracle.py
+      - name: Independent-oracle import firewall
+        run: |
+          python - <<'PY'
+          import ast
+          from pathlib import Path
+          p=Path("tools/e2_gate2d_d2_independent_oracle.py")
+          t=ast.parse(p.read_text())
+          allowed={"argparse","json","hashlib","pathlib"}
+          seen=set()
+          for n in ast.walk(t):
+              if isinstance(n,ast.Import):
+                  seen.update(a.name.split(".")[0] for a in n.names)
+              elif isinstance(n,ast.ImportFrom):
+                  if n.module: seen.add(n.module.split(".")[0])
+          if not seen <= allowed: raise SystemExit("ORACLE_IMPORT_FIREWALL:"+repr(sorted(seen)))
+          PY
+      - name: Pre-science D1 and semantic identity gate
+        run: |
+          mkdir -p d2_artifact
+          python tools/e2_gate2d_d2_preflight.py --root . --out d2_artifact/D2_PREFLIGHT.json
+      - name: Generate exact preregistered 30-case matrix
+        run: |
+          python tools/e2_gate2d_d2_generate_matrix.py             --constitution protocols/RISU_DIFF_E2_GATE2D_EVALUATION_CONSTITUTION_v0.1.json             --protocol protocols/RISU_DIFF_E2_GATE2D_D2_EXECUTION_PROTOCOL_v0.1.json             --out d2_matrix
+      - name: Execute frozen evaluator and checker dual replays
+        continue-on-error: true
+        run: |
+          python tools/e2_gate2d_d2_execute.py --root . --matrix d2_matrix --out d2_execution
+      - name: Independent 30-case oracle
+        continue-on-error: true
+        run: |
+          python tools/e2_gate2d_d2_independent_oracle.py             --constitution protocols/RISU_DIFF_E2_GATE2D_EVALUATION_CONSTITUTION_v0.1.json             --protocol protocols/RISU_DIFF_E2_GATE2D_D2_EXECUTION_PROTOCOL_v0.1.json             --matrix d2_matrix             --execution d2_execution             --out d2_artifact/D2_INDEPENDENT_ORACLE.json
+      - name: Materialize artifact
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p d2_artifact
+          cp -r d2_matrix d2_artifact/ 2>/dev/null || true
+          cp -r d2_execution d2_artifact/ 2>/dev/null || true
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          root=Path("d2_artifact")
+          fs=[]
+          for p in sorted(x for x in root.rglob("*") if x.is_file()):
+              if p.name=="ARTIFACT_FILE_MANIFEST.json": continue
+              b=p.read_bytes();fs.append({"path":str(p.relative_to(root)),"sha256":hashlib.sha256(b).hexdigest(),"size":len(b)})
+          (root/"ARTIFACT_FILE_MANIFEST.json").write_text(json.dumps({"schema":"risu.e2-gate2d-d2-artifact-manifest/v0.1","files":fs},sort_keys=True,separators=(",",":"))+"\n")
+          PY
+      - name: Upload first-complete artifact before assertion
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-gate2d-d2-adversarial-synthetic-first-complete
+          path: d2_artifact
+          if-no-files-found: error
+          retention-days: 90
+      - name: Frozen D2 success assertion
+        if: always()
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("d2_artifact/D2_PREFLIGHT.json"); q=Path("d2_artifact/D2_INDEPENDENT_ORACLE.json")
+          if not p.exists() or not q.exists(): raise SystemExit("D2_RESULT_MISSING")
+          a=json.loads(p.read_bytes());b=json.loads(q.read_bytes())
+          if a.get("status")!="PASS": raise SystemExit("D2_PREFLIGHT_FAIL")
+          if b.get("status")!="PASS" or b.get("predicate_pass_count")!=30 or b.get("case_count")!=30: raise SystemExit("D2_SCIENTIFIC_FAIL")
+          if any(b.get(k) is not False for k in ("epistemic10_read","truth_read","fresh_target_read","mutation_algebra_opened","gate2e_authorized")): raise SystemExit("D2_FIREWALL_FAIL")
+          print("GATE2D_D2_FIRST_COMPLETE_PASS")
+          PY
