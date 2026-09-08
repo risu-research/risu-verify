@@ -1,0 +1,46 @@
+name: E2 Gate2D Copilot Model Slug Metadata Probe
+
+on:
+  push:
+    branches:
+      - gate2d-copilot-model-slug-probe
+    paths:
+      - .github/workflows/e2-gate2d-copilot-model-slug-probe.yml
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+      - name: Install exact frozen Copilot CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p probe-artifact
+          npm view @github/copilot@1.0.83 dist.integrity --json > probe-artifact/COPILOT_NPM_INTEGRITY.json
+          npm install -g @github/copilot@1.0.83 > probe-artifact/INSTALL_STDOUT.txt 2> probe-artifact/INSTALL_STDERR.txt
+          copilot --version > probe-artifact/COPILOT_VERSION.txt
+      - name: Extract nonsemantic model completion metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          copilot completion bash > probe-artifact/COPILOT_COMPLETION_BASH.txt
+          python - <<'PY'
+          import json,re
+          from pathlib import Path
+          s=Path('probe-artifact/COPILOT_COMPLETION_BASH.txt').read_text(errors='replace')
+          targets=['gpt-5.6','terra','sol','claude-sonnet-5','claude-opus-5','sonnet-5','opus-5']
+          hits={t:sorted(set(re.findall(r'[^\s\"\'\`]*'+re.escape(t)+r'[^\s\"\'\`]*',s,re.I))) for t in targets}
+          out={'schema':'risu.e2-gate2d-copilot-model-slug-probe/v0.1','cli_package':'@github/copilot','cli_version':'1.0.83','provider_semantic_request_count':0,'hits':hits}
+          Path('probe-artifact/MODEL_SLUG_PROBE.json').write_text(json.dumps(out,sort_keys=True,separators=(',',':'))+'\n')
+          PY
+      - name: Upload metadata probe
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-gate2d-copilot-model-slug-probe
+          path: probe-artifact/
+          if-no-files-found: error
+          retention-days: 30
