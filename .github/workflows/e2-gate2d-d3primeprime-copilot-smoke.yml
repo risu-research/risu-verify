@@ -1,0 +1,293 @@
+name: E2 Gate2D D3primeprime Copilot Nonheldout Smoke
+
+on:
+  push:
+    branches:
+      - gate2d-d3primeprime-copilot-smoke-run
+
+permissions:
+  contents: read
+
+jobs:
+  d3primeprime:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      LC_ALL: C.UTF-8
+      PYTHONHASHSEED: "0"
+      TZ: UTC
+      PYTHONPATH: ${{ github.workspace }}
+    steps:
+      - name: Checkout exact source
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          fetch-depth: 0
+
+      - name: Pin CPython 3.13.5
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: "3.13.5"
+
+      - name: Record hosted runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p d3pp-artifact
+          python - <<'PY'
+          import json, os, platform
+          from pathlib import Path
+          doc = {
+              "schema": "risu.e2-gate2d-d3pp-hosted-context/v0.1",
+              "github_sha": os.environ["GITHUB_SHA"],
+              "github_ref": os.environ["GITHUB_REF"],
+              "github_run_id": os.environ["GITHUB_RUN_ID"],
+              "github_run_attempt": os.environ["GITHUB_RUN_ATTEMPT"],
+              "runner_os": os.environ.get("RUNNER_OS"),
+              "runner_arch": os.environ.get("RUNNER_ARCH"),
+              "python": platform.python_version(),
+              "LC_ALL": os.environ.get("LC_ALL"),
+              "PYTHONHASHSEED": os.environ.get("PYTHONHASHSEED"),
+              "TZ": os.environ.get("TZ"),
+              "PYTHONPATH": os.environ.get("PYTHONPATH"),
+              "provider_semantic_request_count_before_smoke": 0,
+              "d3primeprime_retry_cap": 0,
+          }
+          Path("d3pp-artifact/HOSTED_CONTEXT.json").write_text(
+              json.dumps(doc, sort_keys=True, separators=(",", ":")) + "\n"
+          )
+          PY
+
+      - name: Pre-semantic exact identity and firewall preflight
+        id: preflight
+        shell: bash
+        run: |
+          set +e
+          python tools/e2_gate2d_d3primeprime_preflight.py --root . --out d3pp-artifact/D3PP_PREFLIGHT.json
+          rc=$?
+          echo "$rc" > d3pp-artifact/D3PP_PREFLIGHT_EXIT_CODE.txt
+          if [ "$rc" -eq 0 ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          fi
+          exit 0
+
+      - name: Install and fingerprint exact Copilot CLI without semantic request
+        id: cli
+        if: steps.preflight.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set +e
+          node --version > d3pp-artifact/NODE_VERSION.txt 2>&1
+          npm --version > d3pp-artifact/NPM_VERSION.txt 2>&1
+          npm view @github/copilot@1.0.83 dist.integrity --json > d3pp-artifact/COPILOT_NPM_INTEGRITY.json 2>&1
+          npm install -g @github/copilot@1.0.83 > d3pp-artifact/COPILOT_INSTALL_STDOUT.txt 2> d3pp-artifact/COPILOT_INSTALL_STDERR.txt
+          install_rc=$?
+          copilot --version > d3pp-artifact/COPILOT_VERSION.txt 2> d3pp-artifact/COPILOT_VERSION_STDERR.txt
+          version_rc=$?
+          python - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+          p = Path("d3pp-artifact/COPILOT_VERSION.txt")
+          got = hashlib.sha256(p.read_bytes()).hexdigest() if p.exists() else None
+          want = "29c4198d94948906858abafe036110547bae7dddc92e2805b2e0a9a2b33ac7ba"
+          doc = {
+              "schema": "risu.e2-gate2d-d3pp-cli-readiness/v0.1",
+              "version_file_sha256": got,
+              "expected_version_file_sha256": want,
+              "version_hash_exact": got == want,
+              "semantic_request_count": 0,
+          }
+          Path("d3pp-artifact/D3PP_CLI_READINESS.json").write_text(
+              json.dumps(doc, sort_keys=True, separators=(",", ":")) + "\n"
+          )
+          PY
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d = json.loads(Path("d3pp-artifact/D3PP_CLI_READINESS.json").read_text())
+          raise SystemExit(0 if d.get("version_hash_exact") else 1)
+          PY
+          hash_rc=$?
+          if [ "$install_rc" -eq 0 ] && [ "$version_rc" -eq 0 ] && [ "$hash_rc" -eq 0 ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          fi
+          exit 0
+
+      - name: Verify personal Copilot credential readiness without request
+        id: credential
+        if: steps.preflight.outputs.ready == 'true' && steps.cli.outputs.ready == 'true'
+        shell: bash
+        env:
+          COPILOT_GITHUB_TOKEN: ${{ secrets.RISU_COPILOT_PERSONAL_TOKEN }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          present = bool(os.environ.get("COPILOT_GITHUB_TOKEN", ""))
+          doc = {
+              "schema": "risu.e2-gate2d-d3pp-credential-readiness/v0.1",
+              "credential_present": present,
+              "credential_value_persisted": False,
+              "provider_semantic_request_count": 0,
+          }
+          Path("d3pp-artifact/D3PP_CREDENTIAL_READINESS.json").write_text(
+              json.dumps(doc, sort_keys=True, separators=(",", ":")) + "\n"
+          )
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write("ready=" + ("true" if present else "false") + "\n")
+          PY
+
+      - name: Execute exactly one Terra and one Sonnet nonheldout semantic process
+        id: smoke
+        if: steps.preflight.outputs.ready == 'true' && steps.cli.outputs.ready == 'true' && steps.credential.outputs.ready == 'true'
+        shell: bash
+        env:
+          COPILOT_GITHUB_TOKEN: ${{ secrets.RISU_COPILOT_PERSONAL_TOKEN }}
+        run: |
+          set +e
+          python tools/e2_gate2d_d3primeprime_smoke.py --root . --out d3pp-artifact/smoke
+          rc=$?
+          echo "$rc" > d3pp-artifact/D3PP_SMOKE_DRIVER_EXIT_CODE.txt
+          exit 0
+
+      - name: Audit credential non-persistence without printing credential
+        if: always()
+        shell: bash
+        env:
+          COPILOT_GITHUB_TOKEN: ${{ secrets.RISU_COPILOT_PERSONAL_TOKEN }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          root = Path("d3pp-artifact")
+          root.mkdir(exist_ok=True)
+          secret = os.environ.get("COPILOT_GITHUB_TOKEN", "").encode()
+          scanned = 0
+          hits = []
+          for p in sorted(x for x in root.rglob("*") if x.is_file()):
+              scanned += 1
+              b = p.read_bytes()
+              if secret and secret in b:
+                  hits.append(p.relative_to(root).as_posix())
+          doc = {
+              "schema": "risu.e2-gate2d-d3pp-secret-hygiene/v0.1",
+              "credential_present_for_scan": bool(secret),
+              "credential_bytes_found": bool(hits),
+              "hit_count": len(hits),
+              "hit_paths": hits,
+              "files_scanned": scanned,
+              "credential_value_persisted": bool(hits),
+          }
+          Path("d3pp-artifact/D3PP_SECRET_HYGIENE.json").write_text(
+              json.dumps(doc, sort_keys=True, separators=(",", ":")) + "\n"
+          )
+          PY
+
+      - name: Materialize complete artifact manifest
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+          root = Path("d3pp-artifact")
+          root.mkdir(exist_ok=True)
+          rows = []
+          for p in sorted(x for x in root.rglob("*") if x.is_file() and x.name != "ARTIFACT_FILE_MANIFEST.json"):
+              b = p.read_bytes()
+              rows.append({
+                  "path": p.relative_to(root).as_posix(),
+                  "sha256": hashlib.sha256(b).hexdigest(),
+                  "size": len(b),
+              })
+          doc = {
+              "schema": "risu.e2-gate2d-d3pp-artifact-manifest/v0.1",
+              "file_count": len(rows),
+              "files": rows,
+          }
+          (root / "ARTIFACT_FILE_MANIFEST.json").write_text(
+              json.dumps(doc, sort_keys=True, separators=(",", ":")) + "\n"
+          )
+          PY
+
+      - name: Upload first-complete artifact before assertion
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-gate2d-d3primeprime-copilot-smoke
+          path: d3pp-artifact/
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Frozen D3primeprime assertion
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          def get(path):
+              p = Path(path)
+              return json.loads(p.read_text()) if p.exists() else None
+
+          pre = get("d3pp-artifact/D3PP_PREFLIGHT.json")
+          cli = get("d3pp-artifact/D3PP_CLI_READINESS.json")
+          cred = get("d3pp-artifact/D3PP_CREDENTIAL_READINESS.json")
+          smoke = get("d3pp-artifact/smoke/D3PP_SMOKE_SUMMARY.json")
+          hygiene = get("d3pp-artifact/D3PP_SECRET_HYGIENE.json")
+
+          if not pre or pre.get("status") != "PASS" or pre.get("failures") != []:
+              raise SystemExit("D3PP_PREFLIGHT_NOT_PASS")
+          if pre.get("provider_semantic_request_count") != 0:
+              raise SystemExit("D3PP_PREFLIGHT_REQUEST_COUNT")
+          if not cli or cli.get("version_hash_exact") is not True:
+              raise SystemExit("D3PP_CLI_NOT_EXACT")
+          if not cred or cred.get("credential_present") is not True or cred.get("credential_value_persisted") is not False:
+              raise SystemExit("D3PP_CREDENTIAL_NOT_READY")
+          if not hygiene or hygiene.get("credential_bytes_found") is not False or hygiene.get("credential_value_persisted") is not False:
+              raise SystemExit("D3PP_SECRET_HYGIENE")
+          if not smoke or smoke.get("status") != "PASS":
+              raise SystemExit("D3PP_SMOKE_NOT_PASS")
+          if smoke.get("provider_semantic_request_count") != 2 or smoke.get("total_process_invocation_count") != 2:
+              raise SystemExit("D3PP_INVOCATION_COUNT")
+          if smoke.get("lane_count") != 2:
+              raise SystemExit("D3PP_LANE_COUNT")
+          if smoke.get("transport_retry_count") != 0 or smoke.get("semantic_retry_count") != 0:
+              raise SystemExit("D3PP_RETRY_COUNT")
+          if smoke.get("both_lane_request_sha256_equal") is not True or smoke.get("request_sha256_exact") is not True:
+              raise SystemExit("D3PP_REQUEST_IDENTITY")
+          if smoke.get("frozen_request_sha256") != "f8519b04e17a92203f6e974f2276b9bc7e45a6deaeca8594d30194bc6402119c":
+              raise SystemExit("D3PP_REQUEST_SHA")
+          if smoke.get("semantic_outcome_values_used_for_gate_decision") is not False:
+              raise SystemExit("D3PP_SEMANTIC_VALUE_USED")
+          if smoke.get("semantic_outcome_values_recorded_in_summary") is not False:
+              raise SystemExit("D3PP_SEMANTIC_VALUE_LEAKED_TO_SUMMARY")
+          for lane in smoke["lanes"]:
+              if not (
+                  lane.get("runner_returncode") == 0
+                  and lane.get("receipt_model_exact") is True
+                  and lane.get("receipt_cli_exact") is True
+                  and lane.get("request_sha256_exact") is True
+                  and lane.get("visible_input_bytes") == 314
+                  and lane.get("semantically_valid") is True
+                  and lane.get("normalized_schema_valid") is True
+                  and lane.get("tool_permissions_granted_exact_empty") is True
+                  and lane.get("credential_value_persisted") is False
+                  and lane.get("provider_semantic_request_count") == 1
+                  and lane.get("process_invocation_count") == 1
+              ):
+                  raise SystemExit("D3PP_LANE_FAILURE")
+          if any(smoke.get(k) for k in ("epistemic10_read", "truth_read", "fresh_target_read", "mutation_algebra_opened")):
+              raise SystemExit("D3PP_FIREWALL")
+          if smoke.get("gate2e_authorized") is not False:
+              raise SystemExit("D3PP_GATE2E_PREMATURE")
+          print("GATE2D_D3PRIMEPRIME_FIRST_COMPLETE_PASS")
+          PY
