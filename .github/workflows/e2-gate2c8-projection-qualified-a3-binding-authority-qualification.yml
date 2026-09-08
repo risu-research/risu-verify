@@ -1,0 +1,231 @@
+name: E2 Gate2C8 Projection-Qualified A3 Binding Authority Qualification
+
+on:
+  push:
+    branches: [e2-development]
+    paths:
+      - ".github/workflows/e2-gate2c8-projection-qualified-a3-binding-authority-qualification.yml"
+
+permissions:
+  contents: read
+
+env:
+  EXPECTED_PARENT: 11433abadf2f2b322d9e4209ed5e721ebe059d80
+  PROTOCOL_COMMIT: 11433abadf2f2b322d9e4209ed5e721ebe059d80
+  PROTOCOL: protocols/RISU_DIFF_E2_GATE2C8_PROJECTION_QUALIFIED_A3_BINDING_AUTHORITY_PROTOCOL_v0.1.json
+  PROTOCOL_BLOB: 94e52c117112b4a6569aaa029f6c9cfe0e114dbc
+  BINDING: risu_e2_c1/binding_authority.py
+  BINDING_BLOB: b243df1f440ae21b368a0e3b7d02042870d37dc1
+  SOURCE_EXTRACT: risu_e2_c1/source_extract.py
+  SOURCE_EXTRACT_BLOB: 3e6dd4fa3a95763d99f9c656d49f9ab97f550ac9
+  SEMANTICS: risu_e2_c1/semantics.py
+  SEMANTICS_BLOB: 256386816cef7213cc6b2361a3e536e1cc439b17
+  PRODUCER: tools/e2_gate2c8_synthetic_qualify.py
+  PRODUCER_BLOB: da342b221189e3e62f0850de5d11f6019eea794f
+  CHECKER: tools/e2_gate2c8_check_projection_qualified_a3_binding_authority.py
+  CHECKER_BLOB: 117b9064029616efe7837fe1884f21fe96c154ce
+  TEST: tests/test_e2_gate2c8_projection_qualified_a3_binding_authority.py
+  TEST_BLOB: fbbdf53505cf9c825e64ff5e756f0233ca94c45f
+  C7_PROJECTION_BLOB: 64e9b0bff2f5dac7b51389cdf8d50745111787e0
+  SOURCE_PYTHON_BLOB: 97c20c76b09de42af21df9b2f531da9e28c055af
+  COMMON_BLOB: 65957407cd21f3940c2d0311b0fe6494f754192b
+  RECHECKER_BLOB: ec7e782c88fb8786eb5b3d267e44d81885707728
+  PYTHONPATH: ${{ github.workspace }}
+
+jobs:
+  synthetic-qualification:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact Gate2C8 implementation revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 2
+
+      - name: Prove prospective authority and minimal mutation surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "$EXPECTED_PARENT"
+          git diff --name-only HEAD^ HEAD | sort > "$RUNNER_TEMP/changed.txt"
+          cat > "$RUNNER_TEMP/expected.txt" <<'EOF'
+          .github/workflows/e2-gate2c8-projection-qualified-a3-binding-authority-qualification.yml
+          risu_e2_c1/binding_authority.py
+          risu_e2_c1/semantics.py
+          risu_e2_c1/source_extract.py
+          tests/test_e2_gate2c8_projection_qualified_a3_binding_authority.py
+          tools/e2_gate2c8_check_projection_qualified_a3_binding_authority.py
+          tools/e2_gate2c8_synthetic_qualify.py
+          EOF
+          sort -o "$RUNNER_TEMP/expected.txt" "$RUNNER_TEMP/expected.txt"
+          cmp "$RUNNER_TEMP/expected.txt" "$RUNNER_TEMP/changed.txt"
+          test "$(git hash-object "$PROTOCOL")" = "$PROTOCOL_BLOB"
+          test "$(git hash-object "$BINDING")" = "$BINDING_BLOB"
+          test "$(git hash-object "$SOURCE_EXTRACT")" = "$SOURCE_EXTRACT_BLOB"
+          test "$(git hash-object "$SEMANTICS")" = "$SEMANTICS_BLOB"
+          test "$(git hash-object "$PRODUCER")" = "$PRODUCER_BLOB"
+          test "$(git hash-object "$CHECKER")" = "$CHECKER_BLOB"
+          test "$(git hash-object "$TEST")" = "$TEST_BLOB"
+          test "$(git hash-object risu_e2_c1/projection_authority.py)" = "$C7_PROJECTION_BLOB"
+          test "$(git hash-object risu_e2_c1/source_python.py)" = "$SOURCE_PYTHON_BLOB"
+          test "$(git hash-object risu_e2_c1/common.py)" = "$COMMON_BLOB"
+          test "$(git hash-object risu_e2_c1/rechecker.py)" = "$RECHECKER_BLOB"
+          ! git diff --name-only HEAD^ HEAD | grep -Eq '^(risu_e2_semantic/|risu_e2/)'
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          p=json.loads(Path(os.environ["PROTOCOL"]).read_text())
+          assert p["status"]=="PROSPECTIVE_SEALED_BEFORE_GATE2C8_IMPLEMENTATION_OR_SYNTHETIC_EXECUTION"
+          assert len(p["synthetic_qualification"]["cases"])==25
+          assert p["population"]["candidate_execution_before_successful_synthetic_freeze"] is False
+          assert p["scientific_firewall"]["epistemic10_read"] is False
+          assert p["scientific_firewall"]["primary_adapter_modified"] is False
+          assert p["scientific_firewall"]["semantic_kernel_modified"] is False
+          print("GATE2C8_PROSPECTIVE_IMPLEMENTATION_BOUNDARY=PASS")
+          PY
+
+      - name: Set up exact Python runtime
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.13.5"
+
+      - name: Audit independent checker and derivation boundaries
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import ast, os, sys
+          from pathlib import Path
+          assert '.'.join(map(str,sys.version_info[:3]))=="3.13.5"
+          checker=Path(os.environ["CHECKER"]).read_text()
+          binding=Path(os.environ["BINDING"]).read_text()
+          producer=Path(os.environ["PRODUCER"]).read_text()
+          assert "risu_e2_c1" not in checker
+          assert "e2_gate2c8_synthetic_qualify" not in checker
+          assert "from .projection_authority" not in binding
+          assert "risu_e2_semantic" not in binding and "risu_e2." not in binding
+          bt=ast.parse(binding)
+          derive=next(n for n in bt.body if isinstance(n,(ast.FunctionDef,ast.AsyncFunctionDef)) and n.name=="derive_binding_authority_receipt")
+          derive_args=[a.arg for a in [*derive.args.posonlyargs,*derive.args.args,*derive.args.kwonlyargs]]
+          assert "allowed_origins" not in derive_args
+          for forbidden in ("e2_gate2c3_python","e2_gate2c6_candidate_projection_match","risu_e2_semantic"):
+              assert forbidden not in producer
+              assert forbidden not in checker
+          tree=ast.parse(checker); roots=[]
+          for n in ast.walk(tree):
+              if isinstance(n,ast.Import):
+                  roots.extend(a.name.split(".",1)[0] for a in n.names)
+              elif isinstance(n,ast.ImportFrom) and n.module:
+                  roots.append(n.module.split(".",1)[0])
+          bad=[x for x in roots if x not in sys.stdlib_module_names and x!="__future__"]
+          assert not bad,bad
+          print("GATE2C8_INDEPENDENCE_AUDIT=PASS")
+          PY
+
+      - name: Run baseline and Gate2C8 unit regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile "$BINDING" "$SOURCE_EXTRACT" "$SEMANTICS" "$PRODUCER" "$CHECKER" "$TEST"
+          python -m unittest tests.test_e2_c1_rechecker
+          python -m unittest tests.test_e2_gate2c7_projection_qualified_c1_origin_authority
+          python -m unittest tests.test_e2_gate2c8_projection_qualified_a3_binding_authority
+          echo GATE2C8_BASELINE_AND_UNIT_REGRESSION=PASS
+
+      - name: Execute frozen 25-case synthetic producer and independent checker twice
+        shell: bash
+        run: |
+          set -euo pipefail
+          python "$PRODUCER" --output "$RUNNER_TEMP/producer1.json" > "$RUNNER_TEMP/producer1.stdout"
+          python "$PRODUCER" --output "$RUNNER_TEMP/producer2.json" > "$RUNNER_TEMP/producer2.stdout"
+          cmp "$RUNNER_TEMP/producer1.json" "$RUNNER_TEMP/producer2.json"
+          cmp "$RUNNER_TEMP/producer1.stdout" "$RUNNER_TEMP/producer2.stdout"
+          python "$CHECKER" --producer "$RUNNER_TEMP/producer1.json" --output "$RUNNER_TEMP/checker1.json" > "$RUNNER_TEMP/checker1.stdout"
+          python "$CHECKER" --producer "$RUNNER_TEMP/producer2.json" --output "$RUNNER_TEMP/checker2.json" > "$RUNNER_TEMP/checker2.stdout"
+          cmp "$RUNNER_TEMP/checker1.json" "$RUNNER_TEMP/checker2.json"
+          cmp "$RUNNER_TEMP/checker1.stdout" "$RUNNER_TEMP/checker2.stdout"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          r=Path(os.environ["RUNNER_TEMP"])
+          p=json.loads((r/"producer1.json").read_text())
+          c=json.loads((r/"checker1.json").read_text())
+          assert p["status"]=="PASS" and p["case_count"]==25 and p["all_expected_decisions_exact"] is True
+          assert p["candidate_c1_executed"] is False and p["candidate_source_bytes_read_by_qualification"]==0
+          assert p["raw_origin_bytes_identical_before_after_authorization"] is True
+          assert p["lineage_bytes_identical_before_after_authorization"] is True
+          assert p["allowed_origins_used_during_certificate_derivation"] is False
+          assert p["world_evaluation_receipt_reused_for_binding_authority"] is False
+          assert c["status"]=="PASS" and c["case_count"]==25
+          assert c["producer_checker_relation_agreement"] is True
+          assert c["unresolved_authority_never_creates_projection_derived_regression"] is True
+          assert c["checker_imports_gate2c7_projection_helper"] is False
+          assert c["checker_imports_production_binding_consumer"] is False
+          print("GATE2C8_SYNTHETIC_25_DUAL_REPLAY=PASS")
+          PY
+
+      - name: Materialize first-complete synthetic qualification receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/gate2c8-qualification"; export OUT; mkdir -p "$OUT"
+          cp "$RUNNER_TEMP/producer1.json" "$OUT/E2_GATE2C8_SYNTHETIC_PRODUCER.json"
+          cp "$RUNNER_TEMP/checker1.json" "$OUT/E2_GATE2C8_SYNTHETIC_INDEPENDENT_CHECKER.json"
+          cp "$RUNNER_TEMP/producer1.stdout" "$OUT/E2_GATE2C8_SYNTHETIC_PRODUCER.stdout"
+          cp "$RUNNER_TEMP/checker1.stdout" "$OUT/E2_GATE2C8_SYNTHETIC_INDEPENDENT_CHECKER.stdout"
+          python - <<'PY'
+          import hashlib,json,os,platform
+          from pathlib import Path
+          h=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          out=Path(os.environ["OUT"])
+          receipt={
+            "schema":"risu.e2-gate2c8-implementation-qualification/v0.1",
+            "status":"SYNTHETICALLY_QUALIFIED_EXACT_SEVEN_C1_RERUN_AUTHORIZED",
+            "workflow_run_id":os.environ["GITHUB_RUN_ID"],
+            "workflow_sha":os.environ["GITHUB_SHA"],
+            "protocol_commit":os.environ["PROTOCOL_COMMIT"],
+            "python_version":platform.python_version(),
+            "protocol_git_blob":os.environ["PROTOCOL_BLOB"],
+            "binding_authority_git_blob":os.environ["BINDING_BLOB"],
+            "source_extract_git_blob":os.environ["SOURCE_EXTRACT_BLOB"],
+            "semantics_git_blob":os.environ["SEMANTICS_BLOB"],
+            "producer_git_blob":os.environ["PRODUCER_BLOB"],
+            "checker_git_blob":os.environ["CHECKER_BLOB"],
+            "test_git_blob":os.environ["TEST_BLOB"],
+            "synthetic_producer_sha256":h(out/"E2_GATE2C8_SYNTHETIC_PRODUCER.json"),
+            "synthetic_checker_sha256":h(out/"E2_GATE2C8_SYNTHETIC_INDEPENDENT_CHECKER.json"),
+            "synthetic_case_count":25,
+            "all_expected_decisions_exact":True,
+            "producer_checker_relation_agreement":True,
+            "producer_dual_replay_byte_identical":True,
+            "checker_dual_replay_byte_identical":True,
+            "raw_origin_bytes_retained":True,
+            "lineage_bytes_retained":True,
+            "unresolved_authority_never_creates_projection_derived_regression":True,
+            "candidate_c1_executed":False,
+            "candidate_source_bytes_read_by_qualification":0,
+            "primary_adapter_modified":False,
+            "semantic_kernel_modified":False,
+            "certificate_producer_modified":False,
+            "gate2c7_projection_authority_modified":False,
+            "truth_read":False,
+            "epistemic10_read":False,
+            "fresh_target_read":False,
+            "mutation_algebra_opened":False,
+            "go_support_added":False,
+            "typescript_support_added":False,
+            "elapsed_or_wall_clock_fields_emitted":False,
+            "next_authorized_action":"IMMUTABLY_FREEZE_GATE2C8_SYNTHETIC_QUALIFICATION_BEFORE_ANY_CANDIDATE_C1_EXECUTION"
+          }
+          (out/"E2_GATE2C8_IMPLEMENTATION_QUALIFICATION_RECEIPT.json").write_text(json.dumps(receipt,sort_keys=True,separators=(",",":"))+"\n")
+          PY
+
+      - name: Upload first-complete synthetic qualification before any candidate execution
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-gate2c8-projection-qualified-a3-binding-authority-qualification
+          path: ${{ runner.temp }}/gate2c8-qualification/
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
