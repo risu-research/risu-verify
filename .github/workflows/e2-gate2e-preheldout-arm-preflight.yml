@@ -1,0 +1,171 @@
+name: E2 Gate2E Zero-Exposure Preheldout Arm Preflight
+
+on:
+  push:
+    branches:
+      - gate2e-epistemic10-first-complete-run
+
+permissions:
+  contents: read
+
+jobs:
+  preheldout-arm:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    env:
+      LC_ALL: C.UTF-8
+      PYTHONHASHSEED: "0"
+      TZ: UTC
+      PYTHONPATH: ${{ github.workspace }}
+      RISU_COPILOT_TOKEN_PRESENT: ${{ secrets.RISU_COPILOT_PERSONAL_TOKEN != '' }}
+    steps:
+      - name: Checkout exact isolated implementation
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          fetch-depth: 0
+
+      - name: Pin CPython 3.13.5
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: "3.13.5"
+
+      - name: Record zero-exposure hosted context
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p gate2e-arm-artifact
+          python - <<'PY'
+          import json, os, platform, subprocess
+          from pathlib import Path
+          def git(*args):
+              return subprocess.check_output(["git", *args], text=True).strip()
+          doc={"schema":"risu.e2-gate2e-preheldout-hosted-context/v0.1","github_sha":os.environ["GITHUB_SHA"],"github_ref":os.environ["GITHUB_REF"],"github_ref_name":os.environ["GITHUB_REF_NAME"],"github_run_id":os.environ["GITHUB_RUN_ID"],"github_run_attempt":os.environ["GITHUB_RUN_ATTEMPT"],"implementation_tree":git("rev-parse","HEAD^{tree}"),"implementation_parent":git("rev-parse","HEAD^"),"runner_os":os.environ.get("RUNNER_OS"),"runner_arch":os.environ.get("RUNNER_ARCH"),"python":platform.python_version(),"LC_ALL":os.environ.get("LC_ALL"),"PYTHONHASHSEED":os.environ.get("PYTHONHASHSEED"),"TZ":os.environ.get("TZ"),"protected_locator_resolution_attempt_count":0,"epistemic10_read":False,"truth_read":False,"fresh_target_read":False,"mutation_algebra_opened":False,"gate2e_scientific_execution_started":False,"copilot_semantic_request_count":0}
+          Path("gate2e-arm-artifact/HOSTED_CONTEXT.json").write_text(json.dumps(doc,sort_keys=True,separators=(",",":"))+"\n")
+          PY
+
+      - name: Static exact-identity and zero-exposure preflight
+        id: static
+        shell: bash
+        run: |
+          set +e
+          python tools/e2_gate2e_preheldout_arm_preflight.py --root . --out gate2e-arm-artifact/STATIC_PREFLIGHT.json
+          rc=$?
+          if [ "$rc" -eq 0 ]; then echo "ready=true" >> "$GITHUB_OUTPUT"; else echo "ready=false" >> "$GITHUB_OUTPUT"; fi
+          exit 0
+
+      - name: Prove personal Copilot credential presence without injecting secret value
+        id: credential
+        if: steps.static.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          present=os.environ.get("RISU_COPILOT_TOKEN_PRESENT","").lower()=="true"
+          doc={"schema":"risu.e2-gate2e-preheldout-credential-readiness/v0.1","credential_secret_name":"RISU_COPILOT_PERSONAL_TOKEN","credential_present_boolean":present,"credential_value_injected_into_preflight_process":False,"credential_value_logged":False,"credential_value_artifacted":False,"copilot_semantic_request_count":0}
+          Path("gate2e-arm-artifact/CREDENTIAL_READINESS.json").write_text(json.dumps(doc,sort_keys=True,separators=(",",":"))+"\n")
+          with open(os.environ["GITHUB_OUTPUT"],"a") as f:f.write("ready="+("true" if present else "false")+"\n")
+          PY
+
+      - name: Install and fingerprint exact Copilot CLI without semantic request
+        id: cli
+        if: steps.static.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set +e
+          node --version > gate2e-arm-artifact/NODE_VERSION.txt 2>&1
+          npm --version > gate2e-arm-artifact/NPM_VERSION.txt 2>&1
+          npm view @github/copilot@1.0.83 dist.integrity --json > gate2e-arm-artifact/COPILOT_NPM_INTEGRITY.json 2>&1
+          npm_view_rc=$?
+          npm install -g @github/copilot@1.0.83 > gate2e-arm-artifact/COPILOT_INSTALL_STDOUT.txt 2> gate2e-arm-artifact/COPILOT_INSTALL_STDERR.txt
+          install_rc=$?
+          copilot --version > gate2e-arm-artifact/COPILOT_VERSION.txt 2> gate2e-arm-artifact/COPILOT_VERSION_STDERR.txt
+          version_rc=$?
+          NPM_VIEW_RC="$npm_view_rc" INSTALL_RC="$install_rc" VERSION_RC="$version_rc" python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          p=Path("gate2e-arm-artifact/COPILOT_VERSION.txt"); vsha=hashlib.sha256(p.read_bytes()).hexdigest() if p.exists() else None
+          try: integrity=json.loads(Path("gate2e-arm-artifact/COPILOT_NPM_INTEGRITY.json").read_text())
+          except Exception: integrity=None
+          wi="sha512-M8uZI0V0dahYV1KZij3nGDxaXEGG7I7YUZzQPI7NEZkL/83Nl/tNTbPdxKtdWZbOmWoXsPKXty/eEYoj6RHDhA=="; wv="29c4198d94948906858abafe036110547bae7dddc92e2805b2e0a9a2b33ac7ba"
+          ok=os.environ["NPM_VIEW_RC"]=="0" and os.environ["INSTALL_RC"]=="0" and os.environ["VERSION_RC"]=="0" and integrity==wi and vsha==wv
+          doc={"schema":"risu.e2-gate2e-preheldout-copilot-cli-readiness/v0.1","status":"PASS" if ok else "FAIL","package":"@github/copilot","version":"1.0.83","npm_integrity_exact":integrity==wi,"version_file_sha256":vsha,"version_exact":vsha==wv,"semantic_request_count":0,"credential_value_injected":False}
+          Path("gate2e-arm-artifact/COPILOT_CLI_READINESS.json").write_text(json.dumps(doc,sort_keys=True,separators=(",",":"))+"\n")
+          PY
+          exit 0
+
+      - name: Verify exact CodeQL bundle queries and synthetic offline runtime
+        id: codeql
+        if: steps.static.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set +e
+          work="$RUNNER_TEMP/gate2e-codeql-readiness"; rm -rf "$work"; mkdir -p "$work/src"
+          printf '%s\n' 'def identity(x):' '    return x' > "$work/src/smoke.py"
+          curl -fsSL --retry 2 https://github.com/github/codeql-cli-binaries/releases/download/v2.26.4/codeql-linux64.zip -o "$work/codeql-linux64.zip"
+          download_rc=$?; got_sha=""; if [ "$download_rc" -eq 0 ]; then got_sha="$(sha256sum "$work/codeql-linux64.zip" | awk '{print $1}')"; fi
+          want_sha="d372d54345e058fe6f7ff8074acd155522fff6770b8d72ee1371ea89deafa193"; hash_exact=false; [ "$got_sha" = "$want_sha" ] && hash_exact=true
+          unzip_rc=99; version_rc=99; query_fetch_rc=99; create_rc=99; analyze_rc=99; version_exact=false; query_commit_exact=false
+          if [ "$hash_exact" = true ]; then unzip -q "$work/codeql-linux64.zip" -d "$work"; unzip_rc=$?; fi
+          if [ "$unzip_rc" -eq 0 ]; then
+            "$work/codeql/codeql" version --format=json > "$work/version.json" 2> "$work/version.stderr"; version_rc=$?
+            if [ "$version_rc" -eq 0 ]; then
+              VERSION_JSON="$work/version.json" python - <<'PY'
+          import json,os
+          d=json.load(open(os.environ["VERSION_JSON"])); raise SystemExit(0 if d.get("version")=="2.26.4" else 1)
+          PY
+              [ "$?" -eq 0 ] && version_exact=true
+            fi
+          fi
+          if [ "$version_exact" = true ]; then
+            mkdir -p "$work/codeql-queries"; git -C "$work/codeql-queries" init -q; git -C "$work/codeql-queries" remote add origin https://github.com/github/codeql.git
+            git -C "$work/codeql-queries" fetch -q --depth=1 origin 1d123a2caa0e4e6256a49d963bfcbd51a01617e8; query_fetch_rc=$?
+            if [ "$query_fetch_rc" -eq 0 ]; then git -C "$work/codeql-queries" checkout -q --detach FETCH_HEAD; got_query_commit="$(git -C "$work/codeql-queries" rev-parse HEAD)"; [ "$got_query_commit" = "1d123a2caa0e4e6256a49d963bfcbd51a01617e8" ] && query_commit_exact=true; fi
+          fi
+          if [ "$version_exact" = true ] && [ "$query_commit_exact" = true ]; then
+            sudo unshare --net bash -c '"'"$work"'/codeql/codeql" database create "'"$work"'/db" --language=python --source-root="'"$work"'/src" --overwrite >"'"$work"'/create.stdout" 2>"'"$work"'/create.stderr"'; create_rc=$?
+            if [ "$create_rc" -eq 0 ]; then sudo unshare --net bash -c '"'"$work"'/codeql/codeql" database analyze "'"$work"'/db" "'"$work"'/codeql-queries/python/ql/src/codeql-suites/python-security-and-quality.qls" --format=sarifv2.1.0 --output="'"$work"'/result.sarif" --threads=0 >"'"$work"'/analyze.stdout" 2>"'"$work"'/analyze.stderr"'; analyze_rc=$?; fi
+          fi
+          ASSET_SHA="$got_sha" HASH_EXACT="$hash_exact" VERSION_EXACT="$version_exact" QUERY_COMMIT_EXACT="$query_commit_exact" CREATE_RC="$create_rc" ANALYZE_RC="$analyze_rc" python - <<'PY'
+          import json,os
+          from pathlib import Path
+          create_ok=os.environ["CREATE_RC"]=="0"; analyze_ok=os.environ["ANALYZE_RC"]=="0"
+          ok=os.environ["HASH_EXACT"]=="true" and os.environ["VERSION_EXACT"]=="true" and os.environ["QUERY_COMMIT_EXACT"]=="true" and create_ok and analyze_ok
+          doc={"schema":"risu.e2-gate2e-preheldout-codeql-readiness/v0.1","status":"PASS" if ok else "FAIL","release_tag":"v2.26.4","version":"2.26.4","asset_sha256":os.environ["ASSET_SHA"] or None,"asset_sha256_exact":os.environ["HASH_EXACT"]=="true","version_exact":os.environ["VERSION_EXACT"]=="true","queries_repo_commit":"1d123a2caa0e4e6256a49d963bfcbd51a01617e8","queries_repo_commit_exact":os.environ["QUERY_COMMIT_EXACT"]=="true","synthetic_database_create_pass":create_ok,"synthetic_analysis_pass":analyze_ok,"synthetic_source_only":True,"protected_input_read":False,"network_during_synthetic_analysis":False,"network_isolation_mechanism":"sudo unshare --net"}
+          Path("gate2e-arm-artifact/CODEQL_READINESS.json").write_text(json.dumps(doc,sort_keys=True,separators=(",",":"))+"\n")
+          PY
+          exit 0
+
+      - name: Finalize immutable preheldout arm artifact
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          python tools/e2_gate2e_finalize_arm_preflight.py --artifact-dir gate2e-arm-artifact
+
+      - name: Upload complete preheldout arm artifact before assertion
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-gate2e-preheldout-arm-preflight
+          path: gate2e-arm-artifact
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Assert preheldout arm preflight only after artifact upload
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("gate2e-arm-artifact/ARM_PREFLIGHT_SUMMARY.json")
+          if not p.exists(): raise SystemExit("ARM_PREFLIGHT_SUMMARY_MISSING")
+          d=json.loads(p.read_text())
+          if d.get("status")!="PASS" or d.get("failures")!=[]: raise SystemExit(2)
+          sf=d["scientific_firewall"]
+          assert sf["protected_locator_resolution_attempt_count"]==0 and sf["epistemic10_read"] is False and sf["truth_read"] is False
+          assert sf["full_system_semantic_execution_count_on_epistemic10"]==0 and sf["baseline_semantic_execution_count_on_epistemic10"]==0 and sf["ablation_semantic_execution_count_on_epistemic10"]==0 and sf["copilot_semantic_request_count"]==0
+          PY
