@@ -1,0 +1,294 @@
+name: E2 Gate2D D1primeprime Copilot Pro Identity Qualification
+
+on:
+  push:
+    branches:
+      - gate2d-d1pp-copilot-pro-identity
+    paths:
+      - evaluation/gate2d/BASELINE_REGISTRY_v0.3.json
+      - evaluation/gate2d/B3_COPILOT_CONFIG_v0.2.json
+      - evaluation/gate2d/D1PP_IDENTITY_MANIFEST_v0.1.json
+      - tools/e2_gate2d_copilot_baseline_v2.py
+      - tools/e2_gate2d_evaluate_v3.py
+      - tools/e2_gate2d_check_evaluation_v3.py
+      - .github/workflows/e2-gate2d-d1pp-copilot-pro-identity.yml
+
+permissions:
+  contents: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    env:
+      LC_ALL: C.UTF-8
+      PYTHONHASHSEED: "0"
+      TZ: UTC
+    steps:
+      - name: Checkout exact source
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          fetch-depth: 0
+
+      - name: Pin CPython 3.13.5
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: '3.13.5'
+
+      - name: Static D1primeprime identity preflight
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p d1pp-artifact
+          python - <<'PY'
+          import hashlib, importlib.util, json, re, subprocess
+          from pathlib import Path
+
+          ROOT=Path(".").resolve()
+          BASE="01b65ad0ecfa04ce2844caa4e9dbb10b50634fb0"
+          CONTRACT="protocols/RISU_DIFF_E2_GATE2D_D1PP_COPILOT_PRO_SUPERSESSION_v0.1.json"
+          SLUG_RECEIPT="experiments/risu-diff-e2/qualification/gate2d-evaluation-constitution/copilot-model-slug-metadata-probe/receipt.json"
+          allowed={
+            "evaluation/gate2d/BASELINE_REGISTRY_v0.3.json",
+            "evaluation/gate2d/B3_COPILOT_CONFIG_v0.2.json",
+            "evaluation/gate2d/D1PP_IDENTITY_MANIFEST_v0.1.json",
+            "tools/e2_gate2d_copilot_baseline_v2.py",
+            "tools/e2_gate2d_evaluate_v3.py",
+            "tools/e2_gate2d_check_evaluation_v3.py",
+            ".github/workflows/e2-gate2d-d1pp-copilot-pro-identity.yml",
+          }
+          failures=[]
+          def git(*args):
+              return subprocess.check_output(["git",*args],text=True).strip()
+          def sha256(b):
+              return hashlib.sha256(b).hexdigest()
+          def git_blob_bytes(b):
+              return hashlib.sha1(b"blob "+str(len(b)).encode()+b"\0"+b).hexdigest()
+
+          changed=set(git("diff","--name-only",BASE,"HEAD").splitlines())
+          if changed != allowed:
+              failures.append("IMPLEMENTATION_SURFACE:"+repr(sorted(changed)))
+
+          if git("hash-object",CONTRACT)!="3f705f290dd0160766e0d9b296324ded13237801":
+              failures.append("D1PP_CONTRACT_BLOB")
+          if git("hash-object",SLUG_RECEIPT)!="233df8fb2300db1b35962361a1d06c6b54a97411":
+              failures.append("SLUG_RECEIPT_BLOB")
+
+          manifest=json.loads((ROOT/"evaluation/gate2d/D1PP_IDENTITY_MANIFEST_v0.1.json").read_bytes())
+          if manifest.get("parent_contract_commit") != BASE:
+              failures.append("MANIFEST_PARENT")
+          for rel,ident in sorted((manifest.get("files") or {}).items()):
+              p=ROOT/rel
+              if not p.is_file():
+                  failures.append("MANIFEST_MISSING:"+rel); continue
+              b=p.read_bytes()
+              if len(b)!=ident["size"]: failures.append("MANIFEST_SIZE:"+rel)
+              if sha256(b)!=ident["sha256"]: failures.append("MANIFEST_SHA256:"+rel)
+              if git_blob_bytes(b)!=ident["git_blob"]: failures.append("MANIFEST_GIT_BLOB:"+rel)
+
+          exact_locks={
+            "evaluation/gate2d/B3_LLM_PROMPT_v0.1.txt":"d2aeec22e6a500a60b53dc36ef4238a7c734d060",
+            "evaluation/gate2d/B3_LLM_RESPONSE_SCHEMA_v0.1.json":"ec2578ccfba33f70c7b0057a5fbfe9b994eaf48d",
+            "evaluation/gate2d/COMMON_BLINDED_INPUT_CONTRACT_v0.1.json":"db7e6e53ea82ef7942557adaf31b7b781c71365d",
+            "tools/e2_gate2d_evaluate.py":"4a2319da29fcb636f0cf8d09722692902e33581c",
+            "tools/e2_gate2d_check_evaluation.py":"56f7d9d33b9049213c415790d37adb5d6b3fdbcc",
+          }
+          for rel,want in exact_locks.items():
+              if git("hash-object",rel)!=want: failures.append("REUSED_LOCK:"+rel)
+
+          constitution=json.loads((ROOT/"protocols/RISU_DIFF_E2_GATE2D_EVALUATION_CONSTITUTION_v0.1.json").read_bytes())
+          for rel,want in sorted(constitution["authority_locks"]["semantic_snapshot"]["critical_blob_locks"].items()):
+              if git("hash-object",rel)!=want: failures.append("SEMANTIC_SNAPSHOT:"+rel)
+
+          old=json.loads((ROOT/"evaluation/gate2d/BASELINE_REGISTRY_v0.2.json").read_bytes())
+          new=json.loads((ROOT/"evaluation/gate2d/BASELINE_REGISTRY_v0.3.json").read_bytes())
+          def nonb3(d): return [x for x in d["baselines"] if not x["id"].startswith("B3")]
+          if nonb3(old)!=nonb3(new): failures.append("NON_B3_REGISTRY_DELTA")
+          if old["fairness_rules"]!=new["fairness_rules"] or old["normalization"]!=new["normalization"]:
+              failures.append("REGISTRY_RULE_DELTA")
+          ob={x["id"]:x for x in old["baselines"] if x["id"].startswith("B3")}
+          nb={x["id"]:x for x in new["baselines"] if x["id"].startswith("B3")}
+          expected_ids={"B3A_GPT56_TERRA_COPILOT","B3B_CLAUDE_SONNET5_COPILOT"}
+          if set(nb)!=expected_ids: failures.append("B3_IDS")
+          pairs=[
+            ("B3A_GPT56_SOL_COPILOT","B3A_GPT56_TERRA_COPILOT","gpt-5.6-sol","gpt-5.6-terra"),
+            ("B3B_CLAUDE_OPUS5_COPILOT","B3B_CLAUDE_SONNET5_COPILOT","claude-opus-5","claude-sonnet-5"),
+          ]
+          for oid,nid,om,nm in pairs:
+              if nid not in nb or oid not in ob: continue
+              if nb[nid].get("model")!=nm: failures.append("B3_MODEL:"+nid)
+              recovered=dict(nb[nid])
+              recovered["id"]=oid; recovered["model"]=om
+              recovered["config"]="evaluation/gate2d/B3_COPILOT_CONFIG_v0.1.json"
+              recovered["request_runner"]="tools/e2_gate2d_copilot_baseline.py"
+              recovered["applicability"]=recovered["applicability"].replace("D3primeprime","D3prime")
+              if recovered!=ob[oid]: failures.append("B3_NONIDENTITY_DELTA:"+nid)
+
+          oldcfg=json.loads((ROOT/"evaluation/gate2d/B3_COPILOT_CONFIG_v0.1.json").read_bytes())
+          newcfg=json.loads((ROOT/"evaluation/gate2d/B3_COPILOT_CONFIG_v0.2.json").read_bytes())
+          if newcfg["transport"]!=oldcfg["transport"] or newcfg["input"]!=oldcfg["input"] or newcfg["isolation"]!=oldcfg["isolation"] or newcfg["binding"]!=oldcfg["binding"]:
+              failures.append("COPILOT_CONFIG_NONLANE_DELTA")
+          if newcfg["lanes"] != {
+              "B3A_GPT56_TERRA_COPILOT":{"model":"gpt-5.6-terra","provider_family":"OpenAI"},
+              "B3B_CLAUDE_SONNET5_COPILOT":{"model":"claude-sonnet-5","provider_family":"Anthropic"},
+          }:
+              failures.append("COPILOT_CONFIG_LANES")
+          if newcfg["transport"]["cli_package"]!="@github/copilot" or newcfg["transport"]["cli_version"]!="1.0.83":
+              failures.append("COPILOT_CLI_ID")
+          if newcfg["transport"]["max_ai_credits_per_response"]!=30: failures.append("COPILOT_CREDIT_CAP")
+
+          rb=(ROOT/"tools/e2_gate2d_copilot_baseline_v2.py").read_text()
+          recovered=rb.replace(
+              'CONFIG_REL = "evaluation/gate2d/B3_COPILOT_CONFIG_v0.2.json"',
+              'CONFIG_REL = "evaluation/gate2d/B3_COPILOT_CONFIG_v0.1.json"'
+          ).replace(
+              'choices=["B3A_GPT56_TERRA_COPILOT","B3B_CLAUDE_SONNET5_COPILOT"]',
+              'choices=["B3A_GPT56_SOL_COPILOT","B3B_CLAUDE_OPUS5_COPILOT"]'
+          ).encode()
+          if git_blob_bytes(recovered)!="1383bb5fa0ea5c3ed3c391788c672b58e20fb0eb":
+              failures.append("RUNNER_NONIDENTITY_DELTA")
+
+          evb=(ROOT/"tools/e2_gate2d_evaluate_v3.py").read_text().replace("B3A_GPT56_TERRA_COPILOT","B3A_GPT56_SOL_COPILOT").replace("B3B_CLAUDE_SONNET5_COPILOT","B3B_CLAUDE_OPUS5_COPILOT").encode()
+          if git_blob_bytes(evb)!="082f65ec717d23a01e2c265af680a176ac6ace5a":
+              failures.append("EVALUATOR_WRAPPER_NONIDENTITY_DELTA")
+          ckb=(ROOT/"tools/e2_gate2d_check_evaluation_v3.py").read_text().replace("B3A_GPT56_TERRA_COPILOT","B3A_GPT56_SOL_COPILOT").replace("B3B_CLAUDE_SONNET5_COPILOT","B3B_CLAUDE_OPUS5_COPILOT").encode()
+          if git_blob_bytes(ckb)!="b90ca78d4632ea5a415451e1a62a36c19ec02bde":
+              failures.append("CHECKER_WRAPPER_NONIDENTITY_DELTA")
+
+          def load_wrapper(rel,name):
+              spec=importlib.util.spec_from_file_location(name,ROOT/rel)
+              if spec is None or spec.loader is None: raise RuntimeError(rel)
+              mod=importlib.util.module_from_spec(spec); spec.loader.exec_module(mod)
+              return mod.load()
+          expected={"B0_STRUCTURAL_SCHEMA_DIFF","B1_AST_SYNTACTIC_DATAFLOW","B2_STRONG_STATIC_DATAFLOW","B3A_GPT56_TERRA_COPILOT","B3B_CLAUDE_SONNET5_COPILOT","B4_EXECUTION_ONLY_DIFFERENTIAL"}
+          ev=load_wrapper("tools/e2_gate2d_evaluate_v3.py","d1pp_eval")
+          if ev.BS!=expected: failures.append("EVALUATOR_WRAPPER_SET")
+          ck=load_wrapper("tools/e2_gate2d_check_evaluation_v3.py","d1pp_checker")
+          if ck.EXPECTED_BASELINES!=expected: failures.append("CHECKER_WRAPPER_SET")
+          if "e2_gate2d_evaluate" in (ROOT/"tools/e2_gate2d_check_evaluation_v3.py").read_text():
+              failures.append("CHECKER_IMPORTS_EVALUATOR")
+
+          wf=(ROOT/".github/workflows/e2-gate2d-d1pp-copilot-pro-identity.yml").read_text()
+          shell=[]; in_py=False
+          for line in wf.splitlines():
+              stripped=line.strip()
+              if not in_py and stripped=="python - <<'PY'":
+                  in_py=True; shell.append(line); continue
+              if in_py and stripped=="PY":
+                  in_py=False; shell.append(line); continue
+              if not in_py: shell.append(line)
+          if in_py: failures.append("WORKFLOW_HEREDOC_UNBALANCED")
+          surface="\n".join(shell)
+          if "RISU_COPILOT_PERSONAL_TOKEN" in surface or "COPILOT_GITHUB_TOKEN:" in surface:
+              failures.append("SEMANTIC_CREDENTIAL_SURFACE")
+          if re.search(r"(?m)^\s*copilot\s+(?:-p(?:\s|=)|--prompt(?:\s|=))",surface):
+              failures.append("SEMANTIC_REQUEST_SURFACE")
+          allowed_cmds={
+            "copilot --version > d1pp-artifact/COPILOT_VERSION.txt",
+            "copilot help > d1pp-artifact/COPILOT_HELP.txt",
+            "copilot completion bash > d1pp-artifact/COPILOT_COMPLETION_BASH.txt",
+          }
+          actual={x.strip() for x in surface.splitlines() if x.strip().startswith("copilot ")}
+          if actual!=allowed_cmds: failures.append("COPILOT_COMMAND_WHITELIST:"+repr(sorted(actual)))
+
+          out={
+            "schema":"risu.e2-gate2d-d1pp-static-preflight/v0.1",
+            "status":"PASS" if not failures else "FAIL",
+            "failures":sorted(failures),
+            "changed_files":sorted(changed),
+            "provider_semantic_request_count":0,
+            "epistemic10_read":False,"truth_read":False,"fresh_target_read":False,"mutation_algebra_opened":False,
+            "gate2e_authorized":False,
+          }
+          Path("d1pp-artifact/D1PP_STATIC_PREFLIGHT.json").write_text(json.dumps(out,sort_keys=True,separators=(",",":"))+"\n")
+          if failures: raise SystemExit(2)
+          PY
+
+      - name: Install and fingerprint exact Copilot CLI without semantic request
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --version > d1pp-artifact/NODE_VERSION.txt
+          npm --version > d1pp-artifact/NPM_VERSION.txt
+          npm view @github/copilot@1.0.83 dist.integrity --json > d1pp-artifact/COPILOT_NPM_INTEGRITY.json
+          npm install -g @github/copilot@1.0.83 > d1pp-artifact/NPM_INSTALL_STDOUT.txt 2> d1pp-artifact/NPM_INSTALL_STDERR.txt
+          npm list -g @github/copilot --json > d1pp-artifact/COPILOT_NPM_TREE.json
+          copilot --version > d1pp-artifact/COPILOT_VERSION.txt
+          copilot help > d1pp-artifact/COPILOT_HELP.txt
+          copilot completion bash > d1pp-artifact/COPILOT_COMPLETION_BASH.txt
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          tree=json.loads(Path("d1pp-artifact/COPILOT_NPM_TREE.json").read_text())
+          got=((tree.get("dependencies") or {}).get("@github/copilot") or {}).get("version")
+          if got!="1.0.83": raise SystemExit("COPILOT_VERSION_MISMATCH:"+repr(got))
+          h=Path("d1pp-artifact/COPILOT_HELP.txt").read_text()
+          for flag in ("--model","--max-ai-credits","--deny-tool","--output-format","--no-custom-instructions"):
+              if flag not in h: raise SystemExit("COPILOT_HELP_MISSING:"+flag)
+          c=Path("d1pp-artifact/COPILOT_COMPLETION_BASH.txt").read_text()
+          for slug in ("gpt-5.6-terra","claude-sonnet-5"):
+              if slug not in c: raise SystemExit("COPILOT_MODEL_SLUG_MISSING:"+slug)
+          PY
+
+      - name: Materialize D1primeprime identity qualification receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib,json,subprocess
+          from pathlib import Path
+          def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          pre=json.loads(Path("d1pp-artifact/D1PP_STATIC_PREFLIGHT.json").read_text())
+          tree=json.loads(Path("d1pp-artifact/COPILOT_NPM_TREE.json").read_text())
+          completion=Path("d1pp-artifact/COPILOT_COMPLETION_BASH.txt").read_text()
+          valid=(pre["status"]=="PASS" and ((tree.get("dependencies") or {}).get("@github/copilot") or {}).get("version")=="1.0.83" and
+                 all(x in completion for x in ("gpt-5.6-terra","claude-sonnet-5")))
+          out={
+            "schema":"risu.e2-gate2d-d1pp-identity-qualification/v0.1",
+            "status":"PASS" if valid else "FAIL",
+            "source_commit":subprocess.check_output(["git","rev-parse","HEAD"],text=True).strip(),
+            "source_tree":subprocess.check_output(["git","rev-parse","HEAD^{tree}"],text=True).strip(),
+            "parent_contract_commit":"01b65ad0ecfa04ce2844caa4e9dbb10b50634fb0",
+            "copilot_cli":{"package":"@github/copilot","version":"1.0.83","npm_integrity_sha256":sha("d1pp-artifact/COPILOT_NPM_INTEGRITY.json"),"help_sha256":sha("d1pp-artifact/COPILOT_HELP.txt"),"completion_sha256":sha("d1pp-artifact/COPILOT_COMPLETION_BASH.txt")},
+            "lanes":{"B3A_GPT56_TERRA_COPILOT":"gpt-5.6-terra","B3B_CLAUDE_SONNET5_COPILOT":"claude-sonnet-5"},
+            "provider_semantic_request_count":0,
+            "epistemic10_read":False,"truth_read":False,"fresh_target_read":False,"mutation_algebra_opened":False,
+            "gate2e_authorized":False,
+            "next_authorized_action":"FREEZE_D1PP_RESULT_THEN_PROSPECTIVELY_FREEZE_D2PP_ONLY",
+          }
+          Path("d1pp-artifact/D1PP_IDENTITY_QUALIFICATION.json").write_text(json.dumps(out,sort_keys=True,separators=(",",":"))+"\n")
+          PY
+
+      - name: Materialize complete artifact manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          root=Path("d1pp-artifact")
+          rows=[]
+          for p in sorted(x for x in root.rglob("*") if x.is_file() and x.name!="ARTIFACT_FILE_MANIFEST.json"):
+              b=p.read_bytes()
+              rows.append({"path":p.relative_to(root).as_posix(),"size":len(b),"sha256":hashlib.sha256(b).hexdigest()})
+          out={"schema":"risu.e2-artifact-file-manifest/v0.1","file_count":len(rows),"files":rows}
+          (root/"ARTIFACT_FILE_MANIFEST.json").write_text(json.dumps(out,sort_keys=True,separators=(",",":"))+"\n")
+          PY
+
+      - name: Upload D1primeprime artifact before assertion
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-gate2d-d1primeprime-copilot-pro-identity
+          path: d1pp-artifact/
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Frozen D1primeprime assertion
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path("d1pp-artifact/D1PP_IDENTITY_QUALIFICATION.json").read_text())
+          if d.get("status")!="PASS": raise SystemExit(2)
+          if d.get("provider_semantic_request_count")!=0: raise SystemExit(3)
+          PY
