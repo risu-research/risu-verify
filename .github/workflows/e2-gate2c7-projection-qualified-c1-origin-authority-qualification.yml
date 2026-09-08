@@ -1,0 +1,165 @@
+name: E2 Gate2C7 Projection-Qualified C1 Origin Authority Qualification
+
+on:
+  push:
+    branches: [e2-development]
+    paths:
+      - ".github/workflows/e2-gate2c7-projection-qualified-c1-origin-authority-qualification.yml"
+
+permissions:
+  contents: read
+
+env:
+  EXPECTED_PARENT: c9b0e1b805fa7193972894bd6a83f3390cb4be75
+  PROTOCOL: protocols/RISU_DIFF_E2_GATE2C7_PROJECTION_QUALIFIED_C1_ORIGIN_AUTHORITY_PROTOCOL_v0.1.json
+  PROJECTION: risu_e2_c1/projection_authority.py
+  SOURCE_EXTRACT: risu_e2_c1/source_extract.py
+  PRODUCER: tools/e2_gate2c7_synthetic_qualify.py
+  CHECKER: tools/e2_gate2c7_check_projection_qualified_c1_origin_authority.py
+  TEST: tests/test_e2_gate2c7_projection_qualified_c1_origin_authority.py
+  PROTOCOL_BLOB: 9b62376d6a260c21510621bfa769593fdcbaf732
+  PROJECTION_BLOB: 64e9b0bff2f5dac7b51389cdf8d50745111787e0
+  SOURCE_EXTRACT_BLOB: 88e26b65ebfc98ce5567da774acf2a67780cd05b
+  PRODUCER_BLOB: df5251c1246ff7c5ccc891aa71dd9f59eb7abbc5
+  CHECKER_BLOB: 1cc62483d67923d90589c532fe5a80f47b09eb11
+  TEST_BLOB: 64963d65f76b81dfc20d42f1471332c93ae89745
+
+jobs:
+  synthetic-qualification:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact implementation revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 2
+
+      - name: Prove prospective parent and C1-only mutation surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "$EXPECTED_PARENT"
+          git diff --name-only HEAD^ HEAD | sort > "$RUNNER_TEMP/changed.txt"
+          cat > "$RUNNER_TEMP/expected.txt" <<'EOF'
+          .github/workflows/e2-gate2c7-projection-qualified-c1-origin-authority-qualification.yml
+          risu_e2_c1/projection_authority.py
+          risu_e2_c1/source_extract.py
+          tests/test_e2_gate2c7_projection_qualified_c1_origin_authority.py
+          tools/e2_gate2c7_check_projection_qualified_c1_origin_authority.py
+          tools/e2_gate2c7_synthetic_qualify.py
+          EOF
+          sort -o "$RUNNER_TEMP/expected.txt" "$RUNNER_TEMP/expected.txt"
+          cmp "$RUNNER_TEMP/expected.txt" "$RUNNER_TEMP/changed.txt"
+          test "$(git hash-object "$PROTOCOL")" = "$PROTOCOL_BLOB"
+          test "$(git hash-object "$PROJECTION")" = "$PROJECTION_BLOB"
+          test "$(git hash-object "$SOURCE_EXTRACT")" = "$SOURCE_EXTRACT_BLOB"
+          test "$(git hash-object "$PRODUCER")" = "$PRODUCER_BLOB"
+          test "$(git hash-object "$CHECKER")" = "$CHECKER_BLOB"
+          test "$(git hash-object "$TEST")" = "$TEST_BLOB"
+          test ! -e experiments/risu-diff-e2/qualification/candidate58/gate2c7-projection-qualified-c1-origin-authority/first-complete
+          echo GATE2C7_MUTATION_BOUNDARY=PASS
+
+      - name: Set up exact Python runtime
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.13.5"
+
+      - name: Audit independence and forbidden imports
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import ast,os,sys
+          from pathlib import Path
+          assert '.'.join(map(str,sys.version_info[:3]))=='3.13.5'
+          checker=Path(os.environ['CHECKER']).read_text()
+          assert 'risu_e2_c1' not in checker
+          assert 'e2_gate2c7_synthetic_qualify' not in checker
+          projection=Path(os.environ['PROJECTION']).read_text()
+          assert 'risu_e2_semantic' not in projection and 'risu_e2.' not in projection
+          assert 'e2_gate2c5_build_canonical_projection_identity' not in projection
+          assert 'e2_gate2c6_candidate_projection_match' not in projection
+          producer=Path(os.environ['PRODUCER']).read_text()
+          assert 'e2_gate2c5_build_canonical_projection_identity' not in producer
+          assert 'e2_gate2c6_candidate_projection_match' not in producer
+          tree=ast.parse(checker); roots=[]
+          for n in ast.walk(tree):
+              if isinstance(n,ast.Import): roots.extend(a.name.split('.',1)[0] for a in n.names)
+              elif isinstance(n,ast.ImportFrom) and n.module: roots.append(n.module.split('.',1)[0])
+          bad=[x for x in roots if x not in sys.stdlib_module_names and x!='__future__']
+          assert not bad,bad
+          print('GATE2C7_INDEPENDENCE=PASS')
+          PY
+
+      - name: Compile and preserve pre-C7 C1 baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile "$PROJECTION" "$SOURCE_EXTRACT" "$PRODUCER" "$CHECKER" "$TEST"
+          python -m unittest tests.test_e2_c1_rechecker
+          python -m unittest tests.test_e2_gate2c7_projection_qualified_c1_origin_authority
+          echo GATE2C7_BASELINE_AND_ADVERSARIAL_UNIT=PASS
+
+      - name: Execute frozen adversarial producer and independent checker twice
+        shell: bash
+        run: |
+          set -euo pipefail
+          python "$PRODUCER" --output "$RUNNER_TEMP/producer1.json" > "$RUNNER_TEMP/producer1.stdout"
+          python "$PRODUCER" --output "$RUNNER_TEMP/producer2.json" > "$RUNNER_TEMP/producer2.stdout"
+          cmp "$RUNNER_TEMP/producer1.json" "$RUNNER_TEMP/producer2.json"
+          cmp "$RUNNER_TEMP/producer1.stdout" "$RUNNER_TEMP/producer2.stdout"
+          python "$CHECKER" --producer "$RUNNER_TEMP/producer1.json" --output "$RUNNER_TEMP/checker1.json" > "$RUNNER_TEMP/checker1.stdout"
+          python "$CHECKER" --producer "$RUNNER_TEMP/producer2.json" --output "$RUNNER_TEMP/checker2.json" > "$RUNNER_TEMP/checker2.stdout"
+          cmp "$RUNNER_TEMP/checker1.json" "$RUNNER_TEMP/checker2.json"
+          cmp "$RUNNER_TEMP/checker1.stdout" "$RUNNER_TEMP/checker2.stdout"
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          r=Path(os.environ['RUNNER_TEMP'])
+          p=json.loads((r/'producer1.json').read_text()); c=json.loads((r/'checker1.json').read_text())
+          assert p['status']=='PASS' and p['case_count']==14 and p['all_expected_decisions_exact'] is True
+          assert p['candidate_c1_executed'] is False and p['epistemic10_read'] is False
+          assert c['status']=='PASS' and c['case_count']==14 and c['producer_checker_decision_agreement'] is True
+          assert c['checker_imports_production_helper'] is False
+          print('GATE2C7_SYNTHETIC_DUAL_REPLAY=PASS')
+          PY
+
+      - name: Materialize hosted qualification receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/gate2c7-qualification"; export OUT; mkdir -p "$OUT"
+          cp "$RUNNER_TEMP/producer1.json" "$OUT/E2_GATE2C7_SYNTHETIC_PRODUCER.json"
+          cp "$RUNNER_TEMP/checker1.json" "$OUT/E2_GATE2C7_SYNTHETIC_INDEPENDENT_CHECKER.json"
+          python - <<'PY'
+          import hashlib,json,os,platform
+          from pathlib import Path
+          h=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          r={
+            'schema':'risu.e2-gate2c7-implementation-qualification/v0.1',
+            'status':'SYNTHETICALLY_QUALIFIED_CANDIDATE_C1_RERUN_AUTHORIZED',
+            'workflow_run_id':os.environ['GITHUB_RUN_ID'],'workflow_sha':os.environ['GITHUB_SHA'],
+            'protocol_commit':os.environ['EXPECTED_PARENT'],'python_version':platform.python_version(),
+            'protocol_git_blob':os.environ['PROTOCOL_BLOB'],'projection_git_blob':os.environ['PROJECTION_BLOB'],
+            'source_extract_git_blob':os.environ['SOURCE_EXTRACT_BLOB'],'producer_git_blob':os.environ['PRODUCER_BLOB'],
+            'checker_git_blob':os.environ['CHECKER_BLOB'],'test_git_blob':os.environ['TEST_BLOB'],
+            'producer_sha256':h(os.environ['PRODUCER']),'checker_sha256':h(os.environ['CHECKER']),
+            'synthetic_case_count':14,'all_expected_decisions_exact':True,
+            'producer_checker_decision_agreement':True,'synthetic_logical_dual_replay_byte_identical':True,
+            'checker_imports_production_helper':False,'primary_adapter_modified':False,
+            'candidate_c1_executed':False,'candidate_source_bytes_read_by_qualification':0,
+            'truth_read':False,'epistemic10_read':False,'mutation_algebra_opened':False,
+            'go_support_added':False,'typescript_support_added':False,'elapsed_or_wall_clock_fields_emitted':False
+          }
+          Path(os.environ['OUT'],'E2_GATE2C7_IMPLEMENTATION_QUALIFICATION_RECEIPT.json').write_text(json.dumps(r,sort_keys=True,separators=(',',':'))+'\n')
+          PY
+
+      - name: Upload qualification artifact before candidate C1 rerun
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-gate2c7-projection-qualified-c1-origin-authority-qualification
+          path: ${{ runner.temp }}/gate2c7-qualification/
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0

@@ -7,6 +7,10 @@ import copy
 from typing import Any, Mapping
 
 from .common import SLICE_SCHEMA, _digest_bytes, _digest_json
+from .projection_authority import (
+    evaluate_compare_with_projection_authority,
+    prefix_projection_environment,
+)
 from .source_python import (
     ALLOWED_ASSIGN, _anchor_node, _apply_assign, _compare_op_name, _contains,
     _effect_expr, _eval_compare, _find_target_function, _origins, _role_state,
@@ -41,7 +45,6 @@ def _extract_direct(
     if signature.get("guard", {}).get("form") != "DIRECT_CONTROL":
         return None, ["C1_V0_1_ONLY_DIRECT_CONTROL"]
 
-    # Run straight-line prefix to the guard and retain exact definition state.
     state = {k: set(v) for k, v in state0.items()}; definition_trace: list[dict[str, Any]] = []
     prefix: list[ast.stmt] = []
     found_if = False
@@ -62,7 +65,10 @@ def _extract_direct(
             bad.append("PREFIX_STATEMENT_OUTSIDE_MINIMAL_FRAGMENT")
     if bad: return None, sorted(set(bad))
 
-    # Guard operand bindings are independently re-derived from the raw AST.
+    projection_env, projection_params, projection_sidecar_bad = prefix_projection_environment(
+        fn, guard_if, signature
+    )
+
     operands = [guard_node.left] + list(guard_node.comparators)
     guard_specs = [x for x in signature.get("required_bindings", []) or [] if x.get("kind") == "guard_operand"]
     bindings: list[dict[str, Any]] = []
@@ -88,9 +94,6 @@ def _extract_direct(
             "representation": {"required": False},
         })
 
-    # Enumerate the two complete structured branches. v0.1 requires each branch
-    # to terminate in an explicit return, with optional straight-line suffix on
-    # the false branch.
     branch_rows: list[tuple[bool, list[ast.stmt]]] = [(True, list(guard_if.body)), (False, list(guard_if.orelse) + suffix)]
     control_paths: list[dict[str, Any]] = []
     world_branch_states: dict[bool, tuple[dict[str, set[str]], ast.Return]] = {}
@@ -125,7 +128,6 @@ def _extract_direct(
         })
     if bad: return None, sorted(set(bad))
 
-    # Effect bindings are checked at the uniquely declared effect-return path.
     effect_specs = [x for x in signature.get("required_bindings", []) or [] if x.get("kind") in {"effect_call_argument", "effect_return_mapping_field"}]
     effect_paths = [p for p in control_paths if any(x.startswith("EFFECT:") for x in p["events"])]
     if len(effect_paths) != 1:
@@ -160,14 +162,32 @@ def _extract_direct(
 
     if bad: return None, sorted(set(bad))
 
-    # World interpretation: kappa is trusted canonical-seed semantics; rho is
-    # reconstructed from target branch outcome + effect carrier values.
     op = _compare_op_name(guard_node.ops[0]) if len(guard_node.ops) == 1 else None
     if op is None: return None, ["GUARD_OPERATOR_OUTSIDE_MINIMAL_FRAGMENT"]
     worlds_out: list[dict[str, Any]] = []
+    projection_authority_receipts: list[dict[str, Any]] = []
     for world in signature.get("worlds", []) or []:
         polarity = _eval_compare(guard_node, state, world)
-        if polarity is None: return None, [f"WORLD_GUARD_EVAL_UNRESOLVED:{world.get('id')}"]
+        if polarity is None:
+            polarity, receipts = evaluate_compare_with_projection_authority(
+                guard_node,
+                world=world,
+                env=projection_env,
+                param_by_name=projection_params,
+            )
+            projection_authority_receipts.append({
+                "world_id": str(world.get("id")),
+                "operands": receipts,
+            })
+        if polarity is None:
+            reasons = [f"WORLD_GUARD_EVAL_UNRESOLVED:{world.get('id')}"]
+            reasons.extend(
+                f"GATE2C7:{x.get('reason')}"
+                for x in (projection_authority_receipts[-1].get("operands", []) if projection_authority_receipts else [])
+                if x.get("decision") == "REJECT"
+            )
+            reasons.extend(f"GATE2C7_SIDECAR:{x}" for x in projection_sidecar_bad)
+            return None, sorted(set(reasons))
         branch = next((p for p in control_paths if p["guard_polarity"] == str(polarity).lower()), None)
         if branch is None: return None, [f"WORLD_BRANCH_UNRESOLVED:{world.get('id')}"]
         ev = branch["events"]
@@ -183,7 +203,6 @@ def _extract_direct(
         rho = {"outcome": outcome, "effect_carriers": carrier_values if outcome == "SUCCESS_EFFECT" else {}}
         worlds_out.append({"id": str(world.get("id")), "kappa": world.get("kappa"), "rho": rho})
 
-    # Evidence receipts are independently generated from exact raw bytes.
     source_evidence = []
     for role, row in sorted((contract.get("anchors", {}) or {}).items()):
         span = list(row.get("span", [])); raw = _slice_bytes(source, span)
@@ -199,6 +218,7 @@ def _extract_direct(
         "source_contract": copy.deepcopy(contract),
         "source_evidence": source_evidence,
         "bindings": bindings,
+        "projection_authority_receipts": projection_authority_receipts,
         "guard": {
             "form": "DIRECT_CONTROL", "effective_guard_id": "g0", "effective_guard_count": 1,
             "net_polarity": "PRESERVE", "helper_chain": [],
