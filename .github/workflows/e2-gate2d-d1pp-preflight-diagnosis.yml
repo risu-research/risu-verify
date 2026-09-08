@@ -1,0 +1,61 @@
+name: E2 Gate2D D1primeprime Exact Preflight Diagnosis
+
+on:
+  push:
+    branches:
+      - gate2d-d1pp-preflight-diagnosis
+    paths:
+      - .github/workflows/e2-gate2d-d1pp-preflight-diagnosis.yml
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout exact failed implementation
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          ref: 2f4403ce459192e447e61bf256794ec296d5f521
+          fetch-depth: 0
+      - name: Pin exact Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: '3.13.5'
+      - name: Re-execute exact frozen preflight without terminal raise
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,textwrap
+          from pathlib import Path
+          wf=Path('.github/workflows/e2-gate2d-d1pp-copilot-pro-identity.yml').read_text()
+          lines=wf.splitlines()
+          start=next(i for i,x in enumerate(lines) if x.strip()=="python - <<'PY'")
+          end=next(i for i in range(start+1,len(lines)) if lines[i].strip()=="PY")
+          code=textwrap.dedent('\n'.join(lines[start+1:end]))+'\n'
+          needle='if failures: raise SystemExit(2)'
+          if code.count(needle)!=1:
+              raise SystemExit('EXACT_TERMINAL_RAISE_NOT_UNIQUE')
+          code=code.replace(needle,'pass')
+          exec(compile(code,'<exact-d1pp-preflight-diagnosis>','exec'),{'__name__':'__main__'})
+          src=Path('d1pp-artifact/D1PP_STATIC_PREFLIGHT.json')
+          d=json.loads(src.read_text())
+          Path('diagnosis-artifact').mkdir(exist_ok=True)
+          Path('diagnosis-artifact/EXACT_PREFLIGHT_DIAGNOSIS.json').write_text(json.dumps({
+            'schema':'risu.e2-gate2d-d1pp-exact-preflight-diagnosis/v0.1',
+            'source_implementation':'2f4403ce459192e447e61bf256794ec296d5f521',
+            'provider_semantic_request_count':0,
+            'original_preflight_status':d.get('status'),
+            'failures':d.get('failures'),
+            'changed_files':d.get('changed_files'),
+          },sort_keys=True,separators=(',',':'))+'\n')
+          PY
+      - name: Upload diagnosis
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-gate2d-d1pp-exact-preflight-diagnosis
+          path: diagnosis-artifact/
+          if-no-files-found: error
+          retention-days: 90
