@@ -1,0 +1,96 @@
+name: E2 Gate2D D1prime Static Diagnosis
+
+on:
+  push:
+    branches:
+      - gate2d-d1p-copilot-static-diagnosis
+    paths:
+      - .github/workflows/e2-gate2d-d1p-static-diagnosis.yml
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    env:
+      LC_ALL: C.UTF-8
+      PYTHONHASHSEED: "0"
+      TZ: UTC
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: '3.13.5'
+      - name: Recompute exact static predicates and print only predicate failures
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib, importlib.util, json, subprocess
+          from pathlib import Path
+          ROOT=Path('.').resolve(); BASE='9920ee588fa9a75e79ae8a4c308bacbb276feb1f'; failures=[]
+          allowed={
+            'evaluation/gate2d/BASELINE_REGISTRY_v0.2.json','evaluation/gate2d/B3_COPILOT_CONFIG_v0.1.json',
+            'evaluation/gate2d/D1P_IDENTITY_MANIFEST_v0.1.json','tools/e2_gate2d_copilot_baseline.py',
+            'tools/e2_gate2d_evaluate_v2.py','tools/e2_gate2d_check_evaluation_v2.py',
+            '.github/workflows/e2-gate2d-d1p-copilot-identity-qualification.yml',
+          }
+          def git(*a): return subprocess.check_output(['git',*a],text=True).strip()
+          def sh(b): return hashlib.sha256(b).hexdigest()
+          def gb(b): return hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()
+          changed=set(git('diff','--name-only',BASE,'3acd04213c9e9e55f742cd4f5608f4a170da8234').splitlines())
+          if changed!=allowed: failures.append({'predicate':'IMPLEMENTATION_SURFACE','got':sorted(changed),'want':sorted(allowed)})
+          m=json.loads((ROOT/'evaluation/gate2d/D1P_IDENTITY_MANIFEST_v0.1.json').read_bytes())
+          if m.get('parent_contract_commit')!=BASE: failures.append({'predicate':'MANIFEST_PARENT','got':m.get('parent_contract_commit'),'want':BASE})
+          for rel,ident in sorted((m.get('files') or {}).items()):
+            b=(ROOT/rel).read_bytes()
+            got={'size':len(b),'sha256':sh(b),'git_blob':gb(b)}
+            want={'size':ident['size'],'sha256':ident['sha256'],'git_blob':ident['git_blob']}
+            if got!=want: failures.append({'predicate':'MANIFEST_IDENTITY','path':rel,'got':got,'want':want})
+          oldm=json.loads((ROOT/'evaluation/gate2d/D1_IDENTITY_MANIFEST_v0.1.json').read_bytes())
+          for rel in ['evaluation/gate2d/B3_LLM_PROMPT_v0.1.txt','evaluation/gate2d/B3_LLM_RESPONSE_SCHEMA_v0.1.json','evaluation/gate2d/COMMON_BLINDED_INPUT_CONTRACT_v0.1.json','tools/e2_gate2d_evaluate.py','tools/e2_gate2d_check_evaluation.py']:
+            ident=oldm['files'][rel]; b=(ROOT/rel).read_bytes(); got=(len(b),sh(b),gb(b)); want=(ident['size'],ident['sha256'],ident['git_blob'])
+            if got!=want: failures.append({'predicate':'REUSED_LOCK','path':rel,'got':got,'want':want})
+          constitution=json.loads((ROOT/'protocols/RISU_DIFF_E2_GATE2D_EVALUATION_CONSTITUTION_v0.1.json').read_bytes())
+          for rel,want in sorted(constitution['authority_locks']['semantic_snapshot']['critical_blob_locks'].items()):
+            got=git('hash-object',rel)
+            if got!=want: failures.append({'predicate':'SEMANTIC_SNAPSHOT','path':rel,'got':got,'want':want})
+          old=json.loads((ROOT/'evaluation/gate2d/BASELINE_REGISTRY_v0.1.json').read_bytes()); new=json.loads((ROOT/'evaluation/gate2d/BASELINE_REGISTRY_v0.2.json').read_bytes())
+          non=lambda d:[x for x in d['baselines'] if not x['id'].startswith('B3')]
+          if non(old)!=non(new): failures.append({'predicate':'NON_B3_REGISTRY_DELTA'})
+          if old['fairness_rules']!=new['fairness_rules'] or old['normalization']!=new['normalization']: failures.append({'predicate':'REGISTRY_RULE_DELTA'})
+          nb=[x for x in new['baselines'] if x['id'].startswith('B3')]
+          if [x['id'] for x in nb]!=['B3A_GPT56_SOL_COPILOT','B3B_CLAUDE_OPUS5_COPILOT']: failures.append({'predicate':'B3_IDS'})
+          if [x['model'] for x in nb]!=['gpt-5.6-sol','claude-opus-5']: failures.append({'predicate':'B3_MODELS'})
+          cfg=json.loads((ROOT/'evaluation/gate2d/B3_COPILOT_CONFIG_v0.1.json').read_bytes())
+          if cfg['transport']['cli_package']!='@github/copilot' or cfg['transport']['cli_version']!='1.0.83': failures.append({'predicate':'COPILOT_CLI_ID'})
+          if cfg['transport']['authentication_env']!='COPILOT_GITHUB_TOKEN': failures.append({'predicate':'COPILOT_AUTH_ENV'})
+          if cfg['transport']['max_ai_credits_per_response']!=30: failures.append({'predicate':'COPILOT_CREDIT_CAP'})
+          if set(cfg['lanes'])!={'B3A_GPT56_SOL_COPILOT','B3B_CLAUDE_OPUS5_COPILOT'}: failures.append({'predicate':'COPILOT_LANES'})
+          def load(rel,name):
+            spec=importlib.util.spec_from_file_location(name,ROOT/rel); mod=importlib.util.module_from_spec(spec); spec.loader.exec_module(mod); return mod.load()
+          try:
+            ev=load('tools/e2_gate2d_evaluate_v2.py','dxev')
+            if ev.BS!={'B0_STRUCTURAL_SCHEMA_DIFF','B1_AST_SYNTACTIC_DATAFLOW','B2_STRONG_STATIC_DATAFLOW','B3A_GPT56_SOL_COPILOT','B3B_CLAUDE_OPUS5_COPILOT','B4_EXECUTION_ONLY_DIFFERENTIAL'}: failures.append({'predicate':'EVALUATOR_WRAPPER_SET'})
+          except Exception as e: failures.append({'predicate':'EVALUATOR_WRAPPER_LOAD','error':type(e).__name__+':'+str(e)})
+          try:
+            ck=load('tools/e2_gate2d_check_evaluation_v2.py','dxck')
+            if ck.EXPECTED_BASELINES!={'B0_STRUCTURAL_SCHEMA_DIFF','B1_AST_SYNTACTIC_DATAFLOW','B2_STRONG_STATIC_DATAFLOW','B3A_GPT56_SOL_COPILOT','B3B_CLAUDE_OPUS5_COPILOT','B4_EXECUTION_ONLY_DIFFERENTIAL'}: failures.append({'predicate':'CHECKER_WRAPPER_SET'})
+          except Exception as e: failures.append({'predicate':'CHECKER_WRAPPER_LOAD','error':type(e).__name__+':'+str(e)})
+          if 'e2_gate2d_evaluate' in (ROOT/'tools/e2_gate2d_check_evaluation_v2.py').read_text(): failures.append({'predicate':'CHECKER_IMPORTS_EVALUATOR'})
+          wf=(ROOT/'.github/workflows/e2-gate2d-d1p-copilot-identity-qualification.yml').read_text()
+          if 'COPILOT_GITHUB_TOKEN:' in wf or 'RISU_COPILOT_PERSONAL_TOKEN' in wf: failures.append({'predicate':'D1P_SEMANTIC_CREDENTIAL_SURFACE'})
+          if 'copilot -p' in wf or 'copilot --prompt' in wf: failures.append({'predicate':'D1P_SEMANTIC_REQUEST_SURFACE'})
+          out={'schema':'risu.e2-gate2d-d1p-static-diagnosis/v0.1','source_commit':'3acd04213c9e9e55f742cd4f5608f4a170da8234','failures':failures,'failure_count':len(failures),'provider_semantic_request_count':0,'epistemic10_read':False,'truth_read':False,'fresh_target_read':False,'mutation_algebra_opened':False}
+          Path('D1P_STATIC_DIAGNOSIS.json').write_text(json.dumps(out,sort_keys=True,separators=(',',':'))+'\n')
+          print(json.dumps({'failure_count':len(failures),'failure_predicates':[x['predicate'] for x in failures]},sort_keys=True,separators=(',',':')))
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-gate2d-d1prime-static-diagnosis
+          path: D1P_STATIC_DIAGNOSIS.json
+          if-no-files-found: error
+          retention-days: 90
