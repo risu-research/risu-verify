@@ -1,0 +1,197 @@
+name: E2 Gate2D D3prime Copilot Nonheldout Smoke
+
+on:
+  push:
+    branches:
+      - gate2d-d3prime-copilot-smoke-run
+
+permissions:
+  contents: read
+
+jobs:
+  d3prime:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      LC_ALL: C.UTF-8
+      PYTHONHASHSEED: "0"
+      TZ: UTC
+      PYTHONPATH: ${{ github.workspace }}
+    steps:
+      - name: Checkout exact source
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          fetch-depth: 0
+
+      - name: Pin CPython 3.13.5
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: "3.13.5"
+
+      - name: Record hosted runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p d3p-artifact
+          python - <<'PY'
+          import json,os,platform,subprocess
+          from pathlib import Path
+          doc={
+            "schema":"risu.e2-gate2d-d3p-hosted-context/v0.1",
+            "github_sha":os.environ["GITHUB_SHA"],
+            "github_ref":os.environ["GITHUB_REF"],
+            "github_run_id":os.environ["GITHUB_RUN_ID"],
+            "github_run_attempt":os.environ["GITHUB_RUN_ATTEMPT"],
+            "runner_os":os.environ.get("RUNNER_OS"),
+            "runner_arch":os.environ.get("RUNNER_ARCH"),
+            "python":platform.python_version(),
+            "LC_ALL":os.environ.get("LC_ALL"),
+            "PYTHONHASHSEED":os.environ.get("PYTHONHASHSEED"),
+            "TZ":os.environ.get("TZ"),
+            "PYTHONPATH":os.environ.get("PYTHONPATH"),
+            "provider_semantic_request_count_before_smoke":0,
+          }
+          Path("d3p-artifact/HOSTED_CONTEXT.json").write_text(json.dumps(doc,sort_keys=True,separators=(",",":"))+"\n")
+          PY
+
+      - name: Pre-provider identity preflight
+        id: preflight
+        shell: bash
+        run: |
+          set +e
+          python tools/e2_gate2d_d3prime_preflight.py --root . --out d3p-artifact/D3P_PREFLIGHT.json
+          rc=$?
+          echo "$rc" > d3p-artifact/D3P_PREFLIGHT_EXIT_CODE.txt
+          if [ "$rc" -eq 0 ]; then echo "ready=true" >> "$GITHUB_OUTPUT"; else echo "ready=false" >> "$GITHUB_OUTPUT"; fi
+          exit 0
+
+      - name: Install and fingerprint exact Copilot CLI without semantic request
+        id: cli
+        if: steps.preflight.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set +e
+          node --version > d3p-artifact/NODE_VERSION.txt 2>&1
+          npm --version > d3p-artifact/NPM_VERSION.txt 2>&1
+          npm view @github/copilot@1.0.83 dist.integrity --json > d3p-artifact/COPILOT_NPM_INTEGRITY.json 2>&1
+          npm install -g @github/copilot@1.0.83 > d3p-artifact/COPILOT_INSTALL_STDOUT.txt 2> d3p-artifact/COPILOT_INSTALL_STDERR.txt
+          install_rc=$?
+          copilot --version > d3p-artifact/COPILOT_VERSION.txt 2> d3p-artifact/COPILOT_VERSION_STDERR.txt
+          version_rc=$?
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          def h(p):
+              q=Path(p)
+              return hashlib.sha256(q.read_bytes()).hexdigest() if q.exists() else None
+          got=h("d3p-artifact/COPILOT_VERSION.txt")
+          want="29c4198d94948906858abafe036110547bae7dddc92e2805b2e0a9a2b33ac7ba"
+          doc={"schema":"risu.e2-gate2d-d3p-cli-readiness/v0.1","version_file_sha256":got,
+               "expected_version_file_sha256":want,"version_hash_exact":got==want}
+          Path("d3p-artifact/D3P_CLI_READINESS.json").write_text(json.dumps(doc,sort_keys=True,separators=(",",":"))+"\n")
+          PY
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path("d3p-artifact/D3P_CLI_READINESS.json").read_text())
+          raise SystemExit(0 if d.get("version_hash_exact") else 1)
+          PY
+          hash_rc=$?
+          if [ "$install_rc" -eq 0 ] && [ "$version_rc" -eq 0 ] && [ "$hash_rc" -eq 0 ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          fi
+          exit 0
+
+      - name: Verify personal Copilot credential readiness without request
+        id: credential
+        if: steps.preflight.outputs.ready == 'true' && steps.cli.outputs.ready == 'true'
+        shell: bash
+        env:
+          COPILOT_GITHUB_TOKEN: ${{ secrets.RISU_COPILOT_PERSONAL_TOKEN }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          present=bool(os.environ.get("COPILOT_GITHUB_TOKEN",""))
+          doc={"schema":"risu.e2-gate2d-d3p-credential-readiness/v0.1",
+               "credential_present":present,"credential_value_persisted":False,
+               "provider_semantic_request_count":0}
+          Path("d3p-artifact/D3P_CREDENTIAL_READINESS.json").write_text(json.dumps(doc,sort_keys=True,separators=(",",":"))+"\n")
+          with open(os.environ["GITHUB_OUTPUT"],"a") as f:
+              f.write("ready="+("true" if present else "false")+"\n")
+          PY
+
+      - name: Execute exactly one nonheldout semantic request per frozen Copilot lane
+        id: smoke
+        if: steps.preflight.outputs.ready == 'true' && steps.cli.outputs.ready == 'true' && steps.credential.outputs.ready == 'true'
+        shell: bash
+        env:
+          COPILOT_GITHUB_TOKEN: ${{ secrets.RISU_COPILOT_PERSONAL_TOKEN }}
+        run: |
+          set +e
+          python tools/e2_gate2d_d3prime_smoke.py --root . --out d3p-artifact/smoke
+          rc=$?
+          echo "$rc" > d3p-artifact/D3P_SMOKE_DRIVER_EXIT_CODE.txt
+          exit 0
+
+      - name: Materialize complete artifact manifest
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          root=Path("d3p-artifact"); root.mkdir(exist_ok=True)
+          rows=[]
+          for p in sorted(x for x in root.rglob("*") if x.is_file() and x.name!="ARTIFACT_FILE_MANIFEST.json"):
+              b=p.read_bytes()
+              rows.append({"path":p.relative_to(root).as_posix(),"sha256":hashlib.sha256(b).hexdigest(),"size":len(b)})
+          doc={"schema":"risu.e2-gate2d-d3p-artifact-manifest/v0.1","file_count":len(rows),"files":rows}
+          (root/"ARTIFACT_FILE_MANIFEST.json").write_text(json.dumps(doc,sort_keys=True,separators=(",",":"))+"\n")
+          PY
+
+      - name: Upload first-complete or pre-provider artifact before assertion
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-gate2d-d3prime-copilot-smoke
+          path: d3p-artifact/
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Frozen D3prime assertion
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          def get(p):
+              q=Path(p)
+              return json.loads(q.read_text()) if q.exists() else None
+          pre=get("d3p-artifact/D3P_PREFLIGHT.json")
+          cli=get("d3p-artifact/D3P_CLI_READINESS.json")
+          cred=get("d3p-artifact/D3P_CREDENTIAL_READINESS.json")
+          smoke=get("d3p-artifact/smoke/D3P_SMOKE_SUMMARY.json")
+          if not pre or pre.get("status")!="PASS": raise SystemExit("D3P_PREFLIGHT_NOT_PASS")
+          if not cli or cli.get("version_hash_exact") is not True: raise SystemExit("D3P_CLI_NOT_EXACT")
+          if not cred or cred.get("credential_present") is not True: raise SystemExit("D3P_CREDENTIAL_NOT_READY")
+          if not smoke or smoke.get("status")!="PASS": raise SystemExit("D3P_SMOKE_NOT_PASS")
+          if smoke.get("provider_semantic_request_count")!=2 or smoke.get("lane_count")!=2: raise SystemExit("D3P_REQUEST_COUNT")
+          if smoke.get("both_lane_request_sha256_equal") is not True: raise SystemExit("D3P_REQUEST_IDENTITY")
+          if smoke.get("semantic_outcome_values_used_for_gate_decision") is not False: raise SystemExit("D3P_SEMANTIC_VALUE_USED")
+          for x in smoke["lanes"]:
+              if not (x.get("runner_returncode")==0 and x.get("receipt_model_exact") is True and
+                      x.get("receipt_cli_exact") is True and x.get("semantically_valid") is True and
+                      x.get("normalized_schema_valid") is True and x.get("visible_input_bytes")==314 and
+                      x.get("provider_semantic_request_count")==1):
+                  raise SystemExit("D3P_LANE_FAILURE")
+          if any(smoke.get(k) for k in ("epistemic10_read","truth_read","fresh_target_read","mutation_algebra_opened")):
+              raise SystemExit("D3P_FIREWALL")
+          print("GATE2D_D3PRIME_FIRST_COMPLETE_PASS")
+          PY
