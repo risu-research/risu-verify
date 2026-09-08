@@ -1,0 +1,45 @@
+name: E2 Gate2D D1 Identity Qualification
+on:
+  push:
+    branches: [e2-development]
+    paths:
+      - 'protocols/RISU_DIFF_E2_GATE2D_D1_EVALUATOR_BASELINE_ABLATION_IDENTITY_FREEZE_v0.2.json'
+      - 'evaluation/gate2d/**'
+      - 'tools/e2_gate2d_**'
+      - '.github/workflows/e2-gate2d-d1-identity-qualification.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          fetch-depth: 4
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: '3.13.5'
+      - name: Exact Python runtime
+        run: |
+          python - <<'PY'
+          import sys
+          assert sys.version_info[:3] == (3,13,5), sys.version
+          print(sys.version)
+          PY
+      - name: Compile D1 evaluation tools
+        run: python -m py_compile tools/e2_gate2d_*.py
+      - name: Hosted D1 identity qualification
+        run: |
+          python tools/e2_gate2d_d1_identity_check.py \
+            --manifest evaluation/gate2d/D1_IDENTITY_MANIFEST_v0.1.json \
+            --d0 protocols/RISU_DIFF_E2_GATE2D_EVALUATION_CONSTITUTION_v0.1.json \
+            --protocol protocols/RISU_DIFF_E2_GATE2D_D1_EVALUATOR_BASELINE_ABLATION_IDENTITY_FREEZE_v0.2.json \
+            --output D1_IDENTITY_QUALIFICATION_RECEIPT.json
+      - name: Upload qualification receipt
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-gate2d-d1-identity-qualification
+          path: D1_IDENTITY_QUALIFICATION_RECEIPT.json
+          if-no-files-found: error
+          retention-days: 90
