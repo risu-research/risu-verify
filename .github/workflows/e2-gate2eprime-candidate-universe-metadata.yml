@@ -1,0 +1,86 @@
+name: E2 Gate2Eprime Candidate Universe Metadata Snapshot
+
+on:
+  push:
+    branches:
+      - gate2eprime-candidate-universe-metadata
+
+permissions:
+  contents: read
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      LC_ALL: C.UTF-8
+      PYTHONHASHSEED: "0"
+      TZ: UTC
+      PYTHONPATH: ${{ github.workspace }}
+    steps:
+      - name: Checkout exact metadata implementation
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          fetch-depth: 0
+      - name: Pin CPython 3.13.5
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: '3.13.5'
+      - name: Zero-source identity preflight
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p candidate-metadata-artifact
+          python - <<'PY'
+          import json,platform,subprocess
+          from pathlib import Path
+          parent='4c96efcdb55f999eeeca664ab907b7afc0e159f3'
+          fail=[];git=lambda *a:subprocess.check_output(['git',*a],text=True).strip()
+          if git('rev-parse','HEAD^')!=parent:fail.append('IMPLEMENTATION_PARENT')
+          got=set(x for x in git('diff','--name-only',parent,'HEAD').splitlines() if x)
+          want={'.github/workflows/e2-gate2eprime-candidate-universe-metadata.yml','tools/e2_gate2eprime_candidate_universe_metadata.py'}
+          if got!=want:fail.append('IMPLEMENTATION_SURFACE')
+          s=Path('tools/e2_gate2eprime_candidate_universe_metadata.py').read_text()
+          for forbidden in ('/contents/','/git/trees','/git/blobs','raw.githubusercontent.com','git clone'):
+              if forbidden in s:fail.append('FORBIDDEN_TARGET_CONTENT_SURFACE:'+forbidden)
+          if platform.python_version()!='3.13.5':fail.append('PYTHON_RUNTIME')
+          d={'schema':'risu.e2-gate2eprime-candidate-universe-preflight/v0.1','status':'PASS' if not fail else 'FAIL','failures':sorted(fail),'fresh_target_source_bytes_read':False,'truth_read':False,'semantic_execution_count':0}
+          Path('candidate-metadata-artifact/PREFLIGHT.json').write_text(json.dumps(d,sort_keys=True,separators=(',',':'))+'\n')
+          if fail:raise SystemExit(2)
+          PY
+      - name: Snapshot repository metadata and cryptographic rank only
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT=candidate-metadata-artifact/CANDIDATE_UNIVERSE.json python tools/e2_gate2eprime_candidate_universe_metadata.py
+      - name: Materialize artifact manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          root=Path('candidate-metadata-artifact');rows=[]
+          for p in sorted(x for x in root.rglob('*') if x.is_file() and x.name!='ARTIFACT_MANIFEST.json'):
+              b=p.read_bytes();rows.append({'path':p.relative_to(root).as_posix(),'sha256':hashlib.sha256(b).hexdigest(),'size':len(b)})
+          (root/'ARTIFACT_MANIFEST.json').write_text(json.dumps({'schema':'risu.e2-gate2eprime-candidate-metadata-artifact/v0.1','file_count':len(rows),'files':rows,'source_bytes_read':False,'truth_read':False,'semantic_execution_count':0},sort_keys=True,separators=(',',':'))+'\n')
+          PY
+      - name: Upload metadata-only artifact before assertion
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-gate2eprime-candidate-universe-metadata
+          path: candidate-metadata-artifact/
+          if-no-files-found: error
+          retention-days: 90
+      - name: Frozen metadata-only assertion
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=json.loads(Path('candidate-metadata-artifact/PREFLIGHT.json').read_text());d=json.loads(Path('candidate-metadata-artifact/CANDIDATE_UNIVERSE.json').read_text())
+          if p.get('status')!='PASS' or d.get('status')!='PASS':raise SystemExit(2)
+          if d.get('source_bytes_read') is not False or d.get('truth_read') is not False or d.get('semantic_execution_count')!=0:raise SystemExit(3)
+          if d.get('target_tree_endpoints_used') or d.get('target_blob_endpoints_used') or d.get('target_contents_endpoints_used') or d.get('raw_target_urls_used'):raise SystemExit(4)
+          PY
