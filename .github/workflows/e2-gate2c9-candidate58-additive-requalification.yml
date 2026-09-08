@@ -1,0 +1,196 @@
+name: E2 Gate2C9 Candidate58 Additive Requalification
+
+on:
+  push:
+    branches: [e2-development]
+    paths:
+      - ".github/workflows/e2-gate2c9-candidate58-additive-requalification.yml"
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: e2-gate2c9-candidate58-additive-requalification
+  cancel-in-progress: false
+
+env:
+  SOLE_SCIENTIFIC_AUTHORITY: faa082386c9fc763a4f49df97523838d8c0f5b1d
+  PROTOCOL_V1_COMMIT: f4232f9ee32299e129ddcdc1b51fe3947c69168a
+  PROTOCOL_V2_COMMIT: bd925aa1861e9ef62d712cd6a411c7b55974ed5f
+  COMPOSER_COMMIT: 6405ab46ba20c671821059c6d62cf1efd8320438
+  CHECKER_COMMIT: 4a2eb53e7681b2cc5c45bb4c6b72b082e6a3ad70
+  PROTOCOL: protocols/RISU_DIFF_E2_GATE2C9_CANDIDATE58_ADDITIVE_REQUALIFICATION_PROTOCOL_v0.2.json
+  PROTOCOL_BLOB: f2ef1c97ed9af96a822c124e9c332040a3034f00
+  HIST_MATRIX: experiments/risu-diff-e2/qualification/candidate58/gate2c2a-repaired-machine-requalification/first-complete/E2_GATE2C2A_REPAIRED_MACHINE_PREDICTION_MATRIX.json
+  HIST_MATRIX_BLOB: f0bcf0ea806b24caf46689bd4c68147ba35b8e60
+  HIST_FREEZE: experiments/risu-diff-e2/qualification/candidate58/gate2c2a-repaired-machine-requalification/first-complete/E2_GATE2C2A_FIRST_COMPLETE_IMMUTABLE_FREEZE_RECEIPT.json
+  HIST_FREEZE_BLOB: 0a5853950905ecd2fca219945c4e8f3844f6af81
+  REPAIR_FREEZE: experiments/risu-diff-e2/qualification/candidate58/gate2c8-projection-qualified-a3-binding-authority/exact-seven-first-complete/freeze_receipt.json
+  REPAIR_FREEZE_BLOB: 39f29a7242717b68961896d08fc8c07704df3cce
+  REPAIR_LEDGER: experiments/risu-diff-e2/qualification/candidate58/gate2c8-projection-qualified-a3-binding-authority/exact-seven-first-complete/E2_GATE2C8_REPAIRED_LANE_COMPACT_LEDGER.json
+  REPAIR_LEDGER_BLOB: 624b73e11e39829f4902c217a0790467d42b385f
+  COMPOSER: tools/e2_gate2c9_compose_candidate58_additive_authority.py
+  COMPOSER_BLOB: 935b0421ddb43e23e823935c48f84126619b20c2
+  CHECKER: tools/e2_gate2c9_check_candidate58_additive_authority.py
+  CHECKER_BLOB: f924fc8554e86ed24f793e8ff18af91e1126c702
+  REPAIR_ARTIFACT_ID: "10043213748"
+  REPAIR_ARTIFACT_DIGEST: sha256:d8346e31c8ed27b43aea25da0cd7e066b2d2b512a7fed7fae77102f1ff8f5da3
+
+jobs:
+  additive-only:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exact additive execution revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 7
+
+      - name: Prove prospective chain and closed read surface before artifact read
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "$CHECKER_COMMIT"
+          test "$(git rev-parse HEAD^^)" = "$COMPOSER_COMMIT"
+          test "$(git rev-parse HEAD^^^)" = "$PROTOCOL_V2_COMMIT"
+          test "$(git rev-parse HEAD^^^^)" = "$PROTOCOL_V1_COMMIT"
+          test "$(git rev-parse HEAD^^^^^)" = "$SOLE_SCIENTIFIC_AUTHORITY"
+          test "$(git diff --name-only HEAD^ HEAD)" = ".github/workflows/e2-gate2c9-candidate58-additive-requalification.yml"
+          test "$(git hash-object "$PROTOCOL")" = "$PROTOCOL_BLOB"
+          test "$(git hash-object "$HIST_MATRIX")" = "$HIST_MATRIX_BLOB"
+          test "$(git hash-object "$HIST_FREEZE")" = "$HIST_FREEZE_BLOB"
+          test "$(git hash-object "$REPAIR_FREEZE")" = "$REPAIR_FREEZE_BLOB"
+          test "$(git hash-object "$REPAIR_LEDGER")" = "$REPAIR_LEDGER_BLOB"
+          test "$(git hash-object "$COMPOSER")" = "$COMPOSER_BLOB"
+          test "$(git hash-object "$CHECKER")" = "$CHECKER_BLOB"
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          p=json.loads(Path(os.environ['PROTOCOL']).read_text()); h=lambda q:hashlib.sha256(Path(q).read_bytes()).hexdigest()
+          assert p['status']=='PROSPECTIVE_CORRECTED_AND_SEALED_BEFORE_ANY_ADDITIVE_COMPOSITION_EXECUTION'
+          assert p['sole_parent_authority_commit']==os.environ['SOLE_SCIENTIFIC_AUTHORITY']
+          assert p['prospective_correction']['additive_producer_execution_count_before_correction']==0
+          assert p['prospective_correction']['scientific_additive_result_observed_before_correction'] is False
+          assert h(os.environ['HIST_MATRIX'])==p['authority_locks']['historical_matrix_sha256']
+          assert p['closed_read_set']['source_bytes_read'] is False and p['closed_read_set']['c1_execution'] is False
+          assert p['execution_contract']['historical_51_rerun_forbidden'] is True and p['execution_contract']['repaired_7_rerun_forbidden'] is True
+          print('GATE2C9_PRE_ARTIFACT_PROSPECTIVE_AUTHORITY=PASS')
+          PY
+
+      - name: Set up exact Python runtime
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.13.5"
+
+      - name: Audit additive implementation independence
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile "$COMPOSER" "$CHECKER"
+          python - <<'PY'
+          import ast,os,sys
+          from pathlib import Path
+          for path in [os.environ['COMPOSER'],os.environ['CHECKER']]:
+              text=Path(path).read_text(); tree=ast.parse(text); roots=[]
+              assert 'risu_e2' not in text and 'epistemic10' not in text.lower()
+              for n in ast.walk(tree):
+                  if isinstance(n,ast.Import): roots.extend(x.name.split('.',1)[0] for x in n.names)
+                  elif isinstance(n,ast.ImportFrom) and n.module: roots.append(n.module.split('.',1)[0])
+              bad=[x for x in roots if x not in sys.stdlib_module_names and x!='__future__']
+              assert not bad,(path,bad)
+          assert 'e2_gate2c9_compose_candidate58_additive_authority' not in Path(os.environ['CHECKER']).read_text()
+          print('GATE2C9_STDLIB_ONLY_INDEPENDENCE=PASS')
+          PY
+
+      - name: Recover exactly seven frozen Gate2C8 C1 reports and nothing else
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          ZIP="$RUNNER_TEMP/gate2c8.zip"; META="$RUNNER_TEMP/gate2c8-meta.json"; REPORTS="$RUNNER_TEMP/reports"; export ZIP META REPORTS; mkdir -p "$REPORTS"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$REPAIR_ARTIFACT_ID" > "$META"
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          m=json.loads(Path(os.environ['META']).read_text())
+          assert int(m['id'])==int(os.environ['REPAIR_ARTIFACT_ID']) and m.get('expired') is False
+          assert m.get('digest')==os.environ['REPAIR_ARTIFACT_DIGEST']
+          print('GATE2C9_REPAIR_ARTIFACT_METADATA=PASS')
+          PY
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$REPAIR_ARTIFACT_ID/zip" > "$ZIP"
+          python - <<'PY'
+          import hashlib,json,os,zipfile
+          from pathlib import Path
+          p=json.loads(Path(os.environ['PROTOCOL']).read_text()); ids=sorted(p['population']['repair_case_ids']); out=Path(os.environ['REPORTS']); z=zipfile.ZipFile(os.environ['ZIP']); names=set(z.namelist()); rows=[]
+          for cid in ids:
+              n=f'c1-reports/{cid}.c1_report.json'; assert n in names,n
+              b=z.read(n); h=hashlib.sha256(b).hexdigest(); assert h==p['repair_report_authority'][cid]['c1_report_sha256'],(cid,h)
+              (out/f'{cid}.c1_report.json').write_bytes(b); rows.append({'case_id':cid,'c1_report_sha256':h})
+          assert len(rows)==7 and len(list(out.iterdir()))==7
+          rec={'schema':'risu.e2-gate2c9-selected-repair-input-receipt/v0.1','artifact_id':int(os.environ['REPAIR_ARTIFACT_ID']),'artifact_digest':os.environ['REPAIR_ARTIFACT_DIGEST'],'selected_json_file_count':7,'nonselected_artifact_files_extracted':0,'source_bytes_extracted':False,'rows':rows}
+          Path(os.environ['RUNNER_TEMP'],'selected-repair-input.json').write_text(json.dumps(rec,sort_keys=True,separators=(',',':'))+'\n')
+          print('GATE2C9_EXACT_SEVEN_REPAIR_REPORTS=PASS')
+          PY
+
+      - name: Compose additive Candidate58 authority twice
+        shell: bash
+        run: |
+          set -euo pipefail
+          for N in 1 2; do
+            python "$COMPOSER" --protocol "$PROTOCOL" --historical-matrix "$HIST_MATRIX" --historical-freeze "$HIST_FREEZE" --repaired-freeze "$REPAIR_FREEZE" --repaired-ledger "$REPAIR_LEDGER" --reports "$RUNNER_TEMP/reports" --output "$RUNNER_TEMP/authority$N.json" > "$RUNNER_TEMP/authority$N.stdout"
+          done
+          cmp "$RUNNER_TEMP/authority1.json" "$RUNNER_TEMP/authority2.json"
+          cmp "$RUNNER_TEMP/authority1.stdout" "$RUNNER_TEMP/authority2.stdout"
+          echo GATE2C9_COMPOSER_DUAL_REPLAY=PASS
+
+      - name: Independently check additive authority twice
+        shell: bash
+        run: |
+          set -euo pipefail
+          for N in 1 2; do
+            python "$CHECKER" --protocol "$PROTOCOL" --historical-matrix "$HIST_MATRIX" --repaired-freeze "$REPAIR_FREEZE" --repaired-ledger "$REPAIR_LEDGER" --reports "$RUNNER_TEMP/reports" --authority "$RUNNER_TEMP/authority1.json" --output "$RUNNER_TEMP/checker$N.json" > "$RUNNER_TEMP/checker$N.stdout"
+          done
+          cmp "$RUNNER_TEMP/checker1.json" "$RUNNER_TEMP/checker2.json"
+          cmp "$RUNNER_TEMP/checker1.stdout" "$RUNNER_TEMP/checker2.stdout"
+          echo GATE2C9_CHECKER_DUAL_REPLAY=PASS
+
+      - name: Materialize first-complete payload before decision
+        shell: bash
+        run: |
+          set -euo pipefail
+          PAY="$RUNNER_TEMP/payload"; export PAY; mkdir -p "$PAY"
+          cp "$RUNNER_TEMP/authority1.json" "$PAY/E2_GATE2C9_CANDIDATE58_ADDITIVE_AUTHORITY.json"
+          cp "$RUNNER_TEMP/checker1.json" "$PAY/E2_GATE2C9_CANDIDATE58_ADDITIVE_INDEPENDENT_CHECKER.json"
+          cp "$RUNNER_TEMP/selected-repair-input.json" "$PAY/E2_GATE2C9_SELECTED_REPAIR_INPUT_RECEIPT.json"
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          pay=Path(os.environ['PAY']); a=json.loads((pay/'E2_GATE2C9_CANDIDATE58_ADDITIVE_AUTHORITY.json').read_text()); c=json.loads((pay/'E2_GATE2C9_CANDIDATE58_ADDITIVE_INDEPENDENT_CHECKER.json').read_text()); h=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          success=(c['status']=='PASS' and c['untouched_51_historical_rows_exact'] is True and c['repaired_7_authorities_exact'] is True and c['aggregate_matches_preregistered'] is True and a['aggregate']['effective_final_preservation_count']==7 and a['aggregate']['effective_final_incomplete_count']==51)
+          rec={'schema':'risu.e2-gate2c9-candidate58-additive-execution-receipt/v0.1','status':'FIRST_COMPLETE_READY_FOR_IMMUTABLE_FREEZE','workflow_run_id':os.environ['GITHUB_RUN_ID'],'workflow_sha':os.environ['GITHUB_SHA'],'sole_scientific_authority':os.environ['SOLE_SCIENTIFIC_AUTHORITY'],'protocol_v1_commit':os.environ['PROTOCOL_V1_COMMIT'],'protocol_v2_commit':os.environ['PROTOCOL_V2_COMMIT'],'historical_case_count':58,'historical_rows_reexecuted':0,'repair_case_count':7,'repaired_cases_reexecuted':0,'candidate_execution_count':0,'c1_execution_count':0,'primary_adapter_execution_count':0,'semantic_kernel_execution_count':0,'certificate_reproduction_count':0,'source_bytes_read':False,'truth_read':False,'epistemic10_read':False,'mutation_algebra_opened':False,'producer_dual_replay_byte_identical':True,'checker_dual_replay_byte_identical':True,'additive_success':success,'aggregate':a['aggregate'],'outputs':{'authority_sha256':h(pay/'E2_GATE2C9_CANDIDATE58_ADDITIVE_AUTHORITY.json'),'checker_sha256':h(pay/'E2_GATE2C9_CANDIDATE58_ADDITIVE_INDEPENDENT_CHECKER.json'),'selected_input_sha256':h(pay/'E2_GATE2C9_SELECTED_REPAIR_INPUT_RECEIPT.json')}}
+          (pay/'E2_GATE2C9_CANDIDATE58_ADDITIVE_EXECUTION_RECEIPT.json').write_text(json.dumps(rec,sort_keys=True,separators=(',',':'))+'\n')
+          print('GATE2C9_ADDITIVE_SUCCESS='+str(success).lower())
+          PY
+
+      - name: Upload first-complete additive result before success decision
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-gate2c9-candidate58-additive-first-complete
+          path: ${{ runner.temp }}/payload/
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+
+      - name: Apply preregistered Gate2C9 success rule
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          r=json.loads(Path(os.environ['RUNNER_TEMP'],'payload/E2_GATE2C9_CANDIDATE58_ADDITIVE_EXECUTION_RECEIPT.json').read_text())
+          if r['additive_success'] is not True: raise SystemExit('GATE2C9_ADDITIVE_DECISION=FAIL_CLOSED')
+          print('GATE2C9_ADDITIVE_DECISION=SUCCESS_FREEZE_AUTHORIZED')
+          PY
