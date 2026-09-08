@@ -1,0 +1,60 @@
+name: E2 Gate2D D3 Contract Digest Diagnosis
+
+on:
+  push:
+    branches:
+      - gate2d-d3-closure-qualification
+    paths:
+      - '.github/workflows/e2-gate2d-d3-contract-digest-diagnosis.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          fetch-depth: 0
+      - name: Compute exact frozen contract digests only
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p diagnosis_artifact
+          python - <<'PY'
+          import hashlib,json,subprocess
+          from pathlib import Path
+          p=Path('protocols/RISU_DIFF_E2_GATE2D_D3_CLOSURE_PROTOCOL_v0.1.json')
+          b=p.read_bytes()
+          got_blob=subprocess.check_output(['git','hash-object',str(p)],text=True).strip()
+          freeze=json.loads(Path('experiments/risu-diff-e2/qualification/gate2d-evaluation-constitution/d3-closure-protocol-freeze/freeze_receipt.json').read_bytes())
+          out={
+            'schema':'risu.e2-gate2d-d3-contract-digest-diagnosis/v0.1',
+            'status':'DIAGNOSIS_COMPLETE',
+            'contract_git_blob':got_blob,
+            'contract_size_bytes':len(b),
+            'contract_sha256_actual':hashlib.sha256(b).hexdigest(),
+            'contract_sha256_recorded':freeze.get('contract_sha256'),
+            'git_blob_matches_frozen':got_blob=='e528f6022de092f492d01b1057db3b956398848d',
+            'sha256_matches_recorded':hashlib.sha256(b).hexdigest()==freeze.get('contract_sha256'),
+            'provider_request_count':0,
+            'epistemic10_read':False,
+            'truth_read':False,
+            'fresh_target_read':False,
+            'mutation_algebra_opened':False,
+            'gate2e_authorized':False,
+          }
+          Path('diagnosis_artifact/D3_CONTRACT_DIGEST_DIAGNOSIS.json').write_text(json.dumps(out,sort_keys=True,separators=(',',':'))+'\n')
+          if not out['git_blob_matches_frozen']:
+              raise SystemExit('D3_CONTRACT_GIT_BLOB_CHANGED')
+          if out['sha256_matches_recorded']:
+              raise SystemExit('EXPECTED_RECORDED_SHA256_MISMATCH_NOT_REPRODUCED')
+          print('D3_CONTRACT_DIGEST_MISMATCH_REPRODUCED')
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: e2-gate2d-d3-contract-digest-diagnosis
+          path: diagnosis_artifact
+          if-no-files-found: error
+          retention-days: 90
