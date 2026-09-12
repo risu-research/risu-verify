@@ -9,7 +9,6 @@ on:
       - 'protocols/RISU_KERNEL_K1_RC1_CONSTITUTION.json'
       - 'protocols/RISU_KERNEL_K1_RC1_FREEZE.json'
       - 'tools/risu_kernel_k1_rc1_verify.py'
-      - 'schemas/RISU_KERNEL_K1_W0.schema.json'
       - 'schemas/RISU_KERNEL_K1_WIRE_W0.schema.json'
       - 'protocols/RISU_KERNEL_K1_WIRE_W0.json'
       - 'kernel/k1_checker_w1.py'
