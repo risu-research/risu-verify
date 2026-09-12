@@ -19,7 +19,7 @@
     "tools/risu_kernel_k1_adversarial_gate_a0.py": "b35308f1de49cd4b68683c8e599b6de2ecadb24e",
     "tools/risu_kernel_k1_wire_w0_verify.py": "0a699079f7896c9fa9e7da32ea2576307efceb28",
     "tools/risu_kernel_k1_checker_w1_selftest.py": "c42132a14f104cc2f7ab824d690fbd5b0412975a",
-    "compatibility/v07_k1/VBE_CALIBRATION_4ROW_SNAPSHOT.json": "48f5ffaa5453a7a991562954e97ff5368ae5d661",
+    "compatibility/v07_k1/VBE_CALIBRATION_4ROW_SNAPSHOT.json": "414dbb78de101ff502d350901c937d97cb4a41e2",
     "adapters/v07_to_k1_compat_a0.py": "61bb97f2037c4caea8890d47250f5d38767a9a70",
     "tools/risu_v07_to_k1_compat_a0_verify.py": "f18b6e62e70d382a2ecb7970066af86336a90c28",
     "protocols/RISU_KERNEL_K1_ADVERSARIAL_GATE_A1.json": "5b1e15582d05ceafa1cbd8e6934a421bd44c3dd9",
