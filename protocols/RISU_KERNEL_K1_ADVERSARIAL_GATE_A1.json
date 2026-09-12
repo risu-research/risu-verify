@@ -1,0 +1,193 @@
+{
+  "gate_id": "RISU_KERNEL_K1_ADVERSARIAL_GATE_A1",
+  "version": "0.1",
+  "status": "PROSPECTIVE_FALSIFICATION_ONLY",
+  "base_checkpoint": "docs/RISU_KERNEL_K1_NARROW_WAIST_CHECKPOINT_A0.md",
+  "question": "Does any declared cross-domain obligation require a new K1 semantic primitive under an admissible, target-independent lowering?",
+  "admissible_lowering": {
+    "source_first": "World commitments and ALLOW are fixed before any target realization is inspected.",
+    "same_claim_pair": "GOOD and BAD targets for a family must be judged against the identical K1 claim_id.",
+    "no_posthoc_world_split": "A target outcome may not cause W to be refined, renamed, or split after source commitment.",
+    "no_posthoc_amnesty": "A realized forbidden consequence may not be inserted into ALLOW after target inspection.",
+    "semantic_field_preservation": "Fields declared material by the source lowering manifest may not be dropped or coerced during world/consequence commitment.",
+    "open_target_universe": "A target-native consequence remains representable even when absent from the source ALLOW vocabulary.",
+    "proof_scope_honesty": "A proof object may discharge only the semantic scope its proof kind actually establishes."
+  },
+  "primitive_promotion_rule": {
+    "kernel_counterexample": "Promote a new K1 primitive only if a required semantic distinction still collapses under every admissible target-independent lowering into W, open consequence commitments, ALLOW/REALIZE, and accepted proof obligations.",
+    "proof_kind_gap": "If the distinction is expressible in the relation but the current proof kind cannot establish closure/grounding at the required semantic scope, add or improve a proof kind, not a kernel primitive.",
+    "elaboration_gap": "If the source contract cannot yet be compiled or committed prospectively, repair the elaboration/frontend layer, not the kernel.",
+    "unknown_is_not_preserved": "Missing totality, missing closure, unsupported proof scope, or unresolved interpretation must never be promoted to PRESERVED."
+  },
+  "required_pressure_classes": [
+    "authorization-revocation",
+    "value-recipient-amount-binding",
+    "history-multiplicity-idempotence",
+    "external-audience-binding",
+    "bounded-progress-deadline"
+  ],
+  "cases": [
+    {
+      "id": "A1-AUTH-REVOCATION",
+      "family": "authorization-revocation",
+      "material_world_fields": ["principal", "resource", "authorization", "epoch"],
+      "material_consequence_fields": ["event", "principal", "resource", "result", "epoch"],
+      "worlds": [
+        {
+          "key": "AUTH_ACTIVE_E7",
+          "descriptor": {"family": "authorization", "principal": "alice", "resource": "deploy/prod", "authorization": "active", "epoch": 7},
+          "allow": [{"event": "deploy", "principal": "alice", "resource": "deploy/prod", "result": "executed", "epoch": 7}]
+        },
+        {
+          "key": "AUTH_REVOKED_E8",
+          "descriptor": {"family": "authorization", "principal": "alice", "resource": "deploy/prod", "authorization": "revoked", "epoch": 8},
+          "allow": [{"event": "deploy", "principal": "alice", "resource": "deploy/prod", "result": "denied_revoked", "epoch": 8}]
+        }
+      ],
+      "targets": {
+        "good": [
+          ["AUTH_ACTIVE_E7", {"event": "deploy", "principal": "alice", "resource": "deploy/prod", "result": "executed", "epoch": 7}],
+          ["AUTH_REVOKED_E8", {"event": "deploy", "principal": "alice", "resource": "deploy/prod", "result": "denied_revoked", "epoch": 8}]
+        ],
+        "bad": [
+          ["AUTH_ACTIVE_E7", {"event": "deploy", "principal": "alice", "resource": "deploy/prod", "result": "executed", "epoch": 7}],
+          ["AUTH_REVOKED_E8", {"event": "deploy", "principal": "alice", "resource": "deploy/prod", "result": "executed_under_stale_grant", "epoch": 7}]
+        ]
+      },
+      "expected": {"good": "PRESERVATION", "bad": "REGRESSION"}
+    },
+    {
+      "id": "A1-MONEY-BINDING",
+      "family": "value-recipient-amount-binding",
+      "material_world_fields": ["instruction", "recipient", "amount_minor", "currency"],
+      "material_consequence_fields": ["event", "result", "recipient", "amount_minor", "currency"],
+      "worlds": [
+        {
+          "key": "PAY_ALICE_100",
+          "descriptor": {"family": "payment", "instruction": "p1", "recipient": "alice", "amount_minor": 10000, "currency": "USD"},
+          "allow": [{"event": "transfer", "result": "settled", "recipient": "alice", "amount_minor": 10000, "currency": "USD"}]
+        },
+        {
+          "key": "PAY_BOB_70",
+          "descriptor": {"family": "payment", "instruction": "p2", "recipient": "bob", "amount_minor": 7000, "currency": "USD"},
+          "allow": [{"event": "transfer", "result": "settled", "recipient": "bob", "amount_minor": 7000, "currency": "USD"}]
+        }
+      ],
+      "targets": {
+        "good": [
+          ["PAY_ALICE_100", {"event": "transfer", "result": "settled", "recipient": "alice", "amount_minor": 10000, "currency": "USD"}],
+          ["PAY_BOB_70", {"event": "transfer", "result": "settled", "recipient": "bob", "amount_minor": 7000, "currency": "USD"}]
+        ],
+        "bad": [
+          ["PAY_ALICE_100", {"event": "transfer", "result": "settled", "recipient": "mallory", "amount_minor": 10000, "currency": "USD"}],
+          ["PAY_BOB_70", {"event": "transfer", "result": "settled", "recipient": "bob", "amount_minor": 70000, "currency": "USD"}]
+        ]
+      },
+      "expected": {"good": "PRESERVATION", "bad": "REGRESSION"}
+    },
+    {
+      "id": "A1-IDEMPOTENCE",
+      "family": "history-multiplicity-idempotence",
+      "material_world_fields": ["idempotency_key", "invocation_index", "prior_effects"],
+      "material_consequence_fields": ["event", "idempotency_key", "result", "effect_count"],
+      "worlds": [
+        {
+          "key": "FIRST_K9",
+          "descriptor": {"family": "idempotency", "idempotency_key": "K9", "invocation_index": 1, "prior_effects": 0},
+          "allow": [{"event": "charge", "idempotency_key": "K9", "result": "committed", "effect_count": 1}]
+        },
+        {
+          "key": "RETRY_K9_AFTER_COMMIT",
+          "descriptor": {"family": "idempotency", "idempotency_key": "K9", "invocation_index": 2, "prior_effects": 1},
+          "allow": [{"event": "charge", "idempotency_key": "K9", "result": "duplicate_suppressed", "effect_count": 1}]
+        }
+      ],
+      "targets": {
+        "good": [
+          ["FIRST_K9", {"event": "charge", "idempotency_key": "K9", "result": "committed", "effect_count": 1}],
+          ["RETRY_K9_AFTER_COMMIT", {"event": "charge", "idempotency_key": "K9", "result": "duplicate_suppressed", "effect_count": 1}]
+        ],
+        "bad": [
+          ["FIRST_K9", {"event": "charge", "idempotency_key": "K9", "result": "committed", "effect_count": 1}],
+          ["RETRY_K9_AFTER_COMMIT", {"event": "charge", "idempotency_key": "K9", "result": "committed_again", "effect_count": 2}]
+        ]
+      },
+      "expected": {"good": "PRESERVATION", "bad": "REGRESSION"}
+    },
+    {
+      "id": "A1-COMM-AUDIENCE",
+      "family": "external-audience-binding",
+      "material_world_fields": ["message", "approved_audience"],
+      "material_consequence_fields": ["event", "message", "audience", "result"],
+      "worlds": [
+        {
+          "key": "MSG_TEAM_ONLY",
+          "descriptor": {"family": "communication", "message": "m1", "approved_audience": "team"},
+          "allow": [{"event": "message_send", "message": "m1", "audience": "team", "result": "sent"}]
+        },
+        {
+          "key": "MSG_VENDOR_ONLY",
+          "descriptor": {"family": "communication", "message": "m2", "approved_audience": "vendor_a"},
+          "allow": [{"event": "message_send", "message": "m2", "audience": "vendor_a", "result": "sent"}]
+        }
+      ],
+      "targets": {
+        "good": [
+          ["MSG_TEAM_ONLY", {"event": "message_send", "message": "m1", "audience": "team", "result": "sent"}],
+          ["MSG_VENDOR_ONLY", {"event": "message_send", "message": "m2", "audience": "vendor_a", "result": "sent"}]
+        ],
+        "bad": [
+          ["MSG_TEAM_ONLY", {"event": "message_send", "message": "m1", "audience": "public", "result": "sent"}],
+          ["MSG_VENDOR_ONLY", {"event": "message_send", "message": "m2", "audience": "vendor_a", "result": "sent"}]
+        ]
+      },
+      "expected": {"good": "PRESERVATION", "bad": "REGRESSION"}
+    },
+    {
+      "id": "A1-BOUNDED-DEADLINE",
+      "family": "bounded-progress-deadline",
+      "material_world_fields": ["task", "start_tick", "deadline_tick"],
+      "material_consequence_fields": ["event", "task", "terminal_status", "deadline_tick"],
+      "worlds": [
+        {
+          "key": "TASK_Q_DEADLINE_10",
+          "descriptor": {"family": "bounded_progress", "task": "Q", "start_tick": 0, "deadline_tick": 10},
+          "allow": [{"event": "task_terminal", "task": "Q", "terminal_status": "completed_by_deadline", "deadline_tick": 10}]
+        }
+      ],
+      "targets": {
+        "good": [
+          ["TASK_Q_DEADLINE_10", {"event": "task_terminal", "task": "Q", "terminal_status": "completed_by_deadline", "deadline_tick": 10}]
+        ],
+        "bad": [
+          ["TASK_Q_DEADLINE_10", {"event": "task_terminal", "task": "Q", "terminal_status": "deadline_missed", "deadline_tick": 10}]
+        ],
+        "silent": []
+      },
+      "expected": {"good": "PRESERVATION", "bad": "REGRESSION", "silent": "ASSURANCE_INCOMPLETE"}
+    }
+  ],
+  "scope_sentinels": [
+    {
+      "id": "A1-UNBOUNDED-EVENTUALITY",
+      "obligation": "For every admitted execution satisfying the fairness assumptions, task Q eventually completes with no finite deadline.",
+      "required_semantic_scope": "UNBOUNDED_TRACE_LIVENESS",
+      "current_proof_kind": "k1.finite-model/v1",
+      "current_proof_scope": "DECLARED_FINITE_TARGET_MODEL",
+      "expected_classification": "PROOF_KIND_GAP",
+      "kernel_implication": "NONE_UNLESS_NONREPRESENTABILITY_IS_SHOWN"
+    }
+  ],
+  "mutation_requirements": [
+    "LATE_ALLOW_AMNESTY",
+    "POSTHOC_WORLD_SPLIT",
+    "AUTH_DROP_REVOCATION_STATE",
+    "MONEY_DROP_RECIPIENT",
+    "MONEY_DROP_AMOUNT",
+    "IDEMPOTENCE_DROP_HISTORY",
+    "COMM_DROP_AUDIENCE",
+    "DEADLINE_DROP_TERMINAL_STATUS",
+    "DEADLINE_SILENCE_AS_PRESERVED",
+    "UNBOUNDED_LIVENESS_AS_FINITE_MODEL_PRESERVED"
+  ]
+}
