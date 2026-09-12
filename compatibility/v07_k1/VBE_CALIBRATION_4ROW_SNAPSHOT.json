@@ -1,0 +1,183 @@
+{
+  "snapshot_id": "RISU_V07_K1_COMPAT_CALIBRATION_A0",
+  "status": "NON_AUTHORITATIVE_COMPATIBILITY_SNAPSHOT",
+  "purpose": "Offline architectural-equivalence input only. This snapshot does not create new source or target authority and may not reinterpret the frozen v0.7 results.",
+  "source": {
+    "repository": "risu-research/risu-verify",
+    "commit": "a548a07152c068805a147e47aa18aa40a2ffa492",
+    "path": "results/VBE_CALIBRATION_DIFFERENTIAL.json",
+    "git_blob_sha1": "434ef5f4601e8adb7eb33570676ab0f68fc09306",
+    "result_version": "0.1",
+    "profile": "version-bound-effect",
+    "profile_version": "0.1-development",
+    "source_status": "PASS",
+    "calibration_count": 4
+  },
+  "translation_rule": {
+    "world": "Each frozen legacy world label becomes one K1 admitted world commitment. Coordinates are diagnostics only.",
+    "allow": "Each frozen legacy (world, required_consequence) becomes one K1 ALLOW pair.",
+    "realize_c": "If projected_effect.space == C, the frozen projected_effect.label becomes the K1 realized consequence atom.",
+    "realize_outside_c": "If projected_effect.space == OUTSIDE_C, the frozen native effect is encoded as a distinct target-native consequence atom. It must not be silently dropped or coerced into the source consequence vocabulary.",
+    "diagnostics": "C/D/O, Exact, coordinates, matches, and source_semantic_digest are retained only as compatibility diagnostics and are not inputs to the K1 semantic judgment.",
+    "verdict": "Legacy CONSEQUENCE_REGRESSION must translate to a K1 regression witness; legacy PRESERVED must translate to a complete finite-model preservation certificate."
+  },
+  "rows": [
+    {
+      "instance": "001-github-guarded-merge",
+      "legacy_case": "cases/github-guarded-merge",
+      "legacy_product_status": "CONSEQUENCE_REGRESSION",
+      "source_semantic_digest": "0a381d65696a9399b3ea05a61d844d265a682cf1b955e3077073f4f8a042b117",
+      "exact_status": "REALIZATION_CONTRADICTED",
+      "exact_failure_mode": "MECHANISM_MISALIGNMENT",
+      "structural": {
+        "C": "C1",
+        "D": "D1",
+        "O": "O0",
+        "classification": "OPERATIVE_DISCHARGE_MISSING",
+        "coverage_complete": true,
+        "operative_basis": {
+          "evaluation_cut": "NONE",
+          "gates_effect": false,
+          "post_check_material_transition_possible": true
+        }
+      },
+      "worlds": [
+        {
+          "world": "W-04af36bfe15c8fdedab0",
+          "coordinates": {
+            "otherwise_mergeable": true,
+            "request_head": "H1",
+            "reviewed_head": "H0"
+          },
+          "required_consequence": "STALE_REQUEST_REJECTED",
+          "projected_effect": {
+            "space": "OUTSIDE_C",
+            "native": {
+              "kind": "MERGED_CURRENT_HEAD",
+              "merged_head": "H1"
+            }
+          },
+          "matches": false
+        },
+        {
+          "world": "W-4ba2c06c73b713d2d2de",
+          "coordinates": {
+            "otherwise_mergeable": true,
+            "request_head": "H0",
+            "reviewed_head": "H0"
+          },
+          "required_consequence": "MERGED_REVIEWED_HEAD",
+          "projected_effect": {
+            "space": "C",
+            "label": "MERGED_REVIEWED_HEAD"
+          },
+          "matches": true
+        }
+      ]
+    },
+    {
+      "instance": "002-azure-wiki-etag",
+      "legacy_case": "cases/azure-devops-wiki-etag",
+      "legacy_product_status": "PRESERVED",
+      "source_semantic_digest": "ec0a5cf7e68d9d7395f09a206da3609ec0522e4569b511ec5bb24c1b2c1aa6de",
+      "exact_status": "REALIZATION_ESTABLISHED",
+      "exact_failure_mode": "NONE",
+      "structural": {
+        "C": "C1",
+        "D": "D1",
+        "O": "O1",
+        "classification": "STRUCTURAL_ASSURANCE_ESTABLISHED",
+        "coverage_complete": true,
+        "operative_basis": {
+          "evaluation_cut": "EFFECT",
+          "gates_effect": true,
+          "post_check_material_transition_possible": true
+        }
+      },
+      "worlds": [
+        {
+          "world": "W-3a0881af42d2795c7432",
+          "coordinates": {"current_etag": "E0"},
+          "required_consequence": "UPDATE_COMMITTED",
+          "projected_effect": {"space": "C", "label": "UPDATE_COMMITTED"},
+          "matches": true
+        },
+        {
+          "world": "W-91d952c20f111d685f4a",
+          "coordinates": {"current_etag": "E1"},
+          "required_consequence": "STALE_EDIT_REJECTED",
+          "projected_effect": {"space": "C", "label": "STALE_EDIT_REJECTED"},
+          "matches": true
+        }
+      ]
+    },
+    {
+      "instance": "003-before-github-blob-sha",
+      "legacy_case": "cases/github-create-update-sha-transition/before",
+      "legacy_product_status": "CONSEQUENCE_REGRESSION",
+      "source_semantic_digest": "a1da66b05bdccfc39691bdfaec25a9435f26841d43898d71d671a52e287470d1",
+      "exact_status": "REALIZATION_CONTRADICTED",
+      "exact_failure_mode": "OPERATIVE_INSUFFICIENCY",
+      "structural": {
+        "C": "C0",
+        "D": "NA",
+        "O": "NA",
+        "classification": "CORRESPONDENCE_NOT_ESTABLISHED",
+        "coverage_complete": true,
+        "operative_basis": null
+      },
+      "worlds": [
+        {
+          "world": "W-156ec19991f34bd9b865",
+          "coordinates": {"current_blob_sha": "S1"},
+          "required_consequence": "STALE_UPDATE_REJECTED",
+          "projected_effect": {"space": "C", "label": "STALE_UPDATE_REJECTED"},
+          "matches": true
+        },
+        {
+          "world": "W-3041facb9064b9d8e3e9",
+          "coordinates": {"current_blob_sha": "S0"},
+          "required_consequence": "UPDATE_COMMITTED",
+          "projected_effect": {"space": "C", "label": "STALE_UPDATE_REJECTED"},
+          "matches": false
+        }
+      ]
+    },
+    {
+      "instance": "003-after-github-blob-sha",
+      "legacy_case": "cases/github-create-update-sha-transition/after",
+      "legacy_product_status": "PRESERVED",
+      "source_semantic_digest": "a1da66b05bdccfc39691bdfaec25a9435f26841d43898d71d671a52e287470d1",
+      "exact_status": "REALIZATION_ESTABLISHED",
+      "exact_failure_mode": "NONE",
+      "structural": {
+        "C": "C1",
+        "D": "D1",
+        "O": "O1",
+        "classification": "STRUCTURAL_ASSURANCE_ESTABLISHED",
+        "coverage_complete": true,
+        "operative_basis": {
+          "evaluation_cut": "EFFECT",
+          "gates_effect": true,
+          "post_check_material_transition_possible": true
+        }
+      },
+      "worlds": [
+        {
+          "world": "W-156ec19991f34bd9b865",
+          "coordinates": {"current_blob_sha": "S1"},
+          "required_consequence": "STALE_UPDATE_REJECTED",
+          "projected_effect": {"space": "C", "label": "STALE_UPDATE_REJECTED"},
+          "matches": true
+        },
+        {
+          "world": "W-3041facb9064b9d8e3e9",
+          "coordinates": {"current_blob_sha": "S0"},
+          "required_consequence": "UPDATE_COMMITTED",
+          "projected_effect": {"space": "C", "label": "UPDATE_COMMITTED"},
+          "matches": true
+        }
+      ]
+    }
+  ]
+}
