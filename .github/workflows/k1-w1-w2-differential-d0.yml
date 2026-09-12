@@ -1,4 +1,4 @@
-name: K1 W1-W2 Differential D0
+name: K1 W1-W2 Differential Qualification
 
 on:
   push:
@@ -7,7 +7,9 @@ on:
     paths:
       - 'kernel/k1_checker_w2.go'
       - 'tools/risu_kernel_k1_w1_w2_differential.py'
+      - 'tools/risu_kernel_k1_w1_w2_generative_d1.py'
       - 'protocols/RISU_KERNEL_K1_W1_W2_DIFFERENTIAL_D0.json'
+      - 'protocols/RISU_KERNEL_K1_W1_W2_GENERATIVE_D1.json'
       - 'kernel/k1_checker_w1.py'
       - 'protocols/RISU_KERNEL_K1_WIRE_W0.json'
       - 'schemas/RISU_KERNEL_K1_WIRE_W0.schema.json'
@@ -16,6 +18,9 @@ on:
 
 permissions:
   contents: read
+
+env:
+  CGO_ENABLED: '0'
 
 jobs:
   independent-differential:
@@ -28,11 +33,13 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: '1.24.x'
-      - name: Compile independent Go checker W2
+          cache: false
+      - name: Compile and vet independent Go checker W2
         run: |
           go version
+          go vet kernel/k1_checker_w2.go
           go build -trimpath -o /tmp/risu-k1-w2 kernel/k1_checker_w2.go
-      - name: Run W1 vs W2 differential corpus
+      - name: Run static W1 vs W2 differential D0
         run: |
           python tools/risu_kernel_k1_w1_w2_differential.py \
             --w2 /tmp/risu-k1-w2 \
@@ -46,7 +53,26 @@ jobs:
           assert x['qualification_disagreements'] == []
           assert x['oracle_failures'] == []
           assert x['independence_audit']['pass'] is True
-          print('K1 W1/W2 semantic differential qualification: PASS')
+          assert x['boundary_divergences'] == ['sentinel_proof_kind_schema_pattern']
+          print('K1 W1/W2 static semantic differential: PASS')
           print('full parser equivalence:', x['full_wire_parser_equivalence'])
-          print('boundary divergences:', x['boundary_divergences'])
+          print('classified boundary divergence:', x['boundary_divergences'])
+          PY
+      - name: Run seeded generative W1 vs W2 differential D1
+        run: |
+          python tools/risu_kernel_k1_w1_w2_generative_d1.py \
+            --w2 /tmp/risu-k1-w2 \
+            --output /tmp/k1-w1-w2-d1.json
+          python - <<'PY'
+          import json
+          x = json.load(open('/tmp/k1-w1-w2-d1.json', encoding='utf-8'))
+          assert x['status'] == 'PASS'
+          assert x['comparison_count'] == 384
+          assert x['w1_w2_disagreements'] == []
+          assert x['oracle_failures'] == []
+          assert x['semantic_identity_failures'] == []
+          assert x['all_comparisons_agree'] is True
+          assert x['all_oracles_match'] is True
+          assert x['claim_target_permutation_invariance'] is True
+          print('K1 W1/W2 seeded generative differential: PASS')
           PY
