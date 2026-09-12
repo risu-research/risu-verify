@@ -1,6 +1,6 @@
 {
   "qualification_id": "RISU_KERNEL_K1_W2_QUALIFICATION",
-  "status": "CANDIDATE_QUALIFICATION_FREEZE",
+  "status": "QUALIFICATION_FREEZE",
   "meaning": "Qualification of a second, independently implemented checker as corroborating evidence for the frozen K1 RC1 W0 + k1.finite-model/v1 fragment. This does not modify K1 RC1, establish universal checker correctness, or bind a finite proof model to an external implementation.",
   "base_release_candidate": {
     "branch": "k1-rc1",
@@ -31,6 +31,12 @@
       "D0 static differential success",
       "D1 seeded generative differential success"
     ]
+  },
+  "first_composite_qualification_run": {
+    "workflow_run_id": 34698435629,
+    "head_commit": "ee486bfa68a57135c801907df2d5f3e93e0bcce4",
+    "conclusion": "success",
+    "purpose": "Demonstrated that the composite provenance/blob/source-hygiene/D0/D1 verifier succeeds before final tooling blobs are pinned. Final qualification still requires a fresh composite success on the post-pin head."
   },
   "required_results": {
     "d0": {
@@ -80,6 +86,10 @@
     "universal_correctness_claim": false,
     "full_wire_parser_equivalence_claim": false
   },
-  "qualification_tooling_blobs": {},
-  "qualification_rule": "The composite verifier must prove RC1 ancestry and add-only isolation, match every pinned blob, establish canonical/pure-Go W2 source, rerun D0 and D1, reproduce all required results, and preserve the classified fail-closed parser divergence exactly. Only then may an exact-head k1-w2-qualified branch be created."
+  "qualification_tooling_blobs": {
+    "tools/risu_kernel_k1_w2_qualification_verify.py": "cab494242ca1baf5478f85c66a7846af613bd836",
+    ".github/workflows/k1-w2-qualification.yml": "1b1a6d59fc5ecfba356e2b9f6ea9fb08c57f3367",
+    "docs/RISU_KERNEL_K1_W2_INDEPENDENT_CHECKER.md": "814aac175631f33ba56ba4014d9fc5db167f4797"
+  },
+  "qualification_rule": "The composite verifier must prove RC1 ancestry and add-only isolation, match every pinned blob, establish canonical/pure-Go W2 source, rerun D0 and D1, reproduce all required results, and preserve the classified fail-closed parser divergence exactly. Only a post-pin composite success on the exact current head authorizes creation of k1-w2-qualified."
 }
