@@ -1,0 +1,43 @@
+name: K1 W2 One-Shot Gofmt
+
+on:
+  push:
+    branches:
+      - k1-w2-differential
+    paths:
+      - '.github/workflows/k1-w2-gofmt-once.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  canonicalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: k1-w2-differential
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.x'
+          cache: false
+      - name: Canonicalize W2 source only
+        run: |
+          set -euo pipefail
+          before="$(git hash-object kernel/k1_checker_w2.go)"
+          gofmt -w kernel/k1_checker_w2.go
+          gofmt -d kernel/k1_checker_w2.go | tee /tmp/gofmt-after.diff
+          test ! -s /tmp/gofmt-after.diff
+          git diff --check
+          after="$(git hash-object kernel/k1_checker_w2.go)"
+          echo "before_blob=$before"
+          echo "after_blob=$after"
+          if git diff --quiet -- kernel/k1_checker_w2.go; then
+            echo 'W2 already gofmt-canonical.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add kernel/k1_checker_w2.go
+          git commit -m 'Canonicalize independent K1 checker W2 with gofmt'
+          git push origin HEAD:k1-w2-differential
