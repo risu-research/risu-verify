@@ -1,0 +1,52 @@
+name: K1 W1-W2 Differential D0
+
+on:
+  push:
+    branches:
+      - k1-w2-differential
+    paths:
+      - 'kernel/k1_checker_w2.go'
+      - 'tools/risu_kernel_k1_w1_w2_differential.py'
+      - 'protocols/RISU_KERNEL_K1_W1_W2_DIFFERENTIAL_D0.json'
+      - 'kernel/k1_checker_w1.py'
+      - 'protocols/RISU_KERNEL_K1_WIRE_W0.json'
+      - 'schemas/RISU_KERNEL_K1_WIRE_W0.schema.json'
+      - '.github/workflows/k1-w1-w2-differential-d0.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  independent-differential:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.x'
+      - name: Compile independent Go checker W2
+        run: |
+          go version
+          go build -trimpath -o /tmp/risu-k1-w2 kernel/k1_checker_w2.go
+      - name: Run W1 vs W2 differential corpus
+        run: |
+          python tools/risu_kernel_k1_w1_w2_differential.py \
+            --w2 /tmp/risu-k1-w2 \
+            --output /tmp/k1-w1-w2-d0.json
+          python - <<'PY'
+          import json
+          x = json.load(open('/tmp/k1-w1-w2-d0.json', encoding='utf-8'))
+          assert x['status'] == 'PASS'
+          assert x['semantic_differential_equivalence'] == 'QUALIFIED'
+          assert x['qualification_vector_count'] >= 34
+          assert x['qualification_disagreements'] == []
+          assert x['oracle_failures'] == []
+          assert x['independence_audit']['pass'] is True
+          print('K1 W1/W2 semantic differential qualification: PASS')
+          print('full parser equivalence:', x['full_wire_parser_equivalence'])
+          print('boundary divergences:', x['boundary_divergences'])
+          PY
