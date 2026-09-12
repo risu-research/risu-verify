@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 """K1 Adversarial Gate A1 — cross-domain constitutional falsification.
 
-A1 does not try to make K1 pass.  It asks whether heterogeneous obligations can
-be lowered prospectively into the existing W + ALLOW/REALIZE narrow waist
-without target-dependent rewriting, and whether current proof limitations are
-kept separate from semantic-kernel limitations.
+The gate asks whether heterogeneous obligations require a new K1 semantic
+primitive under a prospective, target-independent lowering.  It deliberately
+separates semantic-kernel counterexamples from elaboration defects and proof-
+kind limitations.
 
-The gate intentionally reuses the tiny W1 checker for finite-model proof
-objects.  Source semantic descriptors used here are synthetic and prospective;
-they are not claims about external implementations.
+Synthetic semantic descriptors are prospective test inputs only.  They are not
+claims about external implementations.
 """
 
 import argparse
@@ -73,11 +72,7 @@ def lowering_commitment(case):
         "material_world_fields": case["material_world_fields"],
         "material_consequence_fields": case["material_consequence_fields"],
         "worlds": [
-            {
-                "key": w["key"],
-                "descriptor": w["descriptor"],
-                "allow": w["allow"],
-            }
+            {"key": w["key"], "descriptor": w["descriptor"], "allow": w["allow"]}
             for w in case["worlds"]
         ],
     }
@@ -193,9 +188,6 @@ def evaluate_target(case, target_name):
 
     try:
         if forbidden:
-            # W1 finite-model/v1 currently grounds a witness through the full
-            # declared finite model.  That is a proof-kind limitation, not a
-            # requirement of the abstract K1 regression rule.
             witness = make_witness(claim, forbidden[0], artifact, artifact_id)
             checked = K.check_witness(witness, claim, raw)
             if checked["semantic_claim"] != "REGRESSION":
@@ -241,97 +233,128 @@ def protocol_case(protocol, case_id):
     return next(c for c in protocol["cases"] if c["id"] == case_id)
 
 
-def mutate_drop_fields(desc, fields):
-    x = copy.deepcopy(desc)
-    for field in fields:
-        x.pop(field, None)
-    return x
+def projected(desc, ignored):
+    return {k: copy.deepcopy(v) for k, v in desc.items() if k not in set(ignored)}
 
 
-def assert_lowering_rejects(mutated_case, label):
-    try:
-        build_claim(mutated_case)
-    except LoweringReject:
-        return {"mutation": label, "killed": True, "mechanism": "LOWERING_REJECT"}
-    except K.Reject:
-        return {"mutation": label, "killed": True, "mechanism": "K1_WELL_FORMEDNESS_REJECT"}
-    raise GateFailure(label + ": malformed source lowering survived")
+def mutant_world_id(case, desc, ignored):
+    # The mutant retains all fields syntactically but incorrectly omits selected
+    # material fields from identity.
+    require_fields(desc, case["material_world_fields"], case["id"] + ".mutant_world")
+    return htoken("w:sha256:", "RISU-K1-A1-WORLD", projected(desc, ignored))
+
+
+def mutant_consequence_id(case, desc, ignored):
+    require_fields(desc, case["material_consequence_fields"], case["id"] + ".mutant_consequence")
+    return htoken("c:sha256:", "RISU-K1-A1-CONSEQUENCE", projected(desc, ignored))
+
+
+def mutant_relation_verdict(case, target_name, ignore_world=(), ignore_consequence=()):
+    key_to_world = {}
+    allow = set()
+    for entry in case["worlds"]:
+        w = mutant_world_id(case, entry["descriptor"], ignore_world)
+        key_to_world[entry["key"]] = w
+        for desc in entry["allow"]:
+            allow.add((w, mutant_consequence_id(case, desc, ignore_consequence)))
+
+    realize = set()
+    for key, desc in case["targets"][target_name]:
+        realize.add((key_to_world[key], mutant_consequence_id(case, desc, ignore_consequence)))
+    return "PRESERVATION" if realize.issubset(allow) else "REGRESSION"
 
 
 def run_mutations(protocol):
     results = []
 
-    # 1. Late amnesty: a target violation can be made to look preserved only by
-    # changing the already-sealed source claim.  Claim drift must expose it.
     auth = protocol_case(protocol, "A1-AUTH-REVOCATION")
     sealed_claim, _, sealed_commit = build_claim(auth)
+
+    # 1. A bad target may not retroactively enlarge ALLOW.
     amended = copy.deepcopy(auth)
     bad_desc = amended["targets"]["bad"][1][1]
     amended["worlds"][1]["allow"].append(copy.deepcopy(bad_desc))
     amended_claim, _, amended_commit = build_claim(amended)
     if amended_claim["claim_id"] == sealed_claim["claim_id"] or amended_commit == sealed_commit:
-        raise GateFailure("LATE_ALLOW_AMNESTY: source mutation failed to move source identity")
+        raise GateFailure("LATE_ALLOW_AMNESTY: source mutation failed to move identity")
     results.append({"mutation": "LATE_ALLOW_AMNESTY", "killed": True, "mechanism": "CLAIM_AND_SOURCE_COMMITMENT_DRIFT"})
 
-    # 2. Post-hoc world splitting is likewise visible in claim identity.
+    # 2. A target outcome may not create a new source-world distinction post hoc.
     split = copy.deepcopy(auth)
-    split["worlds"][1]["descriptor"]["observed_target_outcome"] = "executed_under_stale_grant"
+    split["worlds"][1]["descriptor"]["observed_target_outcome"] = "executed_after_revocation"
     split["worlds"][1]["allow"].append(copy.deepcopy(bad_desc))
     split_claim, _, split_commit = build_claim(split)
     if split_claim["claim_id"] == sealed_claim["claim_id"] or split_commit == sealed_commit:
-        raise GateFailure("POSTHOC_WORLD_SPLIT: target-dependent source rewrite did not move identity")
+        raise GateFailure("POSTHOC_WORLD_SPLIT: target-dependent rewrite did not move identity")
     results.append({"mutation": "POSTHOC_WORLD_SPLIT", "killed": True, "mechanism": "CLAIM_AND_SOURCE_COMMITMENT_DRIFT"})
 
-    # 3. Authorization lowering that drops revocation state/epoch is rejected.
-    auth_drop = copy.deepcopy(auth)
-    for w in auth_drop["worlds"]:
-        w["descriptor"] = mutate_drop_fields(w["descriptor"], ["authorization", "epoch"])
-    results.append(assert_lowering_rejects(auth_drop, "AUTH_DROP_REVOCATION_STATE"))
+    # 3. Realistic identity bug: fields remain present but the world hash ignores
+    # revocation state and epoch.  The nonredundant BAD target then falsely
+    # becomes a subset because ACTIVE and REVOKED worlds alias.
+    if mutant_relation_verdict(auth, "bad", ignore_world=("authorization", "epoch")) != "PRESERVATION":
+        raise GateFailure("AUTH_DROP_REVOCATION_STATE: mutant was not exposed by A1 pair")
+    if evaluate_target(auth, "bad")["verdict"] != "REGRESSION":
+        raise GateFailure("AUTH_DROP_REVOCATION_STATE: correct lowering lost regression")
+    results.append({"mutation": "AUTH_DROP_REVOCATION_STATE", "killed": True, "mechanism": "BAD_FALSELY_PRESERVED_IF_WORLD_FIELDS_IGNORED"})
 
-    # Consequence field-drop mutants must be rejected before hashing, including
-    # target-native outcomes.  This prevents a lossy lowerer from making a bad
-    # target consequence alias an allowed one.
-    field_mutants = [
-        ("MONEY_DROP_RECIPIENT", "A1-MONEY-BINDING", ["recipient"]),
-        ("MONEY_DROP_AMOUNT", "A1-MONEY-BINDING", ["amount_minor"]),
-        ("COMM_DROP_AUDIENCE", "A1-COMM-AUDIENCE", ["audience"]),
-        ("DEADLINE_DROP_TERMINAL_STATUS", "A1-BOUNDED-DEADLINE", ["terminal_status"]),
-    ]
-    for label, cid, fields in field_mutants:
-        case = protocol_case(protocol, cid)
-        mutated = copy.deepcopy(case)
-        # Mutate both source and target semantic encoder inputs to simulate a
-        # lowerer that silently omits a declared material field.
-        for w in mutated["worlds"]:
-            w["allow"] = [mutate_drop_fields(x, fields) for x in w["allow"]]
-        for tname, rows in mutated["targets"].items():
-            mutated["targets"][tname] = [[r[0], mutate_drop_fields(r[1], fields)] for r in rows]
-        try:
-            build_claim(mutated)
-        except LoweringReject:
-            results.append({"mutation": label, "killed": True, "mechanism": "MATERIAL_FIELD_REJECT"})
-        else:
-            raise GateFailure(label + ": lossy consequence lowering survived")
+    # 4-5. Recipient and amount are independently necessary consequence identity
+    # fields.  Dedicated single-fault targets prevent one mismatch masking the
+    # other.
+    money = protocol_case(protocol, "A1-MONEY-BINDING")
+    if mutant_relation_verdict(money, "bad_recipient", ignore_consequence=("recipient",)) != "PRESERVATION":
+        raise GateFailure("MONEY_DROP_RECIPIENT: mutant was not exposed")
+    if evaluate_target(money, "bad_recipient")["verdict"] != "REGRESSION":
+        raise GateFailure("MONEY_DROP_RECIPIENT: correct lowering lost regression")
+    results.append({"mutation": "MONEY_DROP_RECIPIENT", "killed": True, "mechanism": "BAD_FALSELY_PRESERVED_IF_RECIPIENT_IGNORED"})
 
-    # 7. Idempotency requires history/multiplicity to remain material in W.
+    if mutant_relation_verdict(money, "bad_amount", ignore_consequence=("amount_minor",)) != "PRESERVATION":
+        raise GateFailure("MONEY_DROP_AMOUNT: mutant was not exposed")
+    if evaluate_target(money, "bad_amount")["verdict"] != "REGRESSION":
+        raise GateFailure("MONEY_DROP_AMOUNT: correct lowering lost regression")
+    results.append({"mutation": "MONEY_DROP_AMOUNT", "killed": True, "mechanism": "BAD_FALSELY_PRESERVED_IF_AMOUNT_IGNORED"})
+
+    # 6. Idempotence BAD intentionally uses the same consequence as the first
+    # invocation.  Only history/multiplicity in W separates it.
     idem = protocol_case(protocol, "A1-IDEMPOTENCE")
-    idem_drop = copy.deepcopy(idem)
-    for w in idem_drop["worlds"]:
-        w["descriptor"] = mutate_drop_fields(w["descriptor"], ["invocation_index", "prior_effects"])
-    results.append(assert_lowering_rejects(idem_drop, "IDEMPOTENCE_DROP_HISTORY"))
+    if mutant_relation_verdict(idem, "bad", ignore_world=("invocation_index", "prior_effects")) != "PRESERVATION":
+        raise GateFailure("IDEMPOTENCE_DROP_HISTORY: mutant was not exposed")
+    if evaluate_target(idem, "bad")["verdict"] != "REGRESSION":
+        raise GateFailure("IDEMPOTENCE_DROP_HISTORY: correct lowering lost regression")
+    results.append({"mutation": "IDEMPOTENCE_DROP_HISTORY", "killed": True, "mechanism": "BAD_FALSELY_PRESERVED_IF_HISTORY_IGNORED"})
 
-    # 9. Silence at a bounded consequential cut is not preservation.
-    deadline_silent = evaluate_target(protocol_case(protocol, "A1-BOUNDED-DEADLINE"), "silent")
+    # 7. Audience identity is consequential, not metadata.
+    comm = protocol_case(protocol, "A1-COMM-AUDIENCE")
+    if mutant_relation_verdict(comm, "bad", ignore_consequence=("audience",)) != "PRESERVATION":
+        raise GateFailure("COMM_DROP_AUDIENCE: mutant was not exposed")
+    if evaluate_target(comm, "bad")["verdict"] != "REGRESSION":
+        raise GateFailure("COMM_DROP_AUDIENCE: correct lowering lost regression")
+    results.append({"mutation": "COMM_DROP_AUDIENCE", "killed": True, "mechanism": "BAD_FALSELY_PRESERVED_IF_AUDIENCE_IGNORED"})
+
+    # 8. Bounded progress is terminalized at the declared deadline cut.  If the
+    # terminal status is ignored, deadline miss aliases completion.
+    deadline = protocol_case(protocol, "A1-BOUNDED-DEADLINE")
+    if mutant_relation_verdict(deadline, "bad", ignore_consequence=("terminal_status",)) != "PRESERVATION":
+        raise GateFailure("DEADLINE_DROP_TERMINAL_STATUS: mutant was not exposed")
+    if evaluate_target(deadline, "bad")["verdict"] != "REGRESSION":
+        raise GateFailure("DEADLINE_DROP_TERMINAL_STATUS: correct lowering lost regression")
+    results.append({"mutation": "DEADLINE_DROP_TERMINAL_STATUS", "killed": True, "mechanism": "BAD_FALSELY_PRESERVED_IF_TERMINAL_STATUS_IGNORED"})
+
+    # 9. No consequence at a bounded cut is incompleteness, never vacuous safety.
+    deadline_silent = evaluate_target(deadline, "silent")
     if deadline_silent["verdict"] != "ASSURANCE_INCOMPLETE":
         raise GateFailure("DEADLINE_SILENCE_AS_PRESERVED: silent target was not incomplete")
     results.append({"mutation": "DEADLINE_SILENCE_AS_PRESERVED", "killed": True, "mechanism": "W1_TOTALITY_OR_EMPTY_RELATION_REJECT"})
 
-    # 10. Unbounded liveness cannot be laundered through the finite-model proof
-    # scope merely by naming an EVENTUALLY consequence atom.
-    sentinel = protocol["scope_sentinels"][0]
-    if sentinel["required_semantic_scope"] == sentinel["current_proof_scope"]:
-        raise GateFailure("UNBOUNDED_LIVENESS_AS_FINITE_MODEL_PRESERVED: scope sentinel collapsed")
-    results.append({"mutation": "UNBOUNDED_LIVENESS_AS_FINITE_MODEL_PRESERVED", "killed": True, "mechanism": "PROOF_SCOPE_MISMATCH"})
+    # 10. Arbitrarily choosing a finite deadline changes an unbounded liveness
+    # obligation; a finite-model proof cannot be laundered as the original claim.
+    s = next(x for x in protocol["scope_sentinels"] if x["probe"] == "unbounded_liveness_scope")
+    unbounded = {"obligation": s["obligation"], "deadline": None, "scope": s["required_semantic_scope"]}
+    bounded_surrogate = {"obligation": s["obligation"], "deadline": 10, "scope": "BOUNDED_DEADLINE_CUT"}
+    u = htoken("e:sha256:", "RISU-K1-A1-LIVENESS-SOURCE", unbounded)
+    b = htoken("e:sha256:", "RISU-K1-A1-LIVENESS-SOURCE", bounded_surrogate)
+    if u == b:
+        raise GateFailure("UNBOUNDED_LIVENESS_AS_FINITE_MODEL_PRESERVED: bounded surrogate did not change source identity")
+    results.append({"mutation": "UNBOUNDED_LIVENESS_AS_FINITE_MODEL_PRESERVED", "killed": True, "mechanism": "BOUNDED_SURROGATE_SOURCE_IDENTITY_DRIFT"})
 
     expected = set(protocol["mutation_requirements"])
     got = {x["mutation"] for x in results}
@@ -342,22 +365,64 @@ def run_mutations(protocol):
     return results
 
 
+def probe_unbounded_liveness(sentinel):
+    # This is an honesty test, not a theorem prover.  A finite deadline surrogate
+    # is a different source obligation, and W1 explicitly claims only a finite
+    # declared-model scope.  Therefore A1 must not call this preservation.
+    if sentinel["required_semantic_scope"] == sentinel["current_proof_scope"]:
+        raise GateFailure(sentinel["id"] + ": required scope unexpectedly equals W1 scope")
+    return {
+        "id": sentinel["id"],
+        "classification": "PROOF_KIND_GAP",
+        "kernel_implication": sentinel["kernel_implication"],
+        "reason": "unbounded liveness is not discharged by k1.finite-model/v1; choosing a finite deadline changes source identity",
+    }
+
+
+def probe_local_witness_partial_model(protocol, sentinel):
+    # Construct exactly the asymmetry A0 says K1 should support: one concrete
+    # forbidden pair, while an unrelated world has no global finite-model row.
+    # W1 finite-model/v1 rejects because check_artifact requires per-world
+    # totality.  That exposes a proof-kind gap without changing the K1 rule.
+    case = protocol_case(protocol, "A1-AUTH-REVOCATION")
+    claim, key_to_world, _ = build_claim(case)
+    partial_rows = [case["targets"]["bad"][1]]  # revoked forbidden row only
+    possible = target_pairs(case, partial_rows, key_to_world)
+    allow = frozenset((x[0], x[1]) for x in claim["allow"])
+    pair = tuple(possible[0])
+    if pair in allow:
+        raise GateFailure(sentinel["id"] + ": constructed pair is not forbidden")
+    artifact, raw, artifact_id = make_artifact(claim, possible)
+    witness = make_witness(claim, pair, artifact, artifact_id)
+    try:
+        K.check_witness(witness, claim, raw)
+    except K.Reject as exc:
+        if "non-total consequential cut" not in str(exc):
+            raise GateFailure(sentinel["id"] + ": unexpected W1 rejection: " + str(exc))
+        return {
+            "id": sentinel["id"],
+            "classification": "PROOF_KIND_GAP",
+            "kernel_implication": sentinel["kernel_implication"],
+            "reason": "abstract K1 has a concrete forbidden pair, but W1 finite-model/v1 requires unrelated-world totality",
+        }
+    raise GateFailure(sentinel["id"] + ": W1 unexpectedly discharged partial-model local witness")
+
+
 def classify_sentinels(protocol):
     out = []
     for s in protocol["scope_sentinels"]:
-        if s["required_semantic_scope"] != s["current_proof_scope"]:
-            classification = "PROOF_KIND_GAP"
+        probe = s.get("probe")
+        if probe == "unbounded_liveness_scope":
+            row = probe_unbounded_liveness(s)
+        elif probe == "local_witness_partial_model":
+            row = probe_local_witness_partial_model(protocol, s)
         else:
-            classification = "DISCHARGEABLE_BY_CURRENT_PROOF_SCOPE"
-        if classification != s["expected_classification"]:
+            raise GateFailure(s["id"] + ": unknown sentinel probe")
+        if row["classification"] != s["expected_classification"]:
             raise GateFailure(s["id"] + ": scope classification mismatch")
-        out.append({
-            "id": s["id"],
-            "classification": classification,
-            "kernel_implication": s["kernel_implication"],
-            "required_semantic_scope": s["required_semantic_scope"],
-            "current_proof_scope": s["current_proof_scope"],
-        })
+        row["required_semantic_scope"] = s["required_semantic_scope"]
+        row["current_proof_scope"] = s["current_proof_scope"]
+        out.append(row)
     return out
 
 
@@ -371,8 +436,7 @@ def validate_protocol(protocol):
     if len(ids) != len(set(ids)):
         raise GateFailure("duplicate A1 case id")
     families = {c["family"] for c in cases}
-    required = set(protocol["required_pressure_classes"])
-    if families != required:
+    if families != set(protocol["required_pressure_classes"]):
         raise GateFailure("pressure class coverage mismatch")
     for c in cases:
         if set(c["expected"]) - set(c["targets"]):
@@ -389,9 +453,7 @@ def run(protocol):
         for target_name, expected in case["expected"].items():
             result = evaluate_target(case, target_name)
             if result["verdict"] != expected:
-                raise GateFailure(
-                    f"{case['id']}:{target_name}: expected {expected}, got {result['verdict']}"
-                )
+                raise GateFailure(f"{case['id']}:{target_name}: expected {expected}, got {result['verdict']}")
             per_target[target_name] = result
             rows.append(result)
 
@@ -412,6 +474,7 @@ def run(protocol):
     return {
         "status": "PASS",
         "gate": protocol["gate_id"],
+        "protocol_version": protocol["version"],
         "kernel_verdict": "SURVIVES_A1_DECLARED_CLASS",
         "release_candidate_eligibility": "ELIGIBLE_FOR_SCOPED_K1_RC1",
         "semantic_scope": "CONSEQUENCE_CUT_SAFETY_INCLUDING_BOUNDED_DEADLINE_VIOLATIONS",
@@ -428,10 +491,10 @@ def run(protocol):
         "scope_sentinels": sentinels,
         "mutations": mutations,
         "interpretation": (
-            "Within the declared A1 class, heterogeneous obligations were lowered prospectively "
-            "without target-dependent source rewriting and judged by the existing K1 relation. "
-            "The unbounded-eventuality sentinel remains a proof-scope gap, not evidence for a new "
-            "semantic kernel primitive. This result does not prove universal completeness."
+            "Within the declared A1 class, heterogeneous obligations lower prospectively to the existing K1 relation. "
+            "A1 also exposes two proof-ecosystem gaps: unbounded liveness is outside W1 finite-model scope, and W1 "
+            "over-requires global finite-model totality for a semantically local forbidden witness. Neither is evidence "
+            "for a new K1 semantic primitive. This result does not prove universal completeness."
         ),
     }
 
