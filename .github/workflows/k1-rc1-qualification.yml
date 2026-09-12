@@ -1,0 +1,54 @@
+name: K1 RC1 Qualification
+
+on:
+  push:
+    branches:
+      - k1-adversarial-gate-a1
+      - k1-rc1
+    paths:
+      - 'protocols/RISU_KERNEL_K1_RC1_CONSTITUTION.json'
+      - 'protocols/RISU_KERNEL_K1_RC1_FREEZE.json'
+      - 'tools/risu_kernel_k1_rc1_verify.py'
+      - 'schemas/RISU_KERNEL_K1_WIRE_W0.schema.json'
+      - 'protocols/RISU_KERNEL_K1_WIRE_W0.json'
+      - 'kernel/k1_checker_w1.py'
+      - 'protocols/RISU_KERNEL_K1_ADVERSARIAL_GATE_A0.json'
+      - 'tools/risu_kernel_k1_adversarial_gate_a0.py'
+      - 'tools/risu_kernel_k1_wire_w0_verify.py'
+      - 'tools/risu_kernel_k1_checker_w1_selftest.py'
+      - 'compatibility/v07_k1/VBE_CALIBRATION_4ROW_SNAPSHOT.json'
+      - 'adapters/v07_to_k1_compat_a0.py'
+      - 'tools/risu_v07_to_k1_compat_a0_verify.py'
+      - 'protocols/RISU_KERNEL_K1_ADVERSARIAL_GATE_A1.json'
+      - 'tools/risu_kernel_k1_adversarial_gate_a1.py'
+      - '.github/workflows/k1-rc1-qualification.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  rc1-freeze-qualification:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify exact freeze pins and rerun all K1 gates
+        run: |
+          python tools/risu_kernel_k1_rc1_verify.py --output /tmp/k1-rc1.json
+          python - <<'PY'
+          import json
+          x = json.load(open('/tmp/k1-rc1.json', encoding='utf-8'))
+          assert x['status'] == 'PASS'
+          assert x['rc_status'] == 'QUALIFIED_FOR_BRANCH_FREEZE'
+          assert x['pinned_blob_count'] == 13
+          assert x['qualification_command_count'] == 5
+          assert x['a1_summary']['kernel_counterexamples'] == 0
+          assert x['a1_summary']['proof_kind_gaps'] == 2
+          assert x['a1_summary']['new_kernel_primitives_justified'] == []
+          print('K1 RC1 composite qualification: PASS')
+          PY
