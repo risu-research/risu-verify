@@ -1,0 +1,97 @@
+{
+  "constitution_id": "RISU_KERNEL_K1_RC1",
+  "status": "RELEASE_CANDIDATE_NOT_FINAL",
+  "semantic_scope": "CONSEQUENCE_CUT_SAFETY_INCLUDING_BOUNDED_DEADLINE_VIOLATIONS",
+  "meaning": "K1 RC1 is a narrow semantic court over precommitted source-admissible consequences and proof-established target-realizable consequences. It is not a source parser, temporal prover, implementation semantics engine, or repair synthesizer.",
+  "semantic_objects": {
+    "W": "nonempty set of admitted world commitments",
+    "U": "open universe of canonical consequence commitments",
+    "ALLOW": "precommitted source-admissible relation, subset of W x U, nonempty per admitted world",
+    "REALIZE": "target-realizable relation established by an accepted proof object"
+  },
+  "verdict_rules": {
+    "REGRESSION": "One accepted locally grounded pair in REALIZE minus ALLOW is semantically sufficient.",
+    "PRESERVATION": "Requires accepted closure/exhaustiveness for the exact declared target scope, grounding for every realized pair, per-world consequential-cut totality, and REALIZE subset-of ALLOW.",
+    "UNKNOWN": "Any missing closure, grounding, totality, interpretation, or proof-scope support is neither regression nor preservation."
+  },
+  "constitutional_invariants": [
+    "SOURCE_FIRST_COMMITMENT: W and ALLOW are fixed before target realization is inspected.",
+    "NO_POSTHOC_AMNESTY: a forbidden realized consequence cannot be added to ALLOW without changing claim identity.",
+    "NO_POSTHOC_WORLD_SPLIT: target outcomes cannot retrospectively refine source worlds without changing claim identity.",
+    "OPEN_CONSEQUENCE_UNIVERSE: target-native consequences may appear in REALIZE even when absent from source vocabulary.",
+    "NO_VACUITY: empty world scope, empty per-world source permission, silent consequential cuts, or incomplete closure cannot prove preservation.",
+    "GROUNDING: producer assertions alone are not semantic authority.",
+    "ASYMMETRY: one grounded forbidden witness can prove regression; absence of found witnesses cannot prove preservation.",
+    "IDENTITY_SEPARATION: source claim identity and target realization identity are distinct commitments.",
+    "MATERIAL_FIELD_SENSITIVITY: source-declared material world/consequence fields must affect semantic commitment identity.",
+    "PROOF_SCOPE_HONESTY: a proof kind may discharge only the semantic scope it actually establishes.",
+    "DIAGNOSTIC_NON_AUTHORITY: C/D/O/Exact and other diagnostics cannot strengthen a K1 semantic verdict merely by being present.",
+    "MODEL_BOUNDARY_HONESTY: preservation in a declared proof model is not automatically an implementation-binding claim."
+  ],
+  "not_kernel_primitives": [
+    "C",
+    "D",
+    "O",
+    "Exact Realization",
+    "factorization/kernel-inclusion theorem",
+    "CIR",
+    "VBE profile logic",
+    "source AST or language semantics",
+    "MCP/OpenAPI/SDK semantics",
+    "source semantic digest as a universal object",
+    "temporal logic",
+    "SMT solving",
+    "LLM reasoning",
+    "proof search",
+    "repository/network acquisition",
+    "repair synthesis"
+  ],
+  "primitive_promotion_rule": {
+    "required_evidence": "A minimal semantic counterexample showing that a required distinction collapses under every admissible target-independent lowering into W, open consequence commitments, ALLOW/REALIZE, and accepted proof obligations.",
+    "insufficient_evidence": [
+      "A current proof kind cannot establish the relation.",
+      "A frontend cannot yet compile the source contract.",
+      "A diagnostic decomposition is useful for explanation.",
+      "A more expressive solver would be convenient.",
+      "A domain uses time, authorization, money, history, or information flow."
+    ]
+  },
+  "known_non_kernel_gaps": [
+    {
+      "id": "UNBOUNDED_TRACE_LIVENESS",
+      "classification": "PROOF_KIND_GAP",
+      "detail": "k1.finite-model/v1 does not establish unbounded trace liveness. Arbitrarily introducing a finite deadline changes source identity. No new semantic kernel primitive is justified by A1."
+    },
+    {
+      "id": "LOCAL_WITNESS_PARTIAL_MODEL",
+      "classification": "PROOF_KIND_GAP",
+      "detail": "The abstract K1 regression rule is locally sufficient, but W1 finite-model/v1 currently requires unrelated-world totality because its witness is grounded through a full finite model. A future local-witness proof kind may remove this proof-layer overconstraint."
+    },
+    {
+      "id": "IMPLEMENTATION_BINDING",
+      "classification": "PROOF_KIND_OR_EVIDENCE_GAP",
+      "detail": "W1 reports implementation_binding=false. Future proof kinds/evidence must bind declared target models to implementations without enlarging the semantic kernel unless a counterexample requires it."
+    }
+  ],
+  "qualification_chain": [
+    {"gate": "K1 Adversarial Gate A0", "github_actions_run": 34696196165, "expected": "success"},
+    {"gate": "K1 Wire W0", "github_actions_run": 34696451054, "expected": "success"},
+    {"gate": "K1 Checker W1", "github_actions_run": 34696531135, "expected": "success"},
+    {"gate": "v0.7 to K1 Compatibility A0", "github_actions_run": 34696843959, "expected": "success"},
+    {"gate": "K1 Adversarial Gate A1 strengthened", "github_actions_run": 34697401858, "expected": "success"}
+  ],
+  "frozen_dependency_git_blobs": {
+    "schemas/RISU_KERNEL_K1_WIRE_W0.schema.json": "96b1158a2d41d41c65b805d481fcf53501e259a7",
+    "protocols/RISU_KERNEL_K1_WIRE_W0.json": "2141377f2e00cbca0cdb1a7c22e485186f8b55bc",
+    "kernel/k1_checker_w1.py": "273290b5bbc5b1b9a93f962e739995be76f6d0d6",
+    "protocols/RISU_KERNEL_K1_ADVERSARIAL_GATE_A0.json": "2c25be4958cbff63bfe8c4f2bcee30c1069989b6",
+    "tools/risu_kernel_k1_adversarial_gate_a0.py": "b35308f1de49cd4b68683c8e599b6de2ecadb24e",
+    "tools/risu_kernel_k1_wire_w0_verify.py": "0a699079f7896c9fa9e7da32ea2576307efceb28",
+    "tools/risu_kernel_k1_checker_w1_selftest.py": "c42132a14f104cc2f7ab824d690fbd5b0412975a",
+    "adapters/v07_to_k1_compat_a0.py": "61bb97f2037c4caea8890d47250f5d38767a9a70",
+    "tools/risu_v07_to_k1_compat_a0_verify.py": "f18b6e62e70d382a2ecb7970066af86336a90c28",
+    "protocols/RISU_KERNEL_K1_ADVERSARIAL_GATE_A1.json": "5b1e15582d05ceafa1cbd8e6934a421bd44c3dd9",
+    "tools/risu_kernel_k1_adversarial_gate_a1.py": "b4afbfc415cda7c940640a582b538895ecbc8ae4"
+  },
+  "release_rule": "RC1 may be created only after the composite RC1 verifier confirms all pinned dependency blobs and reruns the local qualification commands successfully. RC1 is scoped, not a universal-completeness claim."
+}
