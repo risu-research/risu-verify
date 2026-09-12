@@ -1,0 +1,72 @@
+name: K1 W2 Independent Checker Qualification
+
+on:
+  push:
+    branches:
+      - k1-w2-differential
+      - k1-w2-qualified
+    paths:
+      - 'protocols/RISU_KERNEL_K1_W2_QUALIFICATION.json'
+      - 'tools/risu_kernel_k1_w2_qualification_verify.py'
+      - 'docs/RISU_KERNEL_K1_W2_INDEPENDENT_CHECKER.md'
+      - 'kernel/k1_checker_w2.go'
+      - 'protocols/RISU_KERNEL_K1_W1_W2_DIFFERENTIAL_D0.json'
+      - 'tools/risu_kernel_k1_w1_w2_differential.py'
+      - 'protocols/RISU_KERNEL_K1_W1_W2_GENERATIVE_D1.json'
+      - 'tools/risu_kernel_k1_w1_w2_generative_d1.py'
+      - 'kernel/k1_checker_w1.py'
+      - 'protocols/RISU_KERNEL_K1_WIRE_W0.json'
+      - 'schemas/RISU_KERNEL_K1_WIRE_W0.schema.json'
+      - '.github/workflows/k1-w1-w2-differential-d0.yml'
+      - '.github/workflows/k1-w2-qualification.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CGO_ENABLED: '0'
+
+jobs:
+  qualify-independent-w2:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.x'
+          cache: false
+      - name: Verify provenance, exact blobs, source hygiene, D0, and D1
+        run: |
+          python tools/risu_kernel_k1_w2_qualification_verify.py \
+            --output /tmp/k1-w2-qualification.json
+          python - <<'PY'
+          import json
+          x = json.load(open('/tmp/k1-w2-qualification.json', encoding='utf-8'))
+          assert x['status'] == 'PASS'
+          assert x['qualification_status'] == 'QUALIFIED_INDEPENDENT_CORROBORATING_CHECKER'
+          assert x['base_rc1_commit'] == '9e85515d4974fe06c0b1db8e94e88935381fefe5'
+          assert x['rc1_add_only_isolation'] is True
+          assert x['semantic_differential_equivalence'] == 'QUALIFIED'
+          assert x['full_wire_parser_equivalence'] == 'NOT_QUALIFIED'
+          assert x['d0']['qualification_vector_count'] == 34
+          assert x['d0']['qualification_disagreements'] == []
+          assert x['d0']['oracle_failures'] == []
+          assert x['d0']['boundary_divergences'] == ['sentinel_proof_kind_schema_pattern']
+          assert x['d1']['seed_decimal'] == 1261524786
+          assert x['d1']['trial_count'] == 64
+          assert x['d1']['comparison_count'] == 384
+          assert x['d1']['w1_w2_disagreements'] == []
+          assert x['d1']['oracle_failures'] == []
+          assert x['d1']['semantic_identity_failures'] == []
+          assert x['classified_divergence']['classification'] == 'FAIL_CLOSED_STRUCTURAL_DIVERGENCE'
+          assert x['classified_divergence']['authority_effect'] == 'NONE'
+          assert x['implementation_binding'] is False
+          assert x['universal_correctness_claim'] is False
+          print('K1 W2 independent checker qualification: PASS')
+          PY
