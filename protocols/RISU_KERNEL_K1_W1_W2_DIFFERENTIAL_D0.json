@@ -1,0 +1,83 @@
+{
+  "protocol_id": "RISU_KERNEL_K1_W1_W2_DIFFERENTIAL_D0",
+  "status": "PROSPECTIVE_BEFORE_W2_IMPLEMENTATION",
+  "base_release_candidate": {
+    "branch": "k1-rc1",
+    "commit": "9e85515d4974fe06c0b1db8e94e88935381fefe5"
+  },
+  "purpose": "Test whether a second checker implemented independently from W1 reaches the same W0 / finite-model-v1 semantic judgments without sharing implementation code or runtime.",
+  "independence_requirements": {
+    "language": "Go",
+    "runtime": "Go standard library only",
+    "forbidden_dependencies": [
+      "kernel/k1_checker_w1.py",
+      "imports from RISU Python checker code",
+      "subprocess calls from W2 to Python or W1",
+      "shared identity/hash helper code",
+      "generated translation of W1 source"
+    ],
+    "normative_inputs": [
+      "protocols/RISU_KERNEL_K1_WIRE_W0.json",
+      "schemas/RISU_KERNEL_K1_WIRE_W0.schema.json",
+      "the finite-model/v1 proof-format behavior frozen in RC1"
+    ],
+    "neutral_harness_rule": "The differential harness may invoke both checkers but must not import either checker as a library and must independently construct all fixture identities from the wire specification."
+  },
+  "qualification": {
+    "w0_valid_domain": "All structurally W0-valid claim/proof-object/proof-artifact inputs using k1.finite-model/v1, plus valid unknown proof-kind references for UNSUPPORTED behavior.",
+    "required_equivalence": "For every declared W0-valid-domain vector, W1 and W2 must agree on process class and semantic class: ACCEPTED/PRESERVATION, ACCEPTED/REGRESSION, REJECTED/NONE, or UNSUPPORTED/UNKNOWN.",
+    "identity_metamorphics": "Reordering semantically unordered worlds, relations, grounding entries, or evidence roots must not alter bound identities when the supplied identifiers are correspondingly correct.",
+    "malformed_boundary_sentinels": "Inputs outside the declared W0-valid domain are reported separately. A disagreement is not silently normalized; it must be classified before qualification can be claimed.",
+    "no_majority_oracle": "Agreement between two implementations is not proof of correctness. Declared vectors also carry an independently specified expected semantic class. Both implementations must match it on qualification vectors."
+  },
+  "required_vector_classes": [
+    "complete preservation",
+    "target-native regression witness",
+    "partial closure rejection",
+    "missing grounding rejection",
+    "unknown proof kind unsupported",
+    "artifact byte tamper rejection",
+    "nondeterministic poison preservation rejection",
+    "nondeterministic poison witness acceptance",
+    "strict safe subset preservation",
+    "claim identity mismatch",
+    "target identity mismatch",
+    "certificate identity mismatch",
+    "witness identity mismatch",
+    "duplicate worlds rejection",
+    "duplicate ALLOW rejection",
+    "undeclared ALLOW world rejection",
+    "world without ALLOW rejection",
+    "duplicate REALIZE rejection",
+    "undeclared REALIZE world rejection",
+    "grounding set omission rejection",
+    "grounding set surplus rejection",
+    "duplicate grounding pair rejection",
+    "grounding artifact mismatch rejection",
+    "closure artifact digest mismatch rejection",
+    "proof artifact claim mismatch rejection",
+    "proof artifact target mismatch rejection",
+    "proof artifact world-domain mismatch rejection",
+    "proof artifact non-totality rejection",
+    "duplicate evidence root rejection",
+    "open-universe consequence acceptance",
+    "world-order metamorphic preservation",
+    "relation-order metamorphic preservation",
+    "grounding-order metamorphic preservation",
+    "evidence-order metamorphic preservation"
+  ],
+  "minimum_qualification_vectors": 34,
+  "boundary_sentinels": [
+    {
+      "id": "PROOF_KIND_SCHEMA_PATTERN",
+      "question": "Do both implementations enforce the W0 schema lexical pattern for proof kind strings before semantic dispatch?",
+      "qualification_effect": "A disagreement blocks an unqualified claim of full wire-parser equivalence but does not retroactively modify K1 RC1."
+    },
+    {
+      "id": "JSON_UNKNOWN_FIELD",
+      "question": "Do both implementations reject extra object properties as required by W0 structural shape?",
+      "qualification_effect": "Must agree for full parser equivalence."
+    }
+  ],
+  "success_claim": "W2 is an implementation-independent corroborating checker for the frozen RC1 W0 + k1.finite-model/v1 fragment over the declared differential corpus. This does not establish universal checker correctness or implementation binding."
+}
