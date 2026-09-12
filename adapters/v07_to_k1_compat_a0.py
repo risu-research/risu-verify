@@ -41,8 +41,18 @@ def sha(prefix, domain, text):
     return prefix + hashlib.sha256(raw).hexdigest()
 
 
-def world_id(instance, legacy_world):
-    return sha("w:sha256:", "RISU-V07-WORLD-A0", instance + "\0" + legacy_world)
+def world_id(source_semantic_digest, legacy_world):
+    """Bind a migrated world to the frozen source semantics, not case instance.
+
+    Historical BEFORE/AFTER realizations that share one source contract and one
+    legacy world therefore share the same K1 world/claim identity; only target
+    realization identity changes across the repair.
+    """
+    return sha(
+        "w:sha256:",
+        "RISU-V07-WORLD-A0",
+        source_semantic_digest + "\0" + legacy_world,
+    )
 
 
 def consequence_id(atom):
@@ -70,6 +80,8 @@ def consequence_atom(projected_effect):
 def build_claim_and_model(row):
     if not isinstance(row.get("worlds"), list) or not row["worlds"]:
         raise CompatError("legacy row has no worlds")
+    if not isinstance(row.get("source_semantic_digest"), str) or len(row["source_semantic_digest"]) != 64:
+        raise CompatError("legacy row has invalid source semantic digest")
 
     seen_legacy = set()
     worlds = []
@@ -85,7 +97,7 @@ def build_claim_and_model(row):
             raise CompatError("duplicate legacy world")
         seen_legacy.add(legacy["world"])
 
-        w = world_id(row["instance"], legacy["world"])
+        w = world_id(row["source_semantic_digest"], legacy["world"])
         required_atom = legacy["required_consequence"]
         realized_atom = consequence_atom(legacy["projected_effect"])
         required = consequence_id(required_atom)
@@ -209,15 +221,13 @@ def compute_k1(row):
 
 def diagnostics_ablated(row):
     x = copy.deepcopy(row)
-    x["source_semantic_digest"] = "DIAGNOSTIC_ABLATED"
     x["exact_status"] = "DIAGNOSTIC_ABLATED"
     x["exact_failure_mode"] = "DIAGNOSTIC_ABLATED"
     x["structural"] = {"diagnostic": "ABLATED"}
     for world in x["worlds"]:
         world["coordinates"] = {"diagnostic": "ABLATED"}
-        # 'matches' is diagnostic only. Preserve type but deliberately flip it;
-        # build_claim_and_model normally validates it, so remove the validation
-        # influence by recomputing it from the semantic atoms before translation.
+        # 'matches' is diagnostic only. Preserve type by recomputing it from the
+        # frozen semantic atoms so it cannot independently drive the judgment.
         effect_atom = consequence_atom(world["projected_effect"])
         world["matches"] = effect_atom == world["required_consequence"]
     return x
@@ -259,8 +269,9 @@ def run(snapshot):
                 f"{row['instance']}: K1={computed['k1_product_status']} legacy={row['legacy_product_status']}"
             )
 
-        # Metamorphic proof that C/D/O, Exact, source digest, and coordinates are
-        # not inputs to the K1 semantic judgment.
+        # Metamorphic proof that C/D/O, Exact, coordinates, and match display
+        # data are not inputs to the K1 semantic judgment. source_semantic_digest
+        # is intentionally retained as the migration namespace for world identity.
         ablated = compute_k1(diagnostics_ablated(row))
         semantic_keys = [
             "k1_product_status",
@@ -284,13 +295,18 @@ def run(snapshot):
         output.append(computed)
 
     # Historical repair invariant: the BEFORE/AFTER pair has the same frozen
-    # source semantic digest but changes from regression to preserved.
+    # source semantic digest and therefore the same K1 claim, while its target
+    # relation changes from regression to preservation.
     before = next(x for x in rows if x["instance"] == "003-before-github-blob-sha")
     after = next(x for x in rows if x["instance"] == "003-after-github-blob-sha")
     if before["source_semantic_digest"] != after["source_semantic_digest"]:
         raise CompatError("historical transition source semantic digest changed")
     k_before = next(x for x in output if x["instance"] == before["instance"])
     k_after = next(x for x in output if x["instance"] == after["instance"])
+    if k_before["claim_id"] != k_after["claim_id"]:
+        raise CompatError("historical transition changed K1 claim identity")
+    if k_before["target_id"] == k_after["target_id"]:
+        raise CompatError("historical transition failed to change K1 target identity")
     if (k_before["k1_product_status"], k_after["k1_product_status"]) != (
         "CONSEQUENCE_REGRESSION",
         "PRESERVED",
@@ -306,8 +322,10 @@ def run(snapshot):
         "semantic_equivalence": "4/4",
         "diagnostic_ablation_invariance": "4/4",
         "historical_repair_transition": "CONSEQUENCE_REGRESSION->PRESERVED",
+        "historical_repair_same_claim": True,
         "kernel_primitives_needed_from_v07": [],
         "legacy_diagnostics_retained_outside_kernel": ["C", "D", "O", "Exact", "coordinates", "matches"],
+        "migration_identity_input": "source_semantic_digest",
         "checker": "risu-k1-checker-w1",
         "checker_scope": "DECLARED_FINITE_TARGET_MODEL",
         "implementation_binding": False,
