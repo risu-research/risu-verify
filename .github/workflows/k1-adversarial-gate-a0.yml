@@ -1,0 +1,31 @@
+name: K1 Adversarial Gate A0
+
+on:
+  push:
+    branches:
+      - k1-adversarial-gate-a0
+    paths:
+      - 'protocols/RISU_KERNEL_K1_ADVERSARIAL_GATE_A0.json'
+      - 'tools/risu_kernel_k1_adversarial_gate_a0.py'
+      - 'docs/RISU_KERNEL_K1_ADVERSARIAL_GATE_A0.md'
+      - '.github/workflows/k1-adversarial-gate-a0.yml'
+  pull_request:
+    paths:
+      - 'protocols/RISU_KERNEL_K1_ADVERSARIAL_GATE_A0.json'
+      - 'tools/risu_kernel_k1_adversarial_gate_a0.py'
+      - 'docs/RISU_KERNEL_K1_ADVERSARIAL_GATE_A0.md'
+      - '.github/workflows/k1-adversarial-gate-a0.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  adversarial-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run K1 A0 mutation gate
+        run: python3 tools/risu_kernel_k1_adversarial_gate_a0.py
