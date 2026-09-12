@@ -1,0 +1,51 @@
+{
+  "protocol_id": "RISU_KERNEL_K1_W1_W2_GENERATIVE_D1",
+  "status": "PROSPECTIVE_BEFORE_GENERATOR_IMPLEMENTATION",
+  "parent": "RISU_KERNEL_K1_W1_W2_DIFFERENTIAL_D0",
+  "base_release_candidate": "k1-rc1@9e85515d4974fe06c0b1db8e94e88935381fefe5",
+  "purpose": "Attack common-mode transcript, ordering, cardinality, closure, and open-universe bugs that a finite hand-written corpus could miss.",
+  "generator": {
+    "prng": "Python random.Random",
+    "seed_decimal": 1261524786,
+    "trial_count": 64,
+    "world_count_range": [1, 5],
+    "allowed_consequences_per_world_range": [1, 4],
+    "evidence_root_count_range": [0, 3],
+    "external_dependencies": "none"
+  },
+  "per_trial_properties": [
+    {
+      "id": "SAFE_TOTAL_SUBSET",
+      "construction": "Choose a nonempty subset of ALLOW for every world, preserving per-world consequential-cut totality.",
+      "expected": "W1=W2=ACCEPTED/PRESERVATION"
+    },
+    {
+      "id": "OPEN_UNIVERSE_FORBIDDEN_WITNESS",
+      "construction": "Add one fresh target-native consequence to one admitted world and submit that pair as the grounded witness.",
+      "expected": "W1=W2=ACCEPTED/REGRESSION"
+    },
+    {
+      "id": "FORBIDDEN_CERTIFICATE",
+      "construction": "Submit the same target relation containing the fresh forbidden consequence as a preservation certificate.",
+      "expected": "W1=W2=REJECTED/NONE"
+    },
+    {
+      "id": "PERMUTATION_INVARIANCE",
+      "construction": "Independently permute worlds, ALLOW, REALIZE, grounding entries, artifact worlds/possible rows, and evidence roots without changing semantic sets.",
+      "expected": "Bound identities remain stable and W1=W2=ACCEPTED/PRESERVATION"
+    },
+    {
+      "id": "ARTIFACT_BYTE_BINDING",
+      "construction": "Append one byte after all proof-object commitments are fixed.",
+      "expected": "W1=W2=REJECTED/NONE"
+    },
+    {
+      "id": "GROUNDING_OMISSION",
+      "construction": "Remove one grounding entry from an otherwise valid preservation certificate and recompute certificate identity.",
+      "expected": "W1=W2=REJECTED/NONE"
+    }
+  ],
+  "required_comparisons": 384,
+  "success_rule": "All 384 generated comparisons must match the declared oracle and W1/W2 must agree on process and semantic class for every comparison. The generator must import neither checker implementation.",
+  "scope": "W0-valid finite-model/v1 semantic domain only; malformed parser-boundary behavior remains governed by D0 boundary sentinels."
+}
