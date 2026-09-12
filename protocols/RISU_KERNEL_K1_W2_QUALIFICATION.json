@@ -1,0 +1,85 @@
+{
+  "qualification_id": "RISU_KERNEL_K1_W2_QUALIFICATION",
+  "status": "CANDIDATE_QUALIFICATION_FREEZE",
+  "meaning": "Qualification of a second, independently implemented checker as corroborating evidence for the frozen K1 RC1 W0 + k1.finite-model/v1 fragment. This does not modify K1 RC1, establish universal checker correctness, or bind a finite proof model to an external implementation.",
+  "base_release_candidate": {
+    "branch": "k1-rc1",
+    "commit": "9e85515d4974fe06c0b1db8e94e88935381fefe5",
+    "immutability_rule": "The qualified branch must descend from this exact commit and may only add files relative to it; no file present in RC1 may be modified, deleted, or renamed."
+  },
+  "frozen_rc1_anchors": {
+    "kernel/k1_checker_w1.py": "273290b5bbc5b1b9a93f962e739995be76f6d0d6",
+    "protocols/RISU_KERNEL_K1_WIRE_W0.json": "2141377f2e00cbca0cdb1a7c22e485186f8b55bc",
+    "schemas/RISU_KERNEL_K1_WIRE_W0.schema.json": "96b1158a2d41d41c65b805d481fcf53501e259a7"
+  },
+  "w2_evidence_blobs": {
+    "kernel/k1_checker_w2.go": "76fd74084d74555e47b579bdf74077f5582fe90e",
+    "protocols/RISU_KERNEL_K1_W1_W2_DIFFERENTIAL_D0.json": "145d900bbf1a595d1c78e671eca677aaa8656434",
+    "tools/risu_kernel_k1_w1_w2_differential.py": "e33d295e3c9c26b53025b94363bd191b9cf636ad",
+    "protocols/RISU_KERNEL_K1_W1_W2_GENERATIVE_D1.json": "4fa51631ae58a7c8f5c799e5e113ebaafa2bc20e",
+    "tools/risu_kernel_k1_w1_w2_generative_d1.py": "7d2782e491dc7dbd97d356793961647e955b0bf8",
+    ".github/workflows/k1-w1-w2-differential-d0.yml": "40daac4798c55c886e8b26ad413225e8f22c33a7"
+  },
+  "source_qualification_run": {
+    "workflow_run_id": 34698313070,
+    "head_commit": "8b5de75da58bc057dd63ddb0ee5d285a51a67f7b",
+    "conclusion": "success",
+    "conditions": [
+      "gofmt canonical source",
+      "go vet success",
+      "CGO_ENABLED=0 Go build success",
+      "D0 static differential success",
+      "D1 seeded generative differential success"
+    ]
+  },
+  "required_results": {
+    "d0": {
+      "qualification_vector_count": 34,
+      "semantic_differential_equivalence": "QUALIFIED",
+      "qualification_disagreements": [],
+      "oracle_failures": [],
+      "independence_audit_pass": true,
+      "full_wire_parser_equivalence": "NOT_QUALIFIED",
+      "boundary_divergences": ["sentinel_proof_kind_schema_pattern"]
+    },
+    "d1": {
+      "seed_decimal": 1261524786,
+      "trial_count": 64,
+      "comparison_count": 384,
+      "w1_w2_disagreements": [],
+      "oracle_failures": [],
+      "semantic_identity_failures": [],
+      "all_comparisons_agree": true,
+      "all_oracles_match": true,
+      "claim_target_permutation_invariance": true
+    }
+  },
+  "classified_divergences": [
+    {
+      "id": "PROOF_KIND_SCHEMA_PATTERN",
+      "classification": "FAIL_CLOSED_STRUCTURAL_DIVERGENCE",
+      "input": "A proof-kind string that violates the frozen W0 lexical schema pattern.",
+      "w1": "UNSUPPORTED/UNKNOWN",
+      "w2": "REJECTED/NONE",
+      "authority_effect": "NONE",
+      "interpretation": "Both implementations refuse semantic authority. W2 enforces the W0 lexical schema earlier than W1. Therefore semantic differential equivalence is qualified over the declared W0-valid domain, while full wire-parser equivalence is explicitly not qualified."
+    }
+  ],
+  "independence_claim": {
+    "w2_language": "Go",
+    "runtime_dependencies": "Go standard library only",
+    "cgo": false,
+    "w1_code_imports": 0,
+    "w1_subprocess_calls_from_w2": 0,
+    "shared_risu_checker_helpers": 0,
+    "neutral_harness_imports_checker_implementations": false
+  },
+  "assurance_boundary": {
+    "assurance_scope": "DECLARED_FINITE_TARGET_MODEL",
+    "implementation_binding": false,
+    "universal_correctness_claim": false,
+    "full_wire_parser_equivalence_claim": false
+  },
+  "qualification_tooling_blobs": {},
+  "qualification_rule": "The composite verifier must prove RC1 ancestry and add-only isolation, match every pinned blob, establish canonical/pure-Go W2 source, rerun D0 and D1, reproduce all required results, and preserve the classified fail-closed parser divergence exactly. Only then may an exact-head k1-w2-qualified branch be created."
+}
