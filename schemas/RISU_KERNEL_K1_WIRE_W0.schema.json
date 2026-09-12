@@ -1,0 +1,164 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://risu.dev/schema/kernel-k1-wire-w0.json",
+  "title": "RISU Kernel K1 Wire W0",
+  "description": "Prospective pre-freeze transport schema for K1 claims, preservation certificates, and regression witnesses. Structural validity does not confer semantic authority.",
+  "$defs": {
+    "world_id": {
+      "type": "string",
+      "pattern": "^w:sha256:[0-9a-f]{64}$"
+    },
+    "consequence_id": {
+      "type": "string",
+      "pattern": "^c:sha256:[0-9a-f]{64}$"
+    },
+    "target_id": {
+      "type": "string",
+      "pattern": "^t:sha256:[0-9a-f]{64}$"
+    },
+    "proof_artifact_id": {
+      "type": "string",
+      "pattern": "^p:sha256:[0-9a-f]{64}$"
+    },
+    "evidence_id": {
+      "type": "string",
+      "pattern": "^e:sha256:[0-9a-f]{64}$"
+    },
+    "claim_id": {
+      "type": "string",
+      "pattern": "^claim:sha256:[0-9a-f]{64}$"
+    },
+    "certificate_id": {
+      "type": "string",
+      "pattern": "^cert:sha256:[0-9a-f]{64}$"
+    },
+    "witness_id": {
+      "type": "string",
+      "pattern": "^wit:sha256:[0-9a-f]{64}$"
+    },
+    "pair": {
+      "type": "array",
+      "prefixItems": [
+        {"$ref": "#/$defs/world_id"},
+        {"$ref": "#/$defs/consequence_id"}
+      ],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "proof_ref": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._/-]{0,127}$"
+        },
+        "artifact": {"$ref": "#/$defs/proof_artifact_id"}
+      },
+      "required": ["kind", "artifact"],
+      "additionalProperties": false
+    },
+    "claim": {
+      "type": "object",
+      "properties": {
+        "wire": {"const": "risu.k1.w0"},
+        "kind": {"const": "claim"},
+        "semantics": {"const": "safety-subset-v1"},
+        "worlds": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/world_id"},
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "allow": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/pair"},
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "claim_id": {"$ref": "#/$defs/claim_id"}
+      },
+      "required": ["wire", "kind", "semantics", "worlds", "allow", "claim_id"],
+      "additionalProperties": false
+    },
+    "grounding_entry": {
+      "type": "object",
+      "properties": {
+        "pair": {"$ref": "#/$defs/pair"},
+        "proof": {"$ref": "#/$defs/proof_ref"}
+      },
+      "required": ["pair", "proof"],
+      "additionalProperties": false
+    },
+    "preservation_certificate": {
+      "type": "object",
+      "properties": {
+        "wire": {"const": "risu.k1.w0"},
+        "kind": {"const": "preservation_certificate"},
+        "claim_id": {"$ref": "#/$defs/claim_id"},
+        "target_id": {"$ref": "#/$defs/target_id"},
+        "realize": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/pair"},
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "closure_proof": {"$ref": "#/$defs/proof_ref"},
+        "grounding_proofs": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/grounding_entry"}
+        },
+        "evidence_roots": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/evidence_id"},
+          "uniqueItems": true
+        },
+        "certificate_id": {"$ref": "#/$defs/certificate_id"}
+      },
+      "required": [
+        "wire",
+        "kind",
+        "claim_id",
+        "target_id",
+        "realize",
+        "closure_proof",
+        "grounding_proofs",
+        "evidence_roots",
+        "certificate_id"
+      ],
+      "additionalProperties": false
+    },
+    "regression_witness": {
+      "type": "object",
+      "properties": {
+        "wire": {"const": "risu.k1.w0"},
+        "kind": {"const": "regression_witness"},
+        "claim_id": {"$ref": "#/$defs/claim_id"},
+        "target_id": {"$ref": "#/$defs/target_id"},
+        "pair": {"$ref": "#/$defs/pair"},
+        "grounding_proof": {"$ref": "#/$defs/proof_ref"},
+        "evidence_roots": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/evidence_id"},
+          "uniqueItems": true
+        },
+        "witness_id": {"$ref": "#/$defs/witness_id"}
+      },
+      "required": [
+        "wire",
+        "kind",
+        "claim_id",
+        "target_id",
+        "pair",
+        "grounding_proof",
+        "evidence_roots",
+        "witness_id"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "oneOf": [
+    {"$ref": "#/$defs/claim"},
+    {"$ref": "#/$defs/preservation_certificate"},
+    {"$ref": "#/$defs/regression_witness"}
+  ]
+}
