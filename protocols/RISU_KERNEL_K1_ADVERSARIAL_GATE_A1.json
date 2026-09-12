@@ -1,6 +1,6 @@
 {
   "gate_id": "RISU_KERNEL_K1_ADVERSARIAL_GATE_A1",
-  "version": "0.1",
+  "version": "0.2",
   "status": "PROSPECTIVE_FALSIFICATION_ONLY",
   "base_checkpoint": "docs/RISU_KERNEL_K1_NARROW_WAIST_CHECKPOINT_A0.md",
   "question": "Does any declared cross-domain obligation require a new K1 semantic primitive under an admissible, target-independent lowering?",
@@ -9,7 +9,7 @@
     "same_claim_pair": "GOOD and BAD targets for a family must be judged against the identical K1 claim_id.",
     "no_posthoc_world_split": "A target outcome may not cause W to be refined, renamed, or split after source commitment.",
     "no_posthoc_amnesty": "A realized forbidden consequence may not be inserted into ALLOW after target inspection.",
-    "semantic_field_preservation": "Fields declared material by the source lowering manifest may not be dropped or coerced during world/consequence commitment.",
+    "semantic_field_preservation": "Fields declared material by the source lowering manifest must affect the world/consequence commitment; retaining a field syntactically while ignoring it in identity is also forbidden.",
     "open_target_universe": "A target-native consequence remains representable even when absent from the source ALLOW vocabulary.",
     "proof_scope_honesty": "A proof object may discharge only the semantic scope its proof kind actually establishes."
   },
@@ -51,7 +51,7 @@
         ],
         "bad": [
           ["AUTH_ACTIVE_E7", {"event": "deploy", "principal": "alice", "resource": "deploy/prod", "result": "executed", "epoch": 7}],
-          ["AUTH_REVOKED_E8", {"event": "deploy", "principal": "alice", "resource": "deploy/prod", "result": "executed_under_stale_grant", "epoch": 7}]
+          ["AUTH_REVOKED_E8", {"event": "deploy", "principal": "alice", "resource": "deploy/prod", "result": "executed", "epoch": 7}]
         ]
       },
       "expected": {"good": "PRESERVATION", "bad": "REGRESSION"}
@@ -81,9 +81,17 @@
         "bad": [
           ["PAY_ALICE_100", {"event": "transfer", "result": "settled", "recipient": "mallory", "amount_minor": 10000, "currency": "USD"}],
           ["PAY_BOB_70", {"event": "transfer", "result": "settled", "recipient": "bob", "amount_minor": 70000, "currency": "USD"}]
+        ],
+        "bad_recipient": [
+          ["PAY_ALICE_100", {"event": "transfer", "result": "settled", "recipient": "mallory", "amount_minor": 10000, "currency": "USD"}],
+          ["PAY_BOB_70", {"event": "transfer", "result": "settled", "recipient": "bob", "amount_minor": 7000, "currency": "USD"}]
+        ],
+        "bad_amount": [
+          ["PAY_ALICE_100", {"event": "transfer", "result": "settled", "recipient": "alice", "amount_minor": 10000, "currency": "USD"}],
+          ["PAY_BOB_70", {"event": "transfer", "result": "settled", "recipient": "bob", "amount_minor": 70000, "currency": "USD"}]
         ]
       },
-      "expected": {"good": "PRESERVATION", "bad": "REGRESSION"}
+      "expected": {"good": "PRESERVATION", "bad": "REGRESSION", "bad_recipient": "REGRESSION", "bad_amount": "REGRESSION"}
     },
     {
       "id": "A1-IDEMPOTENCE",
@@ -109,7 +117,7 @@
         ],
         "bad": [
           ["FIRST_K9", {"event": "charge", "idempotency_key": "K9", "result": "committed", "effect_count": 1}],
-          ["RETRY_K9_AFTER_COMMIT", {"event": "charge", "idempotency_key": "K9", "result": "committed_again", "effect_count": 2}]
+          ["RETRY_K9_AFTER_COMMIT", {"event": "charge", "idempotency_key": "K9", "result": "committed", "effect_count": 1}]
         ]
       },
       "expected": {"good": "PRESERVATION", "bad": "REGRESSION"}
@@ -170,12 +178,23 @@
   "scope_sentinels": [
     {
       "id": "A1-UNBOUNDED-EVENTUALITY",
+      "probe": "unbounded_liveness_scope",
       "obligation": "For every admitted execution satisfying the fairness assumptions, task Q eventually completes with no finite deadline.",
       "required_semantic_scope": "UNBOUNDED_TRACE_LIVENESS",
       "current_proof_kind": "k1.finite-model/v1",
       "current_proof_scope": "DECLARED_FINITE_TARGET_MODEL",
       "expected_classification": "PROOF_KIND_GAP",
       "kernel_implication": "NONE_UNLESS_NONREPRESENTABILITY_IS_SHOWN"
+    },
+    {
+      "id": "A1-LOCAL-WITNESS-PARTIAL-MODEL",
+      "probe": "local_witness_partial_model",
+      "obligation": "One independently grounded forbidden realization should be semantically sufficient even if an unrelated admitted world has no global preservation proof.",
+      "required_semantic_scope": "LOCAL_GROUNDED_REGRESSION_WITNESS",
+      "current_proof_kind": "k1.finite-model/v1",
+      "current_proof_scope": "DECLARED_FINITE_TARGET_MODEL",
+      "expected_classification": "PROOF_KIND_GAP",
+      "kernel_implication": "NONE; ADD_A_LOCAL_WITNESS_PROOF_KIND_IF_NEEDED"
     }
   ],
   "mutation_requirements": [
