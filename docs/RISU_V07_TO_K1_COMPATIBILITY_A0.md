@@ -14,12 +14,14 @@ This is not a new analysis of GitHub or Azure behavior. The adapter is forbidden
 
 For each frozen row:
 
-1. each legacy world becomes one committed K1 world;
+1. each legacy world becomes one committed K1 world, namespaced by the frozen `source_semantic_digest` for that declared source semantics;
 2. `(world, required_consequence)` becomes `ALLOW`;
 3. a projected effect in consequence space `C` becomes the correspondingly named realized consequence;
 4. a projected effect in `OUTSIDE_C` becomes a distinct **target-native** open-universe consequence rather than being discarded or coerced into the source vocabulary;
 5. the resulting complete finite relation is submitted to the independent W1 finite-model checker;
 6. a forbidden realized pair is checked as a regression witness; otherwise the complete finite relation is checked as a preservation certificate.
+
+The source semantic digest is a **migration identity namespace**, not a K1 kernel primitive. This matters for the historical repair pair: BEFORE and AFTER have the same frozen source semantics and world labels, so they must produce the same K1 claim identity. The target relation alone changes.
 
 The adapter computes the K1 conclusion first. Only afterward is that conclusion compared with the frozen legacy product status.
 
@@ -28,10 +30,12 @@ The adapter computes the K1 conclusion first. Only afterward is that conclusion 
 The compatibility verifier is designed to catch a fake adapter that merely copies the legacy result.
 
 - Altering a frozen semantic projected effect while leaving the legacy status unchanged must make equivalence fail.
-- Altering C/D/O, Exact fields, source digest display data, or world coordinates must not change K1 claim identity, target identity, proof identity, or verdict.
+- Altering C/D/O, Exact fields, `matches`, or world coordinates must not change K1 claim identity, target identity, proof identity, or verdict.
 - Tampering with the pinned source locator is rejected.
 - `OUTSIDE_C` survives translation as a target-native consequence and therefore remains capable of producing a forbidden K1 witness.
-- The GitHub blob-SHA BEFORE/AFTER pair must preserve the same K1 claim while changing the target relation and reproducing `CONSEQUENCE_REGRESSION → PRESERVED`.
+- The GitHub blob-SHA BEFORE/AFTER pair must preserve both the same frozen source semantic digest **and the same K1 claim ID**, while changing the target ID and reproducing `CONSEQUENCE_REGRESSION → PRESERVED`.
+
+The initial compatibility run intentionally failed this final repair invariant because the first adapter version incorrectly namespaced migrated worlds by case-instance ID. That defect was not waived. World identity was repaired to bind to the frozen source semantic identity instead, after which the compatibility test step passed. This failure is retained in workflow history as evidence that the gate can reject a structurally plausible but semantically wrong migration design.
 
 ## Interpretation rule
 
