@@ -31,13 +31,19 @@ jobs:
           p = '/tmp/k1-a1-result.json'
           x = json.load(open(p, encoding='utf-8'))
           assert x['status'] == 'PASS'
+          assert x['protocol_version'] == '0.2'
           assert x['kernel_verdict'] == 'SURVIVES_A1_DECLARED_CLASS'
+          assert x['release_candidate_eligibility'] == 'ELIGIBLE_FOR_SCOPED_K1_RC1'
           assert x['good_bad_same_claim'] == '5/5'
           assert x['good_preservation'] == '5/5'
           assert x['bad_regression'] == '5/5'
           assert x['declared_mutations_killed'] == '10/10'
           assert x['kernel_counterexamples'] == 0
-          assert x['proof_kind_gaps'] == 1
+          assert x['proof_kind_gaps'] == 2
           assert x['new_kernel_primitives_justified'] == []
+          assert {s['id'] for s in x['scope_sentinels']} == {
+              'A1-UNBOUNDED-EVENTUALITY',
+              'A1-LOCAL-WITNESS-PARTIAL-MODEL',
+          }
           print('A1 constitutional assertions: PASS')
           PY
