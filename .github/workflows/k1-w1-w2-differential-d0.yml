@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - k1-w2-differential
+      - k1-w2-qualified
     paths:
       - 'kernel/k1_checker_w2.go'
       - 'tools/risu_kernel_k1_w1_w2_differential.py'
@@ -34,9 +35,12 @@ jobs:
         with:
           go-version: '1.24.x'
           cache: false
-      - name: Compile and vet independent Go checker W2
+      - name: Verify canonical source, vet, and compile independent Go checker W2
         run: |
+          set -euo pipefail
           go version
+          gofmt -d kernel/k1_checker_w2.go | tee /tmp/k1-w2-gofmt.diff
+          test ! -s /tmp/k1-w2-gofmt.diff
           go vet kernel/k1_checker_w2.go
           go build -trimpath -o /tmp/risu-k1-w2 kernel/k1_checker_w2.go
       - name: Run static W1 vs W2 differential D0
@@ -49,14 +53,14 @@ jobs:
           x = json.load(open('/tmp/k1-w1-w2-d0.json', encoding='utf-8'))
           assert x['status'] == 'PASS'
           assert x['semantic_differential_equivalence'] == 'QUALIFIED'
-          assert x['qualification_vector_count'] >= 34
+          assert x['qualification_vector_count'] == 34
           assert x['qualification_disagreements'] == []
           assert x['oracle_failures'] == []
           assert x['independence_audit']['pass'] is True
           assert x['boundary_divergences'] == ['sentinel_proof_kind_schema_pattern']
+          assert x['full_wire_parser_equivalence'] == 'NOT_QUALIFIED'
           print('K1 W1/W2 static semantic differential: PASS')
-          print('full parser equivalence:', x['full_wire_parser_equivalence'])
-          print('classified boundary divergence:', x['boundary_divergences'])
+          print('classified fail-closed parser divergence:', x['boundary_divergences'])
           PY
       - name: Run seeded generative W1 vs W2 differential D1
         run: |
@@ -67,6 +71,8 @@ jobs:
           import json
           x = json.load(open('/tmp/k1-w1-w2-d1.json', encoding='utf-8'))
           assert x['status'] == 'PASS'
+          assert x['seed_decimal'] == 1261524786
+          assert x['trial_count'] == 64
           assert x['comparison_count'] == 384
           assert x['w1_w2_disagreements'] == []
           assert x['oracle_failures'] == []
