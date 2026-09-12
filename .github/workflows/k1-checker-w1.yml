@@ -1,0 +1,29 @@
+name: K1 Checker W1
+
+on:
+  push:
+    branches:
+      - k1-adversarial-gate-a0
+    paths:
+      - 'kernel/k1_checker_w1.py'
+      - 'tools/risu_kernel_k1_checker_w1_selftest.py'
+      - '.github/workflows/k1-checker-w1.yml'
+  pull_request:
+    paths:
+      - 'kernel/k1_checker_w1.py'
+      - 'tools/risu_kernel_k1_checker_w1_selftest.py'
+      - '.github/workflows/k1-checker-w1.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  checker-selftest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run W1 independent-checker adversarial selftest
+        run: python3 tools/risu_kernel_k1_checker_w1_selftest.py
