@@ -32,7 +32,7 @@
     {
       "id": "PERMUTATION_INVARIANCE",
       "construction": "Independently permute worlds, ALLOW, REALIZE, grounding entries, artifact worlds/possible rows, and evidence roots without changing semantic sets.",
-      "expected": "Bound identities remain stable and W1=W2=ACCEPTED/PRESERVATION"
+      "expected": "claim_id and target_id remain stable; byte-bound artifact/certificate identities may change; W1=W2=ACCEPTED/PRESERVATION"
     },
     {
       "id": "ARTIFACT_BYTE_BINDING",
