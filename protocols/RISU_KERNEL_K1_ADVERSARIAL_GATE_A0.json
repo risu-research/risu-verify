@@ -1,0 +1,169 @@
+{
+  "protocol_id": "RISU_KERNEL_K1_ADVERSARIAL_GATE_A0",
+  "status": "PROSPECTIVE_NON_NORMATIVE_FALSIFICATION_GATE",
+  "parent_branch": "e2-development",
+  "parent_sha": "e5bb5285acbfce6c9b22fea94f8bb58c746aed0b",
+  "purpose": "Attempt to falsify the proposed K1 ALLOW/REALIZE narrow waist before any wire schema or kernel freeze.",
+  "non_authority": [
+    "This gate does not reinterpret or modify any frozen v0.7 scientific result.",
+    "actual_possible is synthetic oracle data used only to test closure logic; it is not a proposed K1 wire field.",
+    "diagnostic_only fields are outside the kernel and must not affect semantic verdicts."
+  ],
+  "reference_rules": {
+    "well_formedness": [
+      "W must be nonempty.",
+      "Each admitted world must have at least one source-admissible consequence in ALLOW.",
+      "ALLOW, synthetic actual_possible, submitted REALIZE, and grounding references may mention only admitted worlds.",
+      "Every grounding reference must refer to a submitted REALIZE pair."
+    ],
+    "breaking": "A single grounded pair in REALIZE minus ALLOW establishes BREAKING for its declared slice, even if unrelated scope is incomplete.",
+    "preserved": [
+      "Submitted REALIZE is closed/exhaustive for the synthetic target oracle.",
+      "Every submitted REALIZE pair is grounded.",
+      "The consequential cut is total: every admitted world has at least one explicit material outcome.",
+      "REALIZE is a subset of ALLOW."
+    ],
+    "otherwise": "UNKNOWN",
+    "safety_scope": "Subset preservation is intentionally a safety/refinement judgment. A strict safe subset is PRESERVED unless a stronger profile declares an availability/liveness obligation."
+  },
+  "kernel_basis": [
+    {
+      "id": "K0_BASELINE",
+      "role": "control",
+      "worlds": ["w"],
+      "allow": [["w", "OK"]],
+      "actual_possible": [["w", "OK"]],
+      "realize": [["w", "OK"]],
+      "grounded": [["w", "OK"]],
+      "expected": "PRESERVED"
+    },
+    {
+      "id": "K1_WRONG_LABEL_DISTINGUISHABLE",
+      "role": "mutation_killer",
+      "worlds": ["a", "b"],
+      "allow": [["a", "COMMIT_A"], ["b", "REJECT_STALE"]],
+      "actual_possible": [["a", "COMMIT_A"], ["b", "NATIVE_COMMIT_B"]],
+      "realize": [["a", "COMMIT_A"], ["b", "NATIVE_COMMIT_B"]],
+      "grounded": [["a", "COMMIT_A"], ["b", "NATIVE_COMMIT_B"]],
+      "diagnostic_only": {"legacy_observation": [["a", "OBS_A"], ["b", "OBS_B"]]},
+      "expected": "BREAKING"
+    },
+    {
+      "id": "K2_PARTIAL_REALIZE",
+      "role": "mutation_killer",
+      "worlds": ["w"],
+      "allow": [["w", "OK"]],
+      "actual_possible": [["w", "OK"], ["w", "BAD"]],
+      "realize": [["w", "OK"]],
+      "grounded": [["w", "OK"]],
+      "expected": "UNKNOWN"
+    },
+    {
+      "id": "K3_NONDET_POISON",
+      "role": "mutation_killer",
+      "worlds": ["w"],
+      "allow": [["w", "OK"]],
+      "actual_possible": [["w", "OK"], ["w", "BAD"]],
+      "realize": [["w", "OK"], ["w", "BAD"]],
+      "grounded": [["w", "OK"], ["w", "BAD"]],
+      "expected": "BREAKING"
+    },
+    {
+      "id": "K4_UNGROUNDED_FORBIDDEN",
+      "role": "mutation_killer",
+      "worlds": ["w"],
+      "allow": [["w", "OK"]],
+      "actual_possible": [["w", "BAD"]],
+      "realize": [["w", "BAD"]],
+      "grounded": [],
+      "expected": "UNKNOWN"
+    },
+    {
+      "id": "K5_STRICT_SAFE_SUBSET",
+      "role": "mutation_killer",
+      "worlds": ["w"],
+      "allow": [["w", "COMMIT"], ["w", "REJECT"]],
+      "actual_possible": [["w", "REJECT"]],
+      "realize": [["w", "REJECT"]],
+      "grounded": [["w", "REJECT"]],
+      "expected": "PRESERVED"
+    },
+    {
+      "id": "K6_LOCAL_BREAK_GLOBAL_INCOMPLETE",
+      "role": "mutation_killer",
+      "worlds": ["w0", "w1"],
+      "allow": [["w0", "OK"], ["w1", "OK"]],
+      "actual_possible": [["w0", "BAD"], ["w1", "OK"]],
+      "realize": [["w0", "BAD"]],
+      "grounded": [["w0", "BAD"]],
+      "expected": "BREAKING"
+    },
+    {
+      "id": "K7_EMPTY_WORLD",
+      "role": "mutation_killer",
+      "worlds": [],
+      "allow": [],
+      "actual_possible": [],
+      "realize": [],
+      "grounded": [],
+      "expected": "MALFORMED"
+    },
+    {
+      "id": "K8_EMPTY_ALLOW",
+      "role": "mutation_killer",
+      "worlds": ["w"],
+      "allow": [],
+      "actual_possible": [["w", "BAD"]],
+      "realize": [["w", "BAD"]],
+      "grounded": [["w", "BAD"]],
+      "expected": "MALFORMED"
+    },
+    {
+      "id": "K9_NO_OUTCOME_AT_CUT",
+      "role": "mutation_killer",
+      "worlds": ["w"],
+      "allow": [["w", "OK"]],
+      "actual_possible": [],
+      "realize": [],
+      "grounded": [],
+      "expected": "UNKNOWN"
+    }
+  ],
+  "boundary_metamorphics": [
+    {
+      "id": "B1_REPRESENTATION_INVARIANCE",
+      "rule": "Changing diagnostic/carrier representation metadata while W, ALLOW, REALIZE, grounding, closure, and claim identity stay fixed must not change the semantic verdict."
+    },
+    {
+      "id": "B2_EVIDENCE_ABLATION",
+      "rule": "Removing the grounding for the only forbidden realized pair must downgrade BREAKING to UNKNOWN, not PRESERVED."
+    },
+    {
+      "id": "B3_POST_CHECK_TRANSITION",
+      "rule": "A world may encode a trajectory. Grounding is anchored at the declared consequential cut; a correct pre-check followed by a material state change before effect is represented by the effect-cut consequence and can be BREAKING without a temporal kernel primitive."
+    },
+    {
+      "id": "B4_CONTRACT_SCOPE_BINDING",
+      "rule": "W and ALLOW are claim identity. Post-hoc widening of ALLOW or deletion of a violating world is a different claim/certificate and may not rescue the original claim."
+    }
+  ],
+  "mutants": [
+    "M1_NO_CLOSURE",
+    "M2_MASK_NONDET_BAD_BRANCH",
+    "M3_UNGROUNDED_COUNTS_AS_BREAK",
+    "M4_REQUIRE_EQUALITY_NOT_SUBSET",
+    "M5_GLOBAL_COMPLETENESS_BEFORE_LOCAL_BREAK",
+    "M6_ALLOW_EMPTY_ALLOW",
+    "M7_ALLOW_EMPTY_WORLD",
+    "M8_NO_TOTALITY",
+    "M9_CLOSED_CONSEQUENCE_UNIVERSE",
+    "M10_FACTORIZATION_ONLY"
+  ],
+  "gate_acceptance": [
+    "All reference cases produce their expected verdict.",
+    "Every listed mutant is killed by at least one mutation_killer case.",
+    "The mutation_killer basis is deletion-minimal: removing any mutation_killer leaves at least one listed mutant alive.",
+    "Boundary metamorphic assertions pass.",
+    "No frozen v0.7 artifact is modified by this prospective gate."
+  ]
+}
