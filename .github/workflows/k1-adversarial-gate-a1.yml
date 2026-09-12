@@ -1,0 +1,43 @@
+name: K1 Adversarial Gate A1
+
+on:
+  push:
+    branches:
+      - k1-adversarial-gate-a1
+    paths:
+      - 'protocols/RISU_KERNEL_K1_ADVERSARIAL_GATE_A1.json'
+      - 'tools/risu_kernel_k1_adversarial_gate_a1.py'
+      - 'kernel/k1_checker_w1.py'
+      - '.github/workflows/k1-adversarial-gate-a1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  constitutional-falsification:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run K1 A1 cross-domain constitutional falsification
+        run: |
+          python tools/risu_kernel_k1_adversarial_gate_a1.py \
+            --output /tmp/k1-a1-result.json
+          python - <<'PY'
+          import json
+          p = '/tmp/k1-a1-result.json'
+          x = json.load(open(p, encoding='utf-8'))
+          assert x['status'] == 'PASS'
+          assert x['kernel_verdict'] == 'SURVIVES_A1_DECLARED_CLASS'
+          assert x['good_bad_same_claim'] == '5/5'
+          assert x['good_preservation'] == '5/5'
+          assert x['bad_regression'] == '5/5'
+          assert x['declared_mutations_killed'] == '10/10'
+          assert x['kernel_counterexamples'] == 0
+          assert x['proof_kind_gaps'] == 1
+          assert x['new_kernel_primitives_justified'] == []
+          print('A1 constitutional assertions: PASS')
+          PY
