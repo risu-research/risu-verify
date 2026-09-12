@@ -1,0 +1,77 @@
+{
+  "protocol_id": "RISU_KERNEL_K1_WIRE_W0",
+  "status": "PROSPECTIVE_NON_NORMATIVE_PRE_FREEZE",
+  "parent_gate": "RISU_KERNEL_K1_ADVERSARIAL_GATE_A0",
+  "wire_version": "risu.k1.w0",
+  "semantics": "safety-subset-v1",
+  "schema": "schemas/RISU_KERNEL_K1_WIRE_W0.schema.json",
+  "design": {
+    "transport": "strict JSON; JSON Schema 2020-12 describes structure but schema validity alone carries no semantic authority",
+    "identity": "domain-separated length-prefixed transcript over typed digest tokens; no arbitrary JSON canonicalization is inside K1 claim identity",
+    "open_universe": "REALIZE may contain any syntactically valid consequence commitment, including a target-native consequence absent from ALLOW",
+    "claim_authority": "W and ALLOW are precommitted in claim_id",
+    "proof_authority": "closure and grounding are proof references, never booleans",
+    "unknown_proof_kind": "structurally valid but semantically unsupported until a checker recognizes and validates that proof kind",
+    "annotations": "not part of W0; explanatory metadata remains outside the kernel wire until a non-authoritative envelope is separately specified"
+  },
+  "typed_ids": {
+    "world": "w:sha256:<64 lowercase hex>",
+    "consequence": "c:sha256:<64 lowercase hex>",
+    "target": "t:sha256:<64 lowercase hex>",
+    "proof_artifact": "p:sha256:<64 lowercase hex>",
+    "evidence": "e:sha256:<64 lowercase hex>",
+    "claim": "claim:sha256:<64 lowercase hex>",
+    "certificate": "cert:sha256:<64 lowercase hex>",
+    "witness": "wit:sha256:<64 lowercase hex>"
+  },
+  "identity_transcript": {
+    "string_encoding": "UTF-8",
+    "atom_encoding": "netstring: decimal byte length, colon, bytes, comma",
+    "ordering": "worlds, relation pairs, grounding entries, and evidence roots are lexicographically sorted by their ASCII typed IDs before hashing",
+    "duplicate_policy": "duplicates are invalid, never silently deduplicated",
+    "claim_domain": "RISU-K1-CLAIM-W0\\0",
+    "certificate_domain": "RISU-K1-CERT-W0\\0",
+    "witness_domain": "RISU-K1-WIT-W0\\0",
+    "hash": "SHA-256"
+  },
+  "claim_rules": [
+    "worlds is nonempty and duplicate-free",
+    "allow is nonempty and duplicate-free",
+    "every ALLOW pair references a declared world",
+    "every declared world has at least one ALLOW consequence",
+    "claim_id is recomputed from semantics, sorted worlds, and sorted ALLOW pairs",
+    "there is no closed consequence vocabulary in a claim"
+  ],
+  "certificate_rules": [
+    "certificate claim_id must equal the supplied valid claim",
+    "every REALIZE pair references a declared world",
+    "REALIZE may introduce target-native consequence commitments not named by ALLOW",
+    "closure_proof is a proof reference object with kind and artifact commitment, not an assertion bit",
+    "grounding_proofs may be incomplete at the wire layer; completeness is a checker verdict obligation",
+    "certificate_id binds claim, target, REALIZE, closure proof reference, grounding proof references, and evidence roots"
+  ],
+  "witness_rules": [
+    "a regression witness references one admitted world/consequence pair",
+    "the consequence may be target-native and absent from ALLOW",
+    "the witness carries a grounding proof reference but no closure proof because one grounded forbidden realization is locally sufficient if the grounding proof is accepted",
+    "witness_id binds claim, target, pair, grounding proof reference, and evidence roots"
+  ],
+  "non_authoritative_at_w0": [
+    "proof kind names",
+    "proof artifact contents before a checker validates them",
+    "evidence contents before a checker validates their bindings",
+    "the statement that a certificate is closed",
+    "the statement that a pair is grounded"
+  ],
+  "forbidden_shortcuts": [
+    "closed=true",
+    "grounded=true",
+    "coverage_complete=true",
+    "source consequence enum used as a closed universe",
+    "post-result mutation of W or ALLOW under the same claim_id",
+    "order-dependent claim or certificate identity",
+    "silent duplicate elimination",
+    "unknown proof kinds treated as accepted authority"
+  ],
+  "next_stage": "A tiny independent checker may consume W0 only after W0 identity and malformed-input adversarial vectors pass. The first checker must support an intentionally small proof fragment and return UNKNOWN/ASSURANCE_INCOMPLETE for unsupported proof kinds."
+}
