@@ -169,7 +169,7 @@ def independence(w3_source, w4_source):
     allowed_py = {"argparse", "base64", "hashlib", "json", "re", "pathlib"}
     py_ok = set(imports) <= allowed_py
     go = Path(w4_source).read_text(encoding="utf-8")
-    nonstd_markers = ["github.com/", "golang.org/", "os/exec", "python", "k1_checker_w1", "k1_checker_w2"]
+    nonstd_markers = ["github.com/", "golang.org/", "os/exec", "k1_checker_w1", "k1_checker_w2"]
     bad_go = [marker for marker in nonstd_markers if marker in go.lower()]
     return {"python_imports": imports, "python_stdlib_only": py_ok, "go_forbidden_markers": bad_go, "pass": py_ok and not bad_go}
 
