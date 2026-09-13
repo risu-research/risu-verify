@@ -1,0 +1,38 @@
+{
+  "wire_id": "RISU_KERNEL_K1_CAPSULE_CLOSURE_C2_WIRE",
+  "status": "PROSPECTIVE_BEFORE_CHECKER_IMPLEMENTATION",
+  "proof_kind": "k1.capsule-closure/v1",
+  "capsule_semantics": "risu.k1.capsule/v1",
+  "artifact_exact_keys": [
+    "proof_format",
+    "claim_id",
+    "capsule_semantics",
+    "program_sha256",
+    "boundary"
+  ],
+  "boundary_exact_keys": ["worlds", "slots", "gas"],
+  "program_sha256": "lowercase 64-hex SHA-256 of exact program bytes",
+  "artifact_id": "p:sha256: + SHA-256(exact artifact bytes)",
+  "consequence_id": "c:sha256: + SHA-256(ASCII('RISU-K1-CAPSULE-CONSEQUENCE-V1\\0') || exact EMIT_HEX payload bytes)",
+  "netstring": "len(UTF-8 bytes) in ASCII decimal, then ':', then UTF-8 bytes, then ','",
+  "semantic_target_transcript": [
+    "ASCII('RISU-K1-TARGET-CAPSULE-V1\\0')",
+    "ASCII('S') || netstring('risu.k1.capsule/v1')",
+    "ASCII('P') || netstring(program_sha256)",
+    "ASCII('G') || netstring(decimal gas)",
+    "ASCII('W') || netstring(decimal world_count) || for each lexicographically sorted world: ASCII('w') || netstring(world)",
+    "ASCII('D') || netstring(decimal slot_count) || for each lexicographically sorted slot name: ASCII('s') || netstring(name) || netstring(decimal value_count) || for each lexicographically sorted value: ASCII('v') || netstring(value)",
+    "ASCII('R') || netstring(decimal relation_pair_count) || for each lexicographically sorted (world, consequence): ASCII('r') || netstring(world) || netstring(consequence)"
+  ],
+  "target_id": "t:sha256: + SHA-256(semantic_target_transcript)",
+  "representation_rule": "artifact JSON byte representation is intentionally not canonicalized for p: identity; semantic target identity is canonical under object-key, world, slot, slot-domain, and relation ordering",
+  "closure_derivation": "checkers derive relation by strict capsule parsing and exhaustive world x finite-slot execution; artifact contains no relation or verdict field",
+  "w0_certificate_binding": {
+    "closure_proof.kind": "k1.capsule-closure/v1",
+    "closure_proof.artifact": "exact artifact_id",
+    "grounding_proofs": "exactly one entry for each derived REALIZE pair, each referencing the same proof kind and artifact_id",
+    "certificate.realize": "must equal derived relation exactly",
+    "certificate.target_id": "must equal derived target_id exactly",
+    "certificate_id": "unchanged W0 RISU-K1-CERT-W0 transcript"
+  }
+}
