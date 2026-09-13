@@ -50,6 +50,7 @@ jobs:
       - name: Source hygiene and builds
         run: |
           set -euo pipefail
+          git diff --check
           python -m py_compile \
             tools/risu_kernel_k1_binding_b0.py \
             tools/risu_kernel_k1_binding_b0_verify.py \
