@@ -6,9 +6,12 @@ on:
       - k1-implementation-binding-b0
     paths:
       - 'protocols/RISU_KERNEL_K1_IMPLEMENTATION_BINDING_B0.json'
+      - 'protocols/RISU_KERNEL_K1_IMPLEMENTATION_BINDING_B0_D1.json'
       - 'fixtures/k1_binding_b0/**'
       - 'tools/risu_kernel_k1_binding_b0.py'
       - 'tools/risu_kernel_k1_binding_b0_verify.py'
+      - 'tools/risu_kernel_k1_binding_b0_observer.go'
+      - 'tools/risu_kernel_k1_binding_b0_observer_d1_verify.py'
       - 'tools/specimens/k1_binding_b0_target.go'
       - '.github/workflows/k1-implementation-binding-b0.yml'
   workflow_dispatch:
@@ -47,12 +50,19 @@ jobs:
       - name: Source hygiene and builds
         run: |
           set -euo pipefail
-          python -m py_compile tools/risu_kernel_k1_binding_b0.py tools/risu_kernel_k1_binding_b0_verify.py
+          python -m py_compile \
+            tools/risu_kernel_k1_binding_b0.py \
+            tools/risu_kernel_k1_binding_b0_verify.py \
+            tools/risu_kernel_k1_binding_b0_observer_d1_verify.py
           gofmt -d tools/specimens/k1_binding_b0_target.go | tee /tmp/b0-target-gofmt.diff
           test ! -s /tmp/b0-target-gofmt.diff
+          gofmt -d tools/risu_kernel_k1_binding_b0_observer.go | tee /tmp/b0-observer-gofmt.diff
+          test ! -s /tmp/b0-observer-gofmt.diff
           go vet tools/specimens/k1_binding_b0_target.go
+          go vet tools/risu_kernel_k1_binding_b0_observer.go
           go vet kernel/k1_checker_w2.go
           go build -trimpath -o /tmp/risu-k1-w2 kernel/k1_checker_w2.go
+          go build -trimpath -o /tmp/risu-k1-b0-observer tools/risu_kernel_k1_binding_b0_observer.go
           mkdir -p /tmp/b0-bin
           for v in good bad stdout-lie nonzero-forbidden timeout-after-forbidden timeout-before-effect malformed multi; do
             go build -trimpath -ldflags "-s -w -X main.variant=$v" -o "/tmp/b0-bin/b0-$v" tools/specimens/k1_binding_b0_target.go
@@ -79,4 +89,28 @@ jobs:
           assert x['preservation_authority'] is False
           assert x['implementation_binding_claim'] == 'SCOPED_ONE_SIDED_REGRESSION_ONLY'
           print('K1 implementation-binding B0: PASS')
+          PY
+      - name: Run independent observer differential D1
+        run: |
+          set -euo pipefail
+          python tools/risu_kernel_k1_binding_b0_observer_d1_verify.py \
+            --binder tools/risu_kernel_k1_binding_b0.py \
+            --observer /tmp/risu-k1-b0-observer \
+            --observer-source tools/risu_kernel_k1_binding_b0_observer.go \
+            --w1 kernel/k1_checker_w1.py \
+            --w2 /tmp/risu-k1-w2 \
+            --world fixtures/k1_binding_b0/world_input.txt \
+            --claim fixtures/k1_binding_b0/claim.json \
+            --bin-dir /tmp/b0-bin \
+            --output /tmp/k1-binding-b0-d1.json
+          python - <<'PY'
+          import json
+          x = json.load(open('/tmp/k1-binding-b0-d1.json', encoding='utf-8'))
+          assert x['status'] == 'PASS'
+          assert x['runtime_vector_count'] == 8
+          assert x['passed'] == 8
+          assert x['failed'] == []
+          assert x['observer_independence']['pass'] is True
+          assert x['preservation_authority'] is False
+          print('K1 implementation-binding B0 D1 independent observer differential: PASS')
           PY
