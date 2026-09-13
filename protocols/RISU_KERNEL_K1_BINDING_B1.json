@@ -1,0 +1,89 @@
+{
+  "protocol_id": "RISU_KERNEL_K1_BINDING_B1",
+  "status": "PROSPECTIVE_BEFORE_IMPLEMENTATION",
+  "base_qualification": {
+    "branch": "k1-observed-pair-p1-qualified",
+    "commit": "7dc6e4a34f9bbee025894474df430fd202028244",
+    "rule": "B1 is additive relative to this exact P1-qualified evidence point; no pre-existing file may be modified, deleted, or renamed."
+  },
+  "purpose": "Bind an actual controlled local execution to a P1 local observed-pair regression witness inside a multi-world K1 claim, without creating preservation authority or closing unrelated worlds.",
+  "authority_rule": {
+    "regression": "Only a strictly parsed effect record from the fresh private sink of the current exact executable run may be selected. If that record's consequence is outside ALLOW for the selected admitted world, B1 may mint k1.observed-pair/v1 evidence and only after both frozen P1 checkers accept it may return BOUND_REGRESSION.",
+    "clean_run": "NO_AUTHORITY. Absence of a forbidden observed record never implies preservation.",
+    "malformed_or_unbound_observation": "NO_AUTHORITY or REJECTED, never regression and never preservation.",
+    "unrelated_worlds": "No observation, closure, or synthetic REALIZE data is required for worlds other than the selected execution world."
+  },
+  "controlled_run_contract": {
+    "sink": "Runner creates a fresh temporary private directory for each execution and requires it to be empty before launch. The target receives the sink path only as an argument.",
+    "world": "Runner copies the exact selected world-input bytes into the execution directory, recomputes its world commitment, and requires that world to be declared by the W0 claim before execution authority can be created.",
+    "implementation": "Runner hashes exact executable bytes before launch and P1 checkers independently hash the same path when validating the minted artifact.",
+    "effect_cut": "After process exit or timeout termination, runner reads only sink/effects.log. Stdout and stderr are never interpreted as consequences.",
+    "selection": "For multiple valid effect records, B1 selects the first forbidden record by record order. Allowed records before it do not erase the forbidden record.",
+    "timeout": "A timeout after a durable forbidden sink record preserves the regression witness. A timeout before any valid forbidden record yields no authority.",
+    "process_status": "Nonzero exit after a durable forbidden record does not erase the observed effect."
+  },
+  "run_envelope": {
+    "format": "risu.k1.binding.b1.run/v1",
+    "purpose": "Content-bind the controlled runner's local execution transcript without pretending it is a signature or remote attestation.",
+    "domain": "RISU-K1-BINDING-B1-RUN-V1\\0",
+    "commits_to": [
+      "claim_id",
+      "selected_world_id",
+      "implementation_id",
+      "world_input_sha256",
+      "effect_log_sha256",
+      "timed_out",
+      "exit_code",
+      "stdout_sha256",
+      "stderr_sha256",
+      "p1_artifact_id or null",
+      "p1_witness_id or null",
+      "authority"
+    ]
+  },
+  "p1_integration": {
+    "proof_kind": "k1.observed-pair/v1",
+    "checker_a": "frozen kernel/k1_checker_w3.py from P1-qualified base",
+    "checker_b": "frozen kernel/k1_checker_w4.go from P1-qualified base",
+    "success_condition": "Both independently return ACCEPTED/REGRESSION for the exact same minted artifact, witness, claim, and executable.",
+    "preservation_authority": false
+  },
+  "adversarial_gate": {
+    "required_vectors": 16,
+    "vectors": [
+      ["B1-01", "allowed effect in selected world", "NO_AUTHORITY"],
+      ["B1-02", "forbidden effect in selected world", "BOUND_REGRESSION"],
+      ["B1-03", "forbidden-looking stdout but allowed sink", "NO_AUTHORITY"],
+      ["B1-04", "nonzero exit after forbidden sink record", "BOUND_REGRESSION"],
+      ["B1-05", "timeout after forbidden sink record", "BOUND_REGRESSION"],
+      ["B1-06", "timeout before any effect", "NO_AUTHORITY"],
+      ["B1-07", "malformed effect sink", "NO_AUTHORITY"],
+      ["B1-08", "allowed then forbidden records", "BOUND_REGRESSION"],
+      ["B1-09", "multi-world claim has unrelated unobserved worlds", "BOUND_REGRESSION"],
+      ["B1-10", "claim world and ALLOW reordering", "BOUND_REGRESSION"],
+      ["B1-11", "selected world bytes are not admitted by claim", "REJECTED"],
+      ["B1-12", "report executable substitution", "REJECT_BINDING_EVIDENCE"],
+      ["B1-13", "report world-input substitution", "REJECT_BINDING_EVIDENCE"],
+      ["B1-14", "report effect-log/artifact substitution", "REJECT_BINDING_EVIDENCE"],
+      ["B1-15", "attempt to derive preservation from clean run", "IMPOSSIBLE_BY_INTERFACE"],
+      ["B1-16", "P1 checker disagreement or rejection", "REJECT_BINDING_EVIDENCE"]
+    ]
+  },
+  "independent_observer_gate": {
+    "name": "D2",
+    "implementation": "Go standard library only; no Python execution, no B1 binder import, no P1 checker invocation.",
+    "runtime_variants": ["good", "bad", "stdout-lie", "nonzero-forbidden", "timeout-after-forbidden", "timeout-before-effect", "malformed", "multi"],
+    "required_agreement": "Observer independently re-executes exact binaries and must match B1 on observation class, ordered consequence commitments, first forbidden record selection, world commitment, and executable commitment."
+  },
+  "explicit_nonclaims": [
+    "No preservation from clean executions.",
+    "No closure over unobserved claim worlds.",
+    "No exhaustive implementation-behavior model.",
+    "No authenticated remote attestation or signature.",
+    "No claim that a saved run envelope alone proves causality after leaving the controlled runner environment.",
+    "No determinism theorem across executions.",
+    "No liveness or deadline theorem.",
+    "No change to K1 ALLOW/REALIZE semantics."
+  ],
+  "stop_rule": "Any authority-changing ambiguity or W3/W4/observer disagreement stops B1 qualification. Do not weaken a failed vector to preserve the design."
+}
