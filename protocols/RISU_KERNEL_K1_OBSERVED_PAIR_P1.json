@@ -1,0 +1,114 @@
+{
+  "protocol_id": "RISU_KERNEL_K1_OBSERVED_PAIR_P1",
+  "status": "PROSPECTIVE_BEFORE_IMPLEMENTATION",
+  "base_qualification": {
+    "branch": "k1-binding-b0-qualified",
+    "commit": "305bbc50fe5db94a73f33aca6fbfb1590fb99509",
+    "rule": "P1 work is additive relative to this exact qualified B0 evidence point. No pre-existing file may be modified, deleted, or renamed."
+  },
+  "purpose": "Add a local grounding proof kind for regression witnesses over multi-world K1 claims. One independently checked observed forbidden pair may prove regression without closing, modeling, or fabricating unrelated worlds.",
+  "semantic_non_change": {
+    "k1_kernel_changed": false,
+    "claim_semantics": "safety-subset-v1",
+    "breaking_rule": "One grounded realized pair outside ALLOW is sufficient for REGRESSION.",
+    "preservation_rule": "Unchanged. P1 has zero preservation authority and cannot discharge closure, totality, or global inclusion obligations."
+  },
+  "proof_kind": {
+    "name": "k1.observed-pair/v1",
+    "supported_object": "risu.k1.w0 regression_witness only",
+    "unsupported_objects": [
+      "preservation_certificate",
+      "closure_proof",
+      "global REALIZE enumeration"
+    ],
+    "artifact_exact_keys": [
+      "proof_format",
+      "profile",
+      "claim_id",
+      "target_id",
+      "pair",
+      "implementation_id",
+      "world_input_b64",
+      "effect_log_b64",
+      "record_index",
+      "timed_out",
+      "exit_code",
+      "stdout_sha256",
+      "stderr_sha256"
+    ],
+    "recognized_profile": "risu.binding.effect-sink-e1/v1"
+  },
+  "identity": {
+    "world_domain": "RISU-K1-BINDING-B0-WORLD\\0",
+    "consequence_domain": "RISU-K1-BINDING-B0-CONSEQUENCE\\0",
+    "target_domain": "RISU-K1-TARGET-OBSERVED-PAIR-V1\\0",
+    "artifact_id": "p:sha256 of exact artifact bytes",
+    "witness_id": "unchanged RISU-K1-WIT-W0 transcript",
+    "implementation_id": "impl:sha256 of exact executable bytes supplied independently to the checker",
+    "target_commitment_rule": "target_id commits to profile, claim_id, pair, implementation_id, SHA-256 of exact world-input bytes, SHA-256 of exact effect-log bytes, selected record index, timeout flag, exit code, stdout SHA-256, and stderr SHA-256 using domain-separated length-prefixed transcript encoding."
+  },
+  "grounding_algorithm": [
+    "Strictly validate the W0 claim and regression witness, including claim_id and witness_id recomputation.",
+    "Require witness.grounding_proof.kind == k1.observed-pair/v1 and exact proof-artifact byte digest equality.",
+    "Reject if the witness pair world is not declared by the claim or if the pair is already in ALLOW.",
+    "Strictly parse the proof artifact; unknown profile is UNSUPPORTED, not accepted.",
+    "Require artifact claim_id and pair to equal the witness claim_id and pair.",
+    "Decode base64 canonically. Recompute world ID from exact world_input bytes and require it equals pair.world.",
+    "Strictly parse E1 effect-sink records. record_index must name an existing exact record. Recompute that record's consequence commitment and require it equals pair.consequence.",
+    "Hash the independently supplied executable bytes and require exact equality with artifact.implementation_id.",
+    "Recompute the observed-pair target commitment and require artifact.target_id and witness.target_id to match it.",
+    "Only then return ACCEPTED/REGRESSION with scope LOCAL_OBSERVED_PAIR and preservation_authority=false."
+  ],
+  "epistemic_boundary": {
+    "establishes": [
+      "The submitted W0 claim admits the witness world.",
+      "The selected consequence is not allowed in that world.",
+      "The exact embedded observation bytes encode the submitted pair under the recognized observation profile.",
+      "The artifact is content-bound to the exact executable bytes supplied to the checker.",
+      "No evidence or closure for unrelated claim worlds is required for regression."
+    ],
+    "does_not_establish": [
+      "Preservation from any number of clean runs.",
+      "Exhaustiveness of implementation behavior.",
+      "That embedded observation bytes were causally produced by the executable outside a controlled binding runner.",
+      "Authenticated remote attestation, signature, or transferable trust.",
+      "Determinism across executions.",
+      "Liveness or deadline properties.",
+      "Anything about unobserved worlds beyond claim membership and ALLOW commitments."
+    ]
+  },
+  "adversarial_gate": {
+    "required_vectors": 18,
+    "vectors": [
+      ["P1-01", "three-world claim; grounded forbidden pair in one world", "ACCEPTED/REGRESSION"],
+      ["P1-02", "same grounded pair is allowed", "REJECTED"],
+      ["P1-03", "pair world not declared by claim", "REJECTED"],
+      ["P1-04", "artifact claim substitution", "REJECTED"],
+      ["P1-05", "world-input byte substitution", "REJECTED"],
+      ["P1-06", "effect-log byte substitution", "REJECTED"],
+      ["P1-07", "selected record index out of range", "REJECTED"],
+      ["P1-08", "malformed effect sink", "REJECTED"],
+      ["P1-09", "implementation substitution", "REJECTED"],
+      ["P1-10", "target commitment tamper", "REJECTED"],
+      ["P1-11", "proof artifact byte digest tamper", "REJECTED"],
+      ["P1-12", "witness_id tamper", "REJECTED"],
+      ["P1-13", "observed-pair proof used as preservation authority", "UNSUPPORTED"],
+      ["P1-14", "unrelated worlds have no local observations", "ACCEPTED/REGRESSION"],
+      ["P1-15", "reorder claim worlds and ALLOW without semantic change", "ACCEPTED/REGRESSION"],
+      ["P1-16", "multiple effect records; selected forbidden record grounded", "ACCEPTED/REGRESSION"],
+      ["P1-17", "timeout/nonzero metadata after durable forbidden record", "ACCEPTED/REGRESSION"],
+      ["P1-18", "unknown observation profile", "UNSUPPORTED"]
+    ]
+  },
+  "independence_requirement": {
+    "checker_a": "Python standard library only; must not import W1/W2/B0 binder code.",
+    "checker_b": "Go standard library only; must not execute Python or import RISU checker code.",
+    "differential_rule": "Both checkers must independently recompute claim identity, witness identity, artifact byte digest, world/effect commitments, executable digest, target commitment, and final authority class."
+  },
+  "binding_follow_on": {
+    "name": "B1 multi-world local binding",
+    "rule": "A controlled runner may mint a P1 artifact only from an actual effect sink it observed. Clean/no-forbidden runs mint no regression witness and acquire no preservation authority.",
+    "required_independent_observer": true
+  },
+  "stop_rule": "If any adversarial vector or cross-language differential exposes an ambiguity that can change authority, stop and amend the prospective protocol before qualification. Do not waive a failed vector to preserve the design."
+}
