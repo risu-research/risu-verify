@@ -1,0 +1,90 @@
+name: K1 Closure C2 Bounded Proof
+on:
+  push:
+    branches: [k1-closure-c2-bounded-proof]
+    paths:
+      - 'protocols/RISU_KERNEL_K1_CAPSULE_CLOSURE_C2*.json'
+      - 'kernel/k1_checker_w5.py'
+      - 'kernel/k1_checker_w6.go'
+      - 'tools/risu_kernel_k1_capsule_c2_*'
+      - 'docs/RISU_KERNEL_K1_CAPSULE_CLOSURE_C2.md'
+      - '.github/workflows/k1-closure-c2-bounded-proof.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  CGO_ENABLED: '0'
+jobs:
+  qualify-c2:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.x'
+          cache: false
+      - name: Prove C1-qualified base is untouched
+        run: |
+          set -euo pipefail
+          base=168512cd0e4e260a84788c2c10f140fa39dc6aef
+          git merge-base --is-ancestor "$base" HEAD
+          git diff --name-status "$base" HEAD | tee /tmp/c2-delta.txt
+          test -s /tmp/c2-delta.txt
+          if awk '$1 != "A" { bad=1 } END { exit bad ? 0 : 1 }' /tmp/c2-delta.txt; then
+            echo 'C2 must be additive relative to C1-qualified; non-additive delta found.' >&2
+            exit 1
+          fi
+      - name: Source hygiene and checker independence
+        run: |
+          set -euo pipefail
+          git diff --check
+          python -m py_compile kernel/k1_checker_w5.py tools/risu_kernel_k1_capsule_c2_static_verify.py tools/risu_kernel_k1_capsule_c2_generative_verify.py
+          test -z "$(gofmt -d kernel/k1_checker_w6.go)"
+          go vet kernel/k1_checker_w6.go
+          go build -trimpath -o /tmp/k1-checker-w6 kernel/k1_checker_w6.go
+          python - <<'PY'
+          from pathlib import Path
+          w5=Path('kernel/k1_checker_w5.py').read_text()
+          w6=Path('kernel/k1_checker_w6.go').read_text()
+          assert 'risu_kernel_k1_closure_capsule_c1_falsification' not in w5
+          assert 'subprocess' not in w5
+          for banned in ['os/exec','exec.Command','k1_checker_w5','k1_checker_w1','k1_checker_w2','subprocess']:
+              assert banned not in w6, banned
+          allowed={'bytes','crypto/sha256','encoding/hex','encoding/json','flag','fmt','os','regexp','sort','strconv','strings'}
+          import re
+          block=re.search(r'import \((.*?)\)',w6,re.S).group(1)
+          imports=set(re.findall(r'"([^"]+)"',block))
+          assert imports==allowed,(imports,allowed)
+          print('C2 checker independence audit: PASS')
+          PY
+      - name: Run 28-vector adversarial static differential gate
+        run: |
+          set -euo pipefail
+          python tools/risu_kernel_k1_capsule_c2_static_verify.py --w6 /tmp/k1-checker-w6 --output /tmp/c2-static.json
+          python - <<'PY'
+          import json
+          x=json.load(open('/tmp/c2-static.json'))
+          assert x['status']=='PASS'
+          assert x['vector_count']==28 and x['passed']==28 and x['failed']==[]
+          assert x['semantic_kernel_changed'] is False
+          assert x['producer_supplied_realize_authority'] is False
+          print('C2 static: PASS 28/28')
+          PY
+      - name: Run seeded 768-comparison generative differential gate
+        run: |
+          set -euo pipefail
+          python tools/risu_kernel_k1_capsule_c2_generative_verify.py --w6 /tmp/k1-checker-w6 --output /tmp/c2-generative.json
+          python - <<'PY'
+          import json
+          x=json.load(open('/tmp/c2-generative.json'))
+          assert x['status']=='PASS'
+          assert x['seed']==1123581321 and x['trials']==96 and x['properties_per_trial']==8
+          assert x['comparisons']==768 and x['passed']==768 and x['failed']==[]
+          assert x['semantic_kernel_changed'] is False
+          print('C2 generative: PASS 768/768')
+          PY
