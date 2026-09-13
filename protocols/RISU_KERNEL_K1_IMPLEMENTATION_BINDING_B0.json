@@ -1,0 +1,91 @@
+{
+  "protocol_id": "RISU_KERNEL_K1_IMPLEMENTATION_BINDING_B0",
+  "status": "PROSPECTIVE_BEFORE_IMPLEMENTATION",
+  "base_qualification": {
+    "branch": "k1-w2-qualified",
+    "commit": "3f3e6b9071d7fe1cd447f2bbbba9addbbe509533"
+  },
+  "purpose": "Attack the largest remaining RC1 evidence gap by grounding a K1 regression witness in an actual black-box implementation execution without modifying RC1, W0, W1, or W2 and without laundering black-box testing into preservation authority.",
+  "kernel_change": "FORBIDDEN",
+  "binding_scope": "OBSERVED_EXECUTION_REGRESSION_WITNESS_ONLY",
+  "core_asymmetry": {
+    "regression": "One independently observed forbidden consequence at the declared consequential cut may ground a regression witness.",
+    "preservation": "No finite set of black-box executions in B0 may establish preservation or target closure. Absence of an observed forbidden consequence yields no semantic authority."
+  },
+  "qualification_restriction": {
+    "claim_world_cardinality": 1,
+    "reason": "Frozen W1/W2 k1.finite-model/v1 require the finite proof artifact world domain to equal the claim world domain. B0 refuses to invent unobserved worlds merely to satisfy that proof-kind overconstraint. Multi-world local-witness binding remains a separate proof-kind gap."
+  },
+  "world_commitment": {
+    "id": "w:sha256:<hex>",
+    "preimage": "ASCII RISU-K1-BINDING-B0-WORLD\\x00 followed by B + netstring(exact world-input bytes)",
+    "authority": "computed by the B0 binder; the target process cannot supply a world id"
+  },
+  "observation_contract": {
+    "sink_filename": "effects.log",
+    "record_grammar": "E1|kind=<token>|subject=<token>|value=<token>\\n",
+    "token_pattern": "^[a-z0-9._:@/-]{1,128}$",
+    "cut": "After the target process exits or after the binder terminates it for timeout, the binder reads the complete sink file bytes exactly once.",
+    "stdout": "non-authoritative diagnostic channel; never a consequence source",
+    "stderr": "non-authoritative diagnostic channel; never a consequence source",
+    "exit_status": "non-authoritative for regression grounding; an already-observed forbidden effect is not erased by nonzero exit",
+    "timeout": "non-authoritative for an effect already durably present at the cut; timeout before any valid forbidden effect yields no authority",
+    "malformed_sink": "UNKNOWN/NO_AUTHORITY; B0 does not cherry-pick valid-looking prefixes from an ambiguous sink"
+  },
+  "consequence_commitment": {
+    "id": "c:sha256:<hex>",
+    "preimage": "ASCII RISU-K1-BINDING-B0-CONSEQUENCE\\x00 followed by K + netstring(kind) + S + netstring(subject) + V + netstring(value)",
+    "authority": "computed by the B0 binder from strict sink parsing; the target process cannot supply a consequence id"
+  },
+  "implementation_commitment": {
+    "form": "impl:sha256:<hex of exact executable bytes>",
+    "meaning": "B0 binds the observation to the exact executable bytes actually invoked, not merely to source text or a repository revision."
+  },
+  "composition": {
+    "finite_model_artifact": "For a supported single-world run, B0 constructs a k1.finite-model/v1 artifact containing the set of valid consequences actually observed in that run. This artifact is not asserted to be an exhaustive model of all possible implementation behaviors.",
+    "witness": "If at least one observed consequence is outside ALLOW, B0 deterministically selects the lexicographically first forbidden (world, consequence) pair and constructs a normal W0 regression witness referencing the generated finite-model artifact.",
+    "independent_consumers": "The generated claim/artifact/witness must be accepted as REGRESSION by both frozen W1 and qualified W2. B0 invokes them as external CLIs and imports neither implementation.",
+    "binding_result": "Only the conjunction of direct implementation observation plus W1 acceptance plus W2 acceptance authorizes BOUND_REGRESSION."
+  },
+  "producer_non_authority": [
+    "The target cannot provide world_id.",
+    "The target cannot provide consequence_id.",
+    "The target cannot provide target_id.",
+    "The target cannot provide finite-model proof bytes.",
+    "The target cannot provide witness_id.",
+    "The target cannot turn stdout/stderr text into semantic authority.",
+    "The target cannot obtain preservation authority from a clean or allowed observation."
+  ],
+  "precommitted_vectors": [
+    {"id": "B0-01", "name": "allowed_effect_negative_control", "expected": "NO_AUTHORITY"},
+    {"id": "B0-02", "name": "forbidden_effect_bound_regression", "expected": "BOUND_REGRESSION"},
+    {"id": "B0-03", "name": "stdout_forbidden_but_sink_allowed", "expected": "NO_AUTHORITY"},
+    {"id": "B0-04", "name": "forbidden_effect_then_nonzero_exit", "expected": "BOUND_REGRESSION"},
+    {"id": "B0-05", "name": "forbidden_effect_then_timeout", "expected": "BOUND_REGRESSION"},
+    {"id": "B0-06", "name": "timeout_before_effect", "expected": "NO_AUTHORITY"},
+    {"id": "B0-07", "name": "malformed_sink", "expected": "NO_AUTHORITY"},
+    {"id": "B0-08", "name": "allowed_then_forbidden_multi_event", "expected": "BOUND_REGRESSION"},
+    {"id": "B0-09", "name": "implementation_substitution", "expected": "REJECT_BINDING_EVIDENCE"},
+    {"id": "B0-10", "name": "world_input_substitution", "expected": "REJECT_BINDING_EVIDENCE"},
+    {"id": "B0-11", "name": "effect_observation_tamper", "expected": "REJECT_BINDING_EVIDENCE"},
+    {"id": "B0-12", "name": "attempted_preservation_from_allowed_run", "expected": "IMPOSSIBLE_BY_INTERFACE"},
+    {"id": "B0-13", "name": "multi_world_claim", "expected": "UNSUPPORTED_NO_AUTHORITY"}
+  ],
+  "success_rule": [
+    "All precommitted vectors must meet their expected authority class.",
+    "The B0 binder must not import W1 or W2 and must invoke them only as external CLIs.",
+    "No pre-existing file in k1-w2-qualified may be modified, deleted, or renamed.",
+    "The target specimen source must be outside the binder and checker implementations.",
+    "The final hosted qualification must rebuild the target variants and W2, rerun all vectors, and verify exact pinned blobs.",
+    "A green B0 supports only observed-execution regression binding in the declared single-world finite-run scope."
+  ],
+  "explicit_non_claims": [
+    "No preservation authority from black-box testing.",
+    "No proof that the executable is deterministic.",
+    "No proof that an observed finite model is exhaustive for the implementation.",
+    "No arbitrary-program sandbox or malicious-code containment claim.",
+    "No multi-world local-witness repair.",
+    "No unbounded liveness proof.",
+    "No universal implementation-binding theorem."
+  ]
+}
