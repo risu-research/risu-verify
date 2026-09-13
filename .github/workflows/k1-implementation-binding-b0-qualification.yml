@@ -1,0 +1,53 @@
+name: K1 Implementation Binding B0 Qualification
+
+on:
+  push:
+    branches:
+      - k1-implementation-binding-b0
+    paths:
+      - 'protocols/RISU_KERNEL_K1_IMPLEMENTATION_BINDING_B0_QUALIFICATION.json'
+      - 'tools/risu_kernel_k1_binding_b0_qualification_verify.py'
+      - '.github/workflows/k1-implementation-binding-b0-qualification.yml'
+      - 'docs/RISU_KERNEL_K1_IMPLEMENTATION_BINDING_B0.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CGO_ENABLED: '0'
+
+jobs:
+  qualify-b0:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.x'
+          cache: false
+      - name: Replay complete B0 qualification evidence chain
+        run: |
+          set -euo pipefail
+          python tools/risu_kernel_k1_binding_b0_qualification_verify.py \
+            --manifest protocols/RISU_KERNEL_K1_IMPLEMENTATION_BINDING_B0_QUALIFICATION.json \
+            --output /tmp/k1-binding-b0-qualification.json
+          python - <<'PY'
+          import json
+          x = json.load(open('/tmp/k1-binding-b0-qualification.json', encoding='utf-8'))
+          assert x['status'] == 'PASS'
+          assert x['base_is_ancestor'] is True
+          assert x['add_only'] is True
+          assert x['pinned_blobs'] is True
+          assert x['source_hygiene'] == 'PASS'
+          assert x['b0_adversarial'] == '13/13 PASS'
+          assert x['d1_observer_differential'] == '8/8 PASS'
+          assert x['implementation_binding_claim'] == 'SCOPED_ONE_SIDED_REGRESSION_ONLY'
+          assert x['preservation_authority'] is False
+          print('K1 implementation-binding B0 composite qualification: PASS')
+          PY
