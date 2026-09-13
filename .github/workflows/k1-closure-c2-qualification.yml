@@ -1,0 +1,43 @@
+name: K1 Closure C2 Qualification
+on:
+  push:
+    branches: [k1-closure-c2-bounded-proof]
+    paths:
+      - 'protocols/RISU_KERNEL_K1_CAPSULE_CLOSURE_C2_QUALIFICATION.json'
+      - 'tools/risu_kernel_k1_capsule_c2_qualification_verify.py'
+      - '.github/workflows/k1-closure-c2-qualification.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  CGO_ENABLED: '0'
+jobs:
+  qualify-c2:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.x'
+          cache: false
+      - name: Replay complete C2 qualification evidence chain
+        run: |
+          set -euo pipefail
+          python tools/risu_kernel_k1_capsule_c2_qualification_verify.py \
+            --manifest protocols/RISU_KERNEL_K1_CAPSULE_CLOSURE_C2_QUALIFICATION.json \
+            --output /tmp/c2-qualification.json
+          python - <<'PY'
+          import json
+          x=json.load(open('/tmp/c2-qualification.json'))
+          assert x['status']=='PASS'
+          assert all(x['checks'].values())
+          assert x['kat']['status']=='PASS'
+          assert x['static']['passed']==x['static']['vector_count']==28 and x['static']['failed']==[]
+          assert x['generative']['seed']==1123581321 and x['generative']['passed']==x['generative']['comparisons']==768 and x['generative']['failed']==[]
+          print('K1 C2 composite qualification: PASS')
+          PY
