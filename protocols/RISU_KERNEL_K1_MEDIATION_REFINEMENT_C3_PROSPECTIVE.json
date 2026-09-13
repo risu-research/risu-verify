@@ -1,0 +1,439 @@
+{
+  "protocol_id": "risu.k1.mediation-refinement.c3.prospective/v1",
+  "title": "K1 C3 Prospective Mediation-Complete Refinement Falsification Gate",
+  "status": "PROSPECTIVE_FALSIFICATION_GATE",
+  "frozen_before_c3_implementation": true,
+  "base": {
+    "repository": "risu-research/risu-verify",
+    "qualified_branch": "k1-closure-c2-qualified",
+    "commit_sha": "465ee71aba72f20737bf8713b2192a2029d79cdb",
+    "tree_sha": "6dd10e00eb2e7c132d11cca92551c49c992ba5dd"
+  },
+  "purpose": [
+    "Freeze the C3 authority obligations and adversarial gate before any C3 implementation exists.",
+    "Test whether a deliberately restricted richer implementation profile can be bound to an independently reconstructed C2 bounded model without hidden consequential exits or semantic laundering.",
+    "Permit positive authority only when mediation completeness and refinement fidelity are independently established; producer declarations are never sufficient authority."
+  ],
+  "kernel_invariants": {
+    "semantic_kernel_changed": false,
+    "k1_world_set_nonempty": true,
+    "k1_consequence_universe_open": true,
+    "regression_rule_unchanged": "A grounded realized pair outside ALLOW is sufficient for REGRESSION/BREAKING.",
+    "preservation_rule_unchanged": "PRESERVATION still requires adequate closure/exhaustiveness, grounding, consequential-cut totality, and REALIZE subset-of ALLOW.",
+    "unknown_rule_unchanged": "Any unresolved authority-relevant uncertainty fails closed to unsupported/unknown rather than safety."
+  },
+  "authority_state_at_this_commit": {
+    "production_proof_kind_created": false,
+    "preservation_authority_created": false,
+    "implementation_binding_created": false,
+    "this_file_is_evidence_of": "prospective precommitment only",
+    "producer_self_assertions_authoritative": false
+  },
+  "c3_hypothesis": {
+    "statement": "A richer implementation can inherit C2 positive closure authority only if the admitted representation has a closed, independently checkable consequential boundary; every reachable consequential exit is mediated; the mediation/refinement mapping is total and consequence-faithful; and independent verifiers reconstruct the same C2 target behavior from exact authority inputs.",
+    "scope_restriction": "C3 is intentionally not a proof of arbitrary native-program behavior. The admitted representation/profile must be narrow enough that reachability, effect inventory, and mediation completeness are mechanically checkable.",
+    "architectural_intent": "Keep K1 and the authority checkers small. Move expressive complexity into non-authoritative producers/frontends whose outputs must survive independent reconstruction."
+  },
+  "authority_subject": {
+    "must_bind_exactly": [
+      "K1/W0 claim identity",
+      "exact admitted implementation/profile representation bytes",
+      "exact mediation/refinement specification bytes",
+      "exact admitted world domain",
+      "all finite consequential input/state dimensions required by the profile",
+      "exact downstream C2 target identity and authority-relevant limits",
+      "versioned parser/analyzer/checker semantics"
+    ],
+    "source_label_is_not_identity": true,
+    "filename_is_not_identity": true,
+    "producer_target_id_is_not_identity": true,
+    "producer_realize_relation_is_not_authority": true,
+    "producer_complete_flag_is_not_authority": true
+  },
+  "threat_model": {
+    "in_scope": [
+      "buggy or adversarial proof producer/frontend",
+      "artifact substitution or domain shrinkage",
+      "hidden or omitted consequential exits",
+      "semantic relabeling/laundering at the mediation boundary",
+      "parser and analyzer ambiguity",
+      "unmodeled finite state/history/environment dimensions",
+      "unsupported dynamic behavior inside the admitted profile",
+      "differential-verifier disagreement"
+    ],
+    "mitigated_but_not_magically_eliminated": [
+      "checker implementation defects, by independent implementations and differential adversarial testing",
+      "representation bugs, by exact-byte binding and strict parsing"
+    ],
+    "outside_positive_authority_unless_later_explicitly_modeled": [
+      "compromised host operating system or hardware",
+      "remote or hardware attestation",
+      "arbitrary native binaries",
+      "unrestricted FFI, dynamic loading, reflection, or eval",
+      "unbounded concurrency or liveness",
+      "side channels not represented as K1 consequences",
+      "probabilistic completeness claims"
+    ]
+  },
+  "authority_obligations": [
+    {
+      "id": "C3-O01",
+      "name": "exact_subject_identity",
+      "requirement": "Authority binds exact admitted representation bytes and profile version, not a path, name, build label, or producer assertion."
+    },
+    {
+      "id": "C3-O02",
+      "name": "exact_claim_and_c2_binding",
+      "requirement": "The bridge binds one exact K1/W0 claim and one exact downstream C2 target/evidence chain; substitution changes authority identity."
+    },
+    {
+      "id": "C3-O03",
+      "name": "closed_world_reachability",
+      "requirement": "The admitted profile must make reachable control/effect structure mechanically enumerable or otherwise decidable under a versioned rule; unresolved dynamic reachability cannot receive positive authority."
+    },
+    {
+      "id": "C3-O04",
+      "name": "complete_effect_inventory",
+      "requirement": "Every reachable operation capable of a K1 consequence must be classified as mediated, structurally impossible, or unsupported; an unclassified consequential primitive fails closed."
+    },
+    {
+      "id": "C3-O05",
+      "name": "no_unmediated_consequential_path",
+      "requirement": "No reachable path may cause a consequence while bypassing the declared mediation boundary."
+    },
+    {
+      "id": "C3-O06",
+      "name": "total_refinement_mapping",
+      "requirement": "Every mediated consequential event in the admitted profile maps to a downstream consequence representation; unmapped events cannot be dropped or treated as safe."
+    },
+    {
+      "id": "C3-O07",
+      "name": "non_laundering_refinement",
+      "requirement": "The mapping must preserve every distinction relevant to ALLOW. Many-to-one mapping is forbidden unless the verifier independently establishes that the merged source events are equivalent for the bound K1 claim."
+    },
+    {
+      "id": "C3-O08",
+      "name": "consequential_multiplicity_and_order",
+      "requirement": "Multiple consequences and ordering are preserved whenever the bound consequence semantics distinguishes them; first-effect-only projection is not closure."
+    },
+    {
+      "id": "C3-O09",
+      "name": "open_consequence_universe",
+      "requirement": "Target-native or previously unseen consequence payloads remain representable and cannot be discarded merely because a producer vocabulary lacks a label."
+    },
+    {
+      "id": "C3-O10",
+      "name": "all_variation_accounted",
+      "requirement": "State/history, nondeterminism, time, scheduling, environment, and capabilities are either structurally absent from the admitted profile or represented by explicit authority-bound finite dimensions adequate for the claim."
+    },
+    {
+      "id": "C3-O11",
+      "name": "uncertainty_is_not_safety",
+      "requirement": "Parse failure, unresolved target, unsupported opcode/feature, analyzer uncertainty, resource exhaustion, or incomplete enumeration yields REJECTED/INCOMPLETE/UNKNOWN, never PRESERVED."
+    },
+    {
+      "id": "C3-O12",
+      "name": "independent_reconstruction",
+      "requirement": "At least two independently implemented authority checkers must reconstruct authority-relevant subject identity, mediation completeness, refinement result, and downstream binding without trusting producer verdict fields."
+    },
+    {
+      "id": "C3-O13",
+      "name": "downstream_c2_recomputation",
+      "requirement": "C2 authority-relevant behavior must be independently recomputed or revalidated under the exact C2 protocol from bound inputs; a producer-supplied C2 PASS or REALIZE relation is insufficient."
+    },
+    {
+      "id": "C3-O14",
+      "name": "domain_non_shrinkage",
+      "requirement": "Worlds, boundary slots, slot values, effect classes, and authority-relevant limits are content-bound; omission or shrinkage changes identity and cannot silently preserve authority."
+    },
+    {
+      "id": "C3-O15",
+      "name": "evidence_chain_integrity",
+      "requirement": "Claim, subject, mediation specification, profile, C2 target, and checker-visible evidence form an exact digest-linked chain; any mismatch or tamper fails closed."
+    },
+    {
+      "id": "C3-O16",
+      "name": "verifier_disagreement_fails_closed",
+      "requirement": "Any authority-relevant disagreement between independent verifiers prevents positive authority until resolved."
+    }
+  ],
+  "precommitted_falsification_vectors": [
+    {
+      "id": "C3-01",
+      "mutation": "direct_effect_bypass",
+      "attack": "A reachable consequence-producing primitive bypasses the declared mediator.",
+      "required_result": "No positive C3 authority."
+    },
+    {
+      "id": "C3-02",
+      "mutation": "omitted_mediator_edge",
+      "attack": "One reachable edge into a consequence sink is omitted from the producer effect graph.",
+      "required_result": "Independent reconstruction detects omission or returns incomplete/unknown."
+    },
+    {
+      "id": "C3-03",
+      "mutation": "forbidden_to_allowed_relabel",
+      "attack": "Mapper relabels a source consequence forbidden by the bound claim as an allowed target consequence.",
+      "required_result": "Laundering is detected or the faithful forbidden consequence reaches downstream K1; PRESERVATION is impossible."
+    },
+    {
+      "id": "C3-04",
+      "mutation": "many_to_one_semantic_collapse",
+      "attack": "Distinct source consequences with different ALLOW status are collapsed to one target label.",
+      "required_result": "Rejected unless independent claim-relative equivalence is established; forbidden distinction cannot disappear."
+    },
+    {
+      "id": "C3-05",
+      "mutation": "unknown_effect_class_drop",
+      "attack": "A target-native/unrecognized effect class is omitted because the producer vocabulary does not know it.",
+      "required_result": "Unknown effect survives as an open-universe consequence or positive authority fails."
+    },
+    {
+      "id": "C3-06",
+      "mutation": "first_effect_only_projection",
+      "attack": "Only the first consequence from a multi-effect execution is exported.",
+      "required_result": "Non-exhaustive projection is detected; no positive authority."
+    },
+    {
+      "id": "C3-07",
+      "mutation": "dropped_later_forbidden_effect",
+      "attack": "An allowed effect is followed by a forbidden effect which the producer drops.",
+      "required_result": "Forbidden effect must surface downstream or positive authority fails."
+    },
+    {
+      "id": "C3-08",
+      "mutation": "post_return_async_effect",
+      "attack": "A consequence occurs after the apparent main computation returns.",
+      "required_result": "Profile rejects unsupported asynchronous escape or models it explicitly; no silent preservation."
+    },
+    {
+      "id": "C3-09",
+      "mutation": "child_process_escape",
+      "attack": "Spawned child performs a consequence outside the mediator.",
+      "required_result": "Unsupported spawn/child capability prevents positive authority unless explicitly closed by the admitted profile."
+    },
+    {
+      "id": "C3-10",
+      "mutation": "inherited_capability_escape",
+      "attack": "An inherited file descriptor/handle/capability reaches a sink outside the declared boundary.",
+      "required_result": "Capability escape is detected or profile is unsupported."
+    },
+    {
+      "id": "C3-11",
+      "mutation": "ffi_native_hostcall",
+      "attack": "FFI/native hostcall introduces a consequential exit not represented by the profile.",
+      "required_result": "Fail closed; no arbitrary-FFI positive authority."
+    },
+    {
+      "id": "C3-12",
+      "mutation": "dynamic_loading",
+      "attack": "Runtime-loaded code introduces an unenumerated consequence path.",
+      "required_result": "Fail closed unless exact loaded code is authority-bound and within a later explicitly qualified profile."
+    },
+    {
+      "id": "C3-13",
+      "mutation": "reflection_or_eval",
+      "attack": "Reflection/eval changes reachable consequential operations after static producer analysis.",
+      "required_result": "Unsupported dynamic reachability prevents positive authority."
+    },
+    {
+      "id": "C3-14",
+      "mutation": "shared_memory_escape",
+      "attack": "mmap/shared memory communicates a consequential state mutation outside mediation.",
+      "required_result": "Rejected/unsupported unless explicitly represented as a mediated consequence."
+    },
+    {
+      "id": "C3-15",
+      "mutation": "thread_or_callback_escape",
+      "attack": "Thread, callback, or task reaches a consequential sink not present in the producer's main-path model.",
+      "required_result": "No positive authority unless the concurrency form is inside an explicitly closed admitted profile."
+    },
+    {
+      "id": "C3-16",
+      "mutation": "signal_handler_escape",
+      "attack": "Signal/interrupt handler creates a hidden consequential path.",
+      "required_result": "Unsupported signal behavior fails closed."
+    },
+    {
+      "id": "C3-17",
+      "mutation": "undeclared_time",
+      "attack": "Behavior depends on clock/time not included in the finite authority boundary.",
+      "required_result": "Detected as unsupported variation or explicitly modeled; no sampling-based closure."
+    },
+    {
+      "id": "C3-18",
+      "mutation": "undeclared_randomness",
+      "attack": "Behavior depends on RNG/nondeterminism absent from the bound domain.",
+      "required_result": "Detected as unsupported variation or explicitly finite-modeled; no single-run determinism assumption."
+    },
+    {
+      "id": "C3-19",
+      "mutation": "undeclared_environment",
+      "attack": "Environment/configuration value changes a consequence but is absent from the authority boundary.",
+      "required_result": "Positive authority fails until the dimension is structurally absent or explicitly bound."
+    },
+    {
+      "id": "C3-20",
+      "mutation": "persistent_state_history_omission",
+      "attack": "Prior execution state/history changes reachable consequences but producer resets or omits it.",
+      "required_result": "History dependence is detected/represented or authority is incomplete."
+    },
+    {
+      "id": "C3-21",
+      "mutation": "world_domain_shrink",
+      "attack": "One admitted K1 world is omitted from the bridge domain.",
+      "required_result": "Exact identity mismatch or domain-coverage failure; no positive authority for the original claim."
+    },
+    {
+      "id": "C3-22",
+      "mutation": "boundary_value_shrink",
+      "attack": "One finite slot/value/state case is omitted from the downstream C2 boundary.",
+      "required_result": "Exact identity/coverage mismatch; no silent preservation."
+    },
+    {
+      "id": "C3-23",
+      "mutation": "subject_byte_substitution",
+      "attack": "Implementation/profile representation bytes are modified while retaining producer metadata.",
+      "required_result": "Subject identity changes and stale authority is invalid."
+    },
+    {
+      "id": "C3-24",
+      "mutation": "mapper_byte_substitution",
+      "attack": "Mediation/refinement specification is changed after evidence generation.",
+      "required_result": "Digest chain mismatch or new authority identity; stale PASS cannot transfer."
+    },
+    {
+      "id": "C3-25",
+      "mutation": "c2_target_or_limit_substitution",
+      "attack": "C2 program, boundary, gas/resource limit, or target identity differs from the bound downstream subject.",
+      "required_result": "Independent C2 revalidation detects mismatch; no positive authority."
+    },
+    {
+      "id": "C3-26",
+      "mutation": "parser_ambiguity",
+      "attack": "NUL/CR/tab, duplicate identifiers, malformed encoding, or equivalent syntax ambiguity causes producer/verifier interpretation divergence.",
+      "required_result": "Strict parser rejection or verifier disagreement; never PRESERVED."
+    },
+    {
+      "id": "C3-27",
+      "mutation": "submitted_realize_tamper",
+      "attack": "Producer edits submitted REALIZE to remove a forbidden pair.",
+      "required_result": "Submitted relation has no authority; independent reconstruction restores the pair or rejects."
+    },
+    {
+      "id": "C3-28",
+      "mutation": "producer_complete_flag_tamper",
+      "attack": "Producer sets complete=true or equivalent despite an incomplete mediation/effect inventory.",
+      "required_result": "Flag is ignored for authority; independent checker denies closure."
+    },
+    {
+      "id": "C3-29",
+      "mutation": "producer_target_id_tamper",
+      "attack": "Producer supplies a stale or fabricated target/subject identifier.",
+      "required_result": "Verifier recomputes identity and detects mismatch."
+    },
+    {
+      "id": "C3-30",
+      "mutation": "toctou_subject_change",
+      "attack": "Bytes analyzed for mediation completeness differ from bytes used to derive downstream behavior.",
+      "required_result": "Content-binding mismatch; no positive authority."
+    },
+    {
+      "id": "C3-31",
+      "mutation": "reachability_claim_forgery",
+      "attack": "Producer marks a reachable consequential primitive unreachable to exclude it from the inventory.",
+      "required_result": "Independent reachability reconstruction disagrees or exposes path; positive authority fails."
+    },
+    {
+      "id": "C3-32",
+      "mutation": "independent_checker_disagreement",
+      "attack": "Two authority checkers disagree on subject identity, reachability/effect inventory, refinement relation, or downstream binding.",
+      "required_result": "No positive authority regardless of producer verdict."
+    }
+  ],
+  "positive_controls": [
+    {
+      "id": "C3-P1",
+      "case": "fully_mediated_safe_profile",
+      "required_result": "A small closed admitted profile with all consequences mediated and faithfully mapped remains eligible for downstream C2 evaluation; C3 alone still does not assert PRESERVATION."
+    },
+    {
+      "id": "C3-P2",
+      "case": "representation_order_invariance",
+      "required_result": "Semantically set-like ordering differences in worlds/domains/inventory produce the same authority identity and reconstructed relation where the protocol defines them as representation-invariant."
+    },
+    {
+      "id": "C3-P3",
+      "case": "open_universe_native_consequence",
+      "required_result": "An arbitrary target-native consequence payload survives refinement without being dropped for lack of a friendly label."
+    },
+    {
+      "id": "C3-P4",
+      "case": "faithful_forbidden_consequence",
+      "required_result": "A fully mediated but forbidden consequence is faithfully delivered to downstream K1/C2, causing preservation denial or regression rather than mapper rejection/laundering."
+    },
+    {
+      "id": "C3-P5",
+      "case": "multiple_consequences_preserved",
+      "required_result": "Two or more consequential outputs survive with all claim-relevant distinctions/order intact; no first-effect truncation."
+    },
+    {
+      "id": "C3-P6",
+      "case": "producer_metadata_non_authority",
+      "required_result": "Mutating advisory producer verdict/complete/REALIZE fields cannot create, remove, or transfer authority when exact authority inputs are unchanged."
+    }
+  ],
+  "gate_semantics": {
+    "attack_vector_pass": "The mutation cannot obtain positive C3 authority. Where the correct semantics is a faithful forbidden consequence, success additionally requires that the forbidden consequence survives to downstream K1/C2 rather than being hidden by rejection or relabeling.",
+    "positive_control_pass": "The control is not spuriously rejected and all required authority-relevant information survives independent reconstruction.",
+    "unknown_is_not_failure_of_fail_closed_design": "UNKNOWN/INCOMPLETE/REJECTED is the required safe result for unresolved positive authority, but may not be used to hide a forbidden effect in controls that require faithful propagation.",
+    "no_sampling_substitute": "Replay count, branch coverage, test coverage, or repeated clean execution is diagnostic only and cannot substitute for the C3 authority obligations."
+  },
+  "independence_requirements_for_future_qualification": {
+    "minimum_authority_checkers": 2,
+    "preferred_initial_pair": [
+      "Python",
+      "Go"
+    ],
+    "must_not_share": [
+      "parser implementation",
+      "reachability/effect-analysis implementation",
+      "refinement reconstruction implementation",
+      "producer verdict logic"
+    ],
+    "may_share_only": [
+      "this frozen protocol",
+      "exact test fixtures/artifacts as input",
+      "cryptographic hash specification"
+    ],
+    "differential_disagreement_policy": "fail_closed"
+  },
+  "qualification_rule": {
+    "prospective_gate_must_remain_unchanged_during_first_c3_qualification": true,
+    "all_falsification_vectors_must_pass": true,
+    "all_positive_controls_must_pass": true,
+    "independent_authority_checkers_must_agree": true,
+    "hosted_ci_success_required": true,
+    "exact_sha_evidence_point_required": true,
+    "c2_downstream_authority_must_be_recomputed_or_revalidated": true,
+    "qualification_does_not_expand_scope_beyond_admitted_profile": true,
+    "any_protocol_change_after_implementation_requires": "new protocol version plus fresh prospective attack qualification; no retroactive weakening of this gate"
+  },
+  "no_claim_boundary": [
+    "No claim that this prospective file proves implementation mediation completeness.",
+    "No claim that C3 currently creates a production proof kind.",
+    "No claim that C3 currently grants K1 PRESERVATION.",
+    "No claim of arbitrary native-program closure or arbitrary-language compiler correctness.",
+    "No claim that source-level inspection alone binds executed behavior.",
+    "No claim of sandbox security against hostile arbitrary code.",
+    "No claim of host OS, hardware, remote, or supply-chain attestation.",
+    "No claim of unbounded liveness, deadline, concurrency, or probabilistic completeness.",
+    "No claim about side channels unless they are explicitly represented as K1 consequences in a later versioned profile.",
+    "No change to K1 semantic primitives, P1/B1 negative authority, or C2 scope."
+  ],
+  "next_step_allowed_by_this_freeze": {
+    "instruction": "Only after this prospective gate is committed may C3 admitted-profile semantics and independent reconstruction/checker implementations be added.",
+    "first_implementation_priority": "Choose the smallest richer-than-C2 representation in which consequential exits and reachability can actually be independently closed; do not start from arbitrary native binaries.",
+    "success_standard": "Earn a narrow positive refinement bridge by construction and falsification, not by declaring a broad implementation model complete."
+  }
+}
