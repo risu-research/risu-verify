@@ -1,0 +1,54 @@
+{
+  "qualification_id": "RISU_KERNEL_K1_OBSERVED_PAIR_P1_QUALIFICATION",
+  "status": "CANDIDATE_QUALIFICATION_FREEZE",
+  "frozen_base": {
+    "branch": "k1-binding-b0-qualified",
+    "commit": "305bbc50fe5db94a73f33aca6fbfb1590fb99509",
+    "rule": "descend from the exact base and add files only"
+  },
+  "scope": {
+    "proof_kind": "k1.observed-pair/v1",
+    "profile": "risu.binding.effect-sink-e1/v1",
+    "semantic_claim": "REGRESSION",
+    "assurance_scope": "LOCAL_OBSERVED_PAIR",
+    "preservation_authority": false,
+    "semantic_kernel_changed": false
+  },
+  "results": {
+    "vectors_required": 18,
+    "vectors_passed": 18,
+    "checker_pair": ["risu-k1-checker-w3", "risu-k1-checker-w4"],
+    "fixture_claim_id": "claim:sha256:d22466e24cfc4618a35231e3c8574d47492efc51a3997f57f7db9cc4dfb6466f",
+    "fixture_world": "w:sha256:13cc08218b3578873c7cb0438f32f4bc9ad8f732e4d810193bb15e89214ad314",
+    "fixture_disallowed_consequence": "c:sha256:e9d1d1a276a1c50b31187d32763d4584a6b9f5b92a7c4aa7e53d71adfed9455e"
+  },
+  "frozen_base_blobs": {
+    "protocols/RISU_KERNEL_K1_WIRE_W0.json": "2141377f2e00cbca0cdb1a7c22e485186f8b55bc",
+    "schemas/RISU_KERNEL_K1_WIRE_W0.schema.json": "96b1158a2d41d41c65b805d481fcf53501e259a7",
+    "protocols/RISU_KERNEL_K1_IMPLEMENTATION_BINDING_B0_QUALIFICATION.json": "d46486c80d419a13ad071691878e99e9c67b7f8f"
+  },
+  "pinned_p1_blobs": {
+    "protocols/RISU_KERNEL_K1_OBSERVED_PAIR_P1.json": "e5eb8476ebfffd44ae0e4dfc68957fff5a166375",
+    "fixtures/k1_observed_pair_p1/claim_multi.json": "89986cace78cc738634c87cfd7cf947772fdfd74",
+    "kernel/k1_checker_w3.py": "0bab0ffe6ad5eac035d98ff37e54f8abeae939da",
+    "kernel/k1_checker_w4.go": "a835c6a0c0ad9fbf9ca2da4d121afa566c2fa09b",
+    "tools/risu_kernel_k1_observed_pair_p1_verify.py": "8a080aa294777ecdfac0ec88a5cc9f1d5ce5645d",
+    ".github/workflows/k1-observed-pair-p1.yml": "79b3da41a8c090280684530222a3d3cf415d8feb",
+    "docs/RISU_KERNEL_K1_OBSERVED_PAIR_P1.md": "ad0ad44276bf15444890f3d883ad7671ccb83248"
+  },
+  "qualification_tooling_blobs": {},
+  "required_replay": [
+    "verify base ancestry and exact add-only delta",
+    "verify pinned Git blob hashes",
+    "run source hygiene and builds",
+    "replay all 18 P1 vectors against W3 and W4",
+    "require exact checker agreement and zero preservation authority"
+  ],
+  "nonclaims": [
+    "no preservation from local observations",
+    "no closure over unobserved worlds",
+    "no exhaustive target model",
+    "no change to the K1 semantic kernel"
+  ],
+  "next": "B1 controlled multi-world local implementation binding"
+}
