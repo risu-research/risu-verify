@@ -1,0 +1,61 @@
+{
+  "protocol_id": "RISU_KERNEL_K1_CLOSURE_CAPSULE_C1_FALSIFICATION",
+  "status": "PROSPECTIVE_ARCHITECTURE_FALSIFICATION",
+  "frozen_base": {
+    "branch": "k1-closure-falsification-c0-qualified",
+    "commit": "8dd0887bae68fbe7d2cd23ed28c0f979c9f922ce"
+  },
+  "hypothesis": "A positive implementation-closure lane may be made tractable by moving execution into a tiny hermetic deterministic capsule where all consequence-relevant variation is explicit finite boundary input, ambient capabilities are structurally absent, exact program bytes and the full boundary are identity-bound, every operational point is exhaustively replayable, and any trap, malformed state, gas exhaustion, or zero-effect execution destroys closure authority.",
+  "status_boundary": "C1 falsifies this architecture only. It does not yet create a K1 proof kind or production preservation authority.",
+  "capsule_surface": {
+    "allowed_instructions": ["LABEL", "IF_EQ", "GOTO", "EMIT_HEX", "HALT"],
+    "ambient_capabilities": [],
+    "reserved_input": "@world",
+    "boundary_inputs": "finite explicitly enumerated string-valued slots",
+    "consequence_encoding": "open-universe SHA-256 commitment of exact EMIT_HEX payload bytes",
+    "termination_control": "identity-bound positive gas limit",
+    "closure_rule": "all world x boundary points must parse and execute to HALT within gas and emit at least one consequence; relation is the union of every emitted consequence pair"
+  },
+  "precommitted_attack_vectors": [
+    "C1-01 reject ambient CLOCK",
+    "C1-02 reject ambient RNG",
+    "C1-03 reject ambient FILE",
+    "C1-04 reject ambient NET",
+    "C1-05 reject ambient HOSTCALL",
+    "C1-06 reject ambient SPAWN/scheduling primitive",
+    "C1-07 reject unknown opcode",
+    "C1-08 reject NUL/parser ambiguity",
+    "C1-09 reject duplicate labels",
+    "C1-10 gas exhaustion yields INCOMPLETE not closure",
+    "C1-11 zero-effect HALT yields INCOMPLETE not vacuous closure",
+    "C1-12 undeclared input slot yields INCOMPLETE",
+    "C1-13 empty boundary domain is malformed",
+    "C1-14 duplicate world domain is malformed",
+    "C1-15 exact program byte mutation changes target identity",
+    "C1-16 boundary shrink changes target identity",
+    "C1-17 gas mutation changes target identity",
+    "C1-18 first-effect-only projection is detectably non-exhaustive"
+  ],
+  "positive_controls": [
+    "C1-P1 exact exhaustive finite capsule closes",
+    "C1-P2 world/value enumeration order is representation-invariant",
+    "C1-P3 arbitrary target-native consequence payload survives open universe"
+  ],
+  "required_result": {
+    "attack_vectors_passed": 18,
+    "attack_vectors_total": 18,
+    "positive_controls_passed": 3,
+    "positive_controls_total": 3,
+    "semantic_kernel_changed": false,
+    "production_proof_kind_created": false,
+    "preservation_authority_created": false
+  },
+  "forbidden_repairs": [
+    "do not add ambient capability exceptions to make a vector pass",
+    "do not treat gas exhaustion or missing consequence as safe",
+    "do not close the consequence universe to known payload labels",
+    "do not weaken exact program/boundary/gas identity binding",
+    "do not claim arbitrary native-code adequacy from capsule results"
+  ],
+  "decision_after_gate": "If C1 survives, the next candidate is a separately versioned bounded-capsule closure proof object plus two independent checkers. If it fails, repair the capsule constitution before any proof lane is implemented."
+}
