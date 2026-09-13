@@ -47,7 +47,7 @@ type observation struct {
 	AuthorityCandidate    string   `json:"authority_candidate"`
 	PreservationAuthority bool     `json:"preservation_authority"`
 	WorldID               string   `json:"world_id"`
-	WorldInputSHA256       string   `json:"world_input_sha256"`
+	WorldInputSHA256      string   `json:"world_input_sha256"`
 	ImplementationID      string   `json:"implementation_id"`
 	EffectLogSHA256       string   `json:"effect_log_sha256"`
 	ObservedConsequences  []string `json:"observed_consequences"`
@@ -56,7 +56,7 @@ type observation struct {
 	ExitCode              int      `json:"exit_code"`
 	StdoutSHA256          string   `json:"stdout_sha256"`
 	StderrSHA256          string   `json:"stderr_sha256"`
-	Reason                 string   `json:"reason,omitempty"`
+	Reason                string   `json:"reason,omitempty"`
 }
 
 func hashHex(raw []byte) string {
@@ -275,7 +275,7 @@ func observe(executable string, worldRaw []byte, timeout time.Duration) (observa
 		Observer:              "risu-k1-binding-b0-observer-go-d1",
 		PreservationAuthority: false,
 		WorldID:               worldID(worldRaw),
-		WorldInputSHA256:       hashHex(worldRaw),
+		WorldInputSHA256:      hashHex(worldRaw),
 		ImplementationID:      implID,
 		EffectLogSHA256:       hashHex(effectRaw),
 		TimedOut:              timedOut,
