@@ -1,5 +1,6 @@
 name: K1 Binding B1
 
+# End-to-end requalification after one-shot observer canonicalization.
 on:
   push:
     branches:
