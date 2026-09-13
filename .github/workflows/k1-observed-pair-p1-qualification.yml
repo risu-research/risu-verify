@@ -1,5 +1,6 @@
 name: K1 Observed Pair P1 Qualification
 
+# Composite replay after prospective P1 gate success.
 on:
   push:
     branches:
