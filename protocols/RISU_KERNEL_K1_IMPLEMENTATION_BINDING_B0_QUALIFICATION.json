@@ -59,10 +59,14 @@
     ".github/workflows/k1-implementation-binding-b0.yml": "539b00de9e371fc6816ca175ded8323ea0a348af",
     "docs/RISU_KERNEL_K1_IMPLEMENTATION_BINDING_B0.md": "74eb9c2094e0d4d8429405c602145306881346a1"
   },
-  "qualification_tooling_blobs": {},
+  "qualification_tooling_blobs": {
+    "tools/risu_kernel_k1_binding_b0_qualification_verify.py": "b7d81e21efbdb1d0c3bb3101cf219856c9b8abc7",
+    ".github/workflows/k1-implementation-binding-b0-qualification.yml": "23527a91f126ae3ac4a734be722147808173a6b2"
+  },
   "required_replay": [
     "Verify exact frozen-base ancestry and add-only delta.",
     "Verify every pinned Git blob hash.",
+    "Require the base-to-head delta file set to equal the pinned B0 files plus pinned qualification tooling plus this manifest, with no unpinned additions.",
     "Run git diff --check and source syntax/format/vet/build checks.",
     "Build frozen W2, independent Go D1 observer, and all eight exact target variants with CGO disabled.",
     "Replay all 13 B0 adversarial authority vectors.",
