@@ -46,7 +46,10 @@
     ".github/workflows/k1-binding-b1.yml": "d35aaa039c079a380144f83ded4a0a01f1ed97ea",
     "docs/RISU_KERNEL_K1_BINDING_B1.md": "c07dd2982a6566d47754044517d8a8ad8ab731eb"
   },
-  "qualification_tooling_blobs": {},
+  "qualification_tooling_blobs": {
+    "tools/risu_kernel_k1_binding_b1_qualification_verify.py": "3126baf9b4a9bbc5c1daccf263c499a55e3ba44a",
+    ".github/workflows/k1-binding-b1-qualification.yml": "d4c006c015e5246426f07941d311a032d026d7de"
+  },
   "required_replay": [
     "verify exact P1-qualified ancestry and exact add-only delta file set",
     "verify every frozen-base and pinned-B1 Git blob hash",
