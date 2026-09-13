@@ -1,0 +1,129 @@
+{
+  "freeze_id": "risu.k1.mfst.c3.f0/v1",
+  "status": "FROZEN_BEFORE_W7_W8_IMPLEMENTATION",
+  "parent_design_commit": "92a8e0d5ca01d1e6988555c46e0534e9b586f216",
+  "qualified_c2_base": "465ee71aba72f20737bf8713b2192a2029d79cdb",
+  "authority_state": {"production_proof_kind_created": false, "preservation_authority_created": false, "implementation_binding_created": false, "w7_existed_at_freeze": false, "w8_existed_at_freeze": false},
+  "normative_inputs": {
+    "prospective": "protocols/RISU_KERNEL_K1_MEDIATION_REFINEMENT_C3_PROSPECTIVE.json",
+    "profile": {"path": "protocols/RISU_KERNEL_K1_MFST_C3_PROFILE.json", "blob_sha": "080a03f65e6602b5d36e07988d28b250c19620e8"},
+    "wire": {"path": "protocols/RISU_KERNEL_K1_MFST_C3_WIRE.json", "blob_sha": "11896f05d1e3592228b973aaefaf13fd57f296c6"},
+    "amendment_001": {"path": "protocols/RISU_KERNEL_K1_MFST_C3_AMENDMENT_001.json", "blob_sha": "a4ecc1d98b46deb507466cc0efa56eec2f2b4c55"},
+    "supersession": "Amendment 001 controls on conflict; otherwise profile and wire remain normative."
+  },
+  "exact_fixtures": {
+    "claim": {"path": "fixtures/k1_mfst_c3_f0/claim.json", "sha256_exact_bytes": "f6b488c1e0ee8937e8695d9a38c9f00fd3f1c9d170f8265120f97bc1497bbd93", "claim_id": "claim:sha256:e4170f1652720fc49ac515418c905f1f374e6b1dbec0b711204f17e2eef3c016"},
+    "baseline": {"path": "fixtures/k1_mfst_c3_f0/baseline.json", "sha256_exact_bytes": "2242114da4400ed5e91c5b4d68c1e2f0c451e63020882756b89b6b4234002581"}
+  },
+  "oracle_classes": {
+    "PARSE_REJECT": "subject is outside the exact MFST v1 grammar or contains an explicitly absent capability; both verifiers must reject before semantic authority",
+    "SEMANTIC_REJECT": "subject parses but exact finite semantics, closure, termination, domain, table totality, or ALLOW obligations fail",
+    "CROSSCHECK_REJECT": "a producer/refinement/downstream assertion may exist, but independent reconstruction or crossed replay must disagree and positive authority is forbidden",
+    "ACCEPT": "both independent direct semantics and crossed C2 replay agree and downstream W5/W6 accept; this class is only an expected future test oracle, not current authority"
+  },
+  "anti_gaming_rules": [
+    "A vector is not credited as testing refinement if it is accidentally killed earlier by an unrelated malformed fixture unless its oracle class explicitly permits that stage.",
+    "Producer-supplied reachability, REALIZE, target, completeness, mapping, or verdict fields are never substituted for direct reconstruction.",
+    "A checker-specific exception, crash, timeout, skipped test, xfail, or harness parse error is not a PASS.",
+    "Any W7/W8 disagreement is CROSSCHECK_REJECT even if one side says ACCEPT.",
+    "Any direct-C3 versus generated-C2 trace disagreement is CROSSCHECK_REJECT before K1 preservation can be considered.",
+    "Any mutation that changes exact subject bytes must change c3src identity; semantic-equivalent representation mutations may preserve c3sem only where the wire explicitly canonicalizes them.",
+    "Forbidden-effect vectors must be killed because the faithful forbidden consequence survives to K1 or because fidelity fails, never because the harness silently removes the effect.",
+    "Nontermination is established by repeated exact configuration, not by arbitrary producer gas. Prefix effects from a nonterminating run never create positive closure authority."
+  ],
+  "baseline_oracle": {
+    "boundary_points": 4,
+    "expected_payload_trace_by_mode": {"safe": ["01"], "alt": ["02", "03"]},
+    "expected_realize_payloads_per_world": ["01", "02", "03"],
+    "expected_result": "ACCEPT after W7/W8 crossed reconstruction and W5/W6 downstream revalidation",
+    "required_properties": ["state table update executes before branch", "full multi-effect order preserved in C3 trace", "K1 projection deduplicates only after trace fidelity is established", "both worlds receive identical relation for this baseline"]
+  },
+  "positive_controls": [
+    {"id":"C3-P01","name":"baseline_exact","construction":"exact baseline fixture","oracle":"ACCEPT"},
+    {"id":"C3-P02","name":"representation_permutation","construction":"permute JSON object keys, world order, state/table/block declaration order, table row order only; do not change operation order, table argument order, row tuple positions, or effect order","oracle":"ACCEPT","must_preserve":["c3sem","graph","trace","C2 bytes","K1 REALIZE"]},
+    {"id":"C3-P03","name":"multi_effect_allowed","construction":"baseline alt path retains ordered payloads 02 then 03","oracle":"ACCEPT","must_preserve":["ordered trace 02,03","both consequences in K1 REALIZE"]},
+    {"id":"C3-P04","name":"finite_state_terminating_loop","construction":"add a two-state loop whose exact configuration sequence terminates before repetition and emits only allowed payloads","oracle":"ACCEPT","must_demonstrate":"visited-configuration criterion does not reject merely because a block label repeats with different state"},
+    {"id":"C3-P05","name":"world_as_explicit_input","construction":"use @world as an input source with exact world-domain-compatible receiving/formal domain","oracle":"ACCEPT"},
+    {"id":"C3-P06","name":"open_universe_allowed_payload","construction":"emit exact payload aa, whose consequence identity is derived by the C2 consequence hash and is explicitly ALLOWed","oracle":"ACCEPT"},
+    {"id":"C3-P07","name":"apply_table_alias_prestate","construction":"APPLY_TABLE uses dst state cell as an argument; lookup reads pre-operation value and writes once afterward","oracle":"ACCEPT"},
+    {"id":"C3-P08","name":"declared_unreachable_block","construction":"add a syntactically valid unreachable block containing only profile-valid operations; c3sem/source identity changes, reachable graph/trace/C2 behavior do not","oracle":"ACCEPT","must_distinguish":["source/semantic identity","reachable behavior identity"]}
+  ],
+  "legacy_vectors": [
+    ["C3-01","direct_effect_bypass","PARSE_REJECT","encode an undeclared consequence-capable opcode beside EMIT_HEX; closed operation set must reject"],
+    ["C3-02","omitted_mediator_edge","CROSSCHECK_REJECT","producer reachability/effect inventory omits one reachable effect edge while exact source retains it; direct reconstruction controls"],
+    ["C3-03","forbidden_to_allowed_relabel","CROSSCHECK_REJECT","producer mapping attempts to replace exact forbidden payload de with allowed payload 01; source payload identity controls"],
+    ["C3-04","many_to_one_semantic_collapse","CROSSCHECK_REJECT","producer map collapses distinct exact payloads with different ALLOW status; exact payload hashes remain distinct"],
+    ["C3-05","unknown_effect_class_drop","CROSSCHECK_REJECT","previously unseen valid EMIT_HEX payload is omitted by producer vocabulary; direct trace must retain it"],
+    ["C3-06","first_effect_only_projection","CROSSCHECK_REJECT","baseline alt trace 02,03 is projected as 02 only"],
+    ["C3-07","dropped_later_forbidden_effect","SEMANTIC_REJECT","valid source emits allowed 01 then forbidden de; faithful direct reconstruction must reach K1 and defeat preservation"],
+    ["C3-08","post_return_async_effect","PARSE_REJECT","ASYNC/callback/task capability is outside MFST v1"],
+    ["C3-09","child_process_escape","PARSE_REJECT","SPAWN/subprocess is outside MFST v1"],
+    ["C3-10","inherited_capability_escape","PARSE_REJECT","ambient handle/capability source is outside exact input/state namespace"],
+    ["C3-11","ffi_native_hostcall","PARSE_REJECT","FFI/HOSTCALL is outside MFST v1"],
+    ["C3-12","dynamic_loading","PARSE_REJECT","DYNAMIC_LOAD is outside MFST v1"],
+    ["C3-13","reflection_or_eval","PARSE_REJECT","REFLECTION/EVAL is outside MFST v1"],
+    ["C3-14","shared_memory_escape","PARSE_REJECT","SHARED_MEMORY/PERSIST ambient state is outside MFST v1"],
+    ["C3-15","thread_or_callback_escape","PARSE_REJECT","THREAD/ASYNC/CALLBACK is outside MFST v1"],
+    ["C3-16","signal_handler_escape","PARSE_REJECT","SIGNAL/interrupt behavior is outside MFST v1"],
+    ["C3-17","undeclared_time","PARSE_REJECT","CLOCK/time source not represented as an explicit finite slot is outside MFST v1"],
+    ["C3-18","undeclared_randomness","PARSE_REJECT","RNG/nondeterminism primitive is outside deterministic MFST v1"],
+    ["C3-19","undeclared_environment","PARSE_REJECT","ENV_READ or unknown input source rejects; explicit finite slot form is the only admitted route"],
+    ["C3-20","persistent_state_history_omission","PARSE_REJECT","hidden persisted state is structurally absent; PERSIST/hidden state accessor rejects"],
+    ["C3-21","world_domain_shrink","SEMANTIC_REJECT","boundary.worlds differs from exact W0 claim world set"],
+    ["C3-22","boundary_value_shrink","CROSSCHECK_REJECT","downstream C2 normalization omits one exact MFST slot value/point; direct-vs-C2 point/trace equality fails"],
+    ["C3-23","subject_byte_substitution","CROSSCHECK_REJECT","exact profile bytes change under stale c3src/evidence identity"],
+    ["C3-24","mapper_byte_substitution","CROSSCHECK_REJECT","normalizer/refinement evidence changes while stale identity/result is reused"],
+    ["C3-25","c2_target_or_limit_substitution","CROSSCHECK_REJECT","generated C2 program/boundary/gas/target differs from independently reconstructed exact normal form"],
+    ["C3-26","parser_ambiguity","PARSE_REJECT","NUL, CR, tab, duplicate object key/identifier, invalid UTF-8, unknown key, numeric/bool/null authority value, or noncanonical token ambiguity"],
+    ["C3-27","submitted_realize_tamper","CROSSCHECK_REJECT","producer REALIZE deletion has no authority; W7/W8 and W5/W6 reconstruct from exact source/C2"],
+    ["C3-28","producer_complete_flag_tamper","CROSSCHECK_REJECT","complete=true or equivalent producer assertion is absent from authority grammar/ignored as evidence"],
+    ["C3-29","producer_target_id_tamper","CROSSCHECK_REJECT","stale/fabricated target identifier disagrees with independent derivation"],
+    ["C3-30","toctou_subject_change","CROSSCHECK_REJECT","hash and parse must consume the same immutable byte vector; reopened-path substitution is forbidden"],
+    ["C3-31","reachability_claim_forgery","CROSSCHECK_REJECT","producer marks reachable block/effect unreachable; W7/W8 graph reconstruction exposes it"],
+    ["C3-32","independent_checker_disagreement","CROSSCHECK_REJECT","any authority-relevant W7/W8 disagreement vetoes positive authority"]
+  ],
+  "amendment_vectors": [
+    ["AM1-01","formal_argument_rename","ACCEPT","rename a table formal argument only; c3sem/source identity changes but execution relation/trace may remain equivalent"],
+    ["AM1-02","call_binding_change_same_domain","ACCEPT","bind call position to a different source with identical exact domain; semantic identity changes and execution follows new source"],
+    ["AM1-03","call_domain_mismatch","SEMANTIC_REJECT","resolved machine source domain differs from formal domain"],
+    ["AM1-04","missing_table_tuple","SEMANTIC_REJECT","total finite table misses one Cartesian tuple"],
+    ["AM1-05","duplicate_table_tuple","SEMANTIC_REJECT","two rows claim same formal tuple"],
+    ["AM1-06","surplus_or_out_of_domain_tuple","SEMANTIC_REJECT","row tuple is not exactly in formal Cartesian product"],
+    ["AM1-07","world_input","ACCEPT","@world is valid only as reserved input source with exact domain compatibility"],
+    ["AM1-08","undeclared_input_source","SEMANTIC_REJECT","input name is neither @world nor a declared boundary slot"],
+    ["AM1-09","dst_alias_preoperation_read","ACCEPT","APPLY_TABLE reads all source arguments from pre-operation state, then performs one destination write"],
+    ["AM1-10","formal_declaration_permutation","ACCEPT","nonsemantic declaration permutation preserves both independent c3sem reconstruction and behavior"]
+  ],
+  "mandatory_additional_vectors": [
+    ["F0-01","deterministic_cycle_after_effect","SEMANTIC_REJECT","emit allowed payload then revisit exact block+state configuration forever; emitted prefix cannot authorize closure"],
+    ["F0-02","block_revisit_with_state_progress","ACCEPT","same block revisited with a different complete state vector then halts; label-only cycle detection is forbidden"],
+    ["F0-03","zero_effect_halt","SEMANTIC_REJECT","HALT with empty full-run trace preserves C2 non-vacuity rule"],
+    ["F0-04","unreachable_malformed_target","SEMANTIC_REJECT","undefined block targets or malformed ops reject even if producer claims path unreachable; syntax/semantic well-formedness is global"],
+    ["F0-05","effect_reorder","CROSSCHECK_REJECT","02,03 changed to 03,02 must change C3 trace identity even though K1 set projection is identical"],
+    ["F0-06","effect_duplicate","CROSSCHECK_REJECT","02,03 changed to 02,03,03 must change C3 trace identity even though K1 set projection can be identical"],
+    ["F0-07","effect_delete_same_k1_set_edgecase","CROSSCHECK_REJECT","delete one duplicate occurrence from a trace; K1 set may be unchanged but C3 refinement fidelity must detect it"],
+    ["F0-08","state_cell_domain_shrink","SEMANTIC_REJECT","mutation makes initialization/table/source values escape declared complete state domain"],
+    ["F0-09","state_dimension_omission_in_cycle_key","CROSSCHECK_REJECT","adversarial checker that ignores one state cell would report a false cycle or false termination; W7/W8 exact graph IDs must diverge and fail closed"],
+    ["F0-10","c2_normal_form_nondeterminism","CROSSCHECK_REJECT","W7/W8 generate byte-different C2 normal forms from same exact C3 semantics; positive authority denied even if both happen to project same K1 set"],
+    ["F0-11","c2_gas_underbound","CROSSCHECK_REJECT","derived C2 gas is smaller than exact maximum instruction count over all normalized points"],
+    ["F0-12","c2_limit_overflow","SEMANTIC_REJECT","canonical normalized C2 exceeds qualified C2 program-byte or gas limit; result is UNSUPPORTED/UNKNOWN, never safety"]
+  ],
+  "counts": {"legacy":32,"amendment":10,"mandatory_additional":12,"positive":8,"adversarial_total":54,"total_oracles":62},
+  "implementation_independence_requirements": [
+    "W7 and W8 must be independently implemented in different languages and may share protocol files/fixtures but no parser, executor, canonicalizer, graph builder, trace builder, normalizer, or checker code.",
+    "Each verifier must independently compute c3src, c3sem, reachable graph, ordered trace map, K1 projected relation, canonical C2 program bytes, C2 boundary, and exact derived C2 gas.",
+    "Crossed replay is mandatory: W7-generated C2 is replayed against W8 direct trace and W8-generated C2 against W7 direct trace before downstream W5/W6 acceptance can count.",
+    "A fixed known-answer test with frozen literal commitment constants must be added after independent implementations exist; those constants may not be generated at test runtime by either checker under test."
+  ],
+  "promotion_rule": "F0 is only a frozen prospective oracle corpus. C3 may not be called qualified until all 62 frozen oracles have the required outcome, all static/differential/generative gates pass on hosted CI, exact fixture and normative blob integrity is verified, W7/W8 remain implementation-independent, W5/W6 independently revalidate generated C2 evidence, and a final qualification manifest pins the exact science anchor and tooling blobs.",
+  "forbidden_repairs": [
+    "do not weaken an oracle after seeing a checker failure",
+    "do not change a fixture to match an implementation unless a new explicit pre-authority amendment records why the old oracle was semantically wrong",
+    "do not credit parser rejection for a vector whose frozen oracle requires semantic or cross-check detection",
+    "do not canonicalize away operation/effect order",
+    "do not add producer gas to avoid exact cycle detection",
+    "do not widen MFST with ambient capabilities for convenience",
+    "do not infer native-code preservation from MFST preservation",
+    "do not modify C2 or K1 semantics to make C3 pass"
+  ]
+}
