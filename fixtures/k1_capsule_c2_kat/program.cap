@@ -1,0 +1,7 @@
+IF_EQ @world w:sha256:e5a7c74bd0ae4add726c61404726ef5c1f758c705ad3d8d18e13670cb46afb0c left
+EMIT_HEX bb
+HALT
+LABEL left
+EMIT_HEX aa
+EMIT_HEX cc
+HALT
