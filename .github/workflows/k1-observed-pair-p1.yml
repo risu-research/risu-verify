@@ -1,0 +1,79 @@
+name: K1 Observed Pair P1
+
+on:
+  push:
+    branches:
+      - k1-observed-pair-p1
+    paths:
+      - 'protocols/RISU_KERNEL_K1_OBSERVED_PAIR_P1.json'
+      - 'fixtures/k1_observed_pair_p1/**'
+      - 'kernel/k1_checker_w3.py'
+      - 'kernel/k1_checker_w4.go'
+      - 'tools/risu_kernel_k1_observed_pair_p1_verify.py'
+      - '.github/workflows/k1-observed-pair-p1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CGO_ENABLED: '0'
+
+jobs:
+  adversarial-differential:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.x'
+          cache: false
+      - name: Prove qualified B0 base is untouched
+        run: |
+          set -euo pipefail
+          base=305bbc50fe5db94a73f33aca6fbfb1590fb99509
+          git merge-base --is-ancestor "$base" HEAD
+          git diff --name-status "$base" HEAD | tee /tmp/p1-delta.txt
+          test -s /tmp/p1-delta.txt
+          if awk '$1 != "A" { bad=1 } END { exit bad ? 0 : 1 }' /tmp/p1-delta.txt; then
+            echo 'P1 must be additive relative to qualified B0; non-additive delta found.' >&2
+            exit 1
+          fi
+      - name: Source hygiene and builds
+        run: |
+          set -euo pipefail
+          git diff --check
+          python -m py_compile kernel/k1_checker_w3.py tools/risu_kernel_k1_observed_pair_p1_verify.py
+          gofmt -d kernel/k1_checker_w4.go | tee /tmp/w4-gofmt.diff
+          test ! -s /tmp/w4-gofmt.diff
+          go vet kernel/k1_checker_w4.go
+          go build -trimpath -o /tmp/risu-k1-w4 kernel/k1_checker_w4.go
+          go vet tools/specimens/k1_binding_b0_target.go
+          go build -trimpath -ldflags '-s -w -X main.variant=bad' -o /tmp/p1-target tools/specimens/k1_binding_b0_target.go
+      - name: Run precommitted 18-vector P1 gate
+        run: |
+          set -euo pipefail
+          python tools/risu_kernel_k1_observed_pair_p1_verify.py \
+            --w3 kernel/k1_checker_w3.py \
+            --w4 /tmp/risu-k1-w4 \
+            --w4-source kernel/k1_checker_w4.go \
+            --claim fixtures/k1_observed_pair_p1/claim_multi.json \
+            --implementation /tmp/p1-target \
+            --output /tmp/k1-observed-pair-p1.json
+          python - <<'PY'
+          import json
+          x = json.load(open('/tmp/k1-observed-pair-p1.json', encoding='utf-8'))
+          assert x['status'] == 'PASS'
+          assert x['vector_count'] == 18
+          assert x['passed'] == 18
+          assert x['failed'] == []
+          assert x['checker_independence']['pass'] is True
+          assert x['preservation_authority'] is False
+          assert x['semantic_kernel_changed'] is False
+          print('K1 observed-pair P1: PASS 18/18')
+          PY
