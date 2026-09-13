@@ -21,12 +21,18 @@ def run_json(cmd):
     return proc.returncode, obj
 
 
+def observation_class(status):
+    """Normalize presentation vocabulary only; authority remains separately exact."""
+    if status in {"OBSERVED", "OBSERVED_NO_FORBIDDEN_CONSEQUENCE", "OBSERVED_FORBIDDEN_CONSEQUENCE"}:
+        return "OBSERVED"
+    return status
+
+
 def binder_normalized(report):
-    status = report.get("observation_status")
     observed = report.get("observed_consequences") or []
     pair = report.get("selected_forbidden_pair")
     return {
-        "observation_status": status,
+        "observation_status": observation_class(report.get("observation_status")),
         "observed_consequences": observed,
         "first_forbidden_pair": pair,
         "world_id": report.get("world_id"),
@@ -41,7 +47,7 @@ def binder_normalized(report):
 
 def observer_normalized(obj):
     return {
-        "observation_status": obj.get("observation_status"),
+        "observation_status": observation_class(obj.get("observation_status")),
         "observed_consequences": obj.get("observed_consequences") or [],
         "first_forbidden_pair": obj.get("first_forbidden_pair"),
         "world_id": obj.get("world_id"),
