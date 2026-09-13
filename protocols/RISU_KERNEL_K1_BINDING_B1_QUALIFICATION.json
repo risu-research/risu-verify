@@ -1,0 +1,74 @@
+{
+  "qualification_id": "RISU_KERNEL_K1_BINDING_B1_QUALIFICATION",
+  "status": "CANDIDATE_QUALIFICATION_FREEZE",
+  "meaning": "Qualification of controlled-local multi-world regression binding. One actual forbidden effect from one admitted execution world may mint a P1 local observed-pair witness and establish regression after independent checker acceptance; clean executions retain zero preservation authority.",
+  "frozen_base": {
+    "branch": "k1-observed-pair-p1-qualified",
+    "commit": "7dc6e4a34f9bbee025894474df430fd202028244",
+    "rule": "descend from the exact P1-qualified base and add files only"
+  },
+  "scope": {
+    "binding_scope": "CONTROLLED_LOCAL_EXECUTION_REGRESSION_ONLY",
+    "causal_scope": "CONTROLLED_LOCAL_RUN_ONLY",
+    "proof_kind": "k1.observed-pair/v1",
+    "preservation_authority": false,
+    "transferable_attestation": false,
+    "semantic_kernel_changed": false
+  },
+  "results": {
+    "b1_vectors_required": 16,
+    "b1_vectors_passed": 16,
+    "d2_vectors_required": 8,
+    "d2_vectors_passed": 8,
+    "multiworld_case": "10-world claim with one actually observed forbidden pair -> BOUND_REGRESSION",
+    "clean_case": "allowed observation -> NO_AUTHORITY",
+    "checker_pair": ["risu-k1-checker-w3", "risu-k1-checker-w4"],
+    "posthoc_result": "VERIFIED_BOUND_REGRESSION for accepted bound cases",
+    "fixture_claim_id": "claim:sha256:d22466e24cfc4618a35231e3c8574d47492efc51a3997f57f7db9cc4dfb6466f",
+    "fixture_world": "w:sha256:13cc08218b3578873c7cb0438f32f4bc9ad8f732e4d810193bb15e89214ad314",
+    "fixture_forbidden_consequence": "c:sha256:e9d1d1a276a1c50b31187d32763d4584a6b9f5b92a7c4aa7e53d71adfed9455e"
+  },
+  "frozen_base_blobs": {
+    "protocols/RISU_KERNEL_K1_OBSERVED_PAIR_P1_QUALIFICATION.json": "48b3a483ddaf4f5ccb501515dca9f5712c95382f",
+    "kernel/k1_checker_w3.py": "0bab0ffe6ad5eac035d98ff37e54f8abeae939da",
+    "kernel/k1_checker_w4.go": "a835c6a0c0ad9fbf9ca2da4d121afa566c2fa09b",
+    "fixtures/k1_observed_pair_p1/claim_multi.json": "89986cace78cc738634c87cfd7cf947772fdfd74",
+    "fixtures/k1_binding_b0/world_input.txt": "4d0de28af632907e9954b89d3945fb097c812182",
+    "tools/specimens/k1_binding_b0_target.go": "607f261695bf77445af648b69e77e9c8949b283b"
+  },
+  "pinned_b1_blobs": {
+    "protocols/RISU_KERNEL_K1_BINDING_B1.json": "1a2ef68ee8cd3911431a3fe9860cb03fa06868f1",
+    "tools/risu_kernel_k1_binding_b1.py": "3e2c17af69b9d6392e7d9fa1ef40b39a37d1e99c",
+    "tools/risu_kernel_k1_binding_b1_report_verify.py": "f4fd74356a329fe9fe09ebdaae409e99af4722e5",
+    "tools/risu_kernel_k1_binding_b1_verify.py": "727e065bd57c2ece8ef3156a1b6e107fde88d7bd",
+    "tools/risu_kernel_k1_binding_b1_observer.go": "71e886234d241047f9b02a0ca893e58bebb520a4",
+    "tools/risu_kernel_k1_binding_b1_observer_d2_verify.py": "80834fbf25db8440a6bdeecae4f987eb53ab6b6d",
+    ".github/workflows/k1-binding-b1.yml": "d35aaa039c079a380144f83ded4a0a01f1ed97ea",
+    "docs/RISU_KERNEL_K1_BINDING_B1.md": "c07dd2982a6566d47754044517d8a8ad8ab731eb"
+  },
+  "qualification_tooling_blobs": {},
+  "required_replay": [
+    "verify exact P1-qualified ancestry and exact add-only delta file set",
+    "verify every frozen-base and pinned-B1 Git blob hash",
+    "run git diff --check, Python syntax checks, gofmt, go vet, and Go builds",
+    "build frozen W4, independent D2 observer, and all eight exact target variants with CGO disabled",
+    "replay all 16 B1 authority vectors including post-hoc report verification",
+    "replay all 8 D2 independent-observer runtime vectors",
+    "require preservation_authority=false throughout and exact authority-relevant D2 agreement"
+  ],
+  "fail_then_fix_history": [
+    "first hosted B1 attempt stopped before semantics because the new D2 observer was not gofmt-canonical; observer-only canonicalization was followed by full replay",
+    "first D2 semantic attempt had B1 16/16 PASS but D2 1/8 because independent implementations used different OBSERVED status vocabulary while all authority-relevant fields matched; the differential now normalizes only presentation vocabulary and keeps authority_candidate, pair, consequences, hashes, world, executable, and timeout exact; full B1 and D2 replay then passed"
+  ],
+  "nonclaims": [
+    "no preservation from clean or finite executions",
+    "no closure or exhaustive implementation-behavior model",
+    "no claims about unobserved worlds beyond the W0 claim commitments",
+    "no authenticated remote or hardware-backed execution attestation",
+    "no transferable causal proof from a detached saved run envelope",
+    "no determinism, unbounded liveness, or deadline theorem",
+    "no hostile-program sandbox guarantee",
+    "no change to the K1 ALLOW/REALIZE semantic kernel"
+  ],
+  "next_structural_gap": "positive implementation adequacy and closure: an independently checkable producer capable of justifying enough of an implementation consequence space for preservation rather than merely finding regressions"
+}
