@@ -1,5 +1,6 @@
 name: K1 Observed Pair P1
 
+# Hosted qualification for the prospectively frozen P1 authority boundary.
 on:
   push:
     branches:
