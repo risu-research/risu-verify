@@ -1,0 +1,217 @@
+{
+  "wire_id": "risu.k1.mfst.c3.wire/v1",
+  "status": "WIRE_DESIGN_FROZEN_NON_AUTHORITATIVE",
+  "profile_protocol": "risu.k1.mfst.c3.profile/v1",
+  "prospective_gate_commit": "4812ff0ab566413399a3e463fcd811de22888eab",
+  "profile_design_parent_commit": "59f6c3a31d667ba2bc7347dcd9779f1b2ebbfd1c",
+  "qualified_c2_base": "465ee71aba72f20737bf8713b2192a2029d79cdb",
+  "authority_state": {
+    "proof_kind_created": false,
+    "preservation_authority_created": false,
+    "implementation_binding_created": false,
+    "wire_is_prospective": true
+  },
+  "primitive_encoding": {
+    "sha256": "SHA-256 as defined by FIPS 180-4; lowercase hexadecimal for textual digests",
+    "netstring": "len(UTF-8 bytes) as ASCII decimal with no leading zero except zero itself, then ':', then exact bytes, then ','",
+    "count": "encoded as a netstring containing the canonical base-10 ASCII integer",
+    "string": "encoded as a netstring over exact UTF-8 bytes; v1 authority strings are ASCII by profile grammar",
+    "source_descriptor": "ASCII(kind) as one byte 'I' for input or 'S' for state, followed by netstring(name)",
+    "sort": "bytewise lexicographic ascending order over the canonical UTF-8 representation unless a more specific tuple order is stated"
+  },
+  "exact_source_identity": {
+    "id_prefix": "c3src:sha256:",
+    "domain_bytes": "ASCII('RISU-K1-C3-MFST-SOURCE-V1\\0')",
+    "preimage": "domain_bytes || exact profile JSON bytes",
+    "rule": "The verifier hashes and parses the same immutable in-memory byte vector. Reopening a pathname after hashing is forbidden on an authority path."
+  },
+  "semantic_profile_transcript": {
+    "id_prefix": "c3sem:sha256:",
+    "domain_bytes": "ASCII('RISU-K1-C3-MFST-SEMANTIC-V1\\0')",
+    "prelude": [
+      "ASCII('C') || netstring(claim_id)",
+      "ASCII('E') || netstring(entry)"
+    ],
+    "boundary": [
+      "ASCII('W') || count(world_count) || for world in sorted unique worlds: ASCII('w') || netstring(world)",
+      "ASCII('D') || count(slot_count) || for slot_name in sorted slot names: ASCII('s') || netstring(slot_name) || count(value_count) || for value in sorted unique domain values: ASCII('v') || netstring(value)"
+    ],
+    "state": [
+      "ASCII('Q') || count(state_cell_count)",
+      "for cell in cells sorted by name: ASCII('q') || netstring(name) || count(domain_size) || sorted domain values each as ASCII('v') || netstring(value) || initial encoding",
+      "const initial encoding: ASCII('C') || netstring(value)",
+      "input initial encoding: ASCII('I') || netstring(slot_name)"
+    ],
+    "tables": [
+      "ASCII('T') || count(table_count)",
+      "for table in tables sorted by name: ASCII('t') || netstring(name) || count(argument_count) || argument descriptors in declared order || count(result_domain_size) || sorted result values each ASCII('v') || netstring(value) || count(row_count) || rows sorted lexicographically by canonical when tuple",
+      "row encoding: ASCII('r') || count(when_arity) || each when value in argument order as ASCII('v') || netstring(value) || ASCII('o') || netstring(result)"
+    ],
+    "blocks": [
+      "ASCII('B') || count(block_count)",
+      "for block in blocks sorted by label: ASCII('b') || netstring(label) || count(op_count) || operation encodings in declared order || terminator encoding"
+    ],
+    "operation_encodings": {
+      "SET_CONST": "ASCII('1') || netstring(dst) || netstring(value)",
+      "SET_FROM": "ASCII('2') || netstring(dst) || source_descriptor(source)",
+      "APPLY_TABLE": "ASCII('3') || netstring(dst) || netstring(table) || count(argument_count) || source_descriptor(argument) in declared order",
+      "EMIT_HEX": "ASCII('4') || netstring(lowercase payload hex)"
+    },
+    "terminator_encodings": {
+      "GOTO": "ASCII('G') || netstring(target)",
+      "IF_EQ": "ASCII('I') || source_descriptor(source) || netstring(value) || netstring(if_true) || netstring(if_false)",
+      "HALT": "ASCII('H')"
+    },
+    "semantic_profile_id": "c3sem:sha256: + SHA-256(domain_bytes || all transcript fragments exactly in the order specified above)",
+    "representation_invariance": "JSON object-key order, world order, slot-domain order, state declaration order, table declaration order, total-table row order, and block declaration order are nonsemantic and canonicalized by the transcript. Operation order, table-argument order, row tuple position, and effect order are semantic and never sorted away."
+  },
+  "boundary_point_transcript": {
+    "ordering": "points sorted first by world, then by slot values in lexicographic slot-name order",
+    "encoding": "ASCII('P') || netstring(world) || count(slot_count) || for slot in sorted slot names: ASCII('s') || netstring(slot) || netstring(value)"
+  },
+  "consequence_projection": {
+    "id": "c:sha256: + SHA-256(ASCII('RISU-K1-CAPSULE-CONSEQUENCE-V1\\0') || exact payload bytes)",
+    "compatibility": "identical to qualified C2",
+    "rule": "No source-known consequence vocabulary is allowed to filter payloads before commitment."
+  },
+  "reachable_graph_transcript": {
+    "id_prefix": "c3graph:sha256:",
+    "domain_bytes": "ASCII('RISU-K1-C3-MFST-GRAPH-V1\\0')",
+    "accepted_graph_condition": "Every declared boundary point reaches HALT without repeating a configuration and with a nonempty full-run trace.",
+    "point_section": "points in canonical boundary-point order",
+    "point_encoding": "boundary_point_transcript || count(reachable_node_count) || nodes sorted by (block_label, canonical state tuple)",
+    "state_tuple": "count(state_cell_count) || for cell in lexicographic cell-name order: netstring(cell_name) || netstring(current_value)",
+    "node_encoding": "ASCII('N') || netstring(block_label) || state_tuple || count(block_local_payload_count) || each payload in execution order as ASCII('e') || netstring(payload_hex) || successor encoding",
+    "successor_halt": "ASCII('H')",
+    "successor_config": "ASCII('S') || netstring(successor_block_label) || successor state_tuple",
+    "graph_id": "c3graph:sha256: + SHA-256(domain_bytes || canonical point sections)",
+    "cycle_rule": "A repeated configuration is a semantic failure for positive closure. No graph_id is authority-eligible for such an execution."
+  },
+  "ordered_trace_map_transcript": {
+    "id_prefix": "c3trace:sha256:",
+    "domain_bytes": "ASCII('RISU-K1-C3-MFST-TRACE-V1\\0')",
+    "entry_encoding": "boundary_point_transcript || count(payload_count) || each payload in exact execution order as ASCII('e') || netstring(payload_hex)",
+    "entries": "one per declared boundary point in canonical boundary-point order",
+    "trace_map_id": "c3trace:sha256: + SHA-256(domain_bytes || all entry encodings)",
+    "properties": "preserves point attribution, exact raw bytes, multiplicity and order before K1 set projection"
+  },
+  "projected_realize": {
+    "derivation": "For each complete trace entry, convert every raw payload to the qualified C2 consequence id and add (point.world, consequence_id) to a mathematical set.",
+    "duplicates": "duplicate occurrences remain in C3 trace evidence but collapse only at this explicit K1 relation projection",
+    "ordering": "relation serialization, when needed, is sorted lexicographically by (world, consequence_id)"
+  },
+  "canonical_c2_normal_form": {
+    "name": "CBTNF-v1",
+    "input": "the independently recomputed complete C3 ordered trace map and exact boundary",
+    "dimensions": "ordered vector ['@world'] followed by slot names in lexicographic order",
+    "domains": "world values or slot values, each lexicographically sorted",
+    "labels": {
+      "root": "C3N.ROOT",
+      "internal": "C3N." + dot-separated zero-based value-index path from root",
+      "leaf": "C3L." + dot-separated zero-based value-index path from root",
+      "trap": "C3.TRAP",
+      "rule": "Labels are derived only from canonical path indices and never from producer strings."
+    },
+    "recursive_serialization": [
+      "Emit root subtree first.",
+      "For an internal node at dimension d and canonical path P, emit 'LABEL <internal-label(P)>'.",
+      "For each domain value at zero-based index i in ascending value order, emit 'IF_EQ <dimension-name> <value> <child-label(P+i)>'.",
+      "After all IF_EQ lines for that internal node, emit 'GOTO C3.TRAP'.",
+      "Then recursively serialize child subtrees in ascending value-index order.",
+      "At depth equal to dimension count, emit 'LABEL <leaf-label(P)>', then one 'EMIT_HEX <payload>' line for every payload in that exact point trace order, then 'HALT'.",
+      "After the complete root subtree, emit exactly 'LABEL C3.TRAP' followed by exactly 'GOTO C3.TRAP'.",
+      "Terminate every instruction line with LF, including the final line; emit no blank lines."
+    ],
+    "declared_point_rule": "Every declared point must reach exactly one leaf. The trap is unreachable for every declared point and exists only to close false fallthrough for values outside the declared boundary.",
+    "program_digest": "lowercase raw SHA-256 of exact CBTNF-v1 program bytes, exactly as expected by C2 program_sha256",
+    "derived_gas": "Independently execute the exact CBTNF-v1 bytes under qualified C2 instruction semantics for every declared boundary point; gas is the maximum exact instruction count including LABEL, IF_EQ, GOTO if executed, EMIT_HEX and HALT. Producer gas is forbidden.",
+    "bridge_rejection": "If exact CBTNF-v1 bytes exceed 65536 bytes or derived gas exceeds 10000, positive C3 authority is UNSUPPORTED under v1; no truncation, alternative normalization, or relaxed C2 limit is permitted."
+  },
+  "canonical_c2_artifact": {
+    "object": {
+      "proof_format": "k1.capsule-closure/v1",
+      "claim_id": "exact C3 profile claim_id",
+      "capsule_semantics": "risu.k1.capsule/v1",
+      "program_sha256": "raw SHA-256 of exact CBTNF-v1 bytes",
+      "boundary": {
+        "worlds": "lexicographically sorted exact worlds",
+        "slots": "object with lexicographically sorted slot keys and each value array lexicographically sorted",
+        "gas": "derived gas as a JSON integer"
+      }
+    },
+    "serialization": "UTF-8 JSON with no BOM or trailing whitespace, separators exactly ',' and ':', object keys lexicographically sorted recursively, ensure_ascii=true, and exactly one final LF forbidden: artifact bytes end at the closing '}'.",
+    "artifact_id": "p:sha256: + SHA-256(exact canonical artifact bytes), matching C2",
+    "rule": "W7 and W8 must independently produce byte-identical C2 artifacts; W5/W6 receive those exact bytes and recompute all C2 authority facts."
+  },
+  "crossed_refinement_square": {
+    "purpose": "Prevent a C3 normalizer from validating its own bug by construction and reduce common-mode semantic/compiler failure.",
+    "W7": [
+      "independently strict-parse and directly execute C3",
+      "independently reconstruct graph and trace map",
+      "independently generate exact CBTNF-v1 bytes",
+      "independently parse and execute the final shared CBTNF-v1 byte vector under C2 trace semantics"
+    ],
+    "W8": [
+      "independently strict-parse and directly execute C3 using no W7 code",
+      "independently reconstruct graph and trace map using no W7 code",
+      "independently generate exact CBTNF-v1 bytes using no W7 code",
+      "independently parse and execute the final shared CBTNF-v1 byte vector under separately implemented C2 trace semantics"
+    ],
+    "cross_equalities": [
+      "W7 direct C3 trace map == W8 direct C3 trace map",
+      "W7 graph_id == W8 graph_id",
+      "W7 CBTNF bytes == W8 CBTNF bytes",
+      "W7 replay of exact CBTNF bytes == W8 direct C3 trace map pointwise",
+      "W8 replay of exact CBTNF bytes == W7 direct C3 trace map pointwise",
+      "both C2 replays == both direct C3 traces including payload order and multiplicity",
+      "both C3 projected REALIZE relations == relation independently derived by W5 and W6"
+    ],
+    "implementation_independence": "W7 and W8 may share protocol fixtures but no parser, executor, graph builder, canonicalizer, normalizer, C2 replay code, or subprocess invocation of one another.",
+    "disagreement": "Any mismatch is authority-fatal and yields UNKNOWN/UNSUPPORTED, never PRESERVATION."
+  },
+  "candidate_refinement_evidence": {
+    "status": "reserved wire only; not a production proof kind",
+    "candidate_kind": "k1.mediated-refinement/v1",
+    "required_bindings": [
+      "claim_id",
+      "c3 exact source identity",
+      "c3 semantic profile identity",
+      "reachable graph id",
+      "ordered trace-map id",
+      "exact CBTNF program SHA-256",
+      "exact canonical C2 artifact_id",
+      "derived C2 target_id",
+      "W7/W8 agreement result",
+      "W5/W6 agreement result"
+    ],
+    "composition_rule": "A qualified future C3 proof kind must establish exact C3-to-C2 refinement and then rely on independently rechecked C2-to-K1 preservation. A C2 certificate by itself does not bind or prove the originating C3 profile.",
+    "producer_rule": "All derived bindings are verifier outputs. A producer may transport them for diagnostics but no checker may trust them as authority inputs."
+  },
+  "strict_fail_closed_cases": [
+    "invalid UTF-8 or duplicate JSON key",
+    "unknown authority key or opcode",
+    "undeclared or out-of-domain value",
+    "non-total finite table",
+    "undefined block target",
+    "hidden/ambient capability attempt",
+    "repeated execution configuration",
+    "zero-effect HALT",
+    "unexecuted declared boundary point",
+    "source or semantic identity mismatch",
+    "graph or trace mismatch",
+    "normal-form byte mismatch",
+    "normal-form replay mismatch",
+    "C2 program-size or gas limit exceeded",
+    "C2 artifact mismatch",
+    "W7/W8 disagreement",
+    "W5/W6 disagreement",
+    "C2 derived relation or target mismatch",
+    "any forbidden C2-derived consequence when preservation is requested"
+  ],
+  "nonclaims": [
+    "This wire does not itself create k1.mediated-refinement/v1 authority.",
+    "This wire does not prove arbitrary native programs refine MFST.",
+    "This wire does not make ordered traces part of K1 semantics.",
+    "This wire does not weaken any qualified C2 parser, execution, gas, closure, grounding, or ALLOW rule."
+  ]
+}
