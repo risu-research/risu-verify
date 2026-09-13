@@ -50,7 +50,10 @@
     "protocols/RISU_KERNEL_K1_CAPSULE_CLOSURE_C2_QUALIFICATION.json",
     "tools/risu_kernel_k1_capsule_c2_qualification_verify.py"
   ],
-  "qualification_tooling_blobs": {},
+  "qualification_tooling_blobs": {
+    ".github/workflows/k1-closure-c2-qualification.yml": "9f16ec3865a063869f152a3dd08e356d306ba89d",
+    "tools/risu_kernel_k1_capsule_c2_qualification_verify.py": "445cb59d1d62d38c9037967502692ef6ef1e252b"
+  },
   "required_replay": [
     "verify exact C1-qualified ancestry",
     "verify exact C2 science anchor ancestry",
