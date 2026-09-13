@@ -1,0 +1,25 @@
+{
+  "wire": "risu.k1.w0",
+  "kind": "claim",
+  "semantics": "safety-subset-v1",
+  "worlds": [
+    "w:sha256:13cc08218b3578873c7cb0438f32f4bc9ad8f732e4d810193bb15e89214ad314",
+    "w:sha256:8f813b079e5ff8d512eb2b3e475b036e65ea168b0fc99bc62509ca5ce52ffcdb",
+    "w:sha256:ff94710ef15366938763bdcc9577ff68c6d7722c25cbd8d2a80f09b4e26ab4fd"
+  ],
+  "allow": [
+    [
+      "w:sha256:13cc08218b3578873c7cb0438f32f4bc9ad8f732e4d810193bb15e89214ad314",
+      "c:sha256:238c9f640b79314187064c6f722f726ec981c980229233cb5c1a5453b37f6ee0"
+    ],
+    [
+      "w:sha256:8f813b079e5ff8d512eb2b3e475b036e65ea168b0fc99bc62509ca5ce52ffcdb",
+      "c:sha256:3d0092161462a9b27ff4a04834a318668c81cc8772b3701bcce640407c719125"
+    ],
+    [
+      "w:sha256:ff94710ef15366938763bdcc9577ff68c6d7722c25cbd8d2a80f09b4e26ab4fd",
+      "c:sha256:37af1f917765488ed1b4250faed0f9c49aba5a92a4f2a6e70470a0c932c210c5"
+    ]
+  ],
+  "claim_id": "claim:sha256:d22466e24cfc4618a35231e3c8574d47492efc51a3997f57f7db9cc4dfb6466f"
+}
