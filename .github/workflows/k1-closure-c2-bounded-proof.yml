@@ -7,6 +7,7 @@ on:
       - 'kernel/k1_checker_w5.py'
       - 'kernel/k1_checker_w6.go'
       - 'tools/risu_kernel_k1_capsule_c2_*'
+      - 'fixtures/k1_capsule_c2_kat/**'
       - 'docs/RISU_KERNEL_K1_CAPSULE_CLOSURE_C2.md'
       - '.github/workflows/k1-closure-c2-bounded-proof.yml'
   workflow_dispatch:
@@ -43,7 +44,7 @@ jobs:
         run: |
           set -euo pipefail
           git diff --check
-          python -m py_compile kernel/k1_checker_w5.py tools/risu_kernel_k1_capsule_c2_static_verify.py tools/risu_kernel_k1_capsule_c2_generative_verify.py
+          python -m py_compile kernel/k1_checker_w5.py tools/risu_kernel_k1_capsule_c2_static_verify.py tools/risu_kernel_k1_capsule_c2_generative_verify.py tools/risu_kernel_k1_capsule_c2_kat_verify.py
           test -z "$(gofmt -d kernel/k1_checker_w6.go)"
           go vet kernel/k1_checker_w6.go
           go build -trimpath -o /tmp/k1-checker-w6 kernel/k1_checker_w6.go
@@ -61,6 +62,17 @@ jobs:
           imports=set(re.findall(r'"([^"]+)"',block))
           assert imports==allowed,(imports,allowed)
           print('C2 checker independence audit: PASS')
+          PY
+      - name: Run fixed known-answer conformance gate
+        run: |
+          set -euo pipefail
+          python tools/risu_kernel_k1_capsule_c2_kat_verify.py --w6 /tmp/k1-checker-w6 --output /tmp/c2-kat.json
+          python - <<'PY'
+          import json
+          x=json.load(open('/tmp/c2-kat.json'))
+          assert x['status']=='PASS'
+          assert all(x['checks'].values())
+          print('C2 KAT: PASS')
           PY
       - name: Run 28-vector adversarial static differential gate
         run: |
