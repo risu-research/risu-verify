@@ -1,0 +1,83 @@
+{
+  "qualification_id": "RISU_KERNEL_K1_IMPLEMENTATION_BINDING_B0_QUALIFICATION",
+  "status": "CANDIDATE_QUALIFICATION_FREEZE",
+  "meaning": "Qualification of one-sided observed-execution regression binding for frozen K1. An actual forbidden effect from exact executable bytes may ground a normal K1 regression witness; finite allowed/clean runs never establish preservation authority.",
+  "frozen_base": {
+    "branch": "k1-w2-qualified",
+    "commit": "3f3e6b9071d7fe1cd447f2bbbba9addbbe509533",
+    "immutability_rule": "The qualified B0 branch must descend from this exact commit and may only add files relative to it; no pre-existing file may be modified, deleted, or renamed."
+  },
+  "scope": {
+    "binding_scope": "OBSERVED_EXECUTION_REGRESSION_WITNESS_ONLY",
+    "claim_world_cardinality": 1,
+    "preservation_authority": false,
+    "implementation_binding_claim": "SCOPED_ONE_SIDED_REGRESSION_ONLY"
+  },
+  "qualification_results": {
+    "b0_adversarial_vectors": {
+      "required": 13,
+      "passed": 13,
+      "failed": 0
+    },
+    "d1_independent_observer_vectors": {
+      "required": 8,
+      "passed": 8,
+      "failed": 0
+    },
+    "w1_w2_for_forbidden_run": {
+      "w1": "ACCEPTED/REGRESSION",
+      "w2": "ACCEPTED/REGRESSION"
+    },
+    "exact_fixture_oracles": {
+      "world_id": "w:sha256:13cc08218b3578873c7cb0438f32f4bc9ad8f732e4d810193bb15e89214ad314",
+      "allowed_consequence_id": "c:sha256:238c9f640b79314187064c6f722f726ec981c980229233cb5c1a5453b37f6ee0",
+      "forbidden_consequence_id": "c:sha256:e9d1d1a276a1c50b31187d32763d4584a6b9f5b92a7c4aa7e53d71adfed9455e",
+      "claim_id": "claim:sha256:d1f58f461082d72270105da7795f7c53d586f1b19b7d3ac18decb4d93cf60c73"
+    },
+    "simple_forbidden_run": {
+      "target_id": "t:sha256:4e8c30e81aa526341eadde4e8082360427129bc7b8e0f4fd8a4a6a5c2b73543e",
+      "proof_artifact_id": "p:sha256:164a6ff83c8751569d364fc7faaf693d25518b51be74f31a2f1e63d2717c2f35",
+      "witness_id": "wit:sha256:5607336d713bb30d863dd72ec335017515fe05fd62a10721fdba7dcdfaa939fb"
+    }
+  },
+  "frozen_base_blobs": {
+    "kernel/k1_checker_w1.py": "273290b5bbc5b1b9a93f962e739995be76f6d0d6",
+    "kernel/k1_checker_w2.go": "76fd74084d74555e47b579bdf74077f5582fe90e",
+    "protocols/RISU_KERNEL_K1_WIRE_W0.json": "2141377f2e00cbca0cdb1a7c22e485186f8b55bc",
+    "schemas/RISU_KERNEL_K1_WIRE_W0.schema.json": "96b1158a2d41d41c65b805d481fcf53501e259a7"
+  },
+  "pinned_b0_blobs": {
+    "protocols/RISU_KERNEL_K1_IMPLEMENTATION_BINDING_B0.json": "6c7aa8ac6006736be1397412179306f9a97721ea",
+    "protocols/RISU_KERNEL_K1_IMPLEMENTATION_BINDING_B0_D1.json": "7aaaf08402fc5d4ef88d8130abc68d355325b743",
+    "fixtures/k1_binding_b0/world_input.txt": "4d0de28af632907e9954b89d3945fb097c812182",
+    "fixtures/k1_binding_b0/claim.json": "b795e551b0492fb78281a47094a9ce3223e48677",
+    "tools/risu_kernel_k1_binding_b0.py": "e39c7946840b58411389334fea124bdf971c6246",
+    "tools/risu_kernel_k1_binding_b0_verify.py": "006c5cb27f03e766b29523c5898cde43b7e7cda3",
+    "tools/risu_kernel_k1_binding_b0_observer.go": "9c338165139d0a44358693a5048b2421d6c4a38f",
+    "tools/risu_kernel_k1_binding_b0_observer_d1_verify.py": "f2d5562f5b3a8ee4eea74b3d5c223ef1eea9b27a",
+    "tools/specimens/k1_binding_b0_target.go": "607f261695bf77445af648b69e77e9c8949b283b",
+    ".github/workflows/k1-implementation-binding-b0.yml": "539b00de9e371fc6816ca175ded8323ea0a348af",
+    "docs/RISU_KERNEL_K1_IMPLEMENTATION_BINDING_B0.md": "74eb9c2094e0d4d8429405c602145306881346a1"
+  },
+  "qualification_tooling_blobs": {},
+  "required_replay": [
+    "Verify exact frozen-base ancestry and add-only delta.",
+    "Verify every pinned Git blob hash.",
+    "Run git diff --check and source syntax/format/vet/build checks.",
+    "Build frozen W2, independent Go D1 observer, and all eight exact target variants with CGO disabled.",
+    "Replay all 13 B0 adversarial authority vectors.",
+    "Replay all 8 D1 independent-observer differential vectors.",
+    "Require preservation_authority=false throughout."
+  ],
+  "explicit_non_claims": [
+    "No preservation from black-box testing.",
+    "No exhaustiveness claim for observed implementation behavior.",
+    "No determinism claim across replays.",
+    "No arbitrary-program sandbox or hostile-code containment claim.",
+    "No unbounded liveness or deadline proof.",
+    "No multi-world local-witness support.",
+    "No universal implementation-binding theorem.",
+    "No claim that binding_id is a signature, authenticated attestation, or transferable trust token."
+  ],
+  "next_structural_gap": "A local observed-pair proof kind for regression witnesses over multi-world claims, without pretending to close unrelated worlds and without changing the K1 semantic kernel."
+}
