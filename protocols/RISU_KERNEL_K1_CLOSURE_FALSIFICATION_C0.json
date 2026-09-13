@@ -1,0 +1,60 @@
+{
+  "protocol_id": "RISU_KERNEL_K1_CLOSURE_FALSIFICATION_C0",
+  "status": "PROSPECTIVE_BEFORE_IMPLEMENTATION",
+  "frozen_base": {
+    "branch": "k1-binding-b1-qualified",
+    "commit": "581ab6c1596751242a312b72d743d7595a43b327"
+  },
+  "objective": "Falsify unsound implementation-closure producers before admitting any positive implementation-preservation authority.",
+  "epistemic_rule": "A producer does not gain closure authority by declaration, repetition, coverage, or a finite clean trace. In this gate, a closure claim survives only when an independent synthetic oracle confirms exact implementation binding, exact world-domain binding, complete declared operational-boundary enumeration, consequence-sequence completeness, and exact realized-relation equality with no unresolved execution or parse state.",
+  "oracle_non_authority": "The C0 oracle exists only to kill unsound producer strategies in this synthetic falsification laboratory. It is not a production K1 proof kind and cannot be cited as implementation closure outside C0.",
+  "candidate_obligations_under_attack": [
+    "exact executable identity rather than source label or producer-selected identity",
+    "exact equality with the W0 admitted-world domain rather than a producer-selected subset",
+    "explicit closure over consequence-relevant environment dimensions",
+    "explicit closure over persistent state/history dimensions",
+    "explicit closure over randomness or nondeterministic choice",
+    "explicit closure over time classes when time can affect consequences",
+    "explicit closure over schedule/interleaving classes when scheduling can affect consequences",
+    "sequence-complete consequential observation rather than first-effect-only projection",
+    "open consequence universe: target-native or previously unknown consequences may not be dropped",
+    "timeout, unresolved execution, malformed observation, or incomplete parsing cannot be laundered into an empty safe result",
+    "coverage metrics and repeated clean executions are diagnostic evidence only, never closure authority",
+    "producer self-attestation of closed=true is non-authoritative"
+  ],
+  "precommitted_attack_vectors": [
+    "C0-01 self-declared closure",
+    "C0-02 repeated-clean replay closure",
+    "C0-03 control-flow branch-coverage proxy",
+    "C0-04 hidden environment dimension",
+    "C0-05 hidden persistent-state dimension",
+    "C0-06 hidden random/nondeterministic dimension",
+    "C0-07 hidden time dimension",
+    "C0-08 hidden schedule/interleaving dimension",
+    "C0-09 first-effect-only consequence projection",
+    "C0-10 drop target-native/unknown consequence",
+    "C0-11 timeout-as-empty laundering",
+    "C0-12 implementation substitution/source-label binding",
+    "C0-13 world-domain shrink",
+    "C0-14 malformed/unresolved observation laundering",
+    "C0-P1 exact exhaustive bounded closure positive control",
+    "C0-P2 representation-order metamorphic positive control"
+  ],
+  "required_result": {
+    "unsound_mutants_killed": 14,
+    "unsound_mutants_total": 14,
+    "positive_controls_passed": 2,
+    "positive_controls_total": 2,
+    "semantic_kernel_changed": false,
+    "preservation_authority_created": false
+  },
+  "forbidden_shortcuts": [
+    "do not add MUST/liveness merely to rescue a failed closure producer",
+    "do not treat sample count as exhaustiveness",
+    "do not equate branch coverage with consequence-space closure",
+    "do not close the consequence universe to source-known labels",
+    "do not trust producer-supplied closed, grounded, complete, or covered booleans",
+    "do not weaken a failing vector after observing its outcome"
+  ],
+  "decision_after_gate": "If all unsound strategies are killed and positive controls survive, derive the minimum closure-proof obligations and design C1 as an independently checkable bounded implementation-adequacy proof lane. If any unsound strategy survives, C1 is forbidden until the hole is repaired."
+}
