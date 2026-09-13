@@ -1,0 +1,60 @@
+name: K1 Closure Falsification C0
+
+on:
+  push:
+    branches:
+      - k1-closure-falsification-c0
+    paths:
+      - 'protocols/RISU_KERNEL_K1_CLOSURE_FALSIFICATION_C0.json'
+      - 'tools/risu_kernel_k1_closure_falsification_c0.py'
+      - 'docs/RISU_KERNEL_K1_CLOSURE_FALSIFICATION_C0.md'
+      - '.github/workflows/k1-closure-falsification-c0.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  falsify-closure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prove qualified base is untouched
+        run: |
+          set -euo pipefail
+          base=581ab6c1596751242a312b72d743d7595a43b327
+          git merge-base --is-ancestor "$base" HEAD
+          git diff --name-status "$base" HEAD | tee /tmp/c0-delta.txt
+          test -s /tmp/c0-delta.txt
+          if awk '$1 != "A" { bad=1 } END { exit bad ? 0 : 1 }' /tmp/c0-delta.txt; then
+            echo 'C0 must be additive relative to B1-qualified; non-additive delta found.' >&2
+            exit 1
+          fi
+      - name: Source hygiene
+        run: |
+          set -euo pipefail
+          git diff --check
+          python -m py_compile tools/risu_kernel_k1_closure_falsification_c0.py
+          python -m json.tool protocols/RISU_KERNEL_K1_CLOSURE_FALSIFICATION_C0.json >/dev/null
+      - name: Run precommitted closure falsification gate
+        run: |
+          set -euo pipefail
+          python tools/risu_kernel_k1_closure_falsification_c0.py --output /tmp/k1-closure-c0.json
+          python - <<'PY'
+          import json
+          x=json.load(open('/tmp/k1-closure-c0.json',encoding='utf-8'))
+          assert x['status']=='PASS'
+          assert x['unsound_mutants_total']==14
+          assert x['unsound_mutants_killed']==14
+          assert x['positive_controls_total']==2
+          assert x['positive_controls_passed']==2
+          assert x['semantic_kernel_changed'] is False
+          assert x['preservation_authority_created'] is False
+          assert all(r['killed'] for r in x['rows'])
+          print('K1 closure falsification C0: PASS 14/14 mutants killed; 2/2 controls survived')
+          PY
