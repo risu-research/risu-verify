@@ -1,0 +1,130 @@
+{
+  "protocol_id": "RISU_KERNEL_K1_CAPSULE_CLOSURE_C2",
+  "status": "PROSPECTIVE_BEFORE_IMPLEMENTATION",
+  "frozen_base": {
+    "branch": "k1-closure-c1-capsule-falsification-qualified",
+    "commit": "168512cd0e4e260a84788c2c10f140fa39dc6aef"
+  },
+  "goal": "Create the first positive implementation-bound preservation lane without changing the K1 ALLOW/REALIZE semantics. Two independent checkers must derive the exhaustive capsule relation from exact program bytes and an explicit finite boundary rather than trusting a producer-supplied closure relation.",
+  "proof_kind": "k1.capsule-closure/v1",
+  "capsule_semantics": "risu.k1.capsule/v1",
+  "artifact_rule": {
+    "producer_may_supply": [
+      "proof_format",
+      "claim_id",
+      "capsule_semantics",
+      "program_sha256",
+      "boundary.worlds",
+      "boundary.slots",
+      "boundary.gas"
+    ],
+    "producer_must_not_supply": [
+      "REALIZE",
+      "possible relation",
+      "closed=true",
+      "complete=true",
+      "target_id",
+      "preservation verdict"
+    ],
+    "artifact_bytes_are_digest_bound": true
+  },
+  "checker_rule": {
+    "independent_checkers": ["risu-k1-checker-w5", "risu-k1-checker-w6"],
+    "w5_language": "Python",
+    "w6_language": "Go standard library only",
+    "shared_checker_code": false,
+    "network": false,
+    "solver": false,
+    "llm": false,
+    "required_derivation": [
+      "validate exact W0 claim and certificate structure",
+      "verify exact proof artifact byte digest",
+      "verify exact capsule program SHA-256",
+      "require artifact boundary world set to equal the W0 claim world set",
+      "strictly parse the capability-free capsule language",
+      "exhaustively enumerate every world x finite slot valuation",
+      "require every execution to HALT within identity-bound gas and emit at least one consequence",
+      "include every emitted effect at the consequential cut",
+      "derive the complete REALIZE relation independently",
+      "derive target_id from capsule semantics version, exact program digest, exact finite boundary, and derived REALIZE",
+      "require certificate REALIZE to equal the derived relation exactly",
+      "require one exact grounding proof entry per derived pair and no extras",
+      "require derived REALIZE subset of ALLOW before returning PRESERVATION"
+    ]
+  },
+  "target_commitment": {
+    "domain": "RISU-K1-TARGET-CAPSULE-V1",
+    "binds": [
+      "capsule semantics version",
+      "exact program SHA-256",
+      "exact sorted world set",
+      "exact sorted finite slot names and domains",
+      "gas limit",
+      "exact sorted derived REALIZE relation"
+    ]
+  },
+  "authority_scope": {
+    "positive_authority": "PRESERVATION only for the exact bounded hermetic capsule program and exact finite boundary",
+    "implementation_binding": true,
+    "arbitrary_native_program_binding": false,
+    "remote_attestation": false,
+    "unbounded_liveness": false,
+    "semantic_kernel_changed": false
+  },
+  "precommitted_static_vectors": [
+    "C2-01 valid exhaustive safe capsule -> W5/W6 ACCEPTED PRESERVATION",
+    "C2-02 valid multi-world branch -> exact same relation and target",
+    "C2-03 strict safe subset -> PRESERVATION",
+    "C2-04 target-native open-universe consequence is derived, not dropped",
+    "C2-05 certificate REALIZE omission -> reject",
+    "C2-06 certificate REALIZE surplus -> reject",
+    "C2-07 forbidden derived consequence -> preservation reject",
+    "C2-08 artifact byte tamper -> reject",
+    "C2-09 program byte tamper -> reject",
+    "C2-10 program digest substitution -> reject",
+    "C2-11 claim_id substitution -> reject",
+    "C2-12 boundary world shrink -> reject",
+    "C2-13 boundary world surplus -> reject",
+    "C2-14 empty slot domain -> reject",
+    "C2-15 undeclared program input -> no authority",
+    "C2-16 ambient CLOCK/RNG/FILE/NET/HOSTCALL/SPAWN -> reject",
+    "C2-17 unknown opcode -> reject",
+    "C2-18 parser ambiguity / duplicate label -> reject",
+    "C2-19 gas exhaustion -> no authority",
+    "C2-20 zero-effect HALT -> no authority",
+    "C2-21 first-effect-only laundering -> reject",
+    "C2-22 grounding omission -> reject",
+    "C2-23 grounding surplus -> reject",
+    "C2-24 grounding points to different artifact -> reject",
+    "C2-25 target_id mutation -> reject",
+    "C2-26 certificate_id mutation -> reject",
+    "C2-27 artifact attempts to add relation/verdict/closed field -> reject",
+    "C2-28 representation permutation preserves derived semantic target and verdict while artifact byte digest may change"
+  ],
+  "generative_gate": {
+    "seed": 1123581321,
+    "trials": 96,
+    "properties_per_trial": 8,
+    "comparisons": 768,
+    "properties": [
+      "W5/W6 derived relation equality",
+      "W5/W6 target_id equality",
+      "W5/W6 preservation verdict equality",
+      "world/slot/domain representation permutation preserves semantic target",
+      "one REALIZE pair deletion is rejected",
+      "one REALIZE pair insertion is rejected",
+      "program-byte mutation is rejected under old artifact",
+      "artifact-byte mutation is rejected under old proof reference"
+    ]
+  },
+  "promotion_rule": "C2 may be called qualified only if every static vector and every seeded generative comparison passes on hosted CI, W5 and W6 remain implementation-independent, the C1-qualified base is untouched, and no claim broader than exact bounded capsule preservation is introduced.",
+  "forbidden_repairs": [
+    "do not trust a producer-supplied REALIZE or target relation",
+    "do not treat sampling, coverage, replay count, or clean executions as closure",
+    "do not weaken gas exhaustion, parse uncertainty, missing input, or zero-effect execution into safety",
+    "do not add ambient capabilities to make examples convenient",
+    "do not close the consequence universe to source-known labels",
+    "do not claim arbitrary native-code preservation from capsule preservation",
+    "do not modify frozen K1 RC1 semantics"
+  ]
+}
