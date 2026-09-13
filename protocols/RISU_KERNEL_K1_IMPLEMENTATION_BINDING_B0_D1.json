@@ -1,0 +1,69 @@
+{
+  "protocol_id": "RISU_KERNEL_K1_IMPLEMENTATION_BINDING_B0_D1",
+  "status": "PROSPECTIVE_BEFORE_OBSERVER_IMPLEMENTATION",
+  "parent": "RISU_KERNEL_K1_IMPLEMENTATION_BINDING_B0",
+  "base_qualification": {
+    "branch": "k1-w2-qualified",
+    "commit": "3f3e6b9071d7fe1cd447f2bbbba9addbbe509533"
+  },
+  "purpose": "Attack common-mode bugs in the Python B0 binder's execution observation, strict sink parsing, and world/consequence commitment derivation with an independently implemented observer in a different language/runtime.",
+  "observer_independence": {
+    "language": "Go",
+    "runtime_dependencies": "Go standard library only",
+    "must_not_import_or_execute": [
+      "tools/risu_kernel_k1_binding_b0.py",
+      "tools/risu_kernel_k1_binding_b0_verify.py",
+      "kernel/k1_checker_w1.py",
+      "kernel/k1_checker_w2.go",
+      "Python"
+    ],
+    "must_reimplement": [
+      "world commitment",
+      "strict effect-sink parser",
+      "consequence commitment",
+      "single-world claim validation sufficient to recover ALLOW",
+      "black-box process execution and consequential cut",
+      "forbidden-set derivation"
+    ]
+  },
+  "authority_rule": "The D1 observer is a differential oracle only. It never emits preservation authority and does not by itself create a K1 witness. B0 authority remains the conjunction of direct B0 observation plus frozen W1 and qualified W2 regression acceptance.",
+  "required_runtime_vectors": [
+    {"variant": "good", "observation_status": "OBSERVED", "forbidden_count": 0},
+    {"variant": "bad", "observation_status": "OBSERVED", "forbidden_count": 1},
+    {"variant": "stdout-lie", "observation_status": "OBSERVED", "forbidden_count": 0},
+    {"variant": "nonzero-forbidden", "observation_status": "OBSERVED", "forbidden_count": 1},
+    {"variant": "timeout-after-forbidden", "observation_status": "OBSERVED", "forbidden_count": 1},
+    {"variant": "timeout-before-effect", "observation_status": "OBSERVED", "forbidden_count": 0},
+    {"variant": "malformed", "observation_status": "MALFORMED_OBSERVATION", "forbidden_count": 0},
+    {"variant": "multi", "observation_status": "OBSERVED", "forbidden_count": 1}
+  ],
+  "exact_fixture_oracles": {
+    "world_id": "w:sha256:13cc08218b3578873c7cb0438f32f4bc9ad8f732e4d810193bb15e89214ad314",
+    "allowed_consequence_id": "c:sha256:238c9f640b79314187064c6f722f726ec981c980229233cb5c1a5453b37f6ee0",
+    "forbidden_consequence_id": "c:sha256:e9d1d1a276a1c50b31187d32763d4584a6b9f5b92a7c4aa7e53d71adfed9455e"
+  },
+  "required_differential_properties": [
+    "Python binder and Go observer derive the exact same world commitment from the exact same world-input bytes.",
+    "For every non-malformed runtime vector, both derive the exact same observed consequence set and forbidden consequence set.",
+    "For malformed observation, both refuse authority and neither salvages a valid-looking prefix.",
+    "stdout/stderr cannot create a consequence in either implementation.",
+    "Nonzero exit and timeout after a durable forbidden sink record do not erase that observation in either implementation.",
+    "Timeout before any sink record yields no forbidden observation in either implementation.",
+    "The Go observer source contains no Python execution path or references to B0 binder/checker implementations."
+  ],
+  "success_rule": [
+    "All 8 runtime vectors satisfy their precommitted oracle.",
+    "All authority-relevant observation sets agree exactly between Python binder and Go observer.",
+    "The exact fixture world/allowed/forbidden commitment constants agree in both implementations.",
+    "No observer independence violation occurs.",
+    "No preservation authority is introduced."
+  ],
+  "explicit_non_claims": [
+    "No proof of target determinism across replays.",
+    "No proof that finite observed effects exhaust implementation behavior.",
+    "No sandbox or hostile-code containment claim.",
+    "No preservation authority.",
+    "No multi-world local witness support.",
+    "No universal implementation-binding theorem."
+  ]
+}
