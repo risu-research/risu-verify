@@ -36,7 +36,10 @@
     ".github/workflows/k1-observed-pair-p1.yml": "79b3da41a8c090280684530222a3d3cf415d8feb",
     "docs/RISU_KERNEL_K1_OBSERVED_PAIR_P1.md": "ad0ad44276bf15444890f3d883ad7671ccb83248"
   },
-  "qualification_tooling_blobs": {},
+  "qualification_tooling_blobs": {
+    "tools/risu_kernel_k1_observed_pair_p1_qualification_verify.py": "93e0401f0ea1e2ac19933c71514202c7bff03d2d",
+    ".github/workflows/k1-observed-pair-p1-qualification.yml": "ed349d9247c9561ea5416ce8cb4c7b7d084ae4b8"
+  },
   "required_replay": [
     "verify base ancestry and exact add-only delta",
     "verify pinned Git blob hashes",
