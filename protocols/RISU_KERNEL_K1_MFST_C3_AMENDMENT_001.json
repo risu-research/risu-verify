@@ -1,0 +1,82 @@
+{
+  "amendment_id": "risu.k1.mfst.c3.amendment/001",
+  "status": "PRE_IMPLEMENTATION_NORMATIVE_CORRECTION",
+  "applies_to": [
+    "risu.k1.mfst.c3.profile/v1",
+    "risu.k1.mfst.c3.wire/v1"
+  ],
+  "base_head_before_amendment": "4e1c1d3a923c5e4d2d803df3ebb3d40dae543990",
+  "reason": "Remove a pre-implementation ambiguity between table formal parameters and APPLY_TABLE call-site source bindings, and make the input-source namespace explicit. The correction narrows interpretation before any W7/W8 implementation or C3 authority exists.",
+  "authority_state": {
+    "semantic_kernel_changed": false,
+    "production_proof_kind_created": false,
+    "preservation_authority_created": false,
+    "implementation_binding_created": false,
+    "checker_implementation_existed_when_frozen": false
+  },
+  "supersession_rule": "Where this amendment conflicts with RISU_KERNEL_K1_MFST_C3_PROFILE.json or RISU_KERNEL_K1_MFST_C3_WIRE.json, this amendment is normative for C3 v1 qualification. All non-conflicting rules remain unchanged.",
+  "source_namespace": {
+    "source_descriptor_exact_keys": ["kind", "name"],
+    "allowed_kinds": ["input", "state"],
+    "input_resolution": "If name is @world, the source domain is the exact boundary world set. Otherwise name must be an exact declared boundary slot and the source domain is that slot's exact declared domain.",
+    "state_resolution": "name must be an exact declared state cell and the source domain is that cell's exact declared domain.",
+    "unknown_source": "reject",
+    "namespace_rule": "@world is a valid input source but may not be declared as a user boundary slot."
+  },
+  "state_initialization_correction": {
+    "const": "unchanged: initial value must be in the destination state-cell domain",
+    "input": "initial.name may be @world or an exact declared boundary slot; the complete resolved input domain must be a subset of the destination state-cell domain",
+    "hidden_initial_state": "still forbidden"
+  },
+  "table_formal_argument_schema": {
+    "table_exact_keys": ["name", "arguments", "result_domain", "rows"],
+    "argument_exact_keys": ["name", "domain"],
+    "argument_name": "unique token-safe formal name within the table; it does not resolve to a machine input or state cell",
+    "argument_domain": "nonempty finite set of unique token-safe values",
+    "argument_order": "semantic and defines tuple position",
+    "result_domain": "nonempty finite set of unique token-safe values",
+    "rows": "exactly one {when,result} row for every tuple in the Cartesian product of formal argument domains",
+    "row_when": "ordered value tuple whose position i belongs to formal argument i domain",
+    "row_result": "must belong to result_domain",
+    "table_purity": "unchanged: no mutation, branch, effect, ambient access, failure channel, or unknown result"
+  },
+  "apply_table_call_schema": {
+    "exact_keys": ["op", "dst", "table", "arguments"],
+    "arguments": "ordered list of machine source descriptors",
+    "arity": "must equal referenced table formal argument count exactly",
+    "domain_binding": "for each position i, the fully resolved machine source domain must equal the referenced formal argument i domain exactly",
+    "evaluation": "read current source values in argument order, look up the unique total-table row, and assign its result to dst",
+    "destination_rule": "the table result_domain must be a subset of the declared dst state-cell domain",
+    "aliasing_rule": "A state cell may appear as a source and dst in the same APPLY_TABLE; all arguments are read from the pre-operation state and the single destination write occurs after lookup."
+  },
+  "semantic_transcript_correction": {
+    "replaces": "the table section only of risu.k1.mfst.c3.wire/v1 semantic_profile_transcript",
+    "table_section": [
+      "ASCII('T') || count(table_count)",
+      "for table in tables sorted by name: ASCII('t') || netstring(name) || count(argument_count) || formal argument encodings in declared order || count(result_domain_size) || sorted result values each ASCII('v') || netstring(value) || count(row_count) || rows sorted lexicographically by canonical when tuple",
+      "formal argument encoding: ASCII('a') || netstring(formal_name) || count(domain_size) || for value in sorted unique formal domain: ASCII('v') || netstring(value)",
+      "row encoding unchanged: ASCII('r') || count(when_arity) || each when value in formal argument order as ASCII('v') || netstring(value) || ASCII('o') || netstring(result)"
+    ],
+    "apply_table_operation_encoding": "unchanged: ASCII('3') || netstring(dst) || netstring(table) || count(argument_count) || source_descriptor(call_argument) in declared order",
+    "effect": "Table declaration identity now commits abstract finite function domains independently from machine source names, while each APPLY_TABLE operation separately commits the exact source binding."
+  },
+  "differential_vectors_added": [
+    "AM1-01 table formal argument renamed without changing call binding -> semantic_profile_id changes but execution relation remains equivalent",
+    "AM1-02 call-site source changed to a different source with identical domain -> semantic_profile_id changes and checker executes the newly bound source",
+    "AM1-03 call-site source domain differs from formal domain -> reject",
+    "AM1-04 missing formal table tuple -> reject",
+    "AM1-05 duplicate formal table tuple -> reject",
+    "AM1-06 surplus/out-of-domain formal tuple -> reject",
+    "AM1-07 @world used as an input source -> valid when its exact world domain matches the receiving/formal domain",
+    "AM1-08 undeclared input source -> reject",
+    "AM1-09 APPLY_TABLE reads dst as an argument -> use pre-operation value deterministically",
+    "AM1-10 W7/W8 semantic transcript equality under formal-argument declaration permutation rules"
+  ],
+  "nonclaims": [
+    "This amendment does not widen the effect surface.",
+    "This amendment does not add host-language computation.",
+    "This amendment does not alter C2 or K1.",
+    "This amendment is not evidence that any C3 attack vector passes."
+  ],
+  "freeze_rule": "W7 and W8 must implement the amended semantics from their first executable versions. No checker may select whichever pre-amendment interpretation is convenient."
+}
