@@ -1,0 +1,15 @@
+{
+  "wire": "risu.k1.w0",
+  "kind": "claim",
+  "semantics": "safety-subset-v1",
+  "worlds": [
+    "w:sha256:13cc08218b3578873c7cb0438f32f4bc9ad8f732e4d810193bb15e89214ad314"
+  ],
+  "allow": [
+    [
+      "w:sha256:13cc08218b3578873c7cb0438f32f4bc9ad8f732e4d810193bb15e89214ad314",
+      "c:sha256:238c9f640b79314187064c6f722f726ec981c980229233cb5c1a5453b37f6ee0"
+    ]
+  ],
+  "claim_id": "claim:sha256:d1f58f461082d72270105da7795f7c53d586f1b19b7d3ac18decb4d93cf60c73"
+}
