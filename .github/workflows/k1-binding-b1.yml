@@ -1,0 +1,112 @@
+name: K1 Binding B1
+
+on:
+  push:
+    branches:
+      - k1-binding-b1
+    paths:
+      - 'protocols/RISU_KERNEL_K1_BINDING_B1.json'
+      - 'tools/risu_kernel_k1_binding_b1.py'
+      - 'tools/risu_kernel_k1_binding_b1_report_verify.py'
+      - 'tools/risu_kernel_k1_binding_b1_verify.py'
+      - 'tools/risu_kernel_k1_binding_b1_observer.go'
+      - 'tools/risu_kernel_k1_binding_b1_observer_d2_verify.py'
+      - '.github/workflows/k1-binding-b1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CGO_ENABLED: '0'
+
+jobs:
+  binding-and-differential:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.x'
+          cache: false
+      - name: Prove P1 qualified base is untouched
+        run: |
+          set -euo pipefail
+          base=7dc6e4a34f9bbee025894474df430fd202028244
+          git merge-base --is-ancestor "$base" HEAD
+          git diff --name-status "$base" HEAD | tee /tmp/b1-delta.txt
+          test -s /tmp/b1-delta.txt
+          if awk '$1 != "A" { bad=1 } END { exit bad ? 0 : 1 }' /tmp/b1-delta.txt; then
+            echo 'B1 must be additive relative to P1-qualified; non-additive delta found.' >&2
+            exit 1
+          fi
+      - name: Source hygiene and builds
+        run: |
+          set -euo pipefail
+          git diff --check
+          python -m py_compile \
+            tools/risu_kernel_k1_binding_b1.py \
+            tools/risu_kernel_k1_binding_b1_report_verify.py \
+            tools/risu_kernel_k1_binding_b1_verify.py \
+            tools/risu_kernel_k1_binding_b1_observer_d2_verify.py \
+            kernel/k1_checker_w3.py
+          gofmt -d tools/risu_kernel_k1_binding_b1_observer.go | tee /tmp/b1-observer-gofmt.diff
+          test ! -s /tmp/b1-observer-gofmt.diff
+          gofmt -d kernel/k1_checker_w4.go | tee /tmp/w4-gofmt.diff
+          test ! -s /tmp/w4-gofmt.diff
+          go vet tools/risu_kernel_k1_binding_b1_observer.go
+          go vet kernel/k1_checker_w4.go
+          go vet tools/specimens/k1_binding_b0_target.go
+          go build -trimpath -o /tmp/risu-k1-w4 kernel/k1_checker_w4.go
+          go build -trimpath -o /tmp/risu-k1-b1-observer tools/risu_kernel_k1_binding_b1_observer.go
+          mkdir -p /tmp/b1-bin
+          for v in good bad stdout-lie nonzero-forbidden timeout-after-forbidden timeout-before-effect malformed multi; do
+            go build -trimpath -ldflags "-s -w -X main.variant=$v" -o "/tmp/b1-bin/b1-$v" tools/specimens/k1_binding_b0_target.go
+          done
+      - name: Run precommitted B1 16-vector authority gate
+        run: |
+          set -euo pipefail
+          python tools/risu_kernel_k1_binding_b1_verify.py \
+            --binder tools/risu_kernel_k1_binding_b1.py \
+            --report-verifier tools/risu_kernel_k1_binding_b1_report_verify.py \
+            --w3 kernel/k1_checker_w3.py \
+            --w4 /tmp/risu-k1-w4 \
+            --claim fixtures/k1_observed_pair_p1/claim_multi.json \
+            --world fixtures/k1_binding_b0/world_input.txt \
+            --bin-dir /tmp/b1-bin \
+            --output /tmp/k1-binding-b1.json
+          python - <<'PY'
+          import json
+          x=json.load(open('/tmp/k1-binding-b1.json',encoding='utf-8'))
+          assert x['status']=='PASS'
+          assert x['vector_count']==16 and x['passed']==16 and x['failed']==[]
+          assert x['preservation_authority'] is False
+          print('K1 B1 authority gate: PASS 16/16')
+          PY
+      - name: Run independent observer differential D2
+        run: |
+          set -euo pipefail
+          python tools/risu_kernel_k1_binding_b1_observer_d2_verify.py \
+            --binder tools/risu_kernel_k1_binding_b1.py \
+            --observer /tmp/risu-k1-b1-observer \
+            --observer-source tools/risu_kernel_k1_binding_b1_observer.go \
+            --w3 kernel/k1_checker_w3.py \
+            --w4 /tmp/risu-k1-w4 \
+            --claim fixtures/k1_observed_pair_p1/claim_multi.json \
+            --world fixtures/k1_binding_b0/world_input.txt \
+            --bin-dir /tmp/b1-bin \
+            --output /tmp/k1-binding-b1-d2.json
+          python - <<'PY'
+          import json
+          x=json.load(open('/tmp/k1-binding-b1-d2.json',encoding='utf-8'))
+          assert x['status']=='PASS'
+          assert x['runtime_vector_count']==8 and x['passed']==8 and x['failed']==[]
+          assert x['observer_independence']['pass'] is True
+          assert x['preservation_authority'] is False
+          print('K1 B1 D2: PASS 8/8')
+          PY
