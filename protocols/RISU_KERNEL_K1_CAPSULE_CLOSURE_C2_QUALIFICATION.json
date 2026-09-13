@@ -1,0 +1,74 @@
+{
+  "qualification_id": "RISU_KERNEL_K1_CAPSULE_CLOSURE_C2_QUALIFICATION",
+  "status": "CANDIDATE_QUALIFICATION_FREEZE",
+  "frozen_base": {
+    "branch": "k1-closure-c1-capsule-falsification-qualified",
+    "commit": "168512cd0e4e260a84788c2c10f140fa39dc6aef"
+  },
+  "science_anchor": {
+    "branch": "k1-closure-c2-bounded-proof",
+    "commit": "de79dddeba80026a8b772e5bce1e59811e371779",
+    "meaning": "exact C2 science tree that passed checker-independence, fixed KAT, 28/28 static adversarial vectors, and 768/768 seeded generative comparisons"
+  },
+  "authority": {
+    "proof_kind": "k1.capsule-closure/v1",
+    "capsule_semantics": "risu.k1.capsule/v1",
+    "positive_claim": "PRESERVATION for the exact bounded hermetic capsule program and exact finite boundary only",
+    "implementation_binding": true,
+    "implementation_scope": "EXACT_CAPSULE_PROGRAM_AND_FINITE_BOUNDARY",
+    "arbitrary_native_program_binding": false,
+    "semantic_kernel_changed": false
+  },
+  "required_results": {
+    "kat": "PASS",
+    "static_vectors": 28,
+    "static_passed": 28,
+    "generative_seed": 1123581321,
+    "generative_trials": 96,
+    "generative_properties_per_trial": 8,
+    "generative_comparisons": 768,
+    "generative_passed": 768
+  },
+  "science_files": [
+    ".github/workflows/k1-closure-c2-bounded-proof.yml",
+    "docs/RISU_KERNEL_K1_CAPSULE_CLOSURE_C2.md",
+    "fixtures/k1_capsule_c2_kat/artifact.json",
+    "fixtures/k1_capsule_c2_kat/certificate.json",
+    "fixtures/k1_capsule_c2_kat/claim.json",
+    "fixtures/k1_capsule_c2_kat/expected.json",
+    "fixtures/k1_capsule_c2_kat/program.cap",
+    "kernel/k1_checker_w5.py",
+    "kernel/k1_checker_w6.go",
+    "protocols/RISU_KERNEL_K1_CAPSULE_CLOSURE_C2.json",
+    "protocols/RISU_KERNEL_K1_CAPSULE_CLOSURE_C2_WIRE.json",
+    "tools/risu_kernel_k1_capsule_c2_generative_verify.py",
+    "tools/risu_kernel_k1_capsule_c2_kat_verify.py",
+    "tools/risu_kernel_k1_capsule_c2_static_verify.py"
+  ],
+  "qualification_tooling_files": [
+    ".github/workflows/k1-closure-c2-qualification.yml",
+    "protocols/RISU_KERNEL_K1_CAPSULE_CLOSURE_C2_QUALIFICATION.json",
+    "tools/risu_kernel_k1_capsule_c2_qualification_verify.py"
+  ],
+  "qualification_tooling_blobs": {},
+  "required_replay": [
+    "verify exact C1-qualified ancestry",
+    "verify exact C2 science anchor ancestry",
+    "verify every science file is byte-identical to the science anchor",
+    "verify base-to-head delta file set is exactly science_files plus qualification_tooling_files and every delta status is add-only",
+    "verify final qualification verifier/workflow Git blobs after bootstrap sealing",
+    "rerun Python syntax, Go canonical formatting, go vet, and CGO-disabled W6 build",
+    "rerun checker-independence audit",
+    "rerun fixed known-answer conformance gate",
+    "rerun 28/28 static adversarial differential gate",
+    "rerun 768/768 seeded generative differential gate"
+  ],
+  "nonclaims": [
+    "no preservation claim for arbitrary native binaries or unrestricted host execution",
+    "no remote or hardware-backed attestation",
+    "no unbounded liveness theorem",
+    "no proof that a future translator into the capsule preserves arbitrary source semantics",
+    "no universal K1 completeness theorem",
+    "no general theorem-prover superiority claim"
+  ]
+}
