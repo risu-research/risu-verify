@@ -60,7 +60,10 @@ func netBytes(raw []byte) []byte {
 	return append(out, ',')
 }
 func net(s string) []byte { return netBytes([]byte(s)) }
-func digest(prefix string, raw []byte) string { h := sha256.Sum256(raw); return prefix + hex.EncodeToString(h[:]) }
+func digest(prefix string, raw []byte) string {
+	h := sha256.Sum256(raw)
+	return prefix + hex.EncodeToString(h[:])
+}
 func hashHex(raw []byte) string { h := sha256.Sum256(raw); return hex.EncodeToString(h[:]) }
 func worldID(raw []byte) string {
 	var b bytes.Buffer
@@ -118,32 +121,55 @@ func parseEffect(raw []byte) ([]string, error) {
 
 func execute(binary string, worldRaw []byte, timeout time.Duration) (effectRaw, stdout, stderr []byte, timedOut bool, exitCode *int, err error) {
 	root, err := os.MkdirTemp("", "risu-b1-d2-")
-	if err != nil { return nil, nil, nil, false, nil, err }
+	if err != nil {
+		return nil, nil, nil, false, nil, err
+	}
 	defer os.RemoveAll(root)
 	worldPath := filepath.Join(root, "world.input")
 	sink := filepath.Join(root, "sink")
-	if err := os.WriteFile(worldPath, worldRaw, 0o600); err != nil { return nil,nil,nil,false,nil,err }
-	if err := os.Mkdir(sink, 0o700); err != nil { return nil,nil,nil,false,nil,err }
-	entries, err := os.ReadDir(sink); if err != nil || len(entries) != 0 { return nil,nil,nil,false,nil,fmt.Errorf("sink not empty") }
+	if err := os.WriteFile(worldPath, worldRaw, 0o600); err != nil {
+		return nil, nil, nil, false, nil, err
+	}
+	if err := os.Mkdir(sink, 0o700); err != nil {
+		return nil, nil, nil, false, nil, err
+	}
+	entries, err := os.ReadDir(sink)
+	if err != nil || len(entries) != 0 {
+		return nil, nil, nil, false, nil, fmt.Errorf("sink not empty")
+	}
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 	cmd := exec.CommandContext(ctx, binary, "--world", worldPath, "--sink", sink)
 	cmd.Dir = root
 	cmd.Env = []string{"PATH=" + os.Getenv("PATH")}
 	var outBuf, errBuf bytes.Buffer
-	cmd.Stdout = &outBuf; cmd.Stderr = &errBuf
+	cmd.Stdout = &outBuf
+	cmd.Stderr = &errBuf
 	runErr := cmd.Run()
 	timedOut = ctx.Err() == context.DeadlineExceeded
 	if cmd.ProcessState != nil {
 		code := cmd.ProcessState.ExitCode()
 		exitCode = &code
 	}
-	if runErr != nil && cmd.ProcessState == nil && !timedOut { return nil,nil,nil,timedOut,exitCode,runErr }
+	if runErr != nil && cmd.ProcessState == nil && !timedOut {
+		return nil, nil, nil, timedOut, exitCode, runErr
+	}
 	effectPath := filepath.Join(sink, "effects.log")
 	effectRaw, readErr := os.ReadFile(effectPath)
-	if os.IsNotExist(readErr) { effectRaw = []byte{} } else if readErr != nil { return nil,nil,nil,timedOut,exitCode,readErr }
-	entries, err = os.ReadDir(sink); if err != nil { return nil,nil,nil,timedOut,exitCode,err }
-	for _, e := range entries { if e.Name() != "effects.log" { return nil,nil,nil,timedOut,exitCode,fmt.Errorf("unexpected sink entry") } }
+	if os.IsNotExist(readErr) {
+		effectRaw = []byte{}
+	} else if readErr != nil {
+		return nil, nil, nil, timedOut, exitCode, readErr
+	}
+	entries, err = os.ReadDir(sink)
+	if err != nil {
+		return nil, nil, nil, timedOut, exitCode, err
+	}
+	for _, e := range entries {
+		if e.Name() != "effects.log" {
+			return nil, nil, nil, timedOut, exitCode, fmt.Errorf("unexpected sink entry")
+		}
+	}
 	return effectRaw, outBuf.Bytes(), errBuf.Bytes(), timedOut, exitCode, nil
 }
 
@@ -153,19 +179,45 @@ func main() {
 	implementation := flag.String("implementation", "", "exact executable")
 	timeoutMS := flag.Int("timeout-ms", 250, "timeout milliseconds")
 	flag.Parse()
-	if *claimPath == "" || *worldPath == "" || *implementation == "" || *timeoutMS <= 0 { os.Exit(64) }
-	claimRaw, err := os.ReadFile(*claimPath); if err != nil { os.Exit(65) }
-	var claim Claim; if err := json.Unmarshal(claimRaw, &claim); err != nil { os.Exit(65) }
-	worldRaw, err := os.ReadFile(*worldPath); if err != nil { os.Exit(65) }
-	implRaw, err := os.ReadFile(*implementation); if err != nil { os.Exit(65) }
+	if *claimPath == "" || *worldPath == "" || *implementation == "" || *timeoutMS <= 0 {
+		os.Exit(64)
+	}
+	claimRaw, err := os.ReadFile(*claimPath)
+	if err != nil {
+		os.Exit(65)
+	}
+	var claim Claim
+	if err := json.Unmarshal(claimRaw, &claim); err != nil {
+		os.Exit(65)
+	}
+	worldRaw, err := os.ReadFile(*worldPath)
+	if err != nil {
+		os.Exit(65)
+	}
+	implRaw, err := os.ReadFile(*implementation)
+	if err != nil {
+		os.Exit(65)
+	}
 	wid := worldID(worldRaw)
 	declared := false
-	for _, w := range claim.Worlds { if w == wid { declared = true } }
-	if !declared { os.Exit(66) }
+	for _, w := range claim.Worlds {
+		if w == wid {
+			declared = true
+		}
+	}
+	if !declared {
+		os.Exit(66)
+	}
 	allow := map[Pair]bool{}
-	for _, row := range claim.Allow { if len(row) == 2 { allow[Pair{row[0], row[1]}] = true } }
+	for _, row := range claim.Allow {
+		if len(row) == 2 {
+			allow[Pair{row[0], row[1]}] = true
+		}
+	}
 	effectRaw, stdout, stderr, timedOut, exitCode, err := execute(*implementation, worldRaw, time.Duration(*timeoutMS)*time.Millisecond)
-	if err != nil { os.Exit(70) }
+	if err != nil {
+		os.Exit(70)
+	}
 	result := Output{
 		Observer: "risu-k1-binding-b1-observer-go-d2", ObservationStatus: "OBSERVED",
 		AuthorityCandidate: "NO_AUTHORITY", PreservationAuthority: false, ClaimID: claim.ClaimID,
@@ -195,5 +247,7 @@ func main() {
 	copyConsequences := append([]string(nil), result.ObservedConsequences...)
 	sort.Strings(copyConsequences)
 	_ = copyConsequences
-	enc := json.NewEncoder(os.Stdout); enc.SetIndent("", "  "); _ = enc.Encode(result)
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	_ = enc.Encode(result)
 }
