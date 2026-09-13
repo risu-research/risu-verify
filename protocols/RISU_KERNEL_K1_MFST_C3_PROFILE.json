@@ -1,0 +1,310 @@
+{
+  "profile_id": "risu.k1.mfst.c3.profile/v1",
+  "title": "K1 C3 Mediated Finite-State Transducer Profile",
+  "status": "PROFILE_DESIGN_FROZEN_NON_AUTHORITATIVE",
+  "prospective_gate": {
+    "branch": "k1-closure-c3",
+    "commit": "4812ff0ab566413399a3e463fcd811de22888eab",
+    "protocol": "risu.k1.mediation-refinement.c3.prospective/v1"
+  },
+  "qualified_base": {
+    "branch": "k1-closure-c2-qualified",
+    "commit": "465ee71aba72f20737bf8713b2192a2029d79cdb",
+    "c2_proof_kind": "k1.capsule-closure/v1",
+    "c2_semantics": "risu.k1.capsule/v1"
+  },
+  "design_goal": "Admit materially richer deterministic finite-state behavior while preserving a mechanically closed consequential surface and reducing the exact behavior to the already-qualified C2 positive authority lane without changing K1 semantics.",
+  "authority_state": {
+    "semantic_kernel_changed": false,
+    "new_production_proof_kind_created": false,
+    "preservation_authority_created": false,
+    "implementation_binding_created": false,
+    "native_program_binding_created": false,
+    "this_protocol_is_authority": false
+  },
+  "semantic_thesis": {
+    "machine_class": "deterministic finite-state transducer over an explicit finite boundary",
+    "effect_surface": "EMIT_HEX is the only consequence-capable operation",
+    "ambient_capabilities": "none",
+    "closure_argument": "For each finite boundary point, the initial machine state is explicit and execution is deterministic. A configuration is the current block label plus the complete finite state vector. HALT yields a finite complete trace; repetition of a configuration proves deterministic nontermination and therefore denies positive authority. All consequences arise only from EMIT_HEX and are recorded before any projection to K1.",
+    "refinement_argument": "Two independent C3 verifiers directly execute the exact profile, reconstruct the reachable state-lift graph and ordered trace map, and independently compile the trace map into the same canonical C2 normal-form capsule. Existing independent C2 W5/W6 checkers then re-derive the K1 REALIZE relation from that exact normal form.",
+    "trust_boundary": "No producer-supplied reachability set, trace, REALIZE relation, completeness flag, semantic identifier, lowering, target identifier, or preservation verdict is authoritative."
+  },
+  "profile_wire": {
+    "wire": "risu.k1.c3.mfst/v1",
+    "kind": "mediated_finite_state_transducer",
+    "exact_top_level_keys": [
+      "wire",
+      "kind",
+      "claim_id",
+      "boundary",
+      "state",
+      "tables",
+      "entry",
+      "blocks"
+    ],
+    "json_rules": {
+      "encoding": "strict UTF-8 without BOM",
+      "duplicate_object_keys": "reject",
+      "nul_cr_tab": "reject anywhere in authority strings",
+      "unknown_keys": "reject at every authority-bearing object",
+      "numbers": "not admitted in v1 authority objects",
+      "booleans_null": "not admitted in v1 authority objects",
+      "string_alphabet": "Identifiers and finite values use the C2 token alphabet [A-Za-z0-9_.@:-]+; payloads use nonempty even-length lowercase hexadecimal.",
+      "normalization": "no Unicode normalization; v1 authority tokens are ASCII-only by grammar"
+    }
+  },
+  "boundary": {
+    "worlds": {
+      "type": "nonempty finite set represented as a JSON array",
+      "member_format": "w:sha256:<64 lowercase hex>",
+      "duplicates": "reject",
+      "authority_rule": "must equal the W0 claim world set exactly"
+    },
+    "slots": {
+      "type": "finite map from token-safe slot name to nonempty finite set of token-safe values",
+      "reserved_names": ["@world"],
+      "duplicates": "reject",
+      "empty_domain": "reject",
+      "semantics": "A boundary point is one world plus one value for every declared slot. Every point is authority-relevant and must be exhaustively executed."
+    },
+    "ambient_input_rule": "There is no ambient input. Time, randomness, environment, history, persisted state, tenant identity, configuration, or any other consequential context must be represented by an explicit finite slot if it is admitted at all."
+  },
+  "state": {
+    "cell_schema": {
+      "exact_keys": ["name", "domain", "initial"],
+      "name": "unique token-safe name that is not @world and does not collide with a boundary slot",
+      "domain": "nonempty finite set of unique token-safe values",
+      "initial": {
+        "allowed_forms": [
+          {"kind": "const", "exact_keys": ["kind", "value"]},
+          {"kind": "input", "exact_keys": ["kind", "name"]}
+        ],
+        "const_rule": "value must be in the cell domain",
+        "input_rule": "named boundary slot must exist and every value in its domain must be in the cell domain"
+      }
+    },
+    "machine_state_rule": "The complete authority-relevant mutable state is exactly the vector of declared cells. Hidden heap, globals, caches, persistent storage, clock state, random state, process state, or external mutable state do not exist in v1 semantics.",
+    "ordering_rule": "Cell declaration order is representation-only; canonical semantic state-vector order is lexicographic by cell name."
+  },
+  "tables": {
+    "purpose": "Provide expressive deterministic finite transformations without admitting arithmetic, host-language operators, coercions, or underspecified library semantics into the trusted profile.",
+    "schema": {
+      "exact_keys": ["name", "arguments", "result_domain", "rows"],
+      "name": "unique token-safe table name",
+      "arguments": "ordered list of typed source descriptors, each exactly {kind,name}, where kind is input or state",
+      "result_domain": "nonempty finite set of token-safe values",
+      "rows": "finite set of objects exactly {when,result}; when is an ordered tuple matching argument arity"
+    },
+    "totality": "Rows must contain each tuple in the Cartesian product of the declared argument-source domains exactly once, with no missing, duplicate, surplus, or out-of-domain tuple.",
+    "result_rule": "Every result must be in result_domain.",
+    "semantic_rule": "A table is a pure total function. It cannot emit, branch, access ambient state, mutate anything, fail, block, or return an unknown value.",
+    "ordering_rule": "Table declaration and row ordering are representation-only; argument ordering is semantic."
+  },
+  "blocks": {
+    "schema": {
+      "exact_keys": ["label", "ops", "term"],
+      "label": "unique token-safe label",
+      "ops": "ordered list of zero or more operations from the closed v1 operation set",
+      "term": "exactly one terminator from the closed v1 terminator set"
+    },
+    "entry": "must name exactly one declared block",
+    "fallthrough": "forbidden",
+    "undefined_target": "reject",
+    "ordering_rule": "Block declaration ordering is representation-only; operation ordering within a block is semantic."
+  },
+  "operation_set": {
+    "SET_CONST": {
+      "exact_keys": ["op", "dst", "value"],
+      "semantics": "Assign an in-domain constant to one declared state cell.",
+      "consequence_capable": false
+    },
+    "SET_FROM": {
+      "exact_keys": ["op", "dst", "source"],
+      "source": "exactly {kind,name}, kind input or state",
+      "semantics": "Copy the current source value to dst; every possible source value must be in dst domain.",
+      "consequence_capable": false
+    },
+    "APPLY_TABLE": {
+      "exact_keys": ["op", "dst", "table", "arguments"],
+      "arguments": "ordered typed source descriptors whose domains exactly match the referenced table argument domains",
+      "semantics": "Evaluate one declared total finite table over current input/state values and assign its result to dst; table result_domain must be a subset of dst domain.",
+      "consequence_capable": false
+    },
+    "EMIT_HEX": {
+      "exact_keys": ["op", "payload"],
+      "payload": "nonempty even-length lowercase hexadecimal representing exact consequence payload bytes",
+      "semantics": "Append the exact payload to the ordered execution trace. This is the only consequence-capable operation in v1.",
+      "consequence_capable": true,
+      "consequence_projection": "c:sha256: + SHA-256(ASCII('RISU-K1-CAPSULE-CONSEQUENCE-V1\\0') || exact payload bytes), exactly matching C2"
+    }
+  },
+  "terminator_set": {
+    "GOTO": {
+      "exact_keys": ["op", "target"],
+      "semantics": "Unconditional transition to a declared block."
+    },
+    "IF_EQ": {
+      "exact_keys": ["op", "source", "value", "if_true", "if_false"],
+      "source": "exactly {kind,name}, kind input or state",
+      "semantics": "Compare the current finite source value with an in-domain token and transition explicitly to exactly one of two declared blocks. Both branches are explicit; there is no fallthrough."
+    },
+    "HALT": {
+      "exact_keys": ["op"],
+      "semantics": "Terminate the current boundary-point execution. At least one effect must have been emitted on that execution for positive closure authority, preserving the C2 non-vacuity rule."
+    }
+  },
+  "explicitly_absent_operations": [
+    "CLOCK",
+    "RNG",
+    "FILE",
+    "NET",
+    "HOSTCALL",
+    "SPAWN",
+    "SUBPROCESS",
+    "FFI",
+    "DYNAMIC_LOAD",
+    "EVAL",
+    "REFLECTION",
+    "THREAD",
+    "ASYNC",
+    "CALLBACK",
+    "SIGNAL",
+    "SHARED_MEMORY",
+    "ENV_READ",
+    "PERSIST",
+    "INDIRECT_JUMP",
+    "SELF_MODIFY"
+  ],
+  "execution_semantics": {
+    "point_initialization": "For one fixed boundary point, initialize every state cell from its declared const or explicit input source, then enter entry.",
+    "block_step": "At block entry, record the complete configuration before executing ops. Execute ops sequentially, appending every EMIT_HEX payload to the ordered trace, then execute the unique terminator.",
+    "configuration": "(block_label, complete state vector in lexicographic cell-name order); the boundary point is fixed for the execution and therefore not repeated inside the configuration key.",
+    "cycle_rule": "If a configuration is encountered a second time before HALT, execution is deterministically nonterminating. Positive closure authority is denied; emitted prefixes never launder a nonterminating run into completeness.",
+    "structural_bound": "For a fixed boundary point there are at most |blocks| times the product of state-domain cardinalities distinct block-entry configurations. A verifier must use exact visited-configuration detection, not a producer-supplied gas budget, as the C3 termination criterion.",
+    "falloff": "impossible in a valid profile because every block has exactly one explicit terminator; any implementation observation of falloff is verifier failure and fails closed.",
+    "zero_effect": "A HALT with an empty full-run trace yields no positive closure authority, matching C2's zero-effect non-vacuity discipline.",
+    "effect_feedback": "Effects do not return values and cannot influence control or state in v1."
+  },
+  "exhaustive_closure": {
+    "point_space": "Cartesian product of exact claim worlds and all explicit finite slot domains",
+    "required": "Every boundary point must terminate under the exact C3 semantics and produce a nonempty complete ordered effect trace.",
+    "realize_projection": "After all traces are complete, derive K1 REALIZE as the set of (world, consequence_id) pairs occurring in any complete trace. Multiplicity and order are intentionally retained in C3 evidence before this set projection.",
+    "open_universe": "No effect may be dropped because its payload is unknown, target-native, unrecognized, or absent from ALLOW. Unknown payloads still receive the C2 consequence commitment and participate in REALIZE."
+  },
+  "reachability_evidence": {
+    "state_lift_graph": "For every boundary point, independently reconstruct every reachable configuration and deterministic transition, including the ordered EMIT_HEX payload subsequence produced by each visited block before its terminator.",
+    "node": "(canonical boundary point, block label, complete pre-block state vector)",
+    "edge": "ordered block-local payload sequence plus either HALT or the exact successor configuration",
+    "graph_rule": "Producer-supplied reachability is ignored. Two C3 verifiers must independently reconstruct an identical canonical graph transcript.",
+    "purpose": "Make hidden branch/state omissions, forged reachability, state-update laundering, and effect deletion visible before extensional projection."
+  },
+  "trace_evidence": {
+    "trace_map": "canonical map from every boundary point to the exact ordered sequence of raw EMIT_HEX payloads",
+    "preserves": ["effect presence", "effect multiplicity", "effect order", "boundary-point attribution"],
+    "projection_rule": "K1 remains relation-based. C3 trace evidence is refinement evidence only and does not alter K1 semantics."
+  },
+  "c2_refinement": {
+    "name": "Canonical Boundary-Trace Normal Form",
+    "principle": "The C2 bridge is compiled from independently recomputed complete C3 traces, not from producer claims and not from a trusted external compiler.",
+    "normal_form": {
+      "input_discrimination_order": "@world first, then boundary slot names in lexicographic order; values in lexicographic order",
+      "decision_shape": "deterministic IF_EQ/GOTO chains using only the existing C2 instruction set",
+      "leaf": "the exact C3 trace payload sequence as consecutive C2 EMIT_HEX instructions followed by HALT",
+      "unreachable_default": "a canonical self-loop trap used only for values outside the declared boundary; declared exhaustive C2 execution must never reach it",
+      "label_rule": "labels are deterministic token-safe names derived from canonical decision-tree position, never producer supplied",
+      "program_bytes": "strict C2 canonical text bytes accepted by W5/W6",
+      "gas": "derived as the exact maximum C2 instruction-step count over all declared boundary points; never accepted from the C3 producer"
+    },
+    "downstream_limits": {
+      "c2_max_program_bytes": 65536,
+      "c2_max_gas": 10000,
+      "rule": "If canonical normalization exceeds an existing qualified C2 verifier limit, the C3 profile is unsupported for positive authority under v1. Limits may not be bypassed, truncated, or converted into safety."
+    },
+    "semantic_equivalence": "For every boundary point, direct C3 raw-payload trace must equal the canonical C2 normal-form raw-payload trace exactly, including order and duplicates. The projected C2-derived REALIZE relation must equal the C3 projected relation exactly.",
+    "c2_authority": "Existing W5 and W6 remain responsible for re-deriving the C2 relation, target_id, grounding, ALLOW inclusion, and K1 PRESERVATION under k1.capsule-closure/v1."
+  },
+  "independent_reconstruction_lattice": {
+    "planned_c3_verifiers": [
+      {"name": "W7", "language": "Python", "shared_execution_code_with_W8": false},
+      {"name": "W8", "language": "Go standard library only", "shared_execution_code_with_W7": false}
+    ],
+    "qualified_downstream_verifiers": ["W5", "W6"],
+    "required_W7_W8_exact_agreement": [
+      "semantic_profile_id",
+      "boundary point set",
+      "reachable state-lift graph id",
+      "ordered trace-map id",
+      "projected REALIZE relation",
+      "canonical C2 program bytes and SHA-256",
+      "derived C2 gas",
+      "canonical C2 artifact bytes except fields whose byte identity is independently specified"
+    ],
+    "required_downstream_agreement": "W5 and W6 must both accept the exact recomputed C2 bridge and produce the same C2 target_id and preservation verdict.",
+    "disagreement_rule": "Any authority-relevant W7/W8 or W5/W6 disagreement fails closed and creates no positive authority."
+  },
+  "identity_model": {
+    "exact_source_identity": {
+      "prefix": "c3src:sha256:",
+      "domain": "RISU-K1-C3-MFST-SOURCE-V1\\0",
+      "transcript": "domain bytes followed by exact profile JSON bytes",
+      "purpose": "bind the exact submitted representation"
+    },
+    "semantic_profile_identity": {
+      "prefix": "c3sem:sha256:",
+      "domain": "RISU-K1-C3-MFST-SEMANTIC-V1\\0",
+      "canonicalization": "fixed-schema canonical semantic serialization: object keys lexicographic; worlds, slot domains, state declarations, table declarations, table rows, and block declarations sorted by their semantic keys; operation lists, table argument lists, and all trace sequences remain ordered",
+      "purpose": "representation-invariant identity only where ordering is explicitly nonsemantic"
+    },
+    "dual_binding_rule": "Authority evidence must bind both the exact source identity and semantic profile identity. Representation permutation may preserve semantic_profile_id while necessarily changing exact_source_identity when bytes change; an old exact-source proof cannot be replayed against new bytes."
+  },
+  "resource_profile": {
+    "profile_byte_limit": 262144,
+    "max_blocks": 128,
+    "max_state_cells": 16,
+    "max_single_state_domain": 128,
+    "max_state_vector_cardinality": 65536,
+    "max_boundary_slots": 16,
+    "max_single_slot_domain": 128,
+    "max_boundary_points": 65536,
+    "max_tables": 128,
+    "max_total_table_rows": 262144,
+    "rule": "These are v1 qualification/resource bounds, not semantic shortcuts. Exceeding a bound yields UNSUPPORTED/UNKNOWN, never PRESERVATION. The stricter existing C2 bridge limits remain controlling downstream."
+  },
+  "falsification_alignment": {
+    "direct_effect_bypass": "impossible in the admitted opcode ontology; unknown operations reject",
+    "effect_relabel_or_launder": "raw payload survives through ordered trace evidence and C2 consequence projection",
+    "unknown_effect_drop": "open-universe consequence commitment applies to every raw payload",
+    "first_effect_truncation": "complete ordered trace is independently reconstructed and compared",
+    "async_subprocess_ffi_dynamic_reflection_shared_memory_thread_callback_signal": "not present in v1 semantics; attempted op/profile extension rejects",
+    "hidden_time_rng_env_history": "no ambient reads; admitted variation must be explicit finite boundary input",
+    "world_or_domain_shrink": "exact W0 world equality plus independently reconstructed Cartesian boundary",
+    "implementation_mapper_or_c2_substitution": "dual source/semantic identities plus exact canonical C2 bytes/digest and downstream target binding",
+    "parser_ambiguity": "strict UTF-8 JSON subset, duplicate-key rejection, exact-key schemas, ASCII authority tokens",
+    "fake_realize_complete_target": "fields are absent from producer authority surface and recomputed",
+    "toctou": "verifier hashes and parses the same in-memory byte vector and emits bridge bytes from that parsed value; no authority path may be reopened",
+    "forged_reachability": "state-lift graph independently reconstructed by W7 and W8",
+    "verifier_disagreement": "fail closed",
+    "reject_everything_triviality": "a valid fully mediated forbidden effect must be preserved through direct trace and C2 normalization so that downstream preservation fails because REALIZE is not a subset of ALLOW, rather than being silently deleted"
+  },
+  "positive_controls_required_before_qualification": [
+    "A safe stateful profile using explicit state and a total finite table survives direct execution, independent reconstruction, C2 normalization, W5/W6 closure derivation, and W0 preservation.",
+    "Permutation of semantically set-like declarations preserves semantic_profile_id, graph semantics, trace map, canonical C2 program, C2 target and verdict, while changed source bytes change exact_source_identity.",
+    "An arbitrary target-native payload unknown to ALLOW is never dropped; it reaches C2/K1 and prevents preservation unless explicitly allowed.",
+    "A fully mediated forbidden payload remains in the exact ordered trace and C2 REALIZE relation and therefore defeats preservation rather than being rejected merely for being forbidden.",
+    "Multiple effects, including duplicate payloads, retain exact order and multiplicity in C3 trace evidence even though K1 projection is a set relation.",
+    "Producer metadata or producer-supplied derived claims have no authority path; changing non-authoritative envelope material cannot alter independently reconstructed semantics."
+  ],
+  "nonclaims": [
+    "No arbitrary native-code preservation or implementation binding.",
+    "No unbounded memory, data domain, recursion, liveness, or deadline theorem.",
+    "No concurrency, async behavior, signals, callbacks, subprocesses, FFI, files, network, clock, RNG, environment reads, or hidden persistence.",
+    "No effect-response feedback into control or state.",
+    "No remote or hardware attestation.",
+    "No claim that an external compiler or native implementation refines an MFST profile.",
+    "No K1 semantic change and no conversion of K1 into trace semantics.",
+    "No preservation authority follows from this profile-design protocol alone.",
+    "Finite state-space explosion is explicit proof cost, not evidence that closure may be sampled."
+  ],
+  "promotion_rule": "C3 may obtain a production proof kind only after the already-frozen prospective C3 attacks and positive controls are implemented against two independent C3 verifiers, direct and normalized semantics agree, hosted CI is green, the exact C2-qualified base remains untouched, W5/W6 independently accept the recomputed bridge, and the final claim remains limited to exact admitted MFST profiles and exact finite boundaries."
+}
