@@ -1,0 +1,60 @@
+name: K1 Closure Capsule C1 Falsification
+
+on:
+  push:
+    branches:
+      - k1-closure-c1-capsule-falsification
+    paths:
+      - 'protocols/RISU_KERNEL_K1_CLOSURE_CAPSULE_C1_FALSIFICATION.json'
+      - 'tools/risu_kernel_k1_closure_capsule_c1_falsification.py'
+      - 'docs/RISU_KERNEL_K1_CLOSURE_CAPSULE_C1_FALSIFICATION.md'
+      - '.github/workflows/k1-closure-c1-capsule-falsification.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  falsify-capsule:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prove C0-qualified base is untouched
+        run: |
+          set -euo pipefail
+          base=8dd0887bae68fbe7d2cd23ed28c0f979c9f922ce
+          git merge-base --is-ancestor "$base" HEAD
+          git diff --name-status "$base" HEAD | tee /tmp/c1-delta.txt
+          test -s /tmp/c1-delta.txt
+          if awk '$1 != "A" { bad=1 } END { exit bad ? 0 : 1 }' /tmp/c1-delta.txt; then
+            echo 'C1 must be additive relative to C0-qualified; non-additive delta found.' >&2
+            exit 1
+          fi
+      - name: Source hygiene
+        run: |
+          set -euo pipefail
+          git diff --check
+          python -m py_compile tools/risu_kernel_k1_closure_capsule_c1_falsification.py
+          python -m json.tool protocols/RISU_KERNEL_K1_CLOSURE_CAPSULE_C1_FALSIFICATION.json >/dev/null
+      - name: Run precommitted C1 capsule falsification gate
+        run: |
+          set -euo pipefail
+          python tools/risu_kernel_k1_closure_capsule_c1_falsification.py --output /tmp/k1-closure-c1.json
+          python - <<'PY'
+          import json
+          x=json.load(open('/tmp/k1-closure-c1.json',encoding='utf-8'))
+          assert x['status']=='PASS'
+          assert x['attack_vectors_total']==18 and x['attack_vectors_passed']==18
+          assert x['positive_controls_total']==3 and x['positive_controls_passed']==3
+          assert x['semantic_kernel_changed'] is False
+          assert x['production_proof_kind_created'] is False
+          assert x['preservation_authority_created'] is False
+          assert all(r['pass'] for r in x['attacks'])
+          assert all(r['pass'] for r in x['positive_controls'])
+          print('K1 C1 capsule falsification: PASS 18/18 attacks; 3/3 controls')
+          PY
