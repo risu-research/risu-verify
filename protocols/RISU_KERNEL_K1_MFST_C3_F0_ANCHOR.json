@@ -1,0 +1,20 @@
+{
+  "anchor_id": "risu.k1.mfst.c3.f0.anchor/v1",
+  "status": "FROZEN_ORACLE_ANCHOR_NON_AUTHORITATIVE",
+  "freeze_commit": "6fbf337f0bbf16fa20e6d037b1133096b8a25cd2",
+  "parent_design_commit": "92a8e0d5ca01d1e6988555c46e0534e9b586f216",
+  "qualified_c2_base": "465ee71aba72f20737bf8713b2192a2029d79cdb",
+  "pinned_blobs": [
+    {"path":"fixtures/k1_mfst_c3_f0/claim.json","git_blob_sha":"02fe5e2a56d8a9f2cd56316c57b18fb8c4912c88","sha256_exact_bytes":"f6b488c1e0ee8937e8695d9a38c9f00fd3f1c9d170f8265120f97bc1497bbd93"},
+    {"path":"fixtures/k1_mfst_c3_f0/baseline.json","git_blob_sha":"3c4f386d0edef7cec56a0ff5eb7347924f84287e","sha256_exact_bytes":"2242114da4400ed5e91c5b4d68c1e2f0c451e63020882756b89b6b4234002581"},
+    {"path":"protocols/RISU_KERNEL_K1_MFST_C3_F0_FREEZE.json","git_blob_sha":"bb0b335d4a1a84087099afee9c5d60b1f5165d27"},
+    {"path":"protocols/RISU_KERNEL_K1_MFST_C3_PROFILE.json","git_blob_sha":"080a03f65e6602b5d36e07988d28b250c19620e8"},
+    {"path":"protocols/RISU_KERNEL_K1_MFST_C3_WIRE.json","git_blob_sha":"11896f05d1e3592228b973aaefaf13fd57f296c6"},
+    {"path":"protocols/RISU_KERNEL_K1_MFST_C3_AMENDMENT_001.json","git_blob_sha":"a4ecc1d98b46deb507466cc0efa56eec2f2b4c55"}
+  ],
+  "frozen_counts": {"legacy_adversarial":32,"amendment_vectors":10,"additional_adversarial":12,"positive_controls":8,"total_oracles":62},
+  "integrity_rule": "Qualification tooling must verify every pinned Git blob and exact-byte SHA before executing any oracle. A mismatch is infrastructure failure and cannot be repaired by regenerating fixtures in place.",
+  "change_rule": "Any semantic correction after this anchor requires a new numbered amendment that states the defect and supersession boundary. Existing frozen files and oracle meanings are not silently edited.",
+  "authority_state": {"c3_qualified":false,"preservation_authority":false,"implementation_binding":false,"native_binding":false},
+  "next_allowed_phase": "Implement W7 and W8 independently against the frozen normative inputs and F0 corpus; do not amend tests merely to obtain green results."
+}
