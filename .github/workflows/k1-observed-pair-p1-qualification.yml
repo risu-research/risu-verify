@@ -1,0 +1,48 @@
+name: K1 Observed Pair P1 Qualification
+
+on:
+  push:
+    branches:
+      - k1-observed-pair-p1
+    paths:
+      - 'protocols/RISU_KERNEL_K1_OBSERVED_PAIR_P1_QUALIFICATION.json'
+      - 'tools/risu_kernel_k1_observed_pair_p1_qualification_verify.py'
+      - '.github/workflows/k1-observed-pair-p1-qualification.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CGO_ENABLED: '0'
+
+jobs:
+  qualify-p1:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.x'
+          cache: false
+      - name: Replay complete P1 qualification evidence chain
+        run: |
+          set -euo pipefail
+          python tools/risu_kernel_k1_observed_pair_p1_qualification_verify.py \
+            --manifest protocols/RISU_KERNEL_K1_OBSERVED_PAIR_P1_QUALIFICATION.json \
+            --output /tmp/k1-observed-pair-p1-qualification.json
+          python - <<'PY'
+          import json
+          x = json.load(open('/tmp/k1-observed-pair-p1-qualification.json', encoding='utf-8'))
+          assert x['status'] == 'PASS'
+          assert x['p1_gate']['passed'] == 18
+          assert x['p1_gate']['vector_count'] == 18
+          assert x['p1_gate']['failed'] == []
+          assert all(x['checks'].values())
+          print('K1 observed-pair P1 composite qualification: PASS')
+          PY
