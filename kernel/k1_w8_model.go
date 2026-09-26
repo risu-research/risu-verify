@@ -264,50 +264,338 @@ func parseModel(raw []byte, c *Claim) (*Model, error) {
 }
 func stringArrayAllowEmpty(v any, w string) ([]string, error) {
 	a, e := arr(v, w)
-	if e != nil { return nil, e }
+	if e != nil {
+		return nil, e
+	}
 	out := []string{}
-	for _, x := range a { s, e := str(x, w); if e != nil { return nil, e }; if e = token(s, w); e != nil { return nil, e }; out = append(out, s) }
+	for _, x := range a {
+		s, e := str(x, w)
+		if e != nil {
+			return nil, e
+		}
+		if e = token(s, w); e != nil {
+			return nil, e
+		}
+		out = append(out, s)
+	}
 	return out, nil
 }
-func contains(x []string, s string) bool { for _, v := range x { if v == s { return true } }; return false }
-func sourceDomainOf(m *Model, s Source) ([]string, error) { if s.Kind == "state" { x, ok := m.States[s.Name]; if !ok { return nil, rejectf("unknown state source") }; return x.Domain, nil }; if s.Name == "@world" { return m.Worlds, nil }; d, ok := m.Slots[s.Name]; if !ok { return nil, rejectf("undeclared input source") }; return d, nil }
+func contains(x []string, s string) bool {
+	for _, v := range x {
+		if v == s {
+			return true
+		}
+	}
+	return false
+}
+func sourceDomainOf(m *Model, s Source) ([]string, error) {
+	if s.Kind == "state" {
+		x, ok := m.States[s.Name]
+		if !ok {
+			return nil, rejectf("unknown state source")
+		}
+		return x.Domain, nil
+	}
+	if s.Name == "@world" {
+		return m.Worlds, nil
+	}
+	d, ok := m.Slots[s.Name]
+	if !ok {
+		return nil, rejectf("undeclared input source")
+	}
+	return d, nil
+}
 func parseOp(v any, m *Model) (Op, error) {
-	o, _ := obj(v, "op"); ks, _ := str(o["op"], "op.kind"); z := Op{Kind: ks}
+	o, _ := obj(v, "op")
+	ks, _ := str(o["op"], "op.kind")
+	z := Op{Kind: ks}
 	switch ks {
 	case "SET_CONST":
-		if err := exact(o, "op", "dst", "value"); err != nil { return z, rejectf("SET_CONST malformed") }; z.Dst, _ = str(o["dst"], "dst"); z.Value, _ = str(o["value"], "value"); st, ok := m.States[z.Dst]; if !ok || !contains(st.Domain, z.Value) { return z, rejectf("bad SET_CONST") }
+		if err := exact(o, "op", "dst", "value"); err != nil {
+			return z, rejectf("SET_CONST malformed")
+		}
+		z.Dst, _ = str(o["dst"], "dst")
+		z.Value, _ = str(o["value"], "value")
+		st, ok := m.States[z.Dst]
+		if !ok || !contains(st.Domain, z.Value) {
+			return z, rejectf("bad SET_CONST")
+		}
 	case "SET_FROM":
-		if err := exact(o, "op", "dst", "source"); err != nil { return z, rejectf("SET_FROM malformed") }; z.Dst, _ = str(o["dst"], "dst"); s, err := parseSource(o["source"], "source"); if err != nil { return z, err }; z.Src = s; st, ok := m.States[z.Dst]; d, e := sourceDomainOf(m, s); if !ok || e != nil || !subset(d, st.Domain) { return z, rejectf("bad SET_FROM") }
+		if err := exact(o, "op", "dst", "source"); err != nil {
+			return z, rejectf("SET_FROM malformed")
+		}
+		z.Dst, _ = str(o["dst"], "dst")
+		s, err := parseSource(o["source"], "source")
+		if err != nil {
+			return z, err
+		}
+		z.Src = s
+		st, ok := m.States[z.Dst]
+		d, e := sourceDomainOf(m, s)
+		if !ok || e != nil || !subset(d, st.Domain) {
+			return z, rejectf("bad SET_FROM")
+		}
 	case "APPLY_TABLE":
-		if err := exact(o, "op", "dst", "table", "arguments"); err != nil { return z, rejectf("APPLY_TABLE malformed") }; z.Dst, _ = str(o["dst"], "dst"); z.Table, _ = str(o["table"], "table"); st, ok := m.States[z.Dst]; tb, tok := m.Tables[z.Table]; aa, ae := arr(o["arguments"], "arguments"); if !ok || !tok || ae != nil || len(aa) != len(tb.Args) { return z, rejectf("bad APPLY_TABLE") }; for i, av := range aa { s, e := parseSource(av, "arg"); if e != nil { return z, e }; d, e := sourceDomainOf(m, s); if e != nil || !sameSet(d, tb.Args[i].Domain) { return z, rejectf("APPLY_TABLE formal domain mismatch") }; z.Args = append(z.Args, s) }; if !subset(tb.ResultDomain, st.Domain) { return z, rejectf("APPLY_TABLE result domain") }
+		if err := exact(o, "op", "dst", "table", "arguments"); err != nil {
+			return z, rejectf("APPLY_TABLE malformed")
+		}
+		z.Dst, _ = str(o["dst"], "dst")
+		z.Table, _ = str(o["table"], "table")
+		st, ok := m.States[z.Dst]
+		tb, tok := m.Tables[z.Table]
+		aa, ae := arr(o["arguments"], "arguments")
+		if !ok || !tok || ae != nil || len(aa) != len(tb.Args) {
+			return z, rejectf("bad APPLY_TABLE")
+		}
+		for i, av := range aa {
+			s, e := parseSource(av, "arg")
+			if e != nil {
+				return z, e
+			}
+			d, e := sourceDomainOf(m, s)
+			if e != nil || !sameSet(d, tb.Args[i].Domain) {
+				return z, rejectf("APPLY_TABLE formal domain mismatch")
+			}
+			z.Args = append(z.Args, s)
+		}
+		if !subset(tb.ResultDomain, st.Domain) {
+			return z, rejectf("APPLY_TABLE result domain")
+		}
 	case "EMIT_HEX":
-		if err := exact(o, "op", "payload"); err != nil { return z, rejectf("EMIT malformed") }; z.Payload, _ = str(o["payload"], "payload"); if !payloadRE.MatchString(z.Payload) { return z, rejectf("bad payload") }
-	default: return z, rejectf("unknown/ambient opcode")
+		if err := exact(o, "op", "payload"); err != nil {
+			return z, rejectf("EMIT malformed")
+		}
+		z.Payload, _ = str(o["payload"], "payload")
+		if !payloadRE.MatchString(z.Payload) {
+			return z, rejectf("bad payload")
+		}
+	default:
+		return z, rejectf("unknown/ambient opcode")
 	}
 	return z, nil
 }
 func parseTerm(v any, m *Model) (Term, error) {
-	o, _ := obj(v, "term"); k, _ := str(o["op"], "term.op"); t := Term{Kind: k}
+	o, _ := obj(v, "term")
+	k, _ := str(o["op"], "term.op")
+	t := Term{Kind: k}
 	switch k {
-	case "GOTO": if err := exact(o, "op", "target"); err != nil { return t, rejectf("GOTO malformed") }; t.Target, _ = str(o["target"], "target")
-	case "IF_EQ": if err := exact(o, "op", "source", "value", "if_true", "if_false"); err != nil { return t, rejectf("IF_EQ malformed") }; s, e := parseSource(o["source"], "term.source"); if e != nil { return t, e }; t.Src = s; t.Value, _ = str(o["value"], "value"); t.True, _ = str(o["if_true"], "true"); t.False, _ = str(o["if_false"], "false"); d, e := sourceDomainOf(m, s); if e != nil || !contains(d, t.Value) { return t, rejectf("IF_EQ out of domain") }
-	case "HALT": if err := exact(o, "op"); err != nil { return t, rejectf("HALT malformed") }
-	default: return t, rejectf("bad terminator")
+	case "GOTO":
+		if err := exact(o, "op", "target"); err != nil {
+			return t, rejectf("GOTO malformed")
+		}
+		t.Target, _ = str(o["target"], "target")
+	case "IF_EQ":
+		if err := exact(o, "op", "source", "value", "if_true", "if_false"); err != nil {
+			return t, rejectf("IF_EQ malformed")
+		}
+		s, e := parseSource(o["source"], "term.source")
+		if e != nil {
+			return t, e
+		}
+		t.Src = s
+		t.Value, _ = str(o["value"], "value")
+		t.True, _ = str(o["if_true"], "true")
+		t.False, _ = str(o["if_false"], "false")
+		d, e := sourceDomainOf(m, s)
+		if e != nil || !contains(d, t.Value) {
+			return t, rejectf("IF_EQ out of domain")
+		}
+	case "HALT":
+		if err := exact(o, "op"); err != nil {
+			return t, rejectf("HALT malformed")
+		}
+	default:
+		return t, rejectf("bad terminator")
 	}
 	return t, nil
 }
-func cartesianDomains(a []Formal) [][]string { out := [][]string{{}}; for _, f := range a { next := [][]string{}; for _, p := range out { for _, v := range f.Domain { q := append(append([]string{}, p...), v); next = append(next, q) } }; out = next }; return out }
-func sourceDesc(s Source) []byte { var b bytes.Buffer; if s.Kind == "input" { b.WriteByte('I') } else { b.WriteByte('S') }; addNet(&b, s.Name); return b.Bytes() }
+func cartesianDomains(a []Formal) [][]string {
+	out := [][]string{{}}
+	for _, f := range a {
+		next := [][]string{}
+		for _, p := range out {
+			for _, v := range f.Domain {
+				q := append(append([]string{}, p...), v)
+				next = append(next, q)
+			}
+		}
+		out = next
+	}
+	return out
+}
+func sourceDesc(s Source) []byte {
+	var b bytes.Buffer
+	if s.Kind == "input" {
+		b.WriteByte('I')
+	} else {
+		b.WriteByte('S')
+	}
+	addNet(&b, s.Name)
+	return b.Bytes()
+}
 func semanticID(m *Model) string {
-	var b bytes.Buffer; b.WriteString("RISU-K1-C3-MFST-SEMANTIC-V1\x00"); b.WriteByte('C'); addNet(&b, m.ClaimID); b.WriteByte('E'); addNet(&b, m.Entry)
-	ws := sortedCopy(m.Worlds); b.WriteByte('W'); addCount(&b, len(ws)); for _, w := range ws { b.WriteByte('w'); addNet(&b, w) }
-	sn := sortedKeysSlice(m.Slots); b.WriteByte('D'); addCount(&b, len(sn)); for _, n := range sn { d := sortedCopy(m.Slots[n]); b.WriteByte('s'); addNet(&b, n); addCount(&b, len(d)); for _, v := range d { b.WriteByte('v'); addNet(&b, v) } }
-	stn := sortedStateKeys(m.States); b.WriteByte('Q'); addCount(&b, len(stn)); for _, n := range stn { x := m.States[n]; d := sortedCopy(x.Domain); b.WriteByte('q'); addNet(&b, n); addCount(&b, len(d)); for _, v := range d { b.WriteByte('v'); addNet(&b, v) }; if x.Initial.Kind == "const" { b.WriteByte('C'); addNet(&b, x.Initial.Value) } else { b.WriteByte('I'); addNet(&b, x.Initial.Name) } }
-	tn := sortedTableKeys(m.Tables); b.WriteByte('T'); addCount(&b, len(tn)); for _, n := range tn { t := m.Tables[n]; b.WriteByte('t'); addNet(&b, n); addCount(&b, len(t.Args)); for _, a := range t.Args { b.WriteByte('a'); addNet(&b, a.Name); d := sortedCopy(a.Domain); addCount(&b, len(d)); for _, v := range d { b.WriteByte('v'); addNet(&b, v) } }; rd := sortedCopy(t.ResultDomain); addCount(&b, len(rd)); for _, v := range rd { b.WriteByte('v'); addNet(&b, v) }; rows := append([]Row{}, t.Rows...); sort.Slice(rows, func(i, j int) bool { return tupleKey(rows[i].When) < tupleKey(rows[j].When) }); addCount(&b, len(rows)); for _, r := range rows { b.WriteByte('r'); addCount(&b, len(r.When)); for _, v := range r.When { b.WriteByte('v'); addNet(&b, v) }; b.WriteByte('o'); addNet(&b, r.Result) } }
-	bn := sortedBlockKeys(m.Blocks); b.WriteByte('B'); addCount(&b, len(bn)); for _, n := range bn { x := m.Blocks[n]; b.WriteByte('b'); addNet(&b, n); addCount(&b, len(x.Ops)); for _, o := range x.Ops { switch o.Kind { case "SET_CONST": b.WriteByte('1'); addNet(&b, o.Dst); addNet(&b, o.Value); case "SET_FROM": b.WriteByte('2'); addNet(&b, o.Dst); b.Write(sourceDesc(o.Src)); case "APPLY_TABLE": b.WriteByte('3'); addNet(&b, o.Dst); addNet(&b, o.Table); addCount(&b, len(o.Args)); for _, s := range o.Args { b.Write(sourceDesc(s)) }; case "EMIT_HEX": b.WriteByte('4'); addNet(&b, o.Payload) } }; t := x.Term; switch t.Kind { case "GOTO": b.WriteByte('G'); addNet(&b, t.Target); case "IF_EQ": b.WriteByte('I'); b.Write(sourceDesc(t.Src)); addNet(&b, t.Value); addNet(&b, t.True); addNet(&b, t.False); case "HALT": b.WriteByte('H') } }
+	var b bytes.Buffer
+	b.WriteString("RISU-K1-C3-MFST-SEMANTIC-V1\x00")
+	b.WriteByte('C')
+	addNet(&b, m.ClaimID)
+	b.WriteByte('E')
+	addNet(&b, m.Entry)
+	ws := sortedCopy(m.Worlds)
+	b.WriteByte('W')
+	addCount(&b, len(ws))
+	for _, w := range ws {
+		b.WriteByte('w')
+		addNet(&b, w)
+	}
+	sn := sortedKeysSlice(m.Slots)
+	b.WriteByte('D')
+	addCount(&b, len(sn))
+	for _, n := range sn {
+		d := sortedCopy(m.Slots[n])
+		b.WriteByte('s')
+		addNet(&b, n)
+		addCount(&b, len(d))
+		for _, v := range d {
+			b.WriteByte('v')
+			addNet(&b, v)
+		}
+	}
+	stn := sortedStateKeys(m.States)
+	b.WriteByte('Q')
+	addCount(&b, len(stn))
+	for _, n := range stn {
+		x := m.States[n]
+		d := sortedCopy(x.Domain)
+		b.WriteByte('q')
+		addNet(&b, n)
+		addCount(&b, len(d))
+		for _, v := range d {
+			b.WriteByte('v')
+			addNet(&b, v)
+		}
+		if x.Initial.Kind == "const" {
+			b.WriteByte('C')
+			addNet(&b, x.Initial.Value)
+		} else {
+			b.WriteByte('I')
+			addNet(&b, x.Initial.Name)
+		}
+	}
+	tn := sortedTableKeys(m.Tables)
+	b.WriteByte('T')
+	addCount(&b, len(tn))
+	for _, n := range tn {
+		t := m.Tables[n]
+		b.WriteByte('t')
+		addNet(&b, n)
+		addCount(&b, len(t.Args))
+		for _, a := range t.Args {
+			b.WriteByte('a')
+			addNet(&b, a.Name)
+			d := sortedCopy(a.Domain)
+			addCount(&b, len(d))
+			for _, v := range d {
+				b.WriteByte('v')
+				addNet(&b, v)
+			}
+		}
+		rd := sortedCopy(t.ResultDomain)
+		addCount(&b, len(rd))
+		for _, v := range rd {
+			b.WriteByte('v')
+			addNet(&b, v)
+		}
+		rows := append([]Row{}, t.Rows...)
+		sort.Slice(rows, func(i, j int) bool { return tupleKey(rows[i].When) < tupleKey(rows[j].When) })
+		addCount(&b, len(rows))
+		for _, r := range rows {
+			b.WriteByte('r')
+			addCount(&b, len(r.When))
+			for _, v := range r.When {
+				b.WriteByte('v')
+				addNet(&b, v)
+			}
+			b.WriteByte('o')
+			addNet(&b, r.Result)
+		}
+	}
+	bn := sortedBlockKeys(m.Blocks)
+	b.WriteByte('B')
+	addCount(&b, len(bn))
+	for _, n := range bn {
+		x := m.Blocks[n]
+		b.WriteByte('b')
+		addNet(&b, n)
+		addCount(&b, len(x.Ops))
+		for _, o := range x.Ops {
+			switch o.Kind {
+			case "SET_CONST":
+				b.WriteByte('1')
+				addNet(&b, o.Dst)
+				addNet(&b, o.Value)
+			case "SET_FROM":
+				b.WriteByte('2')
+				addNet(&b, o.Dst)
+				b.Write(sourceDesc(o.Src))
+			case "APPLY_TABLE":
+				b.WriteByte('3')
+				addNet(&b, o.Dst)
+				addNet(&b, o.Table)
+				addCount(&b, len(o.Args))
+				for _, s := range o.Args {
+					b.Write(sourceDesc(s))
+				}
+			case "EMIT_HEX":
+				b.WriteByte('4')
+				addNet(&b, o.Payload)
+			}
+		}
+		t := x.Term
+		switch t.Kind {
+		case "GOTO":
+			b.WriteByte('G')
+			addNet(&b, t.Target)
+		case "IF_EQ":
+			b.WriteByte('I')
+			b.Write(sourceDesc(t.Src))
+			addNet(&b, t.Value)
+			addNet(&b, t.True)
+			addNet(&b, t.False)
+		case "HALT":
+			b.WriteByte('H')
+		}
+	}
 	return digest("c3sem:sha256:", b.Bytes())
 }
-func sortedKeysSlice(m map[string][]string) []string { k := make([]string,0,len(m)); for x := range m { k=append(k,x) }; sort.Strings(k); return k }
-func sortedStateKeys(m map[string]StateCell) []string { k := make([]string,0,len(m)); for x := range m { k=append(k,x) }; sort.Strings(k); return k }
-func sortedTableKeys(m map[string]Table) []string { k := make([]string,0,len(m)); for x := range m { k=append(k,x) }; sort.Strings(k); return k }
-func sortedBlockKeys(m map[string]Block) []string { k := make([]string,0,len(m)); for x := range m { k=append(k,x) }; sort.Strings(k); return k }
+func sortedKeysSlice(m map[string][]string) []string {
+	k := make([]string, 0, len(m))
+	for x := range m {
+		k = append(k, x)
+	}
+	sort.Strings(k)
+	return k
+}
+func sortedStateKeys(m map[string]StateCell) []string {
+	k := make([]string, 0, len(m))
+	for x := range m {
+		k = append(k, x)
+	}
+	sort.Strings(k)
+	return k
+}
+func sortedTableKeys(m map[string]Table) []string {
+	k := make([]string, 0, len(m))
+	for x := range m {
+		k = append(k, x)
+	}
+	sort.Strings(k)
+	return k
+}
+func sortedBlockKeys(m map[string]Block) []string {
+	k := make([]string, 0, len(m))
+	for x := range m {
+		k = append(k, x)
+	}
+	sort.Strings(k)
+	return k
+}
