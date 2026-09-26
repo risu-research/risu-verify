@@ -1,0 +1,75 @@
+name: K1 C3 W8 science
+on:
+  push:
+    branches: [k1-closure-c3]
+    paths:
+      - 'kernel/k1_w8_*.go'
+      - 'kernel/k1_checker_w8.go'
+      - 'tools/risu_kernel_k1_mfst_c3_w8_selftest.py'
+      - 'fixtures/k1_mfst_c3_f0/**'
+      - 'protocols/RISU_KERNEL_K1_MFST_C3_*.json'
+      - '.github/workflows/k1-c3-w8-science.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  w8-science:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assert Go source is normalized
+        run: |
+          test -z "$(gofmt -d kernel/k1_w8_json.go kernel/k1_w8_model.go kernel/k1_w8_exec.go kernel/k1_checker_w8.go)"
+      - name: Vet and build W8 without cgo
+        run: |
+          mkdir -p build
+          cd kernel
+          GO111MODULE=off CGO_ENABLED=0 go vet k1_w8_json.go k1_w8_model.go k1_w8_exec.go k1_checker_w8.go
+          CGO_ENABLED=0 go build -o ../build/k1_checker_w8 k1_w8_json.go k1_w8_model.go k1_w8_exec.go k1_checker_w8.go
+      - name: Independent W8 mutation battery
+        run: python3 tools/risu_kernel_k1_mfst_c3_w8_selftest.py
+      - name: Produce W8 baseline C2 normal form
+        run: |
+          rm -rf /tmp/w8
+          ./build/k1_checker_w8 \
+            --claim fixtures/k1_mfst_c3_f0/claim.json \
+            --profile fixtures/k1_mfst_c3_f0/baseline.json \
+            --out-dir /tmp/w8 > /tmp/w8-result.json
+          python3 -m json.tool /tmp/w8-result.json
+      - name: Assert frozen baseline known answers
+        run: |
+          python3 - <<'PY'
+          import json
+          r=json.load(open('/tmp/w8-result.json'))
+          exp={
+            'c3_source_id':'c3src:sha256:13ca692f6139d0c70a3829616bb360df3a8719c2aad5090c51c24e43f8a8c1d3',
+            'c3_semantic_id':'c3sem:sha256:83808a8b893dd8f96ed6585b37602874f5c24376bd135dffdc99dd16d2b0ae8d',
+            'graph_id':'c3graph:sha256:7de33c57bf1a29674aa5099df86cd18ee9d12e6bab3b31059f42297f8436af84',
+            'trace_map_id':'c3trace:sha256:6fabe8fbdc0678b2d23eaa2ab0410f7619c23cefcbfe08c3fb56e5ada48fd09b',
+            'c2_program_sha256':'c9c9b41df838e12fb00db7bca8c655c4c06f430aa98659631d95f83b7751a970',
+            'c2_derived_gas':9,
+            'c2_artifact_id':'p:sha256:7474f9a767ce454387e29f4934c7c94de1945b1c114cefda6518cf799e6788c4',
+            'c2_target_id':'t:sha256:1879e1655f2dec6bfc462fedf37ac95df4da42d2f094dfab3b50585dbfa06747'}
+          for k,v in exp.items(): assert r[k]==v,(k,r[k],v)
+          assert r['boundary_point_count']==4 and r['trace_payload_count']==6
+          assert r['k1_subset_allowed'] is True and r['authority_created'] is False
+          print('W8_BASELINE_KAT_PASS')
+          PY
+      - name: Independent qualified-W5 reconstruction of W8 C2 output
+        run: |
+          python3 - <<'PY'
+          import hashlib, importlib.util, json
+          from pathlib import Path
+          spec=importlib.util.spec_from_file_location('w5','kernel/k1_checker_w5.py')
+          w5=importlib.util.module_from_spec(spec);spec.loader.exec_module(w5)
+          claim=json.loads(Path('fixtures/k1_mfst_c3_f0/claim.json').read_text())
+          artifact=Path('/tmp/w8/c2_artifact.json').read_bytes()
+          program=Path('/tmp/w8/c2_program.cap').read_bytes()
+          aid='p:sha256:'+hashlib.sha256(artifact).hexdigest()
+          _,realize,target=w5.check_artifact(artifact,aid,claim,program)
+          r=json.loads(Path('/tmp/w8-result.json').read_text())
+          assert target==r['c2_target_id'],(target,r['c2_target_id'])
+          assert [list(x) for x in sorted(realize)]==r['projected_realize']
+          assert hashlib.sha256(program).hexdigest()==r['c2_program_sha256']
+          print('W8_W5_CROSSCHECK_PASS',target,len(realize))
+          PY
