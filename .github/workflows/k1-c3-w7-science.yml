@@ -1,0 +1,49 @@
+name: K1 C3 W7 science
+on:
+  push:
+    branches: [k1-closure-c3]
+    paths:
+      - 'kernel/k1_w7_*.py'
+      - 'kernel/k1_checker_w7.py'
+      - 'tools/risu_kernel_k1_mfst_c3_w7_selftest.py'
+      - 'fixtures/k1_mfst_c3_f0/**'
+      - 'protocols/RISU_KERNEL_K1_MFST_C3_*.json'
+      - '.github/workflows/k1-c3-w7-science.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  w7-science:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile W7
+        run: python3 -m py_compile kernel/k1_w7_model.py kernel/k1_w7_exec.py kernel/k1_checker_w7.py
+      - name: Frozen-root W7 self-test
+        run: python3 tools/risu_kernel_k1_mfst_c3_w7_selftest.py
+      - name: Produce baseline C2 normal form
+        run: |
+          rm -rf /tmp/w7
+          python3 kernel/k1_checker_w7.py \
+            --claim fixtures/k1_mfst_c3_f0/claim.json \
+            --profile fixtures/k1_mfst_c3_f0/baseline.json \
+            --out-dir /tmp/w7 > /tmp/w7-result.json
+          python3 -m json.tool /tmp/w7-result.json
+      - name: Independent qualified-W5 reconstruction of W7 C2 output
+        run: |
+          python3 - <<'PY'
+          import hashlib, importlib.util, json
+          from pathlib import Path
+          spec=importlib.util.spec_from_file_location('w5','kernel/k1_checker_w5.py')
+          w5=importlib.util.module_from_spec(spec);spec.loader.exec_module(w5)
+          claim=json.loads(Path('fixtures/k1_mfst_c3_f0/claim.json').read_text())
+          artifact=Path('/tmp/w7/c2_artifact.json').read_bytes()
+          program=Path('/tmp/w7/c2_program.cap').read_bytes()
+          aid='p:sha256:'+hashlib.sha256(artifact).hexdigest()
+          _,realize,target=w5.check_artifact(artifact,aid,claim,program)
+          r=json.loads(Path('/tmp/w7-result.json').read_text())
+          assert target==r['c2_target_id'],(target,r['c2_target_id'])
+          assert [list(x) for x in sorted(realize)]==r['projected_realize']
+          assert hashlib.sha256(program).hexdigest()==r['c2_program_sha256']
+          print('W7_W5_CROSSCHECK_PASS',target,len(realize))
+          PY
