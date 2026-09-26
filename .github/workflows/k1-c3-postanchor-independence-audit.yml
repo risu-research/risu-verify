@@ -1,0 +1,40 @@
+name: K1 C3 post-anchor independence audit
+on:
+  push:
+    branches: [k1-closure-c3]
+    paths:
+      - 'tools/risu_kernel_k1_mfst_c3_postanchor_independence_audit.py'
+      - '.github/workflows/k1-c3-postanchor-independence-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pin frozen W7 and W8 implementation blobs
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object kernel/k1_w7_model.py)" = "3c351fd445b704d693e05ba01efe9cffa6a2801b"
+          test "$(git hash-object kernel/k1_w7_exec.py)" = "8b1529dfbd8367e20776f0ab8ec3f5fa6559ca2a"
+          test "$(git hash-object kernel/k1_checker_w7.py)" = "c011532efbe9b6dcd6ae440705ce7b38c5dde93b"
+          test "$(git hash-object kernel/k1_w8_json.go)" = "4e770c8ef7882b23705bb7068bd877c2cd9c3543"
+          test "$(git hash-object kernel/k1_w8_model.go)" = "b53897a82255886d59b9dc05d7fbe8166aca1d35"
+          test "$(git hash-object kernel/k1_w8_exec.go)" = "64254a8537d3777848b1d3f8176260c5a1c312e7"
+          test "$(git hash-object kernel/k1_checker_w8.go)" = "f3e1e0c42e8106615b0aeeb2a85ceae3046e74a2"
+      - name: Compile frozen W7 Python implementation
+        run: |
+          python3 -m py_compile kernel/k1_w7_model.py kernel/k1_w7_exec.py kernel/k1_checker_w7.py
+      - name: Verify and build frozen W8 Go implementation
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(gofmt -d kernel/k1_w8_json.go kernel/k1_w8_model.go kernel/k1_w8_exec.go kernel/k1_checker_w8.go)"
+          mkdir -p build
+          cd kernel
+          GO111MODULE=off CGO_ENABLED=0 go vet k1_w8_json.go k1_w8_model.go k1_w8_exec.go k1_checker_w8.go
+          CGO_ENABLED=0 go build -o ../build/k1_checker_w8 k1_w8_json.go k1_w8_model.go k1_w8_exec.go k1_checker_w8.go
+      - name: Run post-anchor semantic independence audit
+        run: python3 tools/risu_kernel_k1_mfst_c3_postanchor_independence_audit.py
