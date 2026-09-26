@@ -1,0 +1,62 @@
+{
+  "anchor_id": "risu.k1.mfst.c3.w8.science-anchor/v1",
+  "status": "W8_IMPLEMENTATION_ANCHORED_NON_AUTHORITATIVE",
+  "frozen_f0_commit": "f5b5ebefffb51c31ca0a098c07248ad6f141a393",
+  "w7_science_anchor_commit": "271712e1364844703569eaf3776d926674da7222",
+  "w8_implementation_commit": "53880b2a6ada8f2047b7e644b7effb9a844ba65b",
+  "hosted_validation": {
+    "workflow": "K1 C3 W8 science",
+    "run_id": 36224190117,
+    "conclusion": "success",
+    "checks": [
+      "repository W8 Go sources are gofmt-normalized",
+      "GO111MODULE=off CGO_ENABLED=0 go vet over the explicit W8 file set",
+      "CGO_ENABLED=0 Go build over the explicit W8 file set",
+      "16-case W8-only mutation battery executed through the compiled Go binary",
+      "frozen baseline exact commitment KAT",
+      "W8 direct MFST versus W8 independent C2 replay equality",
+      "qualified W5 independent reconstruction of W8-generated exact C2 program/artifact",
+      "W5 target_id equality with W8-derived C2 target_id",
+      "W5 REALIZE equality with W8 projected REALIZE"
+    ]
+  },
+  "implementation_blobs": {
+    "kernel/k1_w8_json.go": "4e770c8ef7882b23705bb7068bd877c2cd9c3543",
+    "kernel/k1_w8_model.go": "b53897a82255886d59b9dc05d7fbe8166aca1d35",
+    "kernel/k1_w8_exec.go": "64254a8537d3777848b1d3f8176260c5a1c312e7",
+    "kernel/k1_checker_w8.go": "f3e1e0c42e8106615b0aeeb2a85ceae3046e74a2",
+    "tools/risu_kernel_k1_mfst_c3_w8_selftest.py": "673509f37f41f622e32ec21c621204a84502d15b",
+    ".github/workflows/k1-c3-w8-science.yml": "83f0d349e62a2b3fbb41ef9b2747bcb2af237ab2"
+  },
+  "baseline_known_answers": {
+    "c3_source_id": "c3src:sha256:13ca692f6139d0c70a3829616bb360df3a8719c2aad5090c51c24e43f8a8c1d3",
+    "c3_semantic_id": "c3sem:sha256:83808a8b893dd8f96ed6585b37602874f5c24376bd135dffdc99dd16d2b0ae8d",
+    "graph_id": "c3graph:sha256:7de33c57bf1a29674aa5099df86cd18ee9d12e6bab3b31059f42297f8436af84",
+    "trace_map_id": "c3trace:sha256:6fabe8fbdc0678b2d23eaa2ab0410f7619c23cefcbfe08c3fb56e5ada48fd09b",
+    "c2_program_sha256": "c9c9b41df838e12fb00db7bca8c655c4c06f430aa98659631d95f83b7751a970",
+    "c2_derived_gas": 9,
+    "c2_artifact_id": "p:sha256:7474f9a767ce454387e29f4934c7c94de1945b1c114cefda6518cf799e6788c4",
+    "c2_target_id": "t:sha256:1879e1655f2dec6bfc462fedf37ac95df4da42d2f094dfab3b50585dbfa06747"
+  },
+  "independence_evidence": {
+    "w8_language": "Go standard library",
+    "w7_language": "Python standard library",
+    "w8_json_strategy": "recursive encoding/json.Decoder.Token parser with explicit duplicate-key tracking",
+    "w7_json_strategy": "Python json.loads object_pairs_hook based strict parser",
+    "w8_imports_w7_code": false,
+    "w8_invokes_w7_binary": false,
+    "w8_science_workflow_imports_or_invokes_w7": false,
+    "shared_authority_code_between_w7_w8": false,
+    "shared_inputs": "frozen protocol/profile/wire/amendment/F0 fixtures only",
+    "note": "W8 was implemented only after the W7 science anchor was frozen. Agreement with W7 baseline constants is an observed result, not a shared implementation mechanism."
+  },
+  "authority_state": {
+    "production_c3_proof_kind_created": false,
+    "c3_preservation_authority_created": false,
+    "w8_alone_is_authority": false,
+    "w7_plus_w8_without_crossed_gate_is_authority": false,
+    "semantic_kernel_changed": false,
+    "qualified_c2_modified": false
+  },
+  "next_gate": "Only after this W8 anchor may a separate cross-verification harness compare W7 and W8 direct semantics, exact CBTNF bytes, crossed C2 replays, and W5/W6 downstream reconstruction against the frozen F0 corpus."
+}
