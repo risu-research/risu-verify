@@ -1,0 +1,52 @@
+{
+  "anchor_id": "risu.k1.mfst.c3.w7.science-anchor/v1",
+  "status": "W7_IMPLEMENTATION_ANCHORED_NON_AUTHORITATIVE",
+  "frozen_f0_commit": "f5b5ebefffb51c31ca0a098c07248ad6f141a393",
+  "implementation_commit": "1dbd99ba416da7d9e73e5b119bb51f11dc8dd580",
+  "hosted_validation": {
+    "workflow": "K1 C3 W7 science",
+    "run_id": 36223281614,
+    "conclusion": "success",
+    "checks": [
+      "Python bytecode compilation",
+      "18 frozen-root W7 semantic self-tests",
+      "baseline exact commitment KAT",
+      "W7 direct MFST versus W7 independent C2 replay equality",
+      "qualified W5 independent reconstruction of W7-generated exact C2 program/artifact",
+      "W5 target_id equality with W7-derived C2 target_id",
+      "W5 REALIZE equality with W7 projected REALIZE"
+    ]
+  },
+  "implementation_blobs": {
+    "kernel/k1_w7_model.py": "3c351fd445b704d693e05ba01efe9cffa6a2801b",
+    "kernel/k1_w7_exec.py": "8b1529dfbd8367e20776f0ab8ec3f5fa6559ca2a",
+    "kernel/k1_checker_w7.py": "c011532efbe9b6dcd6ae440705ce7b38c5dde93b",
+    "tools/risu_kernel_k1_mfst_c3_w7_selftest.py": "a82da74363724bd0f0f559db2ec3e99d7bf7091c",
+    ".github/workflows/k1-c3-w7-science.yml": "d4fd828f5ff2fe9377849329b67199c7719fdd16"
+  },
+  "baseline_known_answers": {
+    "c3_source_id": "c3src:sha256:13ca692f6139d0c70a3829616bb360df3a8719c2aad5090c51c24e43f8a8c1d3",
+    "c3_semantic_id": "c3sem:sha256:83808a8b893dd8f96ed6585b37602874f5c24376bd135dffdc99dd16d2b0ae8d",
+    "graph_id": "c3graph:sha256:7de33c57bf1a29674aa5099df86cd18ee9d12e6bab3b31059f42297f8436af84",
+    "trace_map_id": "c3trace:sha256:6fabe8fbdc0678b2d23eaa2ab0410f7619c23cefcbfe08c3fb56e5ada48fd09b",
+    "c2_program_sha256": "c9c9b41df838e12fb00db7bca8c655c4c06f430aa98659631d95f83b7751a970",
+    "c2_derived_gas": 9,
+    "c2_artifact_id": "p:sha256:7474f9a767ce454387e29f4934c7c94de1945b1c114cefda6518cf799e6788c4",
+    "c2_target_id": "t:sha256:1879e1655f2dec6bfc462fedf37ac95df4da42d2f094dfab3b50585dbfa06747"
+  },
+  "independence_boundary": {
+    "w8_existed_at_w7_implementation_anchor": false,
+    "w8_must_not_import_or_invoke_w7": true,
+    "w8_must_be_reimplemented_from_frozen_profile_wire_amendment_and_f0": true,
+    "w7_language": "Python standard library",
+    "w8_required_language": "Go standard library"
+  },
+  "authority_state": {
+    "production_c3_proof_kind_created": false,
+    "c3_preservation_authority_created": false,
+    "w7_alone_is_authority": false,
+    "semantic_kernel_changed": false,
+    "qualified_c2_modified": false
+  },
+  "next_gate": "Implement W8 independently from the frozen C3 specification and F0 corpus, then require exact W7/W8 crossed-refinement equality before any C3 qualification claim."
+}
