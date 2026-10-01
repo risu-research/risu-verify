@@ -49,7 +49,7 @@ jobs:
           test "$(git hash-object kernel/k1_checker_w6.go)" = "33464fe4132d6490b1a68cc71ef803d584e597f9"
 
           # New post-anchor crossed tooling is itself pinned for this gate revision.
-          test "$(git hash-object kernel/k1_w8_cross_replay_driver.go)" = "f2b127e44af21d568bda19a641d3f2925bf93adb"
+          test "$(git hash-object kernel/k1_w8_cross_replay_driver.go)" = "17241706089e5ee7d29389cba4864221b728196c"
           test "$(git hash-object tools/risu_kernel_k1_mfst_c3_crossed_gate.py)" = "14d2a921db962352a5e5983c45d51f6280aeb75f"
 
       - name: Compile Python science components
