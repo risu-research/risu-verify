@@ -69,8 +69,12 @@ func main() {
 	programRaw, e3 := os.ReadFile(*programP)
 	if e1 != nil || e2 != nil || e3 != nil {
 		e := e1
-		if e == nil { e = e2 }
-		if e == nil { e = e3 }
+		if e == nil {
+			e = e2
+		}
+		if e == nil {
+			e = e3
+		}
 		b, _ := json.Marshal(crossReplayOutput{ProofStatus: "REJECTED", Reason: e.Error()})
 		fmt.Println(string(b))
 		return
@@ -96,18 +100,20 @@ func main() {
 	replay, gas, e := replayC2(programRaw, m)
 	if e != nil {
 		status := "REJECTED"
-		if _, ok := e.(unsupportedError); ok { status = "UNSUPPORTED" }
+		if _, ok := e.(unsupportedError); ok {
+			status = "UNSUPPORTED"
+		}
 		b, _ := json.Marshal(crossReplayOutput{ProofStatus: status, Reason: e.Error()})
 		fmt.Println(string(b))
 		return
 	}
 	out := crossReplayOutput{
-		ProofStatus: "ACCEPTED",
-		DirectTraceMap: traceJSON(direct.Traces),
-		ReplayTraceMap: traceJSON(replay),
-		DirectRealize: relationJSON(direct.Relation),
-		ReplayGas: gas,
-		DirectGraphID: direct.GraphID,
+		ProofStatus:      "ACCEPTED",
+		DirectTraceMap:   traceJSON(direct.Traces),
+		ReplayTraceMap:   traceJSON(replay),
+		DirectRealize:    relationJSON(direct.Relation),
+		ReplayGas:        gas,
+		DirectGraphID:    direct.GraphID,
 		DirectTraceMapID: direct.TraceID,
 	}
 	b, _ := json.Marshal(out)
