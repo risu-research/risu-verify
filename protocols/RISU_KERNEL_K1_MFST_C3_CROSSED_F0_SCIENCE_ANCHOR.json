@@ -1,0 +1,116 @@
+{
+  "anchor_id": "risu.k1.mfst.c3.crossed-f0.science-anchor/v1",
+  "status": "CROSSED_F0_SCIENCE_ANCHORED_NON_AUTHORITATIVE",
+  "science_head_commit": "41ae63903fedbff8505df7a4409340619fd499bd",
+  "frozen_f0_anchor_commit": "f5b5ebefffb51c31ca0a098c07248ad6f141a393",
+  "w7_science_anchor_commit": "271712e1364844703569eaf3776d926674da7222",
+  "w8_science_anchor_commit": "95a3132052387dcb4a6e0d4576e327e5f2b7ec50",
+  "postanchor_independence_audit_commit": "e5ee0d0790726275e88daffc1e07496b7680bf1c",
+  "qualified_c2_base_commit": "465ee71aba72f20737bf8713b2192a2029d79cdb",
+  "hosted_validation": {
+    "workflow": "K1 C3 crossed F0 gate",
+    "run_id": 36823783571,
+    "job_id": 110244838286,
+    "conclusion": "success",
+    "final_markers": [
+      "C3_CROSSED_F0_PASS 62",
+      "AUTHORITY_CREATED false"
+    ]
+  },
+  "frozen_oracle_inventory": {
+    "source": "protocols/RISU_KERNEL_K1_MFST_C3_F0_FREEZE.json",
+    "total": 62,
+    "accept": 14,
+    "parse_reject": 15,
+    "semantic_reject": 12,
+    "crosscheck_reject": 21,
+    "all_oracles_executed": true,
+    "all_oracles_matched_frozen_disposition": true
+  },
+  "crossed_equalities_enforced_for_closure_eligible_profiles": [
+    "W7 direct C3 ordered trace map equals W8 direct C3 ordered trace map",
+    "W7-generated CBTNF-v1 bytes equal W8-generated CBTNF-v1 bytes exactly",
+    "W8 replay of exact W7-generated CBTNF-v1 bytes equals W7 direct C3 trace pointwise including payload order and multiplicity",
+    "W7 replay of exact W8-generated CBTNF-v1 bytes equals W8 direct C3 trace pointwise including payload order and multiplicity",
+    "W7 and W8 projected K1 REALIZE relations are equal",
+    "W5 reconstruction from the W7 producer path equals the direct C3 projected REALIZE relation",
+    "W6 reconstruction from the W7 producer path equals the direct C3 projected REALIZE relation",
+    "W5 reconstruction from the W8 producer path equals the direct C3 projected REALIZE relation",
+    "W6 reconstruction from the W8 producer path equals the direct C3 projected REALIZE relation"
+  ],
+  "independent_downstream_paths": [
+    "W5(W7-generated C2 evidence)",
+    "W6(W7-generated C2 evidence)",
+    "W5(W8-generated C2 evidence)",
+    "W6(W8-generated C2 evidence)"
+  ],
+  "high_value_falsification_controls": {
+    "C3-22_boundary_value_shrink": "A deliberately re-signed safe C2 subset is accepted by both qualified C2 checkers, while C3 rejects it because exact MFST boundary points disappeared. This demonstrates a refinement/scope obligation not supplied by C2 alone.",
+    "F0-05_effect_reorder": "Ordered C3 trace changes while K1 set projection can remain identical; crossed trace fidelity vetoes the mutation.",
+    "F0-06_effect_duplicate": "Payload multiplicity changes while K1 set projection can remain identical; crossed trace fidelity vetoes the mutation.",
+    "F0-07_effect_delete_same_k1_set": "Deleting a duplicate occurrence can preserve the K1 set; C3 still detects refinement loss at the ordered trace layer.",
+    "F0-10_c2_normal_form_nondeterminism": "A byte-different C2 program can replay to the same pointwise traces; exact CBTNF-v1 byte equality remains a separate mandatory refinement check.",
+    "C3-07_forbidden_later_effect": "The forbidden consequence survives faithful direct and crossed reconstruction to the K1 projection, and both W5 and W6 reject preservation rather than silently dropping the effect."
+  },
+  "pinned_normative_and_fixture_blobs": {
+    "protocols/RISU_KERNEL_K1_MFST_C3_F0_FREEZE.json": "bb0b335d4a1a84087099afee9c5d60b1f5165d27",
+    "protocols/RISU_KERNEL_K1_MFST_C3_PROFILE.json": "080a03f65e6602b5d36e07988d28b250c19620e8",
+    "protocols/RISU_KERNEL_K1_MFST_C3_WIRE.json": "11896f05d1e3592228b973aaefaf13fd57f296c6",
+    "protocols/RISU_KERNEL_K1_MFST_C3_AMENDMENT_001.json": "a4ecc1d98b46deb507466cc0efa56eec2f2b4c55",
+    "protocols/RISU_KERNEL_K1_MEDIATION_REFINEMENT_C3_PROSPECTIVE.json": "adf5d9536546257f741f9916737990814af97214",
+    "fixtures/k1_mfst_c3_f0/claim.json": "02fe5e2a56d8a9f2cd56316c57b18fb8c4912c88",
+    "fixtures/k1_mfst_c3_f0/baseline.json": "3c4f386d0edef7cec56a0ff5eb7347924f84287e"
+  },
+  "pinned_w7_blobs": {
+    "kernel/k1_w7_model.py": "3c351fd445b704d693e05ba01efe9cffa6a2801b",
+    "kernel/k1_w7_exec.py": "8b1529dfbd8367e20776f0ab8ec3f5fa6559ca2a",
+    "kernel/k1_checker_w7.py": "c011532efbe9b6dcd6ae440705ce7b38c5dde93b"
+  },
+  "pinned_w8_blobs": {
+    "kernel/k1_w8_json.go": "4e770c8ef7882b23705bb7068bd877c2cd9c3543",
+    "kernel/k1_w8_model.go": "b53897a82255886d59b9dc05d7fbe8166aca1d35",
+    "kernel/k1_w8_exec.go": "64254a8537d3777848b1d3f8176260c5a1c312e7",
+    "kernel/k1_checker_w8.go": "f3e1e0c42e8106615b0aeeb2a85ceae3046e74a2"
+  },
+  "pinned_c2_checker_blobs": {
+    "kernel/k1_checker_w5.py": "cf08aff1ce9f9506df37d597c2fc348bfefd6331",
+    "kernel/k1_checker_w6.go": "33464fe4132d6490b1a68cc71ef803d584e597f9"
+  },
+  "crossed_gate_tooling_blobs": {
+    "kernel/k1_w8_cross_replay_driver.go": "17241706089e5ee7d29389cba4864221b728196c",
+    "tools/risu_kernel_k1_mfst_c3_crossed_gate.py": "14d2a921db962352a5e5983c45d51f6280aeb75f",
+    ".github/workflows/k1-c3-crossed-f0-gate.yml": "26b47d159bba42347eee10b9d1764396fa0b0148"
+  },
+  "exact_fixture_byte_digests": {
+    "fixtures/k1_mfst_c3_f0/claim.json": "f6b488c1e0ee8937e8695d9a38c9f00fd3f1c9d170f8265120f97bc1497bbd93",
+    "fixtures/k1_mfst_c3_f0/baseline.json": "2242114da4400ed5e91c5b4d68c1e2f0c451e63020882756b89b6b4234002581"
+  },
+  "baseline_known_answers": {
+    "c3_source_id": "c3src:sha256:13ca692f6139d0c70a3829616bb360df3a8719c2aad5090c51c24e43f8a8c1d3",
+    "c3_semantic_id": "c3sem:sha256:83808a8b893dd8f96ed6585b37602874f5c24376bd135dffdc99dd16d2b0ae8d",
+    "graph_id": "c3graph:sha256:7de33c57bf1a29674aa5099df86cd18ee9d12e6bab3b31059f42297f8436af84",
+    "trace_map_id": "c3trace:sha256:6fabe8fbdc0678b2d23eaa2ab0410f7619c23cefcbfe08c3fb56e5ada48fd09b",
+    "c2_program_sha256": "c9c9b41df838e12fb00db7bca8c655c4c06f430aa98659631d95f83b7751a970",
+    "c2_derived_gas": 9,
+    "c2_artifact_id": "p:sha256:7474f9a767ce454387e29f4934c7c94de1945b1c114cefda6518cf799e6788c4",
+    "c2_target_id": "t:sha256:1879e1655f2dec6bfc462fedf37ac95df4da42d2f094dfab3b50585dbfa06747"
+  },
+  "strongest_supported_science_claim": "Across the exact frozen F0 corpus, every closure-eligible MFST profile accepted by the crossed science gate is reconstructed independently by W7 and W8 into the same ordered direct trace map and byte-identical CBTNF-v1 program; each checker independently replays the other producer's exact CBTNF-v1 bytes to the same pointwise trace including payload order and multiplicity; and qualified W5 and W6 independently reconstruct from both producer paths the same K1 REALIZE relation obtained by projecting those traces. Every frozen non-accepting oracle fails closed at its prescribed parse, semantic, or cross-check boundary.",
+  "authority_state": {
+    "production_c3_proof_kind_created": false,
+    "k1_mediated_refinement_v1_is_production_authority": false,
+    "c3_preservation_authority_created": false,
+    "native_program_binding_created": false,
+    "arbitrary_native_refinement_proved": false,
+    "semantic_kernel_changed": false,
+    "qualified_c2_modified": false,
+    "w7_or_w8_modified_after_their_science_anchors": false
+  },
+  "nonclaims": [
+    "This science anchor does not prove that arbitrary native binaries, containers, operating systems, cloud services, or agent stacks refine the MFST profile.",
+    "This science anchor does not create remote or hardware attestation.",
+    "This science anchor does not make ordered traces part of K1 semantics; trace fidelity is a C3 refinement obligation before the explicit K1 set projection.",
+    "This science anchor does not qualify C3 by itself. The frozen F0 promotion rule still requires the remaining static, differential, generative, integrity, and final qualification gates before any production C3 authority claim."
+  ],
+  "next_gate": "Construct the remaining qualification-grade differential/generative crossed gates without changing the frozen F0 oracle meanings or the anchored W7/W8/W5/W6 implementations, then freeze a final C3 qualification manifest only if all required gates remain green."
+}
