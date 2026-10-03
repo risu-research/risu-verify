@@ -1,0 +1,175 @@
+name: K1 C3 G1 generative crossed campaign
+
+on:
+  push:
+    branches: [k1-closure-c3]
+    paths:
+      - 'protocols/RISU_KERNEL_K1_MFST_C3_GENERATIVE_G1.json'
+      - 'tools/risu_kernel_k1_mfst_c3_g1_generator.py'
+      - 'tools/risu_kernel_k1_mfst_c3_g1_runner.py'
+      - 'tools/risu_kernel_k1_mfst_c3_g1_aggregate.py'
+      - '.github/workflows/k1-c3-g1-generative-crossed.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  frozen-f0:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pin frozen science inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object protocols/RISU_KERNEL_K1_MFST_C3_F0_FREEZE.json)" = "bb0b335d4a1a84087099afee9c5d60b1f5165d27"
+          test "$(git hash-object fixtures/k1_mfst_c3_f0/claim.json)" = "02fe5e2a56d8a9f2cd56316c57b18fb8c4912c88"
+          test "$(git hash-object fixtures/k1_mfst_c3_f0/baseline.json)" = "3c4f386d0edef7cec56a0ff5eb7347924f84287e"
+          test "$(git hash-object kernel/k1_w7_model.py)" = "3c351fd445b704d693e05ba01efe9cffa6a2801b"
+          test "$(git hash-object kernel/k1_w7_exec.py)" = "8b1529dfbd8367e20776f0ab8ec3f5fa6559ca2a"
+          test "$(git hash-object kernel/k1_checker_w7.py)" = "c011532efbe9b6dcd6ae440705ce7b38c5dde93b"
+          test "$(git hash-object kernel/k1_w8_json.go)" = "4e770c8ef7882b23705bb7068bd877c2cd9c3543"
+          test "$(git hash-object kernel/k1_w8_model.go)" = "b53897a82255886d59b9dc05d7fbe8166aca1d35"
+          test "$(git hash-object kernel/k1_w8_exec.go)" = "64254a8537d3777848b1d3f8176260c5a1c312e7"
+          test "$(git hash-object kernel/k1_checker_w8.go)" = "f3e1e0c42e8106615b0aeeb2a85ceae3046e74a2"
+          test "$(git hash-object kernel/k1_checker_w5.py)" = "cf08aff1ce9f9506df37d597c2fc348bfefd6331"
+          test "$(git hash-object kernel/k1_checker_w6.go)" = "33464fe4132d6490b1a68cc71ef803d584e597f9"
+          test "$(git hash-object kernel/k1_w8_cross_replay_driver.go)" = "17241706089e5ee7d29389cba4864221b728196c"
+          test "$(git hash-object tools/risu_kernel_k1_mfst_c3_crossed_gate.py)" = "14d2a921db962352a5e5983c45d51f6280aeb75f"
+      - name: Build frozen W8 crossed replay and qualified W6
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build
+          cd kernel
+          test -z "$(gofmt -d k1_w8_json.go k1_w8_model.go k1_w8_exec.go k1_checker_w8.go k1_w8_cross_replay_driver.go)"
+          GO111MODULE=off CGO_ENABLED=0 go vet k1_w8_json.go k1_w8_model.go k1_w8_exec.go k1_checker_w8.go
+          CGO_ENABLED=0 go build -o ../build/k1_checker_w8 k1_w8_json.go k1_w8_model.go k1_w8_exec.go k1_checker_w8.go
+          GO111MODULE=off CGO_ENABLED=0 go vet k1_w8_json.go k1_w8_model.go k1_w8_exec.go k1_w8_cross_replay_driver.go
+          CGO_ENABLED=0 go build -o ../build/k1_w8_cross_replay k1_w8_json.go k1_w8_model.go k1_w8_exec.go k1_w8_cross_replay_driver.go
+          cd ..
+          test -z "$(gofmt -d kernel/k1_checker_w6.go)"
+          GO111MODULE=off CGO_ENABLED=0 go vet kernel/k1_checker_w6.go
+          CGO_ENABLED=0 go build -o build/k1_checker_w6 kernel/k1_checker_w6.go
+      - name: Re-run exact frozen 62-oracle crossed F0 gate
+        run: python3 tools/risu_kernel_k1_mfst_c3_crossed_gate.py
+
+  generative:
+    needs: frozen-f0
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pin G1 protocol, generator, runner, and frozen checkers
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object protocols/RISU_KERNEL_K1_MFST_C3_GENERATIVE_G1.json)" = "dda097cc8945555e9c475cc9656c07c78d8446bf"
+          test "$(git hash-object tools/risu_kernel_k1_mfst_c3_g1_generator.py)" = "d8ad16b607fdc8d86177c5fb3e593e662038eed1"
+          test "$(git hash-object tools/risu_kernel_k1_mfst_c3_g1_runner.py)" = "2af0c18a0772b8ab3a3fc4f01f88e6cf29903f80"
+          test "$(git hash-object tools/risu_kernel_k1_mfst_c3_crossed_gate.py)" = "14d2a921db962352a5e5983c45d51f6280aeb75f"
+          test "$(git hash-object kernel/k1_w7_model.py)" = "3c351fd445b704d693e05ba01efe9cffa6a2801b"
+          test "$(git hash-object kernel/k1_w7_exec.py)" = "8b1529dfbd8367e20776f0ab8ec3f5fa6559ca2a"
+          test "$(git hash-object kernel/k1_checker_w7.py)" = "c011532efbe9b6dcd6ae440705ce7b38c5dde93b"
+          test "$(git hash-object kernel/k1_w8_json.go)" = "4e770c8ef7882b23705bb7068bd877c2cd9c3543"
+          test "$(git hash-object kernel/k1_w8_model.go)" = "b53897a82255886d59b9dc05d7fbe8166aca1d35"
+          test "$(git hash-object kernel/k1_w8_exec.go)" = "64254a8537d3777848b1d3f8176260c5a1c312e7"
+          test "$(git hash-object kernel/k1_checker_w8.go)" = "f3e1e0c42e8106615b0aeeb2a85ceae3046e74a2"
+          test "$(git hash-object kernel/k1_checker_w5.py)" = "cf08aff1ce9f9506df37d597c2fc348bfefd6331"
+          test "$(git hash-object kernel/k1_checker_w6.go)" = "33464fe4132d6490b1a68cc71ef803d584e597f9"
+          test "$(git hash-object kernel/k1_w8_cross_replay_driver.go)" = "17241706089e5ee7d29389cba4864221b728196c"
+      - name: Enforce generator independence and compile Python
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import ast, pathlib
+          p = pathlib.Path('tools/risu_kernel_k1_mfst_c3_g1_generator.py')
+          src = p.read_text(encoding='utf-8')
+          tree = ast.parse(src)
+          allowed = {'__future__', 'copy', 'itertools', 'json', 'random'}
+          imports = set()
+          for n in ast.walk(tree):
+              if isinstance(n, ast.Import):
+                  imports.update(x.name.split('.')[0] for x in n.names)
+              elif isinstance(n, ast.ImportFrom):
+                  imports.add((n.module or '').split('.')[0])
+          if not imports.issubset(allowed):
+              raise SystemExit(f'generator imports forbidden modules: {sorted(imports - allowed)}')
+          banned = ['k1_w7', 'k1_w8', 'k1_checker', 'subprocess', 'importlib', 'RISU-K1-CAPSULE-CONSEQUENCE']
+          hits = [x for x in banned if x in src]
+          if hits:
+              raise SystemExit(f'generator contains forbidden checker/replay dependencies: {hits}')
+          print('G1_GENERATOR_INDEPENDENCE_PASS', sorted(imports))
+          PY
+          python3 -m py_compile \
+            tools/risu_kernel_k1_mfst_c3_g1_generator.py \
+            tools/risu_kernel_k1_mfst_c3_g1_runner.py \
+            tools/risu_kernel_k1_mfst_c3_crossed_gate.py \
+            kernel/k1_w7_model.py kernel/k1_w7_exec.py kernel/k1_checker_w7.py kernel/k1_checker_w5.py
+      - name: Build frozen W8 crossed replay and qualified W6
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build
+          cd kernel
+          test -z "$(gofmt -d k1_w8_json.go k1_w8_model.go k1_w8_exec.go k1_checker_w8.go k1_w8_cross_replay_driver.go)"
+          GO111MODULE=off CGO_ENABLED=0 go vet k1_w8_json.go k1_w8_model.go k1_w8_exec.go k1_checker_w8.go
+          CGO_ENABLED=0 go build -o ../build/k1_checker_w8 k1_w8_json.go k1_w8_model.go k1_w8_exec.go k1_checker_w8.go
+          GO111MODULE=off CGO_ENABLED=0 go vet k1_w8_json.go k1_w8_model.go k1_w8_exec.go k1_w8_cross_replay_driver.go
+          CGO_ENABLED=0 go build -o ../build/k1_w8_cross_replay k1_w8_json.go k1_w8_model.go k1_w8_exec.go k1_w8_cross_replay_driver.go
+          cd ..
+          test -z "$(gofmt -d kernel/k1_checker_w6.go)"
+          GO111MODULE=off CGO_ENABLED=0 go vet kernel/k1_checker_w6.go
+          CGO_ENABLED=0 go build -o build/k1_checker_w6 kernel/k1_checker_w6.go
+      - name: Run full crossed G1 shard
+        run: |
+          python3 tools/risu_kernel_k1_mfst_c3_g1_runner.py \
+            --shard ${{ matrix.shard }} \
+            --summary build/g1/g1-shard-${{ matrix.shard }}.json
+      - name: Upload deterministic shard summary
+        uses: actions/upload-artifact@v4
+        with:
+          name: g1-shard-${{ matrix.shard }}
+          path: build/g1/g1-shard-${{ matrix.shard }}.json
+          if-no-files-found: error
+          retention-days: 7
+
+  aggregate:
+    needs: generative
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pin prospective protocol and aggregate verifier
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object protocols/RISU_KERNEL_K1_MFST_C3_GENERATIVE_G1.json)" = "dda097cc8945555e9c475cc9656c07c78d8446bf"
+          test "$(git hash-object tools/risu_kernel_k1_mfst_c3_g1_aggregate.py)" = "87bcdb94fc775153c27a122dd4ba63ea2b83bf34"
+          python3 -m py_compile tools/risu_kernel_k1_mfst_c3_g1_aggregate.py
+      - name: Download all eight shard summaries
+        uses: actions/download-artifact@v4
+        with:
+          pattern: g1-shard-*
+          path: build/g1-artifacts
+          merge-multiple: true
+      - name: Verify aggregate counts, coverage, stress, and digests
+        run: |
+          python3 tools/risu_kernel_k1_mfst_c3_g1_aggregate.py \
+            --input build/g1-artifacts \
+            --output build/g1-aggregate.json
+      - name: Upload aggregate evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: g1-aggregate
+          path: build/g1-aggregate.json
+          if-no-files-found: error
+          retention-days: 14
