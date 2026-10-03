@@ -155,7 +155,7 @@ def run_veto(ref, summary_path):
         ("R0-VETO-PREDICATE-FLIP","R0-00001","predicate_flip"),
         ("R0-VETO-PREFIX-DROP","R0-00065","prefix_drop"),
         ("R0-VETO-EFFECT-ORDER","R0-00017","effect_order"),
-        ("R0-VETO-TABLE-ROW","R0-04865","table_row"),
+        ("R0-VETO-TABLE-ROW","R0-11009","table_row"),
     ]
     by_id = {r["descriptor_id"]:r for r in ref}
     results = []
