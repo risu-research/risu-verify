@@ -1,0 +1,208 @@
+{
+  "anchor_id": "risu.k1.mfst.c3.reference-r0.science-anchor/v1",
+  "status": "R0_ORTHOGONAL_EXHAUSTIVE_REFERENCE_ANCHORED_NON_AUTHORITATIVE",
+  "science_head_commit": "9e938e26e79aeb08424471377b5280af412338e5",
+  "parent_g1_science_anchor_commit": "22cc0df36661dbd7fac50d9b551d1e78505fc253",
+  "w9_pre_cross_anchor_commit": "cb3ed0986cdc20dc4a3aeb48ca1104f58ac7c9f5",
+  "qualified_c2_base_commit": "465ee71aba72f20737bf8713b2192a2029d79cdb",
+  "reference_provenance": {
+    "prospective_reference_protocol_commit": "4d2a14b50cc72f5cd930cf35796fc97735cbcd16",
+    "first_w9_only_run": 37162186282,
+    "first_w9_only_run_conclusion": "failure",
+    "first_failure_preserved": "R0-00000 at W0/X1 exposed an indexing error in W9's independent explicit truth-table evaluator before any R0 W7/W8 comparison",
+    "w9_amendment_commit": "df4d71cc7ce48bd77600b50922676b3fae2ad160",
+    "successful_w9_only_run": 37162304986,
+    "successful_w9_only_job": 111318079873,
+    "frozen_w9_reference_sha256": "c731db89e79e75f4d22f38788aded1a9c9e70572467615da448b7e1c9ce93346",
+    "descriptor_to_mfst_compiler_existed_when_w9_root_frozen": false,
+    "r0_w7_w8_crosscheck_had_run_when_w9_root_frozen": false,
+    "cross_control_reachability_amendment": {
+      "commit": "f7a56b3817a0197077ac6b3910fa8555feb89b42",
+      "reason": "The originally selected XOR row veto descriptor did not reach the corrupted row. It was prospectively corrected to R0-11009 before any R0 cross execution.",
+      "w9_reference_changed": false,
+      "descriptor_space_changed": false
+    }
+  },
+  "frozen_reference_space": {
+    "program_descriptors": 18432,
+    "boundary_points_per_program": 4,
+    "expected_point_traces": 73728,
+    "worlds": 2,
+    "user_input_slots": 1,
+    "state_cells": 1,
+    "initial_forms": 3,
+    "update_forms": 8,
+    "predicate_forms": 6,
+    "prefix_forms": 2,
+    "terminal_trace_forms_per_branch": 8,
+    "trace_length_histogram": {"1": 9216, "2": 27648, "3": 27648, "4": 9216},
+    "branch_outcome_histogram": {"false": 36864, "true": 36864},
+    "q_after_update_histogram": {"Q0": 39936, "Q1": 33792},
+    "w9_internal_dual_reference_check": "FORMULA_EQUALS_EXPLICIT_TRUTH_TABLE_FOR_ALL_73728_POINTS"
+  },
+  "hosted_cross_validation": {
+    "workflow": "K1 C3 R0 orthogonal exhaustive reference cross",
+    "run_id": 37162620992,
+    "science_head_sha": "9e938e26e79aeb08424471377b5280af412338e5",
+    "conclusion": "success",
+    "reference_job": 111319019735,
+    "veto_job": 111319045529,
+    "aggregate_job": 111319501632,
+    "final_markers": [
+      "R0_ORTHOGONAL_REFERENCE_PASS 18432 73728",
+      "R0_COMMON_MODE_VETO_TOTAL_PASS 4",
+      "R0_AGGREGATE_DIGEST db6ce828c547771fbfe2b9621dea1deb88ee4b988d57359dbb2ed5dfef7c67f8",
+      "R0_MAX_C2 635 12",
+      "AUTHORITY_CREATED false"
+    ]
+  },
+  "per_descriptor_obligations_satisfied": [
+    "W9 expected point->ordered-payload trace map was regenerated from the pinned W9 reference source and exact frozen reference root before cross execution",
+    "W7 direct accepted and matched W9 exactly",
+    "W8 direct accepted and matched W9 exactly",
+    "W7 direct equaled W8 direct",
+    "W7-generated and W8-generated CBTNF-v1 bytes and C2 artifacts were byte-identical",
+    "W8 replay of exact W7-generated CBTNF-v1 matched W9",
+    "W7 replay of exact W8-generated CBTNF-v1 matched W9",
+    "W7 and W8 projected identical K1 REALIZE sets",
+    "W5 reconstruction from W7 producer path equaled direct C3 K1 projection",
+    "W6 reconstruction from W7 producer path equaled direct C3 K1 projection",
+    "W5 reconstruction from W8 producer path equaled direct C3 K1 projection",
+    "W6 reconstruction from W8 producer path equaled direct C3 K1 projection"
+  ],
+  "aggregate_result": {
+    "successful_descriptors": 18432,
+    "successful_w9_point_trace_comparisons": 73728,
+    "shards": 16,
+    "descriptors_per_shard": 1152,
+    "w9_mismatches": 0,
+    "w7_w8_direct_disagreements": 0,
+    "cross_replay_disagreements": 0,
+    "w5_w6_downstream_disagreements": 0,
+    "common_mode_veto_controls_passed": 4,
+    "max_c2_program_bytes": 635,
+    "max_c2_gas": 12,
+    "aggregate_digest": "db6ce828c547771fbfe2b9621dea1deb88ee4b988d57359dbb2ed5dfef7c67f8"
+  },
+  "common_mode_veto_evidence": [
+    {
+      "id": "R0-VETO-PREDICATE-FLIP",
+      "descriptor": "R0-00001",
+      "ordinary_w7_w8_crossed_square": "PASS",
+      "w5_w6_downstream": "PASS",
+      "w9_exact_trace_veto": "PASS",
+      "k1_realize_same_as_unmutated": true
+    },
+    {
+      "id": "R0-VETO-PREFIX-DROP",
+      "descriptor": "R0-00065",
+      "ordinary_w7_w8_crossed_square": "PASS",
+      "w5_w6_downstream": "PASS",
+      "w9_exact_trace_veto": "PASS",
+      "k1_realize_same_as_unmutated": false
+    },
+    {
+      "id": "R0-VETO-EFFECT-ORDER",
+      "descriptor": "R0-00017",
+      "ordinary_w7_w8_crossed_square": "PASS",
+      "w5_w6_downstream": "PASS",
+      "w9_exact_trace_veto": "PASS",
+      "k1_realize_same_as_unmutated": true,
+      "importance": "This control demonstrates that W9 can veto an ordered-trace refinement error even when the explicit K1 set projection remains identical."
+    },
+    {
+      "id": "R0-VETO-TABLE-ROW",
+      "descriptor": "R0-11009",
+      "ordinary_w7_w8_crossed_square": "PASS",
+      "w5_w6_downstream": "PASS",
+      "w9_exact_trace_veto": "PASS",
+      "k1_realize_same_as_unmutated": false
+    }
+  ],
+  "shard_science_digests": {
+    "0": "31ce45045ea354cf6263b421ad68ef102531d273498726e8c2fd5d244d8f6881",
+    "1": "257b3a5bf848d73bf3d1a0a3acb035072d6a4cf8db180a81f48d166102547e07",
+    "2": "5a6140ade29dc484d07bb5aaf52187c5e4ae100c1d407254f6deed8f4bf64ccc",
+    "3": "e4cbd7dad69dece24dd036c3d61a65d1324220a31fbf16f583a1adf46dca8265",
+    "4": "90362e85091de9d8460ca8905ca12fe706825eabee42ccb58e0aae02a02e4d2b",
+    "5": "bf379076002efea45fe1933eb404f88e02da55edb551dbb1d0ef288a93ba2b75",
+    "6": "919606e3f047431d507d34f25922ee6dee0fba99b4b36e2a572cf5b0c2414598",
+    "7": "09d7472a488a3181ab65cee70a538aafd8ccc49711bf957932a76a28debcae2a",
+    "8": "8dae1526eceea7c27533a3eb20e1b30802ea84c5c3ebf17426f7c8b65562db2a",
+    "9": "7ca795c41ecac4a79f620b625c72809feffc2b8a4b706bda9fc6431b45e0a818",
+    "10": "726edc75154dd181db464af3b070fea39f688ee7c199aa9ce7906b4b997c5850",
+    "11": "0c8ed1b8272fb24f7e4e265b7b306e745e0f62c69dbc38b9b8075b72e007551c",
+    "12": "19d1eb0523a7ccaf94d62ba048fa32b36fcdba14f8037515e6b85271695dda44",
+    "13": "882650069d751653b9e82c7987e06bbc27b3d7a2404e300ab5d71123c3342f66",
+    "14": "300493983e68872931f5572e1f99aa4bf242513b79105299e7bcf4a27cd22735",
+    "15": "4884f3f263663246ea7ac60ef5af7097c7689ffdcd6316ccb3cdb03fc6f9ed3b"
+  },
+  "ci_artifacts": {
+    "reference": {"artifact_id": 11287419873, "zip_sha256": "91f5dc0512e927342cc860f076322d18581a5ea1e139ae8b37133a4a35b08121"},
+    "veto": {"artifact_id": 11288127482, "zip_sha256": "6d1917caf6a4f99c58ea8d54f20a5fbdaf4cad4a3d74dad7af12ad89457d3fb1"},
+    "aggregate": {"artifact_id": 11287724051, "zip_sha256": "68138278ca5de13ceb7640646eb58980d1a6ab692b305302c5fa47f96dc6bbad"},
+    "shard_zip_sha256": {
+      "0": "427c84c3b5bc1f3cbb93fe36edc58611bc39249421e9bb366598807d76d3b83c",
+      "1": "66ac9a6f4cdfb1c41dd749d2c3b32ba193501f63a491fb58fcd1f1fc6e0a5a15",
+      "2": "ac407b0772ecb167992f0965541577ce7dbb9acb84e631ff0a4ec5b4798d4002",
+      "3": "e43315aeb001fd41d884c742bfff8812c1ec8f0523c4ac739e2e0405ad849c7e",
+      "4": "f38ae2416385b3c148d1e72c6594b1f489ae0ab696d1190aff26934f0bfe18d2",
+      "5": "2f9197881801b1aedf9f13329730fb754c3277ca2d4c4994fc0044232498befb",
+      "6": "b56e85b51fcb0ade20415d3e51419f03f201cfa2b2a5eed00eac3ffab165f7ed",
+      "7": "49058b5fbfe2575f2a8dbca78afdc9321eaaa6bc13f1635bbad7dd1cd0714efb",
+      "8": "157a95b24b5d4531441c202357e97dcc1d5ad7d4aa976c8c4ba3d4d050de4872",
+      "9": "ff4f0a69dbdf3e4bd100aaae8f988b362d80e7aef06c756faea532589655789d",
+      "10": "f36c73b197a5c220eb2b68ea385d5564144c45f0f3dcab2d4acfd56f284cab59",
+      "11": "93163f8eeb3bce67e1dd89e34f15f85514e49f1491c62af5e2996c010371a42f",
+      "12": "c3b15ec34faf2952367673f3cf0228bb0a08b669669ed0b30b76eaf8d5c1d9b9",
+      "13": "99eabccaa9cbe5649b1c210e9e6b6d928755be3a1cbe1a6e0db3ed00ade49006",
+      "14": "d7a681e275546ee7caa055421a83ca918fd57ff7d629ee6aceabf06ec6a5b275",
+      "15": "7a752c58f31d2eea6041494c5ac8c84882b9ff2adc436c5861b8f832ec5f5047"
+    }
+  },
+  "pinned_r0_blobs": {
+    "protocols/RISU_KERNEL_K1_MFST_C3_REFERENCE_R0.json": "6e9059a95242db58b94cecd4bca3ae95d75f4a47",
+    "protocols/RISU_KERNEL_K1_MFST_C3_REFERENCE_R0_W9_AMENDMENT_001.json": "0e0d06bbfbb0915561277a2fc1652ebee038bf15",
+    "protocols/RISU_KERNEL_K1_MFST_C3_REFERENCE_R0_W9_ANCHOR.json": "f48090dea94ce5519ca41212255cca631f1bd2aa",
+    "protocols/RISU_KERNEL_K1_MFST_C3_REFERENCE_R0_CROSS_GATE.json": "90425445d3f7720eee012a6d93c8384e0b96795f",
+    "protocols/RISU_KERNEL_K1_MFST_C3_REFERENCE_R0_CROSS_AMENDMENT_001.json": "6d079f827cb1bd67f4881fcc6ac1debc0be9adff",
+    "kernel/k1_checker_w9_reference.js": "d414ecaeca6d4bb99dbf915c37ce471a59d9b58a",
+    "tools/risu_kernel_k1_mfst_c3_r0_compiler.py": "4577de1a1d56b442ad9c238f0008d2a7fea699b6",
+    "tools/risu_kernel_k1_mfst_c3_r0_cross.py": "84a8d8118569d5a3bbcaa053e2cebd22a38b389c",
+    "tools/risu_kernel_k1_mfst_c3_r0_aggregate.py": "445c3eda88e6502fd7c45f6ba03b0504f0c9aecc",
+    ".github/workflows/k1-c3-r0-orthogonal-cross.yml": "0fdd5ac93a6e7bc69cb6b51884d9ee31de007efa"
+  },
+  "pinned_existing_science_blobs": {
+    "tools/risu_kernel_k1_mfst_c3_crossed_gate.py": "14d2a921db962352a5e5983c45d51f6280aeb75f",
+    "kernel/k1_w8_cross_replay_driver.go": "17241706089e5ee7d29389cba4864221b728196c",
+    "kernel/k1_w7_model.py": "3c351fd445b704d693e05ba01efe9cffa6a2801b",
+    "kernel/k1_w7_exec.py": "8b1529dfbd8367e20776f0ab8ec3f5fa6559ca2a",
+    "kernel/k1_checker_w7.py": "c011532efbe9b6dcd6ae440705ce7b38c5dde93b",
+    "kernel/k1_w8_json.go": "4e770c8ef7882b23705bb7068bd877c2cd9c3543",
+    "kernel/k1_w8_model.go": "b53897a82255886d59b9dc05d7fbe8166aca1d35",
+    "kernel/k1_w8_exec.go": "64254a8537d3777848b1d3f8176260c5a1c312e7",
+    "kernel/k1_checker_w8.go": "f3e1e0c42e8106615b0aeeb2a85ceae3046e74a2",
+    "kernel/k1_checker_w5.py": "cf08aff1ce9f9506df37d597c2fc348bfefd6331",
+    "kernel/k1_checker_w6.go": "33464fe4132d6490b1a68cc71ef803d584e597f9"
+  },
+  "strongest_supported_science_claim": "For the entire prospectively frozen R0 finite sublanguage of 18,432 distinct descriptors and 73,728 boundary-point executions, an independently specified W9 reference whose exact expected-trace root was frozen before any R0 W7/W8 comparison matched W7 direct execution, W8 direct execution, both bidirectional crossed replays, and independent W5/W6 reconstruction on both producer paths with zero discrepancies. Four deliberately mistranslated compiled profiles remained internally self-consistent across W7, W8, crossed replay, W5, and W6 but were all vetoed by W9; one effect-order mutation and one predicate mutation even preserved the K1 REALIZE set, demonstrating that the orthogonal reference lane detects refinement errors invisible to ordinary differential agreement and, in those controls, to the explicit K1 set projection.",
+  "authority_state": {
+    "production_c3_proof_kind_created": false,
+    "k1_mediated_refinement_v1_is_production_authority": false,
+    "c3_preservation_authority_created": false,
+    "native_program_binding_created": false,
+    "arbitrary_native_refinement_proved": false,
+    "absence_of_all_common_mode_bugs_proved": false,
+    "semantic_kernel_changed": false,
+    "qualified_c2_modified": false,
+    "w7_or_w8_modified": false
+  },
+  "nonclaims": [
+    "R0 is exhaustive only over its exact deliberately small finite descriptor language; it is not a universal correctness proof for W7 or W8.",
+    "R0 does not cover loops, multiple state cells, multiple user slots, larger finite domains, arbitrary table shapes, unreachable control-flow graphs, ambient effects, concurrency, nondeterminism, exceptions, timeouts, unbounded liveness, native binaries, containers, operating systems, cloud services, agent stacks, remote attestation, or hardware trust.",
+    "The W9 reference itself is software. Its formula-versus-truth-table dual evaluation and the preserved first failure reduce implementation risk but do not constitute a formal proof assistant kernel.",
+    "This science anchor does not qualify C3 or create preservation authority.",
+    "Ordered trace fidelity remains a C3 refinement obligation before the explicit K1 set projection and is not added to K1 semantics."
+  ],
+  "next_gate": "Use F0 + G1 + R0 together to decide whether C3 is scientifically mature enough for a deliberately narrow production refinement proof lane, or whether one more boundary should be attacked first: multiple state cells / multiple input slots, bounded loops, or an independently checked refinement-certificate object."
+}
