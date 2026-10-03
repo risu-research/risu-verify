@@ -1,0 +1,180 @@
+{
+  "anchor_id": "risu.k1.mfst.c3.g1.science-anchor/v1",
+  "status": "G1_LARGE_SCALE_CROSSED_SCIENCE_ANCHORED_NON_AUTHORITATIVE",
+  "science_head_commit": "882253eecf26babedc4c3c1ceed470c6f895780e",
+  "parent_crossed_f0_science_anchor_commit": "c0ad24a9f8078078865c67bcb509c11901b8d0ab",
+  "prospective_g1_freeze_commit": "928bcd74c44dbc48234928dbd5b0c142cc6f67ae",
+  "frozen_f0_anchor_commit": "f5b5ebefffb51c31ca0a098c07248ad6f141a393",
+  "qualified_c2_base_commit": "465ee71aba72f20737bf8713b2192a2029d79cdb",
+  "hosted_validation": {
+    "workflow": "K1 C3 G1 generative crossed campaign",
+    "run_id": 37105015579,
+    "conclusion": "success",
+    "science_head_sha": "882253eecf26babedc4c3c1ceed470c6f895780e",
+    "jobs": {
+      "frozen_f0": 111151704664,
+      "generative_shard_0": 111151782289,
+      "generative_shard_1": 111151782332,
+      "generative_shard_2": 111151782337,
+      "generative_shard_3": 111151782353,
+      "generative_shard_4": 111151782280,
+      "generative_shard_5": 111151782499,
+      "generative_shard_6": 111151782350,
+      "generative_shard_7": 111151782302,
+      "aggregate": 111152184557
+    },
+    "final_markers": [
+      "C3_CROSSED_F0_PASS 62",
+      "C3_G1_GENERATIVE_PASS 4288",
+      "C3_G1_SUPPORT_CONTROLS 1024",
+      "C3_G1_SHARDS 8",
+      "C3_G1_AGGREGATE_DIGEST 9320b59548f9655f2969c1c5e184705a3fe16cae222d718c8612c3708279fdf2",
+      "AUTHORITY_CREATED false"
+    ]
+  },
+  "campaign_scale": {
+    "precommitted_seeds": [271828182, 314159265, 161803398, 141421356, 173205080, 223606797, 244948974, 264575131],
+    "shards": 8,
+    "counted_generated_scenarios": 4288,
+    "support_control_evaluations": 1024,
+    "total_generated_scenario_and_control_evaluations": 5312,
+    "full_square_positive_profile_evaluations": 4800,
+    "negative_mutation_evaluations": 512,
+    "counted_classes": {
+      "structured_valid_full_square": 1536,
+      "metamorphic_transformed_full_square": 2048,
+      "negative_fail_closed_mutations": 512,
+      "high_complexity_stress_full_square": 192
+    },
+    "support_controls": {
+      "metamorphic_base_full_square": 512,
+      "negative_base_full_square": 512
+    }
+  },
+  "aggregate_coverage_over_1536_structured_valid_profiles": {
+    "zero_user_slots": 464,
+    "at_least_two_user_slots": 688,
+    "domain_size_at_least_three": 1536,
+    "at_least_three_state_cells": 800,
+    "at_least_two_tables": 688,
+    "table_arity_at_least_two": 944,
+    "uses_SET_CONST": 1208,
+    "uses_SET_FROM": 712,
+    "uses_APPLY_TABLE": 1072,
+    "uses_IF_EQ": 840,
+    "uses_GOTO": 1224,
+    "multi_effect": 848,
+    "duplicate_effect_occurrence": 464,
+    "valid_unreachable_block": 304,
+    "state_progress_loop": 224,
+    "world_explicit_source": 579
+  },
+  "stress_observed_over_192_profiles": {
+    "max_boundary_points": 48,
+    "max_state_cells": 4,
+    "max_tables": 3,
+    "max_table_arity": 3,
+    "max_blocks": 10,
+    "max_ordered_effects_one_trace": 5,
+    "observed_example_c2_program_bytes": 6499,
+    "observed_example_c2_gas": 21,
+    "note": "The aggregate verifier gates the precommitted stress minima. Per-shard logs additionally record C2 byte/gas maxima; shard 2 observed 6499 bytes and gas 21."
+  },
+  "generator_independence_evidence": {
+    "source": "tools/risu_kernel_k1_mfst_c3_g1_generator.py",
+    "allowed_import_roots": ["__future__", "copy", "itertools", "json", "random"],
+    "hosted_marker": "G1_GENERATOR_INDEPENDENCE_PASS ['__future__', 'copy', 'itertools', 'json', 'random']",
+    "forbidden_dependencies_checked": ["k1_w7", "k1_w8", "k1_checker", "subprocess", "importlib", "RISU-K1-CAPSULE-CONSEQUENCE"],
+    "ordinary_profile_expected_trace_policy": "No hidden reference interpreter computes expected direct traces. The independently implemented crossed square is the executable differential oracle.",
+    "metamorphic_oracle_policy": "External relations were frozen before G1 implementation and execution."
+  },
+  "crossed_square_enforced_for_every_closure_eligible_generated_profile": [
+    "W7 direct C3 ordered trace map equals W8 direct C3 ordered trace map pointwise including payload order and multiplicity",
+    "W7-generated CBTNF-v1 bytes equal W8-generated CBTNF-v1 bytes exactly",
+    "W8 replay of exact W7-generated CBTNF-v1 bytes equals W7 direct C3 ordered trace map",
+    "W7 replay of exact W8-generated CBTNF-v1 bytes equals W8 direct C3 ordered trace map",
+    "W7 projected K1 REALIZE equals W8 projected K1 REALIZE",
+    "W5 reconstruction from W7-generated C2 evidence equals the direct C3 K1 projection",
+    "W6 reconstruction from W7-generated C2 evidence equals the direct C3 K1 projection",
+    "W5 reconstruction from W8-generated C2 evidence equals the direct C3 K1 projection",
+    "W6 reconstruction from W8-generated C2 evidence equals the direct C3 K1 projection"
+  ],
+  "precommitted_metamorphic_relations_all_green": [
+    "nonsemantic JSON/declaration permutations preserve semantic ID, reachable graph, ordered trace, exact C2 bytes, and K1 REALIZE",
+    "table formal-argument rename changes semantic identity but preserves behavior, exact C2 bytes, and K1 REALIZE",
+    "valid unreachable-block insertion changes exact source/semantic identity but preserves reachable trace, exact C2 bytes, and K1 REALIZE",
+    "reachable effect-order transformation changes ordered trace identity and exact C2 bytes while preserving K1 REALIZE when the payload set is unchanged"
+  ],
+  "negative_lanes_all_green": [
+    "missing total-table tuple rejects",
+    "duplicate total-table tuple rejects",
+    "out-of-domain table tuple rejects",
+    "APPLY_TABLE formal/source domain mismatch rejects",
+    "undeclared input source rejects",
+    "zero-effect HALT rejects",
+    "repeated exact configuration after an emitted prefix rejects positive closure",
+    "re-signed downstream C2 slot-domain shrink can be accepted by W5/W6 as its own bounded object but is not credited as faithful source refinement",
+    "downstream C2 gas underbound fails closed",
+    "program-byte mutation under stale artifact/target identity fails closed",
+    "forbidden payload survives faithful direct/crossed reconstruction and defeats W5/W6 preservation",
+    "producer completeness/REALIZE/target self-assertion fields carry no authority and fail strict artifact grammar"
+  ],
+  "aggregate_digest": "9320b59548f9655f2969c1c5e184705a3fe16cae222d718c8612c3708279fdf2",
+  "ci_artifacts": {
+    "aggregate": {
+      "artifact_id": 11268081023,
+      "zip_sha256": "13655b70d25e700988de1ab418e744726e376d52d5ba36b95cee174790f0e742"
+    },
+    "shard_zip_sha256": {
+      "0": "7cf12275e011ec93092c98092e05fd5f8ea9a3de2913f74cf38a79eed4d5209a",
+      "1": "f304038ceb71beccee38804130711ada6ff2d23e8e2f630fd993331bb4a65b3f",
+      "2": "3bba81af1dff6e15e58719224ff0450f2dd1d6404ddf04bbdcac07134e90f1f0",
+      "3": "ad5c359e3418e8450da46c0432398d19f2ce61257a2dc3d9a497a92a23a8353f",
+      "4": "d071ccd7cf9b2905602a24c5466611bc2e4e3c2912b9c9acd43f9bd575a818be",
+      "5": "eb8324469ffa5cd517f90b3023596cdd1a4d931c887b11723dedea8722ab85a7",
+      "6": "689db3141dd13d18e1d51a1e8b5823464e9b5b51353b558ffbfac0aa4e71577d",
+      "7": "91aaa7bc0b884fa922d49ea0888107e6677eb3cf5060c5ce413bb292e85afe03"
+    }
+  },
+  "pinned_g1_blobs": {
+    "protocols/RISU_KERNEL_K1_MFST_C3_GENERATIVE_G1.json": "dda097cc8945555e9c475cc9656c07c78d8446bf",
+    "tools/risu_kernel_k1_mfst_c3_g1_generator.py": "d8ad16b607fdc8d86177c5fb3e593e662038eed1",
+    "tools/risu_kernel_k1_mfst_c3_g1_runner.py": "2af0c18a0772b8ab3a3fc4f01f88e6cf29903f80",
+    "tools/risu_kernel_k1_mfst_c3_g1_aggregate.py": "87bcdb94fc775153c27a122dd4ba63ea2b83bf34",
+    ".github/workflows/k1-c3-g1-generative-crossed.yml": "c3df65cde663395b6421a700f2d7eccec71beabb"
+  },
+  "pinned_existing_science_blobs": {
+    "tools/risu_kernel_k1_mfst_c3_crossed_gate.py": "14d2a921db962352a5e5983c45d51f6280aeb75f",
+    "kernel/k1_w8_cross_replay_driver.go": "17241706089e5ee7d29389cba4864221b728196c",
+    "kernel/k1_w7_model.py": "3c351fd445b704d693e05ba01efe9cffa6a2801b",
+    "kernel/k1_w7_exec.py": "8b1529dfbd8367e20776f0ab8ec3f5fa6559ca2a",
+    "kernel/k1_checker_w7.py": "c011532efbe9b6dcd6ae440705ce7b38c5dde93b",
+    "kernel/k1_w8_json.go": "4e770c8ef7882b23705bb7068bd877c2cd9c3543",
+    "kernel/k1_w8_model.go": "b53897a82255886d59b9dc05d7fbe8166aca1d35",
+    "kernel/k1_w8_exec.go": "64254a8537d3777848b1d3f8176260c5a1c312e7",
+    "kernel/k1_checker_w8.go": "f3e1e0c42e8106615b0aeeb2a85ceae3046e74a2",
+    "kernel/k1_checker_w5.py": "cf08aff1ce9f9506df37d597c2fc348bfefd6331",
+    "kernel/k1_checker_w6.go": "33464fe4132d6490b1a68cc71ef803d584e597f9"
+  },
+  "strongest_supported_science_claim": "After freezing the G1 seeds, scenario counts, metamorphic relations, negative families, coverage floors, and existing checker blobs before campaign execution, eight independent hosted shards executed 4,288 counted generated scenarios plus 1,024 accepted full-square support controls. Every closure-eligible generated profile satisfied the same bidirectional W7/W8 crossed-trace and exact-CBTNF refinement square and was independently reconstructed by qualified W5 and W6 from both producer paths; every precommitted metamorphic relation held; every negative mutation failed closed at its designated source, refinement, or downstream evidence boundary; and the exact frozen 62-oracle F0 gate remained green. No discrepancy was observed within the precommitted G1 generated distribution and attack families.",
+  "authority_state": {
+    "production_c3_proof_kind_created": false,
+    "k1_mediated_refinement_v1_is_production_authority": false,
+    "c3_preservation_authority_created": false,
+    "native_program_binding_created": false,
+    "arbitrary_native_refinement_proved": false,
+    "absence_of_all_common_mode_bugs_proved": false,
+    "semantic_kernel_changed": false,
+    "qualified_c2_modified": false,
+    "w7_or_w8_modified": false
+  },
+  "nonclaims": [
+    "G1 is strong falsification evidence, not a proof that no common-mode bug exists.",
+    "Because ordinary generated profiles use cross-consistency rather than a third complete reference interpreter as their trace oracle, a semantically identical bug shared by W7 and W8 could in principle survive; precommitted metamorphic and negative relations reduce but do not eliminate that risk.",
+    "G1 does not prove arbitrary native binaries, containers, operating systems, cloud services, or agent stacks refine the MFST profile.",
+    "G1 does not add ambient capabilities, concurrency, unbounded nondeterminism, remote attestation, or hardware trust.",
+    "Ordered trace fidelity remains a C3 refinement obligation before the explicit K1 set projection and is not added to K1 semantics.",
+    "This science anchor does not by itself qualify C3 or create preservation authority."
+  ],
+  "next_gate": "Attack the remaining common-mode risk with an orthogonal bounded reference lane: either an independently specified tiny executable oracle for a deliberately smaller MFST sublanguage or exhaustive small-model enumeration whose expected traces are derived without W7/W8 code, then run W7/W8 crossed replay and W5/W6 reconstruction against those externally derived traces before final qualification."
+}
