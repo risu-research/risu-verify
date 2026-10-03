@@ -1,0 +1,70 @@
+name: K1 C3 R0 W9 reference freeze
+
+on:
+  push:
+    branches: [k1-closure-c3-r0-reference]
+    paths:
+      - "protocols/RISU_KERNEL_K1_MFST_C3_REFERENCE_R0.json"
+      - "kernel/k1_checker_w9_reference.js"
+      - ".github/workflows/k1-c3-r0-w9-reference.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  reference-only:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Pin prospective R0 protocol and W9 source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object protocols/RISU_KERNEL_K1_MFST_C3_REFERENCE_R0.json)" = "6e9059a95242db58b94cecd4bca3ae95d75f4a47"
+          test "$(git hash-object kernel/k1_checker_w9_reference.js)" = "8f2a37ac7ce0c1886b173b5e258f5ed4b149e64e"
+
+      - name: Enforce W9 implementation independence
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs = require('fs');
+          const src = fs.readFileSync('kernel/k1_checker_w9_reference.js','utf8');
+          const req = [...src.matchAll(/require\(["']([^"']+)["']\)/g)].map(x => x[1]).sort();
+          const allowed = ['crypto','fs'];
+          if (JSON.stringify(req) !== JSON.stringify(allowed)) {
+            throw new Error('unexpected W9 dependencies: ' + JSON.stringify(req));
+          }
+          for (const bad of ['child_process','spawn(','exec(','k1_w7_model','k1_w7_exec','k1_w8_model','k1_w8_exec','k1_checker_w5','k1_checker_w6']) {
+            if (src.includes(bad)) throw new Error('forbidden W9 dependency token: ' + bad);
+          }
+          console.log('R0_W9_INDEPENDENCE_PASS', JSON.stringify(req));
+          NODE
+
+      - name: Compute exhaustive reference answers before any W7 W8 comparison
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build/r0
+          node kernel/k1_checker_w9_reference.js             --out build/r0/r0-w9-reference.jsonl             --summary build/r0/r0-w9-summary.json
+          test "$(wc -l < build/r0/r0-w9-reference.jsonl)" -eq 18432
+          node - <<'NODE'
+          const fs=require('fs');
+          const s=JSON.parse(fs.readFileSync('build/r0/r0-w9-summary.json','utf8'));
+          if (s.descriptor_count !== 18432) throw new Error('descriptor count');
+          if (s.point_trace_count !== 73728) throw new Error('point trace count');
+          if (s.internal_dual_evaluator !== 'FORMULA_EQUALS_EXPLICIT_TRUTH_TABLE_FOR_ALL_73728_POINTS') throw new Error('dual evaluator');
+          if (s.authority_created !== false) throw new Error('authority');
+          console.log('R0_W9_SUMMARY_AUDIT_PASS', s.aggregate_digest);
+          NODE
+
+      - name: Upload pre-cross reference corpus
+        uses: actions/upload-artifact@v4
+        with:
+          name: r0-w9-reference
+          path: |
+            build/r0/r0-w9-reference.jsonl
+            build/r0/r0-w9-summary.json
+          if-no-files-found: error
+          retention-days: 30
