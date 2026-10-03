@@ -1,0 +1,65 @@
+{
+  "anchor_id": "risu.k1.mfst.c3.reference-r0.w9-pre-cross-anchor/v1",
+  "status": "W9_REFERENCE_FROZEN_BEFORE_R0_W7_W8_CROSSCHECK",
+  "reference_protocol_commit": "4d2a14b50cc72f5cd930cf35796fc97735cbcd16",
+  "first_w9_implementation_commit": "dc55b0691d8e94a06b0449b6eb854e7d00f947fe",
+  "first_w9_workflow_commit": "0a4c71affde2b36c8e17dfa27b70784d66c8d77c",
+  "preserved_failed_run": {
+    "run_id": 37162186282,
+    "job_id": 111317735280,
+    "failed_descriptor": "R0-00000",
+    "failed_point": "W0/X1",
+    "reason": "Independent explicit predicate truth table used wrong x/q index layout; formula evaluator and frozen protocol semantics disagreed.",
+    "w7_w8_crosscheck_had_run": false
+  },
+  "amendment_commit": "df4d71cc7ce48bd77600b50922676b3fae2ad160",
+  "corrected_reference_commit": "50e07c94951c777d90d339aec32d020bab282621",
+  "hosted_reference_run": {
+    "run_id": 37162304986,
+    "job_id": 111318079873,
+    "conclusion": "success",
+    "markers": [
+      "R0_W9_INDEPENDENCE_PASS [\"crypto\",\"fs\"]",
+      "R0_W9_REFERENCE_PASS 18432 73728 c731db89e79e75f4d22f38788aded1a9c9e70572467615da448b7e1c9ce93346",
+      "R0_W9_TRACE_LENGTHS {\"1\":9216,\"2\":27648,\"3\":27648,\"4\":9216}",
+      "R0_W9_BRANCH_OUTCOMES {\"false\":36864,\"true\":36864}",
+      "R0_W9_Q_AFTER {\"Q0\":39936,\"Q1\":33792}",
+      "AUTHORITY_CREATED false"
+    ]
+  },
+  "frozen_reference": {
+    "descriptor_count": 18432,
+    "point_trace_count": 73728,
+    "jsonl_sha256": "c731db89e79e75f4d22f38788aded1a9c9e70572467615da448b7e1c9ce93346",
+    "trace_length_histogram": {"1": 9216, "2": 27648, "3": 27648, "4": 9216},
+    "branch_outcome_histogram": {"false": 36864, "true": 36864},
+    "q_after_update_histogram": {"Q0": 39936, "Q1": 33792},
+    "internal_dual_reference_check": "FORMULA_EQUALS_EXPLICIT_TRUTH_TABLE_FOR_ALL_73728_POINTS"
+  },
+  "hosted_artifact": {
+    "artifact_id": 11286884930,
+    "zip_sha256": "365f3466593d3579eb191189ef237c5a3ef0c56352ba2facb71b2fec1557bb45",
+    "name": "r0-w9-reference"
+  },
+  "pinned_blobs": {
+    "protocols/RISU_KERNEL_K1_MFST_C3_REFERENCE_R0.json": "6e9059a95242db58b94cecd4bca3ae95d75f4a47",
+    "protocols/RISU_KERNEL_K1_MFST_C3_REFERENCE_R0_W9_AMENDMENT_001.json": "0e0d06bbfbb0915561277a2fc1652ebee038bf15",
+    "kernel/k1_checker_w9_reference.js": "d414ecaeca6d4bb99dbf915c37ce471a59d9b58a",
+    ".github/workflows/k1-c3-r0-w9-reference.yml": "89f5adbab6af046065f221303a1989df1fc974c0"
+  },
+  "temporal_separation": {
+    "descriptor_to_mfst_compiler_committed_before_this_anchor": false,
+    "r0_w7_w8_cross_runner_committed_before_this_anchor": false,
+    "r0_w7_w8_crosscheck_executed_before_this_anchor": false,
+    "meaning": "The expected reference answers and digest were frozen without running or consulting W7/W8 on the R0 descriptor population."
+  },
+  "authority_state": {
+    "production_c3_proof_kind_created": false,
+    "c3_preservation_authority_created": false,
+    "native_binding_created": false,
+    "semantic_kernel_changed": false,
+    "qualified_c2_modified": false,
+    "w7_w8_modified": false
+  },
+  "next_gate": "Freeze an R0 crosscheck protocol, then introduce a non-authoritative descriptor-to-MFST compiler and compare every compiled descriptor against this exact W9 reference root using W7 direct, W8 direct, bidirectional crossed replay, and independent W5/W6 downstream reconstruction."
+}
