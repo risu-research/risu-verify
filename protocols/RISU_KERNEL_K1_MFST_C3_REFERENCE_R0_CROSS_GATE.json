@@ -1,0 +1,85 @@
+{
+  "gate_id": "risu.k1.mfst.c3.reference-r0.cross-gate/v1",
+  "status": "FROZEN_PROSPECTIVE_AFTER_W9_REFERENCE_BEFORE_COMPILER_IMPLEMENTATION",
+  "w9_pre_cross_anchor_commit": "cb3ed0986cdc20dc4a3aeb48ca1104f58ac7c9f5",
+  "frozen_w9_reference_sha256": "c731db89e79e75f4d22f38788aded1a9c9e70572467615da448b7e1c9ce93346",
+  "descriptor_count": 18432,
+  "point_trace_count": 73728,
+  "sharding": {
+    "shards": 16,
+    "descriptors_per_shard": 1152,
+    "rule": "shard i owns zero-based descriptor indices [i*1152,(i+1)*1152) exactly"
+  },
+  "compiler_independence": [
+    "The descriptor-to-MFST compiler has no reference authority and must not import or call W7, W8, W5, W6, W9, G1 generator code, crossed-gate code, C2 code, or any RISU parser/executor/canonicalizer.",
+    "The compiler implements only the frozen descriptor_to_mfst_compilation_contract from RISU_KERNEL_K1_MFST_C3_REFERENCE_R0.json.",
+    "The compiler must not compute expected traces, expected K1 relations, target IDs, graph IDs, trace IDs, or preservation verdicts.",
+    "A compiler error is expected to manifest as a W9 mismatch even if W7 and W8 agree with each other."
+  ],
+  "per_descriptor_required_square": [
+    "Regenerate the exact W9 corpus using the pinned W9 source and reject the whole run unless its aggregate SHA-256 equals c731db89e79e75f4d22f38788aded1a9c9e70572467615da448b7e1c9ce93346 before selecting any shard records.",
+    "Compile exactly one MFST profile from the frozen descriptor.",
+    "W7 direct accepts and its point->ordered-payload trace map equals W9 exactly.",
+    "W8 direct accepts and its point->ordered-payload trace map equals W9 exactly.",
+    "W7 direct trace map equals W8 direct trace map.",
+    "W7 and W8 generate byte-identical CBTNF-v1 and byte-identical C2 artifact JSON.",
+    "W8 replay of exact W7-generated CBTNF-v1 equals W9 exactly.",
+    "W7 replay of exact W8-generated CBTNF-v1 equals W9 exactly.",
+    "W7 and W8 project the same K1 REALIZE set.",
+    "W5 reconstruction from W7 producer path equals the direct K1 projection.",
+    "W6 reconstruction from W7 producer path equals the direct K1 projection.",
+    "W5 reconstruction from W8 producer path equals the direct K1 projection.",
+    "W6 reconstruction from W8 producer path equals the direct K1 projection.",
+    "No descriptor is skipped because two descriptors happen to be behaviorally equivalent."
+  ],
+  "common_mode_veto_controls": [
+    {
+      "id": "R0-VETO-PREDICATE-FLIP",
+      "descriptor_id": "R0-00001",
+      "mutation": "Compile X_EQ0 as X_EQ1 while leaving all effect sequences unchanged.",
+      "required": "The ordinary W7/W8 crossed square and W5/W6 downstream reconstruction remain internally consistent for the mutated compiled object, but W9 exact trace comparison vetoes it."
+    },
+    {
+      "id": "R0-VETO-PREFIX-DROP",
+      "descriptor_id": "R0-00065",
+      "mutation": "Drop the required E3 prefix effect.",
+      "required": "The ordinary W7/W8 crossed square and W5/W6 downstream reconstruction remain internally consistent for the mutated compiled object, but W9 exact trace comparison vetoes it."
+    },
+    {
+      "id": "R0-VETO-EFFECT-ORDER",
+      "descriptor_id": "R0-00017",
+      "mutation": "Compile the true branch AB as BA.",
+      "required": "The ordinary W7/W8 crossed square and W5/W6 downstream reconstruction remain internally consistent for the mutated compiled object, but W9 ordered-trace comparison vetoes it even though the K1 set projection can remain identical."
+    },
+    {
+      "id": "R0-VETO-TABLE-ROW",
+      "descriptor_id": "R0-04865",
+      "mutation": "In XOR_QX_TABLE, change the (q=v1,x=v1) result from v0 to v1.",
+      "required": "The ordinary W7/W8 crossed square and W5/W6 downstream reconstruction remain internally consistent for the mutated compiled object, but W9 exact trace comparison vetoes it."
+    }
+  ],
+  "aggregate_requirements": {
+    "exact_successful_descriptor_count": 18432,
+    "exact_successful_point_trace_comparisons": 73728,
+    "exact_successful_shard_count": 16,
+    "w9_mismatches": 0,
+    "w7_w8_direct_disagreements": 0,
+    "cross_replay_disagreements": 0,
+    "w5_w6_downstream_disagreements": 0,
+    "common_mode_veto_controls_passed": 4,
+    "authority_created": false
+  },
+  "campaign_integrity": [
+    "Every shard summary binds its exact descriptor range, W9 root, compiler blob, frozen checker blobs, count, and deterministic digest.",
+    "Aggregate fails if any shard is missing, overlaps, has a gap, reports a different W9 root, or has any nonzero mismatch counter.",
+    "The four common-mode veto controls are separate from the 18,432 valid descriptor count.",
+    "The original F0 62-oracle gate and G1 4,288-scenario gate remain scientifically separate; R0 supplements rather than replaces them."
+  ],
+  "promotion_effect": "A green R0 cross gate provides an orthogonal exhaustive finite-reference result against common-mode W7/W8 semantic error in the exact R0 sublanguage. It still does not create a production proof kind or C3 preservation authority.",
+  "nonclaims": [
+    "R0 does not prove correctness of W7/W8 outside the frozen sublanguage.",
+    "R0 does not cover loops, multiple state cells, multiple user inputs, larger domains, unbounded execution, concurrency, nondeterminism, ambient capabilities, native code, or remote attestation.",
+    "R0 does not prove absence of all implementation bugs.",
+    "The descriptor compiler itself remains non-authoritative; agreement with the frozen W9 reference is what validates its behavior over the exhaustive R0 population."
+  ]
+}
