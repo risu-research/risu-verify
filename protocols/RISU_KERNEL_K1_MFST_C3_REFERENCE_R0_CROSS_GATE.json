@@ -53,7 +53,7 @@
     },
     {
       "id": "R0-VETO-TABLE-ROW",
-      "descriptor_id": "R0-04865",
+      "descriptor_id": "R0-11009",
       "mutation": "In XOR_QX_TABLE, change the (q=v1,x=v1) result from v0 to v1.",
       "required": "The ordinary W7/W8 crossed square and W5/W6 downstream reconstruction remain internally consistent for the mutated compiled object, but W9 exact trace comparison vetoes it."
     }
