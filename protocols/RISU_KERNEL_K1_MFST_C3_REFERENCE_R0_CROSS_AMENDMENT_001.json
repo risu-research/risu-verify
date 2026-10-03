@@ -1,0 +1,26 @@
+{
+  "amendment_id": "risu.k1.mfst.c3.reference-r0.cross-amendment-001",
+  "status": "PRE_EXECUTION_CONTROL_REACHABILITY_CORRECTION",
+  "cross_gate_executed_before_correction": false,
+  "w7_w8_r0_population_observed_before_correction": false,
+  "original_control": {
+    "id": "R0-VETO-TABLE-ROW",
+    "descriptor_id": "R0-04865",
+    "problem": "With initial_q=C0, the intentionally corrupted XOR row (q=v1,x=v1) is unreachable, so the control would not necessarily create a W9-visible semantic mismatch."
+  },
+  "corrected_control": {
+    "descriptor_id": "R0-11009",
+    "decoded_axes": {
+      "initial_q": "C1",
+      "update": "XOR_QX_TABLE",
+      "predicate": "Q_EQ0",
+      "prefix": "NONE",
+      "true_trace": "A",
+      "false_trace": "B"
+    },
+    "reason": "At x=v1 the pre-update state is q=v1, so the corrupted XOR (v1,v1) row is exercised and changes the post-update branch result."
+  },
+  "descriptor_space_changed": false,
+  "w9_reference_changed": false,
+  "authority_created": false
+}
