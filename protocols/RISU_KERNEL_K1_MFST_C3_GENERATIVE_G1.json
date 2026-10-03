@@ -1,0 +1,153 @@
+{
+  "campaign_id": "risu.k1.mfst.c3.generative-g1/v1",
+  "title": "C3 G1 Large-Scale Crossed Differential and Generative Falsification Campaign",
+  "status": "FROZEN_PROSPECTIVE_BEFORE_G1_IMPLEMENTATION",
+  "parent_crossed_science_anchor_commit": "c0ad24a9f8078078865c67bcb509c11901b8d0ab",
+  "frozen_f0_anchor_commit": "f5b5ebefffb51c31ca0a098c07248ad6f141a393",
+  "qualified_c2_base_commit": "465ee71aba72f20737bf8713b2192a2029d79cdb",
+  "authority_state": {
+    "production_c3_proof_kind_created": false,
+    "c3_preservation_authority_created": false,
+    "native_binding_created": false,
+    "semantic_kernel_changed": false,
+    "qualified_c2_modified": false,
+    "w7_w8_modified": false
+  },
+  "frozen_checker_blobs": {
+    "kernel/k1_w7_model.py": "3c351fd445b704d693e05ba01efe9cffa6a2801b",
+    "kernel/k1_w7_exec.py": "8b1529dfbd8367e20776f0ab8ec3f5fa6559ca2a",
+    "kernel/k1_checker_w7.py": "c011532efbe9b6dcd6ae440705ce7b38c5dde93b",
+    "kernel/k1_w8_json.go": "4e770c8ef7882b23705bb7068bd877c2cd9c3543",
+    "kernel/k1_w8_model.go": "b53897a82255886d59b9dc05d7fbe8166aca1d35",
+    "kernel/k1_w8_exec.go": "64254a8537d3777848b1d3f8176260c5a1c312e7",
+    "kernel/k1_checker_w8.go": "f3e1e0c42e8106615b0aeeb2a85ceae3046e74a2",
+    "kernel/k1_checker_w5.py": "cf08aff1ce9f9506df37d597c2fc348bfefd6331",
+    "kernel/k1_checker_w6.go": "33464fe4132d6490b1a68cc71ef803d584e597f9",
+    "kernel/k1_w8_cross_replay_driver.go": "17241706089e5ee7d29389cba4864221b728196c"
+  },
+  "generator_independence_rules": [
+    "The G1 profile generator must not import, copy, call, or introspect any W7 or W8 parser, validator, executor, canonicalizer, graph builder, trace builder, C2 normalizer, replay implementation, or target builder.",
+    "The generator may use only the frozen public C3 profile/wire rules, literal finite domains, and the six literal one-byte payloads already ALLOWed by the frozen F0 claim: 01, 02, 03, aa, bb, ff.",
+    "Expected direct traces for ordinary random profiles must not be computed by a hidden reference implementation. The crossed square is the executable differential oracle.",
+    "Metamorphic expectations must arise only from syntactic transformations whose required relation is stated in this frozen campaign before execution.",
+    "No generated failure may be deleted, skipped, xfailed, reseeded, or replaced merely to obtain a green campaign. Any semantic defect in this campaign requires a numbered pre-authority amendment that preserves the failing seed and scenario index."
+  ],
+  "crossed_square_required_for_every_closure_eligible_profile": [
+    "W7 direct C3 ordered trace map equals W8 direct C3 ordered trace map pointwise including payload order and multiplicity",
+    "W7-generated CBTNF-v1 bytes equal W8-generated CBTNF-v1 bytes exactly",
+    "W8 replay of the exact W7-generated CBTNF-v1 bytes equals the W7 direct ordered trace map",
+    "W7 replay of the exact W8-generated CBTNF-v1 bytes equals the W8 direct ordered trace map",
+    "W7 projected K1 REALIZE equals W8 projected K1 REALIZE",
+    "W5 reconstruction from W7-generated C2 evidence equals the direct C3 K1 projection",
+    "W6 reconstruction from W7-generated C2 evidence equals the direct C3 K1 projection",
+    "W5 reconstruction from W8-generated C2 evidence equals the direct C3 K1 projection",
+    "W6 reconstruction from W8-generated C2 evidence equals the direct C3 K1 projection"
+  ],
+  "campaign_shape": {
+    "shards": 8,
+    "seeds": [271828182, 314159265, 161803398, 141421356, 173205080, 223606797, 244948974, 264575131],
+    "per_shard": {
+      "structured_valid_full_square": 192,
+      "metamorphic_base_profiles": 64,
+      "metamorphic_transformations_per_base": 4,
+      "negative_fail_closed_mutations": 64,
+      "high_complexity_stress_full_square": 24
+    },
+    "totals": {
+      "structured_valid_full_square": 1536,
+      "metamorphic_transformed_profiles": 2048,
+      "negative_fail_closed_mutations": 512,
+      "high_complexity_stress_full_square": 192,
+      "generated_scenarios": 4288
+    }
+  },
+  "structured_valid_distribution": {
+    "boundary_slots": "0 through 3 user slots; domain sizes 2 through 4 when present; exact frozen two-world claim world set always retained",
+    "state_cells": "1 through 4 cells; finite domains 2 through 4; initialization may be const, declared input, or @world only when the exact destination domain is compatible",
+    "tables": "0 through 3 total finite tables; arity 1 through 3; exact Cartesian row coverage; table formal names independent of machine source names",
+    "operations": ["SET_CONST", "SET_FROM", "APPLY_TABLE", "EMIT_HEX"],
+    "control": ["HALT", "GOTO", "IF_EQ"],
+    "effects": "one through four ordered effects on each terminating point, with deliberate duplicate payload occurrences represented in a nonzero fraction",
+    "graph_families": ["straight line", "diamond branch", "nested branch", "state-progress bounded loop", "valid unreachable block"],
+    "allowed_payloads": ["01", "02", "03", "aa", "bb", "ff"],
+    "construction_rule": "ordinary valid profiles are terminating by construction rather than by consulting W7/W8 execution results"
+  },
+  "metamorphic_relations": [
+    {
+      "id": "G1-META-KEY-DECL-PERMUTE",
+      "transformation": "permute JSON object keys plus world/state/table/block declaration order and table row order only where the frozen wire declares order nonsemantic",
+      "required": ["both profiles full-square accept", "c3_semantic_id equal", "graph_id equal", "trace_map_id equal", "C2 bytes equal", "K1 REALIZE equal"]
+    },
+    {
+      "id": "G1-META-FORMAL-RENAME",
+      "transformation": "rename table formal arguments consistently without changing row tuple positions or APPLY_TABLE source bindings",
+      "required": ["both profiles full-square accept", "c3_semantic_id different", "ordered trace map equal", "C2 bytes equal", "K1 REALIZE equal"]
+    },
+    {
+      "id": "G1-META-UNREACHABLE-BLOCK",
+      "transformation": "insert a new syntactically valid unreachable block containing profile-valid operations only",
+      "required": ["both profiles full-square accept", "c3 source identity different", "c3_semantic_id different", "reachable ordered trace map equal", "C2 bytes equal", "K1 REALIZE equal"]
+    },
+    {
+      "id": "G1-META-EFFECT-ORDER-MULTIPLICITY",
+      "transformation": "on a generated multi-effect reachable block, either swap two adjacent distinct payloads or duplicate one payload occurrence without changing the underlying payload set when possible",
+      "required": ["both profiles full-square accept", "trace_map_id different", "C2 bytes different", "if the payload set is unchanged then K1 REALIZE equal"]
+    }
+  ],
+  "negative_mutation_families": [
+    "remove one required total-table tuple",
+    "duplicate one total-table tuple",
+    "insert one out-of-domain table tuple",
+    "bind APPLY_TABLE source whose exact domain differs from the formal domain",
+    "reference an undeclared input source",
+    "construct a zero-effect HALT path",
+    "construct an exact repeated block+full-state configuration after an emitted prefix",
+    "shrink a downstream C2 slot domain after source acceptance and re-sign C2 evidence",
+    "underbound downstream C2 gas",
+    "perturb generated C2 bytes while retaining stale artifact or target identity",
+    "inject a valid but non-ALLOWed payload and require the forbidden consequence to survive faithful reconstruction",
+    "add producer-style completeness/REALIZE/target assertions and require them to carry no authority"
+  ],
+  "minimum_coverage_over_1536_structured_valid_profiles": {
+    "profiles_with_zero_user_slots": 120,
+    "profiles_with_at_least_two_user_slots": 350,
+    "profiles_with_domain_size_at_least_three": 450,
+    "profiles_with_at_least_three_state_cells": 300,
+    "profiles_with_at_least_two_tables": 250,
+    "profiles_with_table_arity_at_least_two": 350,
+    "profiles_using_SET_CONST": 500,
+    "profiles_using_SET_FROM": 500,
+    "profiles_using_APPLY_TABLE": 500,
+    "profiles_using_IF_EQ": 700,
+    "profiles_using_GOTO": 350,
+    "profiles_with_multi_effect_trace": 700,
+    "profiles_with_duplicate_effect_occurrence": 180,
+    "profiles_with_valid_unreachable_block": 180,
+    "profiles_with_state_progress_loop": 180,
+    "profiles_using_world_as_explicit_source": 120
+  },
+  "stress_requirements_over_192_profiles": {
+    "minimum_boundary_points_observed": 48,
+    "minimum_state_cells_observed": 4,
+    "minimum_tables_observed": 3,
+    "minimum_table_arity_observed": 3,
+    "minimum_blocks_observed": 10,
+    "minimum_ordered_effects_in_one_trace_observed": 4,
+    "rule": "stress profiles must remain within qualified C2 program-byte and gas limits; explicit limit-overflow belongs to the negative lane and must fail closed"
+  },
+  "campaign_integrity": [
+    "Every shard writes a deterministic digest over seed, scenario IDs, exact generated source bytes, scenario class, and observed disposition.",
+    "The aggregate gate fails unless all eight expected shard digests are present and all precommitted scenario counts are exact.",
+    "Coverage counters are computed from generator construction metadata before checker execution, not inferred from successful checker outputs.",
+    "Any W7/W8 crash, timeout, malformed output, disagreement, replay mismatch, W5/W6 disagreement, skipped scenario, or missing shard is a campaign failure.",
+    "The 62 frozen F0 gate remains separately green and is not replaced by G1."
+  ],
+  "promotion_effect": "Passing G1 is additional non-authoritative falsification evidence only. It is necessary input to a later C3 qualification decision but does not itself create a production C3 proof kind or preservation authority.",
+  "nonclaims": [
+    "G1 does not prove absence of all common-mode bugs.",
+    "G1 does not prove arbitrary native programs refine MFST.",
+    "G1 does not add ambient capabilities, concurrency, unbounded nondeterminism, remote attestation, or hardware trust.",
+    "G1 does not change K1 semantics or qualified C2 semantics.",
+    "A green random campaign is evidence against the tested bug classes and generated distribution, not a universal correctness theorem."
+  ]
+}
