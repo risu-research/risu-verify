@@ -22,7 +22,7 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git hash-object protocols/RISU_KERNEL_K1_MFST_C3_REFERENCE_R0.json)" = "6e9059a95242db58b94cecd4bca3ae95d75f4a47"
-          test "$(git hash-object kernel/k1_checker_w9_reference.js)" = "8f2a37ac7ce0c1886b173b5e258f5ed4b149e64e"
+          test "$(git hash-object kernel/k1_checker_w9_reference.js)" = "d414ecaeca6d4bb99dbf915c37ce471a59d9b58a"
 
       - name: Enforce W9 implementation independence
         shell: bash

@@ -113,10 +113,10 @@ function updateTable(op, q, x) {
 function predTable(p, w, x, q) {
   const key = [w,x,q];
   const truth = {
-    X_EQ0:      [true,false,true,false,true,false,true,false],
-    X_EQ1:      [false,true,false,true,false,true,false,true],
-    Q_EQ0:      [true,true,false,false,true,true,false,false],
-    Q_EQ1:      [false,false,true,true,false,false,true,true],
+    X_EQ0:      [true,true,false,false,true,true,false,false],
+    X_EQ1:      [false,false,true,true,false,false,true,true],
+    Q_EQ0:      [true,false,true,false,true,false,true,false],
+    Q_EQ1:      [false,true,false,true,false,true,false,true],
     WORLD_EQ0:  [true,true,true,true,false,false,false,false],
     WORLD_EQ1:  [false,false,false,false,true,true,true,true],
   };
