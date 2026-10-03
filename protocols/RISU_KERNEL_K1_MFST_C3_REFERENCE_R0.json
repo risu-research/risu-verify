@@ -1,0 +1,154 @@
+{
+  "protocol_id": "risu.k1.mfst.c3.reference-r0/v1",
+  "title": "C3 R0 Orthogonal Exhaustive Small-Model Reference Lane",
+  "status": "FROZEN_PROSPECTIVE_BEFORE_REFERENCE_IMPLEMENTATION",
+  "parent_g1_science_anchor_commit": "22cc0df36661dbd7fac50d9b551d1e78505fc253",
+  "parent_g1_science_head_commit": "882253eecf26babedc4c3c1ceed470c6f895780e",
+  "qualified_c2_base_commit": "465ee71aba72f20737bf8713b2192a2029d79cdb",
+  "authority_state": {
+    "production_c3_proof_kind_created": false,
+    "c3_preservation_authority_created": false,
+    "native_binding_created": false,
+    "semantic_kernel_changed": false,
+    "qualified_c2_modified": false,
+    "w7_w8_modified": false
+  },
+  "scientific_purpose": "Attack the remaining W7/W8 common-mode semantic risk with an externally specified, deliberately smaller MFST sublanguage whose complete finite program space and exact ordered point traces are computed before any W7/W8 comparison.",
+  "reference_independence_rules": [
+    "The R0 reference evaluator must not import, call, parse, copy, introspect, or derive logic from W7, W8, W5, W6, the G1 generator, the crossed gate, any C2 normalizer, or any RISU parser/executor/canonicalizer.",
+    "The R0 reference evaluator consumes only an integer descriptor index and the frozen arrays and transition equations in this file; it never consumes generated MFST JSON.",
+    "Expected ordered payload traces must be computed and committed to a deterministic reference digest in a hosted W9-only run before the descriptor-to-MFST compiler or W7/W8 R0 crosscheck is introduced.",
+    "The descriptor-to-MFST compiler is a separate later component. Any compiler bug that changes descriptor meaning must therefore produce a W9 versus W7/W8 disagreement rather than changing the reference answer.",
+    "No failed descriptor may be removed, reseeded, renumbered, or reinterpreted after the W9-only reference digest is frozen."
+  ],
+  "fixed_boundary": {
+    "worlds": [
+      "w:sha256:1111111111111111111111111111111111111111111111111111111111111111",
+      "w:sha256:2222222222222222222222222222222222222222222222222222222222222222"
+    ],
+    "world_symbols": ["W0", "W1"],
+    "slot": {"name": "x", "domain": ["v0", "v1"], "symbols": ["X0", "X1"]},
+    "state": {"name": "q", "domain": ["v0", "v1"], "symbols": ["Q0", "Q1"]},
+    "point_order": ["W0/X0", "W0/X1", "W1/X0", "W1/X1"]
+  },
+  "descriptor_axes_in_exact_enumeration_order": {
+    "initial_q": ["C0", "C1", "X"],
+    "update": ["KEEP", "CONST0", "CONST1", "COPY_X", "NOT_Q_TABLE", "ID_Q_TABLE", "XOR_QX_TABLE", "AND_QX_TABLE"],
+    "predicate": ["X_EQ0", "X_EQ1", "Q_EQ0", "Q_EQ1", "WORLD_EQ0", "WORLD_EQ1"],
+    "prefix": ["NONE", "E3"],
+    "true_trace": ["A", "B", "AB", "BA", "AA", "BB", "ABA", "BAB"],
+    "false_trace": ["A", "B", "AB", "BA", "AA", "BB", "ABA", "BAB"]
+  },
+  "effect_alphabet": {
+    "A": ["01"],
+    "B": ["02"],
+    "AB": ["01", "02"],
+    "BA": ["02", "01"],
+    "AA": ["01", "01"],
+    "BB": ["02", "02"],
+    "ABA": ["01", "02", "01"],
+    "BAB": ["02", "01", "02"],
+    "prefix_E3": ["03"]
+  },
+  "reference_semantics": {
+    "bit_encoding": {"v0": 0, "v1": 1, "W0": 0, "W1": 1},
+    "initial_q": {
+      "C0": "q := 0",
+      "C1": "q := 1",
+      "X": "q := x"
+    },
+    "updates_are_applied_before_predicate": {
+      "KEEP": "q := q",
+      "CONST0": "q := 0",
+      "CONST1": "q := 1",
+      "COPY_X": "q := x",
+      "NOT_Q_TABLE": "q := 1 - q",
+      "ID_Q_TABLE": "q := q",
+      "XOR_QX_TABLE": "q := q XOR x",
+      "AND_QX_TABLE": "q := q AND x"
+    },
+    "predicate_after_update": {
+      "X_EQ0": "x == 0",
+      "X_EQ1": "x == 1",
+      "Q_EQ0": "q == 0",
+      "Q_EQ1": "q == 1",
+      "WORLD_EQ0": "world == W0",
+      "WORLD_EQ1": "world == W1"
+    },
+    "trace_equation": "expected_trace(point, descriptor) = ([03] iff prefix=E3 else []) concatenated with effect_alphabet[true_trace] if predicate is true, otherwise effect_alphabet[false_trace]",
+    "termination": "Every descriptor executes exactly one update phase, one predicate, one terminal branch, and HALT. Every point has at least one effect because all terminal trace symbols are nonempty."
+  },
+  "enumeration": {
+    "nesting": "for initial_q in listed order; for update; for predicate; for prefix; for true_trace; for false_trace innermost",
+    "descriptor_count": 18432,
+    "descriptor_id": "R0- followed by the zero-based enumeration index as exactly five decimal digits, from R0-00000 through R0-18431",
+    "boundary_points_per_descriptor": 4,
+    "expected_point_trace_count": 73728
+  },
+  "descriptor_to_mfst_compilation_contract": {
+    "wire": "risu.k1.c3.mfst/v1",
+    "claim_id": "claim:sha256:e4170f1652720fc49ac515418c905f1f374e6b1dbec0b711204f17e2eef3c016",
+    "boundary_worlds": "exact fixed two-world set above",
+    "boundary_slots": {"x": ["v0", "v1"]},
+    "single_state": "q with exact domain [v0,v1] and initial C0/C1/X mapped respectively to const v0 / const v1 / input x",
+    "entry_block": "contains the exact update operation, then optional EMIT_HEX 03 for E3, then one IF_EQ terminator corresponding to the frozen predicate",
+    "terminal_blocks": "T and F contain exactly the ordered EMIT_HEX sequence selected by true_trace or false_trace, then HALT",
+    "update_mapping": {
+      "KEEP": "no update op",
+      "CONST0": "SET_CONST q v0",
+      "CONST1": "SET_CONST q v1",
+      "COPY_X": "SET_FROM q <- input x",
+      "NOT_Q_TABLE": "one exact total unary table NOT with v0->v1 and v1->v0; APPLY_TABLE q <- NOT(q)",
+      "ID_Q_TABLE": "one exact total unary table ID with v0->v0 and v1->v1; APPLY_TABLE q <- ID(q)",
+      "XOR_QX_TABLE": "one exact total binary table XOR over q,x with standard Boolean XOR rows; APPLY_TABLE q <- XOR(q,x)",
+      "AND_QX_TABLE": "one exact total binary table AND over q,x with standard Boolean AND rows; APPLY_TABLE q <- AND(q,x)"
+    },
+    "predicate_mapping": {
+      "X_EQ0": "IF_EQ input x v0 T F",
+      "X_EQ1": "IF_EQ input x v1 T F",
+      "Q_EQ0": "IF_EQ state q v0 T F",
+      "Q_EQ1": "IF_EQ state q v1 T F",
+      "WORLD_EQ0": "IF_EQ input @world exact first world T F",
+      "WORLD_EQ1": "IF_EQ input @world exact second world T F"
+    },
+    "compiler_nonauthority": "The compiler has no oracle authority. The frozen W9 expected traces dominate any later compiled profile behavior."
+  },
+  "w9_reference_output_contract": {
+    "one_record_per_descriptor": true,
+    "record_fields": ["descriptor_id", "initial_q", "update", "predicate", "prefix", "true_trace", "false_trace", "point_traces"],
+    "point_trace_fields": ["point_symbol", "world_symbol", "x_symbol", "payloads"],
+    "serialization": "one canonical JSON object per line, UTF-8 LF, object keys lexicographically sorted, no insignificant whitespace",
+    "aggregate_digest": "SHA-256 over the exact concatenation of all 18,432 canonical JSONL record bytes including final LF",
+    "required_pre_cross_freeze": ["W9 source blob SHA", "exact descriptor count 18432", "exact point-trace count 73728", "aggregate digest", "per-axis frequency audit", "trace-length histogram"]
+  },
+  "later_crosscheck_obligations_for_every_descriptor": [
+    "Compiled MFST is accepted by both frozen W7 and frozen W8.",
+    "W7 direct point->ordered-payload trace map equals the frozen W9 point->ordered-payload trace map exactly.",
+    "W8 direct point->ordered-payload trace map equals the frozen W9 point->ordered-payload trace map exactly.",
+    "W7 direct equals W8 direct.",
+    "W7-generated CBTNF bytes equal W8-generated CBTNF bytes exactly.",
+    "W8 replay of exact W7 CBTNF equals W9 expected ordered traces.",
+    "W7 replay of exact W8 CBTNF equals W9 expected ordered traces.",
+    "W7 projected K1 REALIZE equals W8 projected K1 REALIZE.",
+    "Qualified W5 and W6 independently reconstruct each producer path and equal the direct C3 K1 projection."
+  ],
+  "reference_self_audits_frozen_before_implementation": [
+    "Descriptor IDs are contiguous and unique from 0 through 18431.",
+    "Every axis tuple appears exactly once.",
+    "Each initial_q value occurs exactly 6144 times.",
+    "Each update value occurs exactly 2304 times.",
+    "Each predicate value occurs exactly 3072 times.",
+    "Each prefix value occurs exactly 9216 times.",
+    "Each true_trace symbol occurs exactly 2304 times and each false_trace symbol occurs exactly 2304 times.",
+    "Every descriptor has exactly four point traces in the frozen point order.",
+    "Every expected point trace is nonempty and contains only 01,02,03.",
+    "No W7/W8/C2/K1 consequence hashing is needed to compute W9 expected traces."
+  ],
+  "promotion_effect": "R0 passing is non-authoritative falsification evidence against shared W7/W8 semantic bugs in this exact bounded sublanguage. It does not itself qualify C3 or create preservation authority.",
+  "nonclaims": [
+    "R0 does not prove W7/W8 are correct outside this finite sublanguage.",
+    "R0 does not prove absence of all common-mode bugs.",
+    "R0 does not cover arbitrary state cardinality, arbitrary input cardinality, multiple state cells, multiple input slots, loops, unreachable blocks, ambient effects, concurrency, nondeterminism, exceptions, timeouts, or native execution.",
+    "R0 does not change K1 or C2 semantics and does not create a new production proof kind."
+  ]
+}
