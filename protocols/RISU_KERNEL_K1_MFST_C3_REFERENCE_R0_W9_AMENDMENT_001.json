@@ -1,0 +1,31 @@
+{
+  "amendment_id": "risu.k1.mfst.c3.reference-r0.w9-amendment-001",
+  "status": "PRE_CROSS_REFERENCE_IMPLEMENTATION_CORRECTION",
+  "protocol_semantics_changed": false,
+  "descriptor_space_changed": false,
+  "w7_w8_observed_before_fix": false,
+  "failed_hosted_run": 37162186282,
+  "failed_job": 111317735280,
+  "failed_commit": "0a4c71affde2b36c8e17dfa27b70784d66c8d77c",
+  "failure": {
+    "descriptor_id": "R0-00000",
+    "point": "W0/X1",
+    "formula_predicate": false,
+    "tabular_predicate": true,
+    "initial_q": "C0",
+    "update": "KEEP",
+    "predicate": "X_EQ0"
+  },
+  "root_cause": "The explicit truth-table evaluator used index w*4+x*2+q but its X_EQ and Q_EQ arrays had been laid out as if x and q occupied the opposite positions. The Boolean equation evaluator matched the frozen protocol; the independent tabular evaluator did not.",
+  "permitted_fix": "Correct only the six explicit predicate truth arrays to the frozen index order (w,x,q). Do not change protocol axes, transition equations, descriptor count, enumeration order, effect traces, or any W7/W8 code.",
+  "correct_truth_arrays_in_index_order_w0x0q0_w0x0q1_w0x1q0_w0x1q1_w1x0q0_w1x0q1_w1x1q0_w1x1q1": {
+    "X_EQ0": [true,true,false,false,true,true,false,false],
+    "X_EQ1": [false,false,true,true,false,false,true,true],
+    "Q_EQ0": [true,false,true,false,true,false,true,false],
+    "Q_EQ1": [false,true,false,true,false,true,false,true],
+    "WORLD_EQ0": [true,true,true,true,false,false,false,false],
+    "WORLD_EQ1": [false,false,false,false,true,true,true,true]
+  },
+  "authority_created": false,
+  "note": "This amendment preserves the first W9-only failure and is committed before the corrected reference evaluator is run. No descriptor-to-MFST compiler or W7/W8 R0 crosscheck existed at the time of correction."
+}
