@@ -1,0 +1,80 @@
+name: K1 C3 refinement certificate C0 adversarial gate
+
+on:
+  push:
+    branches: [k1-closure-c3-certificate-c0]
+    paths:
+      - 'protocols/RISU_KERNEL_K1_MFST_C3_REFINEMENT_CERTIFICATE_C0*.json'
+      - 'kernel/k1_checker_w10_refinement_cert.py'
+      - 'kernel/k1_checker_w11_refinement_cert.go'
+      - 'tools/risu_kernel_k1_mfst_c3_cert_c0_fixture.py'
+      - 'tools/risu_kernel_k1_mfst_c3_cert_c0_gate.py'
+      - '.github/workflows/k1-c3-certificate-c0-gate.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  c0-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Pin prior science and checker implementations
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor c0894d0a31974b42fdeb85fcd935240731d18391 HEAD
+          test "$(git hash-object protocols/RISU_KERNEL_K1_MFST_C3_CROSSED_F0_SCIENCE_ANCHOR.json)" = "38a91987aa48e7ab5b0f7c35b281986666ad95b5"
+          test "$(git hash-object protocols/RISU_KERNEL_K1_MFST_C3_G1_SCIENCE_ANCHOR.json)" = "5950594819baed636c94aea036d5551359150d74"
+          test "$(git hash-object protocols/RISU_KERNEL_K1_MFST_C3_REFERENCE_R0_SCIENCE_ANCHOR.json)" = "e9409914ef4dd0a67d2f4ae22687da846b339a3f"
+          test "$(git hash-object protocols/RISU_KERNEL_K1_MFST_C3_REFINEMENT_CERTIFICATE_C0.json)" = "9d8b8b87ffa58fca5246a0dfcb9764859eedc3be"
+          test "$(git hash-object protocols/RISU_KERNEL_K1_MFST_C3_REFINEMENT_CERTIFICATE_C0_AMENDMENT_001.json)" = "cfcda7f8124aa8b8b867b7187952e21a56a3db3a"
+          test "$(git hash-object kernel/k1_w7_model.py)" = "3c351fd445b704d693e05ba01efe9cffa6a2801b"
+          test "$(git hash-object kernel/k1_w7_exec.py)" = "8b1529dfbd8367e20776f0ab8ec3f5fa6559ca2a"
+          test "$(git hash-object kernel/k1_checker_w7.py)" = "c011532efbe9b6dcd6ae440705ce7b38c5dde93b"
+          test "$(git hash-object kernel/k1_w8_json.go)" = "4e770c8ef7882b23705bb7068bd877c2cd9c3543"
+          test "$(git hash-object kernel/k1_w8_model.go)" = "b53897a82255886d59b9dc05d7fbe8166aca1d35"
+          test "$(git hash-object kernel/k1_w8_exec.go)" = "64254a8537d3777848b1d3f8176260c5a1c312e7"
+          test "$(git hash-object kernel/k1_checker_w8.go)" = "f3e1e0c42e8106615b0aeeb2a85ceae3046e74a2"
+          test "$(git hash-object kernel/k1_checker_w5.py)" = "cf08aff1ce9f9506df37d597c2fc348bfefd6331"
+          test "$(git hash-object kernel/k1_checker_w6.go)" = "33464fe4132d6490b1a68cc71ef803d584e597f9"
+          test "$(git hash-object kernel/k1_checker_w10_refinement_cert.py)" = "1ae9cb6a2a1fd134c53f7c79cbf4290c023889e1"
+          test "$(git hash-object kernel/k1_checker_w11_refinement_cert.go)" = "1434a9255d42ad9e9b8d57f9e1c1fa1d47c6a8a0"
+          test "$(git hash-object tools/risu_kernel_k1_mfst_c3_cert_c0_fixture.py)" = "0c56e6010372ec96e5d3c378997390941e73a0db"
+          test "$(git hash-object tools/risu_kernel_k1_mfst_c3_cert_c0_gate.py)" = "a632d7f2f03edd838f1cb41af668d64e9781692d"
+
+      - name: Compile independent Python lanes
+        run: |
+          python3 -m py_compile             kernel/k1_checker_w10_refinement_cert.py             tools/risu_kernel_k1_mfst_c3_cert_c0_fixture.py             tools/risu_kernel_k1_mfst_c3_cert_c0_gate.py
+
+      - name: Build frozen W8 and qualified W6
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build
+          cd kernel
+          test -z "$(gofmt -d k1_w8_json.go k1_w8_model.go k1_w8_exec.go k1_checker_w8.go)"
+          GO111MODULE=off CGO_ENABLED=0 go vet k1_w8_json.go k1_w8_model.go k1_w8_exec.go k1_checker_w8.go
+          CGO_ENABLED=0 go build -o ../build/k1_checker_w8 k1_w8_json.go k1_w8_model.go k1_w8_exec.go k1_checker_w8.go
+          cd ..
+          test -z "$(gofmt -d kernel/k1_checker_w6.go)"
+          GO111MODULE=off CGO_ENABLED=0 go vet kernel/k1_checker_w6.go
+          CGO_ENABLED=0 go build -o build/k1_checker_w6 kernel/k1_checker_w6.go
+
+      - name: Build independent W11 without source mutation
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(gofmt -d kernel/k1_checker_w11_refinement_cert.go)"
+          GO111MODULE=off CGO_ENABLED=0 go vet kernel/k1_checker_w11_refinement_cert.go
+          CGO_ENABLED=0 go build -o build/k1_checker_w11_refinement_cert kernel/k1_checker_w11_refinement_cert.go
+
+      - name: Execute frozen 38-negative plus 8-positive C0 battery
+        run: |
+          python3 tools/risu_kernel_k1_mfst_c3_cert_c0_gate.py | tee /tmp/c0-gate.log
+          grep -F "C0_REFINEMENT_CERTIFICATE_GATE_PASS 46" /tmp/c0-gate.log
+          grep -F "AUTHORITY_CREATED false" /tmp/c0-gate.log
