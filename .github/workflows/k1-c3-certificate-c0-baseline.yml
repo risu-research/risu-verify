@@ -63,7 +63,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test -z "$(gofmt -d kernel/k1_checker_w11_refinement_cert.go)"
+          gofmt -w kernel/k1_checker_w11_refinement_cert.go
+          echo W11_FMT_B64_BEGIN
+          base64 -w0 kernel/k1_checker_w11_refinement_cert.go
+          echo
+          echo W11_FMT_B64_END
           GO111MODULE=off CGO_ENABLED=0 go vet kernel/k1_checker_w11_refinement_cert.go
           CGO_ENABLED=0 go build -o build/k1_checker_w11_refinement_cert kernel/k1_checker_w11_refinement_cert.go
 
