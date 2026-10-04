@@ -1,0 +1,286 @@
+{
+  "protocol_id": "RISU_KERNEL_K1_MFST_C3_REFINEMENT_CERTIFICATE_C0",
+  "status": "PROSPECTIVE_FROZEN_BEFORE_W10_W11_IMPLEMENTATION",
+  "parent": {
+    "branch": "k1-closure-c3-r0-reference",
+    "commit": "c0894d0a31974b42fdeb85fcd935240731d18391",
+    "r0_science_head": "9e938e26e79aeb08424471377b5280af412338e5",
+    "qualified_c2_base": "465ee71aba72f20737bf8713b2192a2029d79cdb"
+  },
+  "goal": "Falsify and then independently check a transportable C3 refinement-certificate object without allowing the certificate, producer assertions, or one checker to become new authority. The certificate is a commitment to verifier-rederived facts, not a source of those facts.",
+  "candidate_wire": {
+    "wire": "risu.k1.c3.refinement-certificate/v1",
+    "kind": "mediated_refinement_preservation",
+    "verification_profile": "risu.k1.c3.refinement-verification/v1",
+    "exact_top_level_keys": [
+      "wire",
+      "kind",
+      "verification_profile",
+      "claim_id",
+      "c3_source_id",
+      "c3_semantic_id",
+      "reachable_graph_id",
+      "ordered_trace_map_id",
+      "c2_program_sha256",
+      "c2_artifact_id",
+      "c2_target_id",
+      "projected_realize",
+      "c2_certificate_id",
+      "certificate_id"
+    ],
+    "authority_rule": "Every field other than wire/kind/version is diagnostic transport until independently rederived. No boolean agreement, complete, closed, safe, preservation, authority, reviewer, or producer verdict field is admitted."
+  },
+  "id_transcript": {
+    "domain": "RISU-K1-C3-REFINEMENT-CERT-V1\\0",
+    "netstring": "ASCII byte length + ':' + exact UTF-8 bytes + ','",
+    "relation": "projected_realize is a mathematical set of canonical (world,consequence) pairs; transcript sorts pairs lexicographically and rejects duplicates",
+    "order": [
+      "ASCII('V') || netstring(verification_profile)",
+      "ASCII('C') || netstring(claim_id)",
+      "ASCII('S') || netstring(c3_source_id)",
+      "ASCII('M') || netstring(c3_semantic_id)",
+      "ASCII('G') || netstring(reachable_graph_id)",
+      "ASCII('H') || netstring(ordered_trace_map_id)",
+      "ASCII('P') || netstring(c2_program_sha256)",
+      "ASCII('A') || netstring(c2_artifact_id)",
+      "ASCII('T') || netstring(c2_target_id)",
+      "ASCII('R') || netstring(pair_count) || for sorted pair: ASCII('r') || netstring(world) || netstring(consequence)",
+      "ASCII('D') || netstring(c2_certificate_id)"
+    ],
+    "certificate_id": "c3cert:sha256: + SHA-256(domain_bytes || transcript)"
+  },
+  "independent_checker_plan": {
+    "w10": {
+      "language": "Python standard library",
+      "role": "strictly parse certificate independently; execute frozen W7 and W8 as separate subprocesses; compare independently generated exact C2 bytes; derive a fresh C2 W0 certificate from rederived relation/artifact; execute frozen W5 and W6; recompute C3 certificate transcript without importing W11"
+    },
+    "w11": {
+      "language": "Go standard library",
+      "role": "independently parse/validate certificate and recompute its transcript; orchestrate the same frozen W7/W8/W5/W6 evidence chain without importing or invoking W10; independently construct the C2 W0 certificate transcript/object"
+    },
+    "shared_authority_code": false,
+    "checker_disagreement": "fatal; no certificate acceptance",
+    "subprocess_rule": "W10/W11 may invoke the already-frozen semantic checkers as evidence engines but may not trust producer-supplied checker outputs or precomputed agreement flags.",
+    "exact_bytes_rule": "Supplied C2 program and artifact bytes must be byte-identical to both W7- and W8-generated outputs before downstream checking.",
+    "implementation_pins": "Hosted gate must pin W7/W8/W5/W6 exact Git blob identities from the R0 science anchor before either certificate checker runs."
+  },
+  "derived_chain": [
+    "read claim, exact C3 profile bytes, candidate C3 certificate bytes, exact C2 program bytes, exact C2 artifact bytes",
+    "W7 and W8 independently rederive c3_source_id, semantic_id, graph_id, ordered trace_map_id, projected REALIZE, CBTNF bytes, artifact bytes, target_id",
+    "require all corresponding W7/W8 facts equal and require supplied program/artifact bytes equal both independent outputs exactly",
+    "construct a fresh C2 W0 preservation certificate from the independently rederived relation and exact artifact; producer C2 certificate input is forbidden",
+    "W5 and W6 independently reexecute exact program over exact finite boundary and require exact relation/target/certificate agreement",
+    "only after the full chain succeeds compare every transported C3 certificate field to rederived values and recompute c3 certificate_id",
+    "require W10 and W11 to reach the same verdict and independently recomputed certificate_id"
+  ],
+  "precommitted_negative_vectors": [
+    [
+      "C0-01",
+      "stale exact-source id after representation-only profile byte change"
+    ],
+    [
+      "C0-02",
+      "stale semantic id after semantic profile change"
+    ],
+    [
+      "C0-03",
+      "stale reachable graph id"
+    ],
+    [
+      "C0-04",
+      "stale ordered trace-map id"
+    ],
+    [
+      "C0-05",
+      "effect reorder laundering that preserves K1 REALIZE set"
+    ],
+    [
+      "C0-06",
+      "effect duplicate insertion that preserves K1 REALIZE set"
+    ],
+    [
+      "C0-07",
+      "duplicate deletion that preserves K1 REALIZE set"
+    ],
+    [
+      "C0-08",
+      "C2 boundary shrink that is independently valid to W5/W6 as a smaller capsule but not faithful to source scope"
+    ],
+    [
+      "C0-09",
+      "behavior-equivalent but non-CBTNF C2 program substitution"
+    ],
+    [
+      "C0-10",
+      "stale C2 program SHA"
+    ],
+    [
+      "C0-11",
+      "stale C2 artifact id"
+    ],
+    [
+      "C0-12",
+      "stale C2 target id"
+    ],
+    [
+      "C0-13",
+      "projected REALIZE omission"
+    ],
+    [
+      "C0-14",
+      "projected REALIZE surplus"
+    ],
+    [
+      "C0-15",
+      "stale C2 certificate id"
+    ],
+    [
+      "C0-16",
+      "claim substitution"
+    ],
+    [
+      "C0-17",
+      "coherent splice: source bindings from profile A + complete lowering bundle from profile B"
+    ],
+    [
+      "C0-18",
+      "old certificate_id after any otherwise-valid field mutation"
+    ],
+    [
+      "C0-19",
+      "attacker recomputes certificate_id over a false transported field; rederivation must still reject"
+    ],
+    [
+      "C0-20",
+      "producer adds agreement=true"
+    ],
+    [
+      "C0-21",
+      "producer adds preservation=true / authority=true / closed=true / complete=true"
+    ],
+    [
+      "C0-22",
+      "duplicate certificate JSON key"
+    ],
+    [
+      "C0-23",
+      "malformed identifier namespace or digest length"
+    ],
+    [
+      "C0-24",
+      "duplicate projected REALIZE pair"
+    ],
+    [
+      "C0-25",
+      "profile with stale cert after source-byte-only permutation; semantic equality must not erase exact-source binding"
+    ],
+    [
+      "C0-26",
+      "artifact JSON byte reserialization with same semantics; exact artifact binding must change and stale certificate must reject"
+    ],
+    [
+      "C0-27",
+      "gas mutation / underbound artifact"
+    ],
+    [
+      "C0-28",
+      "program byte mutation plus correspondingly refreshed raw SHA but stale source-derived lowering"
+    ],
+    [
+      "C0-29",
+      "W7 unavailable or non-success -> fail closed"
+    ],
+    [
+      "C0-30",
+      "W8 unavailable or non-success -> fail closed"
+    ],
+    [
+      "C0-31",
+      "W5 unavailable or non-success -> fail closed"
+    ],
+    [
+      "C0-32",
+      "W6 unavailable or non-success -> fail closed"
+    ],
+    [
+      "C0-33",
+      "W10/W11 verdict or certificate-id disagreement -> fail closed"
+    ],
+    [
+      "C0-34",
+      "pinned W7/W8 implementation blob drift before gate"
+    ],
+    [
+      "C0-35",
+      "pinned W5/W6 implementation blob drift before gate"
+    ],
+    [
+      "C0-36",
+      "certificate checker receives producer-generated checker result JSON instead of rerunning evidence engines"
+    ],
+    [
+      "C0-37",
+      "trace commitment from a different claim with coincident payloads"
+    ],
+    [
+      "C0-38",
+      "unknown top-level or nested authority-bearing field injection"
+    ]
+  ],
+  "precommitted_positive_controls": [
+    [
+      "C0-P01",
+      "baseline exact certificate"
+    ],
+    [
+      "C0-P02",
+      "certificate JSON object-key permutation preserves semantic certificate id and verdict"
+    ],
+    [
+      "C0-P03",
+      "profile declaration-order permutation with freshly regenerated exact-source binding"
+    ],
+    [
+      "C0-P04",
+      "table formal rename with behavior-equivalent lowering and freshly regenerated semantic/source identities"
+    ],
+    [
+      "C0-P05",
+      "unreachable syntactically valid block addition with freshly regenerated source/semantic/graph commitments"
+    ],
+    [
+      "C0-P06",
+      "valid ordered multi-effect trace"
+    ],
+    [
+      "C0-P07",
+      "valid repeated identical effect occurrences; multiplicity retained before K1 projection"
+    ],
+    [
+      "C0-P08",
+      "two source programs with same final K1 set but different ordered traces each accept only their own freshly regenerated certificate"
+    ]
+  ],
+  "anti_gaming": [
+    "A negative vector passes only at its intended binding/cross-check plane; accidental parser failure does not count unless the vector targets parsing.",
+    "No implementation may rewrite the frozen attack meaning after seeing W10/W11 results. Defects require numbered amendments preserving the prior record.",
+    "The candidate certificate is never accepted merely because its internal fields are mutually self-consistent.",
+    "No certificate field can substitute for direct execution/reconstruction by the evidence chain.",
+    "A valid smaller C2 proof does not establish preservation of a larger C3 source scope."
+  ],
+  "promotion_floor": [
+    "all frozen negative vectors rejected by both W10 and W11 at the intended plane",
+    "all frozen positive controls accepted by both",
+    "W10/W11 independently recompute identical certificate_id and C2 certificate_id",
+    "F0 62/62, G1 science anchor, and R0 exhaustive reference anchor remain untouched and green",
+    "hosted CI pins all preexisting checker blobs before running",
+    "authority_created remains false for C0"
+  ],
+  "nonclaims": [
+    "C0 does not create k1.mediated-refinement/v1 production authority.",
+    "C0 does not prove W7/W8 universally correct or eliminate all common-mode bugs.",
+    "C0 does not bind arbitrary native programs, containers, networks, concurrency, ambient capabilities, or unbounded liveness.",
+    "C0 does not make producer-supplied certificate facts authoritative.",
+    "C0 does not change K1 semantics or qualified C2."
+  ]
+}
