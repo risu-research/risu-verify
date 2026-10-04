@@ -1,0 +1,21 @@
+{
+  "amendment_id": "RISU_KERNEL_K1_MFST_C3_REFINEMENT_CERTIFICATE_C0_AMENDMENT_001",
+  "status": "PRE_IMPLEMENTATION_NORMATIVE_AMENDMENT",
+  "amends_commit": "a4e293ab2619e7caa038a672877139819ed8206f",
+  "reason": "The C0 freeze required W10/W11 to construct a fresh deterministic C2 W0 certificate but did not freeze the evidence_roots value used by the existing C2 certificate transcript. Without this rule, two correct independent C3 certificate checkers could derive different C2 certificate_id values from arbitrary diagnostic roots.",
+  "rule": {
+    "c2_evidence_root_domain": "RISU-K1-C3-REFINEMENT-C2-EVIDENCE-V1\\0",
+    "preimage": [
+      "domain bytes",
+      "ASCII('S') || netstring(c3_source_id)",
+      "ASCII('H') || netstring(ordered_trace_map_id)",
+      "ASCII('P') || netstring(c2_program_sha256)",
+      "ASCII('A') || netstring(c2_artifact_id)"
+    ],
+    "evidence_root": "e:sha256: + SHA-256(preimage)",
+    "c2_certificate": "Fresh C2 W0 preservation certificate has exactly one evidence_roots entry equal to this derived evidence_root; all other C2 fields are reconstructed from claim, exact artifact/program and independently rederived projected REALIZE.",
+    "authority": "The evidence root is a deterministic binding/diagnostic root only. It creates no independent authority."
+  },
+  "compatibility": "No frozen C3 semantics, F0/G1/R0 result, W7/W8/W5/W6 implementation, or descriptor space changes.",
+  "implementation_existed_at_amendment": false
+}
