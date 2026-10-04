@@ -1,0 +1,100 @@
+name: K1 C3 certificate C0 baseline
+
+on:
+  push:
+    branches: [k1-closure-c3-certificate-c0]
+    paths:
+      - 'protocols/RISU_KERNEL_K1_MFST_C3_REFINEMENT_CERTIFICATE_C0*.json'
+      - 'kernel/k1_checker_w10_refinement_cert.py'
+      - 'kernel/k1_checker_w11_refinement_cert.go'
+      - 'tools/risu_kernel_k1_mfst_c3_cert_c0_fixture.py'
+      - '.github/workflows/k1-c3-certificate-c0-baseline.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  baseline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Pin frozen science base and C0 protocol
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object protocols/RISU_KERNEL_K1_MFST_C3_REFINEMENT_CERTIFICATE_C0.json)" = "9d8b8b87ffa58fca5246a0dfcb9764859eedc3be"
+          test "$(git hash-object protocols/RISU_KERNEL_K1_MFST_C3_REFINEMENT_CERTIFICATE_C0_AMENDMENT_001.json)" = "cfcda7f8124aa8b8b867b7187952e21a56a3db3a"
+          test "$(git hash-object kernel/k1_w7_model.py)" = "3c351fd445b704d693e05ba01efe9cffa6a2801b"
+          test "$(git hash-object kernel/k1_w7_exec.py)" = "8b1529dfbd8367e20776f0ab8ec3f5fa6559ca2a"
+          test "$(git hash-object kernel/k1_checker_w7.py)" = "c011532efbe9b6dcd6ae440705ce7b38c5dde93b"
+          test "$(git hash-object kernel/k1_w8_json.go)" = "4e770c8ef7882b23705bb7068bd877c2cd9c3543"
+          test "$(git hash-object kernel/k1_w8_model.go)" = "b53897a82255886d59b9dc05d7fbe8166aca1d35"
+          test "$(git hash-object kernel/k1_w8_exec.go)" = "64254a8537d3777848b1d3f8176260c5a1c312e7"
+          test "$(git hash-object kernel/k1_checker_w8.go)" = "f3e1e0c42e8106615b0aeeb2a85ceae3046e74a2"
+          test "$(git hash-object kernel/k1_checker_w5.py)" = "cf08aff1ce9f9506df37d597c2fc348bfefd6331"
+          test "$(git hash-object kernel/k1_checker_w6.go)" = "33464fe4132d6490b1a68cc71ef803d584e597f9"
+          test "$(git hash-object fixtures/k1_mfst_c3_f0/claim.json)" = "02fe5e2a56d8a9f2cd56316c57b18fb8c4912c88"
+          test "$(git hash-object fixtures/k1_mfst_c3_f0/baseline.json)" = "3c4f386d0edef7cec56a0ff5eb7347924f84287e"
+          test "$(git hash-object kernel/k1_checker_w10_refinement_cert.py)" = "1ae9cb6a2a1fd134c53f7c79cbf4290c023889e1"
+          test "$(git hash-object kernel/k1_checker_w11_refinement_cert.go)" = "a0e5362e28a23591ef7e1104deddf9fc2ab9f01e"
+          test "$(git hash-object tools/risu_kernel_k1_mfst_c3_cert_c0_fixture.py)" = "0c56e6010372ec96e5d3c378997390941e73a0db"
+
+      - name: Compile Python components
+        run: |
+          python3 -m py_compile kernel/k1_checker_w10_refinement_cert.py tools/risu_kernel_k1_mfst_c3_cert_c0_fixture.py
+
+      - name: Build frozen W8 and qualified W6
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build
+          cd kernel
+          test -z "$(gofmt -d k1_w8_json.go k1_w8_model.go k1_w8_exec.go k1_checker_w8.go)"
+          GO111MODULE=off CGO_ENABLED=0 go vet k1_w8_json.go k1_w8_model.go k1_w8_exec.go k1_checker_w8.go
+          CGO_ENABLED=0 go build -o ../build/k1_checker_w8 k1_w8_json.go k1_w8_model.go k1_w8_exec.go k1_checker_w8.go
+          cd ..
+          test -z "$(gofmt -d kernel/k1_checker_w6.go)"
+          GO111MODULE=off CGO_ENABLED=0 go vet kernel/k1_checker_w6.go
+          CGO_ENABLED=0 go build -o build/k1_checker_w6 kernel/k1_checker_w6.go
+
+      - name: Build independent W11
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(gofmt -d kernel/k1_checker_w11_refinement_cert.go)"
+          GO111MODULE=off CGO_ENABLED=0 go vet kernel/k1_checker_w11_refinement_cert.go
+          CGO_ENABLED=0 go build -o build/k1_checker_w11_refinement_cert kernel/k1_checker_w11_refinement_cert.go
+
+      - name: Generate non-authoritative baseline fixture
+        shell: bash
+        run: |
+          mkdir -p build/c0
+          python3 tools/risu_kernel_k1_mfst_c3_cert_c0_fixture.py             --claim fixtures/k1_mfst_c3_f0/claim.json             --profile fixtures/k1_mfst_c3_f0/baseline.json             --w7 kernel/k1_checker_w7.py             --w8 build/k1_checker_w8             --out build/c0/certificate.json             --program_out build/c0/program.cap             --artifact_out build/c0/artifact.json
+
+      - name: Run W10
+        shell: bash
+        run: |
+          python3 kernel/k1_checker_w10_refinement_cert.py             --claim fixtures/k1_mfst_c3_f0/claim.json             --profile fixtures/k1_mfst_c3_f0/baseline.json             --certificate build/c0/certificate.json             --program build/c0/program.cap             --artifact build/c0/artifact.json             --w7 kernel/k1_checker_w7.py             --w8 build/k1_checker_w8             --w5 kernel/k1_checker_w5.py             --w6 build/k1_checker_w6 | tee build/c0/w10.json
+
+      - name: Run W11
+        shell: bash
+        run: |
+          build/k1_checker_w11_refinement_cert             --claim fixtures/k1_mfst_c3_f0/claim.json             --profile fixtures/k1_mfst_c3_f0/baseline.json             --certificate build/c0/certificate.json             --program build/c0/program.cap             --artifact build/c0/artifact.json             --w7 kernel/k1_checker_w7.py             --w8 build/k1_checker_w8             --w5 kernel/k1_checker_w5.py             --w6 build/k1_checker_w6 | tee build/c0/w11.json
+
+      - name: Assert independent baseline convergence
+        run: |
+          python3 - <<'PY'
+          import json
+          a=json.load(open('build/c0/w10.json')); b=json.load(open('build/c0/w11.json'))
+          assert a['proof_status']==b['proof_status']=='ACCEPTED',(a,b)
+          assert a['authority_created'] is False and b['authority_created'] is False
+          assert a['certificate_id']==b['certificate_id']
+          assert a['c2_certificate_id']==b['c2_certificate_id']
+          assert a['c3_source_id']==b['c3_source_id']
+          assert a['ordered_trace_map_id']==b['ordered_trace_map_id']
+          assert a['c2_target_id']==b['c2_target_id']
+          print('C0_W10_W11_BASELINE_PASS',a['certificate_id'],a['c2_certificate_id'])
+          print('AUTHORITY_CREATED false')
+          PY
