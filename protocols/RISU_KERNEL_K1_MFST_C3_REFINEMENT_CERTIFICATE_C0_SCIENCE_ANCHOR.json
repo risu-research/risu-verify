@@ -1,0 +1,203 @@
+{
+  "anchor_id": "risu.k1.mfst.c3.refinement-certificate.c0.science-anchor/v1",
+  "status": "C0_INDEPENDENT_REFINEMENT_CERTIFICATE_SCIENCE_ANCHORED_NON_AUTHORITATIVE",
+  "parent_r0_anchor_commit": "c0894d0a31974b42fdeb85fcd935240731d18391",
+  "science_tested_head": "8a09af69c5575701c036cd8b898a771aa8d515f9",
+  "protocol_provenance": {
+    "prospective_protocol_commit": "a4e293ab2619e7caa038a672877139819ed8206f",
+    "prospective_protocol_blob": "9d8b8b87ffa58fca5246a0dfcb9764859eedc3be",
+    "preimplementation_amendment_commit": "e83c92298414ecd3c6c3a6e811e178a7b0eef370",
+    "preimplementation_amendment_blob": "cfcda7f8124aa8b8b867b7187952e21a56a3db3a",
+    "amendment_reason": "Freeze a deterministic source/trace/program/artifact-bound C2 evidence root so independent W10/W11 can reconstruct the same fresh downstream C2 certificate without arbitrary diagnostic-root choice.",
+    "w10_existed_when_protocol_frozen": false,
+    "w11_existed_when_protocol_frozen": false,
+    "attack_inventory_frozen_before_checker_implementation": true
+  },
+  "candidate_object": {
+    "wire": "risu.k1.c3.refinement-certificate/v1",
+    "kind": "mediated_refinement_preservation",
+    "verification_profile": "risu.k1.c3.refinement-verification/v1",
+    "transported_bindings": [
+      "claim_id",
+      "c3_source_id",
+      "c3_semantic_id",
+      "reachable_graph_id",
+      "ordered_trace_map_id",
+      "c2_program_sha256",
+      "c2_artifact_id",
+      "c2_target_id",
+      "projected_realize",
+      "c2_certificate_id"
+    ],
+    "certificate_id_domain": "RISU-K1-C3-REFINEMENT-CERT-V1\\0",
+    "authority_rule": "Transported bindings are assertions only. W10/W11 independently rederive them before comparison. Certificate self-consistency is insufficient."
+  },
+  "independent_checkers": {
+    "w10": {
+      "language": "Python standard library orchestration",
+      "blob": "1ae9cb6a2a1fd134c53f7c79cbf4290c023889e1",
+      "role": "Independently strict-parse candidate certificate; rerun frozen W7/W8; require exact source-derived program/artifact bytes; reconstruct fresh C2 W0 certificate; rerun qualified W5/W6; independently recompute C3 certificate_id."
+    },
+    "w11": {
+      "language": "Go standard library orchestration",
+      "blob": "1434a9255d42ad9e9b8d57f9e1c1fa1d47c6a8a0",
+      "role": "Independent duplicate-key/unknown-field parser, relation canonicalizer, C3/C2 commitment construction, W7/W8/W5/W6 orchestration and final candidate-certificate verification.",
+      "imports_or_invokes_w10": false
+    },
+    "shared_authority_code": false
+  },
+  "pinned_preexisting_science": {
+    "w7_model": "3c351fd445b704d693e05ba01efe9cffa6a2801b",
+    "w7_exec": "8b1529dfbd8367e20776f0ab8ec3f5fa6559ca2a",
+    "w7_checker": "c011532efbe9b6dcd6ae440705ce7b38c5dde93b",
+    "w8_json": "4e770c8ef7882b23705bb7068bd877c2cd9c3543",
+    "w8_model": "b53897a82255886d59b9dc05d7fbe8166aca1d35",
+    "w8_exec": "64254a8537d3777848b1d3f8176260c5a1c312e7",
+    "w8_checker": "f3e1e0c42e8106615b0aeeb2a85ceae3046e74a2",
+    "w5_checker": "cf08aff1ce9f9506df37d597c2fc348bfefd6331",
+    "w6_checker": "33464fe4132d6490b1a68cc71ef803d584e597f9",
+    "f0_science_anchor_blob": "38a91987aa48e7ab5b0f7c35b281986666ad95b5",
+    "g1_science_anchor_blob": "5950594819baed636c94aea036d5551359150d74",
+    "r0_science_anchor_blob": "e9409914ef4dd0a67d2f4ae22687da846b339a3f"
+  },
+  "c0_tooling_blobs": {
+    "fixture_producer": "0c56e6010372ec96e5d3c378997390941e73a0db",
+    "adversarial_gate": "a632d7f2f03edd838f1cb41af668d64e9781692d",
+    "baseline_workflow": "d4e147ea5165777418dcd04f2c7e3332391ac113",
+    "adversarial_workflow": "c6b379210f165d921cb9e17f08cae26f8516927a"
+  },
+  "preserved_development_evidence": [
+    {
+      "run_id": 37164435396,
+      "job_id": 111324352596,
+      "conclusion": "failure",
+      "meaning": "Initial W11 source failed the source-normalization gate before semantic execution; failure preserved."
+    },
+    {
+      "run_id": 37164597762,
+      "job_id": 111324836408,
+      "conclusion": "success",
+      "meaning": "Checkout-local gofmt diagnostic run demonstrated W11 compiled and W10/W11 baseline semantics converged; formatted bytes were then frozen back into source."
+    },
+    {
+      "run_id": 37164653922,
+      "job_id": 111324992452,
+      "conclusion": "failure",
+      "meaning": "After freezing formatted W11 source, the still-old exact blob pin rejected implementation drift, demonstrating the pin gate operated as intended."
+    },
+    {
+      "run_id": 37164666808,
+      "job_id": 111325029812,
+      "conclusion": "success",
+      "meaning": "Source-clean W11, with no checkout mutation, passed gofmt/vet/build and converged with W10 on the full baseline chain."
+    }
+  ],
+  "baseline_known_answer": {
+    "c3_certificate_id": "c3cert:sha256:45eb015f13f505ba49590a492fb8829eb308407c6f08d9fc2d9e088ef6d21ed5",
+    "fresh_c2_certificate_id": "cert:sha256:c601b0a7248961931b70e876a450afd5d062968c2239a78f7f4336b2cd8ac104",
+    "c2_target_id": "t:sha256:1879e1655f2dec6bfc462fedf37ac95df4da42d2f094dfab3b50585dbfa06747",
+    "c3_source_id": "c3src:sha256:13ca692f6139d0c70a3829616bb360df3a8719c2aad5090c51c24e43f8a8c1d3",
+    "ordered_trace_map_id": "c3trace:sha256:6fabe8fbdc0678b2d23eaa2ab0410f7619c23cefcbfe08c3fb56e5ada48fd09b",
+    "w10_w11_agreement": true,
+    "authority_created": false
+  },
+  "hosted_adversarial_validation": {
+    "workflow": "K1 C3 refinement certificate C0 adversarial gate",
+    "run_id": 37164687121,
+    "job_id": 111325089679,
+    "head_sha": "8a09af69c5575701c036cd8b898a771aa8d515f9",
+    "conclusion": "success",
+    "positive_controls": {
+      "count": 8,
+      "accepted": 8
+    },
+    "negative_vectors": {
+      "count": 38,
+      "rejected_or_fail_closed": 38
+    },
+    "total_vectors": 46,
+    "final_markers": [
+      "C0_REFINEMENT_CERTIFICATE_GATE_PASS 46",
+      "AUTHORITY_CREATED false"
+    ]
+  },
+  "strongest_falsification_controls": [
+    {
+      "id": "C0-08",
+      "result": "PASS",
+      "importance": "A boundary-shrunk C2 artifact was first proven independently valid to W5/W6 as a smaller bounded capsule, yet W10/W11 rejected it because it was not the exact source-derived C3 lowering."
+    },
+    {
+      "id": "C0-09",
+      "result": "PASS",
+      "importance": "A behavior-equivalent but non-CBTNF C2 program with rebuilt valid C2 artifact was independently acceptable downstream, yet rejected by the C3 certificate lane because exact source-derived normalization was violated."
+    },
+    {
+      "id": "C0-26",
+      "result": "PASS",
+      "importance": "Artifact JSON reserialization remained semantically valid C2 after rebuilding its proof identity, but stale C3 exact-artifact binding was rejected."
+    },
+    {
+      "ids": [
+        "C0-05",
+        "C0-06",
+        "C0-07",
+        "C0-P08"
+      ],
+      "result": "PASS",
+      "importance": "Ordered trace reorder/duplication/deletion cannot be laundered through an unchanged K1 set; two same-K1-set source programs accept only their own freshly rebound certificates."
+    },
+    {
+      "ids": [
+        "C0-29",
+        "C0-30",
+        "C0-31",
+        "C0-32",
+        "C0-33",
+        "C0-34",
+        "C0-35"
+      ],
+      "result": "PASS",
+      "importance": "Evidence-engine absence, independent-checker disagreement, and pinned implementation drift all fail closed."
+    }
+  ],
+  "exact_chain_required_for_acceptance": [
+    "Candidate certificate is strict-parsed but its transported facts are not trusted.",
+    "W7 and W8 rerun exact C3 source independently and must agree on source/semantic/graph/ordered-trace/projected-REALIZE/lowering facts.",
+    "Both independently generated C2 program and artifact byte vectors must be identical and must exactly equal the supplied byte vectors.",
+    "W10 and W11 independently construct a fresh deterministic C2 W0 certificate from rederived facts; no producer C2 certificate is accepted as input.",
+    "Qualified W5 and W6 independently reexecute exact C2 program/boundary and must accept the fresh certificate with identical REALIZE, target and certificate commitment.",
+    "Only after the evidence chain succeeds are candidate C3 certificate fields compared to rederived facts and c3 certificate_id independently recomputed.",
+    "W10 and W11 must converge; disagreement is fatal."
+  ],
+  "repository_integrity": {
+    "base": "c0894d0a31974b42fdeb85fcd935240731d18391",
+    "science_head": "8a09af69c5575701c036cd8b898a771aa8d515f9",
+    "ahead_by": 11,
+    "behind_by": 0,
+    "additive_only_files": 8,
+    "preexisting_files_modified": 0,
+    "w7_w8_w5_w6_modified": false,
+    "k1_semantics_modified": false,
+    "qualified_c2_modified": false
+  },
+  "strongest_supported_science_claim": "For the prospectively frozen C0 certificate attack inventory, two independently implemented certificate verifiers (Python W10 and Go W11) rederived every authority-relevant candidate binding from the exact C3 source through frozen independent W7/W8 execution and exact C2 lowering, independently reconstructed a fresh downstream C2 preservation certificate, and required qualified W5/W6 reexecution before accepting the candidate object. All 8 positive controls were accepted and all 38 precommitted negative/splice/scope/trace/identity/engine-drift cases failed closed. In stronger controls, alternative C2 objects that were independently valid to W5/W6 were still rejected when they were not the exact source-derived C3 lowering, showing that the candidate object binds refinement scope rather than merely wrapping a valid downstream C2 proof.",
+  "authority_state": {
+    "production_c3_proof_kind_created": false,
+    "k1_mediated_refinement_v1_is_production_authority": false,
+    "c3_preservation_authority_created": false,
+    "certificate_is_authority_by_itself": false,
+    "native_program_binding_created": false,
+    "arbitrary_native_refinement_proved": false,
+    "semantic_kernel_changed": false,
+    "qualified_c2_modified": false
+  },
+  "nonclaims": [
+    "C0 is a falsification/science lane, not qualification or production authority.",
+    "W10/W11 are independent certificate checkers but still orchestrate software evidence engines; this is not a proof-assistant kernel or proof of universal W7/W8 correctness.",
+    "C0 does not bind arbitrary native programs, containers, cloud services, concurrency, ambient effects or unbounded liveness to MFST.",
+    "Passing the frozen attack inventory does not prove absence of all possible certificate or common-mode bugs.",
+    "The candidate certificate does not make ordered traces part of K1 semantics; ordered trace fidelity remains a pre-projection C3 refinement obligation."
+  ],
+  "next_gate": "Run a qualification-oriented Q0 that freezes W10/W11 exact implementations, replays F0 + selected G1/R0 controls through the certificate object itself, adds independent certificate-object mutation generation, and then decides whether the deliberately narrow MFST-to-qualified-C2 certificate lane is mature enough for production proof-kind promotion."
+}
