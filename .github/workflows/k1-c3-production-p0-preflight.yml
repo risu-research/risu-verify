@@ -29,7 +29,7 @@ jobs:
           test "$(git hash-object kernel/k1_checker_w10_refinement_cert.py)" = "5eea6fa26bdb488d60743a4bf3470cd5bd28eab3"
           test "$(git hash-object kernel/k1_checker_w11_refinement_cert.go)" = "1434a9255d42ad9e9b8d57f9e1c1fa1d47c6a8a0"
           test "$(git hash-object kernel/k1_checker_w12_promotion.py)" = "1ea971f161a7ee134ca87d538160855a803a5ed8"
-          test "$(git hash-object kernel/k1_checker_w13_promotion.go)" = "fdf9069b2dbbcec2f87c98674444edf6819775a6"
+          test "$(git hash-object kernel/k1_checker_w13_promotion.go)" = "a6d689c704951afacace2beccd8e54eb4f857d84"
           test "$(git hash-object tools/risu_kernel_k1_mfst_c3_p0_fixture.py)" = "c0133547172ed73f38ffac4c1884a7de3f0335b0"
           test "$(git hash-object tools/risu_kernel_k1_mfst_c3_p0_preflight.py)" = "29d492e5972d8bddde86568757362dd32bb5cedc"
       - name: Build exact Q0 checker closure
