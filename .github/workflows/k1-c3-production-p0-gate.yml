@@ -1,0 +1,55 @@
+name: K1 C3 P0 production-promotion attack
+
+on:
+  push:
+    branches: [k1-closure-c3-production-p0]
+    paths:
+      - 'protocols/RISU_KERNEL_K1_MFST_C3_PRODUCTION_PROMOTION_P0*.json'
+      - 'kernel/k1_checker_w12_promotion.py'
+      - 'kernel/k1_checker_w13_promotion.go'
+      - 'tools/risu_kernel_k1_mfst_c3_p0_*.py'
+      - '.github/workflows/k1-c3-production-p0-gate.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  p0-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Pin Q0-qualified closure and frozen P0 candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor a857fe1f72b7341d549354e9ccc330dca22e9c0d HEAD
+          test "$(git hash-object protocols/RISU_KERNEL_K1_MFST_C3_PRODUCTION_PROMOTION_P0.json)" = "163dc414e6410972fcf58c1225a7b31d19762308"
+          test "$(git hash-object protocols/RISU_KERNEL_K1_MFST_C3_PRODUCTION_PROMOTION_P0_AMENDMENT_001.json)" = "21041de11135a05b6c0e2393c905569cf619e676"
+          test "$(git hash-object protocols/RISU_KERNEL_K1_MFST_C3_PRODUCTION_PROMOTION_P0_CANDIDATE_A0_FREEZE.json)" = "8ead8120119b8914836a2370183851061454afb0"
+          test "$(git hash-object protocols/RISU_KERNEL_K1_MFST_C3_REFINEMENT_CERTIFICATE_Q0_QUALIFICATION_ANCHOR.json)" = "592afac89231040280e9e29ba26292c18f90b9e6"
+          test "$(git hash-object kernel/k1_checker_w10_refinement_cert.py)" = "5eea6fa26bdb488d60743a4bf3470cd5bd28eab3"
+          test "$(git hash-object kernel/k1_checker_w11_refinement_cert.go)" = "1434a9255d42ad9e9b8d57f9e1c1fa1d47c6a8a0"
+          test "$(git hash-object kernel/k1_checker_w12_promotion.py)" = "1ea971f161a7ee134ca87d538160855a803a5ed8"
+          test "$(git hash-object kernel/k1_checker_w13_promotion.go)" = "a6d689c704951afacace2beccd8e54eb4f857d84"
+          test "$(git hash-object tools/risu_kernel_k1_mfst_c3_p0_fixture.py)" = "c0133547172ed73f38ffac4c1884a7de3f0335b0"
+          test "$(git hash-object tools/risu_kernel_k1_mfst_c3_p0_gate.py)" = "f3d155e83fc79e0fe323d64b28cd1180d9c8de68"
+      - name: Build exact Q0 checker closure
+        run: bash tools/risu_kernel_k1_mfst_c3_cert_q0_build.sh
+      - name: Build exact P0 candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile kernel/k1_checker_w12_promotion.py tools/risu_kernel_k1_mfst_c3_p0_fixture.py tools/risu_kernel_k1_mfst_c3_p0_gate.py
+          test -z "$(gofmt -d kernel/k1_checker_w13_promotion.go)"
+          GO111MODULE=off CGO_ENABLED=0 go vet kernel/k1_checker_w13_promotion.go
+          CGO_ENABLED=0 go build -o build/k1_checker_w13_promotion kernel/k1_checker_w13_promotion.go
+      - name: Execute frozen 58-vector P0 attack
+        run: |
+          python3 tools/risu_kernel_k1_mfst_c3_p0_gate.py | tee /tmp/p0-gate.log
+          grep -F "P0_PRODUCTION_PROMOTION_ATTACK_PASS 58" /tmp/p0-gate.log
+          grep -F "P0_POSITIVE 8" /tmp/p0-gate.log
+          grep -F "P0_NEGATIVE 50" /tmp/p0-gate.log
+          grep -F "AUTHORITY_CREATED false" /tmp/p0-gate.log
