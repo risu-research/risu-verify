@@ -1,0 +1,413 @@
+{
+  "protocol_id": "RISU_KERNEL_K1_MFST_C3_PRODUCTION_PROMOTION_P0",
+  "status": "PROSPECTIVE_PROMOTION_ATTACK_FREEZE_BEFORE_P0_CHECKER_IMPLEMENTATION",
+  "parent_q0_anchor_commit": "a857fe1f72b7341d549354e9ccc330dca22e9c0d",
+  "parent_q0_anchor_blob": "592afac89231040280e9e29ba26292c18f90b9e6",
+  "purpose": "Attack the composition layer that would turn the Q0-qualified C3 refinement-certificate checker pair into a production K1 preservation proof kind. P0 itself creates no production authority.",
+  "candidate_proof_kind": {
+    "proof_kind": "k1.mediated-refinement/v1",
+    "proof_format": "risu.k1.mediated-refinement-proof/v1",
+    "source_semantics": "risu.k1.c3.mfst/v1",
+    "downstream_proof_kind": "k1.capsule-closure/v1",
+    "authority_scope": "EXACT_MFST_SOURCE_TO_EXACT_QUALIFIED_C2_LOWERING",
+    "q0_candidate_id": "A1",
+    "q0_qualification_anchor_commit": "a857fe1f72b7341d549354e9ccc330dca22e9c0d",
+    "q0_qualification_anchor_blob": "592afac89231040280e9e29ba26292c18f90b9e6",
+    "w10_blob": "5eea6fa26bdb488d60743a4bf3470cd5bd28eab3",
+    "w11_blob": "1434a9255d42ad9e9b8d57f9e1c1fa1d47c6a8a0"
+  },
+  "promotion_artifact": {
+    "exact_keys": [
+      "proof_format",
+      "proof_kind",
+      "claim_id",
+      "source_semantics",
+      "downstream_proof_kind",
+      "authority_scope",
+      "profile_sha256",
+      "c3_certificate_sha256",
+      "c3_certificate_id",
+      "c2_program_sha256",
+      "c2_artifact_id",
+      "c2_target_id",
+      "q0_candidate_id",
+      "q0_qualification_anchor_commit",
+      "q0_qualification_anchor_blob",
+      "w10_blob",
+      "w11_blob"
+    ],
+    "artifact_id": "p:sha256: + SHA-256(exact promotion artifact bytes)",
+    "representation_rule": "Promotion-artifact byte representation is not canonicalized for p: identity. A representation-only reserialization may be a distinct valid artifact only if every outer binding is rebuilt to its new artifact_id.",
+    "transported_authority_rule": "Every field is independently checked against the supplied exact source/profile/certificate/program/artifact and the frozen P0 policy. Self-consistency or a recomputed promotion artifact hash carries no authority."
+  },
+  "production_composition_candidate": {
+    "outer_wire": "risu.k1.w0",
+    "outer_kind": "preservation_certificate",
+    "closure_proof_kind": "k1.mediated-refinement/v1",
+    "target_id": "must exactly equal independently rederived c2_target_id from the accepted C3 certificate chain",
+    "realize": "must exactly equal independently rederived projected_realize as a mathematical set",
+    "closure_proof_artifact": "must equal exact p:sha256 of the supplied promotion artifact bytes",
+    "grounding_proofs": "exactly one entry per REALIZE pair, each pair unique, every proof.kind k1.mediated-refinement/v1 and proof.artifact equal the same promotion artifact_id",
+    "evidence_root_domain": "RISU-K1-MEDIATED-REFINEMENT-PROOF-V1\\0",
+    "evidence_root_transcript": [
+      "claim_id",
+      "promotion_artifact_id",
+      "c3_certificate_id",
+      "c2_target_id",
+      "q0_qualification_anchor_commit",
+      "w10_blob",
+      "w11_blob"
+    ],
+    "outer_certificate_id": "existing RISU-K1-CERT-W0 transcript, unchanged",
+    "semantic_kernel_changed": false
+  },
+  "checker_composition_rule": [
+    "P0 promotion checker must strict-parse promotion artifact and outer W0 certificate with duplicate-key rejection and exact top-level key sets.",
+    "P0 must verify all proof-kind, source-semantics, downstream-kind, authority-scope, Q0-anchor, candidate-id, W10-blob and W11-blob pins against this frozen policy; these values are not caller-selectable authority.",
+    "P0 must bind exact bytes of profile, C3 certificate, C2 program and C2 artifact to the promotion artifact before invoking semantic checkers.",
+    "Both Q0-qualified checkers W10 A1 and W11 must ACCEPT the same exact source/certificate/program/artifact inputs and agree on certificate_id, C2 certificate_id, source_id, ordered trace id, target_id and REALIZE pair count.",
+    "One-checker success, checker disagreement, checker absence, malformed checker output or unexpected checker identity fails closed.",
+    "Only after dual Q0 acceptance may P0 construct/compare the expected outer W0 preservation certificate. The outer certificate can never repair or override a failed inner C3 chain.",
+    "Unknown or older proof kinds, qualification anchors or checker candidates are unsupported and cannot be silently downgraded to C2 or W0 generic authority."
+  ],
+  "positive_controls": [
+    [
+      "P0-P01",
+      "baseline_exact",
+      "exact F0 baseline -> Q0 certificate -> promotion artifact -> outer W0 certificate",
+      "ACCEPT"
+    ],
+    [
+      "P0-P02",
+      "state_progress",
+      "F0 bounded state-progress loop positive -> complete promotion composition",
+      "ACCEPT"
+    ],
+    [
+      "P0-P03",
+      "g1_stress",
+      "G1 seed 271828182 stress index 0 -> complete promotion composition",
+      "ACCEPT"
+    ],
+    [
+      "P0-P04",
+      "r0_reference",
+      "R0-00001 compiled source -> complete promotion composition",
+      "ACCEPT"
+    ],
+    [
+      "P0-P05",
+      "promotion_representation_rebind",
+      "reserialize promotion artifact with semantically identical JSON, compute new artifact_id/evidence root and rebuild outer W0 certificate",
+      "ACCEPT"
+    ],
+    [
+      "P0-P06",
+      "c3_realize_order_invariance",
+      "permute C3 projected_REALIZE pair order, retain its set-canonical C3 certificate_id, then rebuild promotion artifact and outer W0 bindings",
+      "ACCEPT"
+    ],
+    [
+      "P0-P07",
+      "mfst_representation_permutation",
+      "nonsemantic source representation permutation with its own fresh Q0 certificate and promotion composition",
+      "ACCEPT"
+    ],
+    [
+      "P0-P08",
+      "fresh_ordered_effect_source",
+      "a source with changed reachable effect order and therefore fresh trace/C2/C3 identities is accepted only with its own fully rebound promotion composition",
+      "ACCEPT"
+    ]
+  ],
+  "negative_vectors": [
+    [
+      "P0-01",
+      "proof_kind_substitution",
+      "promotion artifact proof_kind changed to k1.capsule-closure/v1, outer fields coherently rebound",
+      "REJECT"
+    ],
+    [
+      "P0-02",
+      "proof_kind_version_downgrade",
+      "proof_kind changed to k1.mediated-refinement/v0",
+      "REJECT"
+    ],
+    [
+      "P0-03",
+      "proof_format_version_downgrade",
+      "proof_format changed to risu.k1.mediated-refinement-proof/v0",
+      "REJECT"
+    ],
+    [
+      "P0-04",
+      "promotion_unknown_key",
+      "inject authority-like top-level key qualified=true",
+      "REJECT"
+    ],
+    [
+      "P0-05",
+      "promotion_duplicate_key",
+      "duplicate proof_kind JSON key",
+      "REJECT"
+    ],
+    [
+      "P0-06",
+      "stale_promotion_artifact_binding",
+      "reserialize promotion artifact but retain old outer artifact reference",
+      "REJECT"
+    ],
+    [
+      "P0-07",
+      "stale_outer_certificate_id",
+      "mutate an outer authority field while retaining old W0 certificate_id",
+      "REJECT"
+    ],
+    [
+      "P0-08",
+      "stale_evidence_root",
+      "change promotion artifact and outer artifact reference but retain old evidence root",
+      "REJECT"
+    ],
+    [
+      "P0-09",
+      "stale_c3_certificate_sha256",
+      "reserialize or replace exact C3 certificate bytes while retaining promotion c3_certificate_sha256",
+      "REJECT"
+    ],
+    [
+      "P0-10",
+      "stale_c3_certificate_id",
+      "replace promotion c3_certificate_id while recomputing promotion artifact and outer bindings",
+      "REJECT"
+    ],
+    [
+      "P0-11",
+      "q0_anchor_commit_rollback_to_c0",
+      "replace Q0 anchor commit with C0 science anchor commit and coherently rebind outer artifact",
+      "REJECT"
+    ],
+    [
+      "P0-12",
+      "q0_anchor_blob_substitution",
+      "change Q0 anchor blob under correct commit",
+      "REJECT"
+    ],
+    [
+      "P0-13",
+      "q0_candidate_rollback_a0",
+      "candidate A1 -> A0",
+      "REJECT"
+    ],
+    [
+      "P0-14",
+      "w10_candidate_rollback",
+      "W10 A1 blob -> prequalification A0 W10 blob",
+      "REJECT"
+    ],
+    [
+      "P0-15",
+      "w11_blob_substitution",
+      "replace pinned W11 blob",
+      "REJECT"
+    ],
+    [
+      "P0-16",
+      "mixed_candidate_splice",
+      "retain A1 label/Q0 anchor but use stale A0 W10 blob",
+      "REJECT"
+    ],
+    [
+      "P0-17",
+      "future_unqualified_candidate",
+      "candidate A2 under the A1 qualification anchor",
+      "REJECT"
+    ],
+    [
+      "P0-18",
+      "qualification_anchor_commit_substitution",
+      "use Q0 campaign science head 02518e... instead of final qualification anchor a857fe...",
+      "REJECT"
+    ],
+    [
+      "P0-19",
+      "source_semantics_native_widening",
+      "source_semantics changed to risu.native/v1",
+      "REJECT"
+    ],
+    [
+      "P0-20",
+      "source_semantics_wildcard",
+      "source_semantics changed to *",
+      "REJECT"
+    ],
+    [
+      "P0-21",
+      "downstream_kind_unknown",
+      "downstream proof kind changed to an unknown kind",
+      "REJECT"
+    ],
+    [
+      "P0-22",
+      "downstream_kind_generic_w0",
+      "downstream proof kind changed to risu.k1.w0",
+      "REJECT"
+    ],
+    [
+      "P0-23",
+      "authority_scope_native_widening",
+      "authority scope changed to ARBITRARY_NATIVE_PROGRAM",
+      "REJECT"
+    ],
+    [
+      "P0-24",
+      "authority_scope_wildcard",
+      "authority scope changed to *",
+      "REJECT"
+    ],
+    [
+      "P0-25",
+      "profile_swap_stale_promotion",
+      "supply a different valid MFST profile under the original promotion artifact/certificate",
+      "REJECT"
+    ],
+    [
+      "P0-26",
+      "c2_program_swap",
+      "supply another valid source's C2 program while retaining base promotion object",
+      "REJECT"
+    ],
+    [
+      "P0-27",
+      "c2_artifact_swap",
+      "supply another valid source's C2 artifact while retaining base promotion object",
+      "REJECT"
+    ],
+    [
+      "P0-28",
+      "outer_target_substitution",
+      "change outer W0 target_id and recompute only outer certificate_id",
+      "REJECT"
+    ],
+    [
+      "P0-29",
+      "outer_realize_shrink",
+      "delete one outer REALIZE pair and rebuild outer certificate_id",
+      "REJECT"
+    ],
+    [
+      "P0-30",
+      "outer_realize_widen",
+      "add one syntactically valid false pair and rebuild outer certificate_id",
+      "REJECT"
+    ],
+    [
+      "P0-31",
+      "cross_claim_replay",
+      "use a different claim with base source/certificate/promotion object",
+      "REJECT"
+    ],
+    [
+      "P0-32",
+      "promotion_claim_rewrite",
+      "rewrite promotion claim_id and rebuild promotion/outer identities while inner C3 certificate remains bound to original claim",
+      "REJECT"
+    ],
+    [
+      "P0-33",
+      "coherent_promotion_splice",
+      "splice authority-bearing promotion fields from a different valid proof, recompute promotion/outer identities, retain base exact evidence inputs",
+      "REJECT"
+    ],
+    [
+      "P0-34",
+      "c3_certificate_other_source",
+      "supply another valid source's C3 certificate with base profile/program/artifact",
+      "REJECT"
+    ],
+    [
+      "P0-35",
+      "profile_other_source",
+      "supply another valid source profile with base C3 certificate/program/artifact",
+      "REJECT"
+    ],
+    [
+      "P0-36",
+      "cross_target_outer_replay",
+      "use another valid promotion proof's target/REALIZE in the base outer certificate",
+      "REJECT"
+    ],
+    [
+      "P0-37",
+      "cross_proof_evidence_root",
+      "use evidence root from another valid promotion proof",
+      "REJECT"
+    ],
+    [
+      "P0-38",
+      "cross_proof_closure_artifact",
+      "outer closure proof references another valid promotion artifact",
+      "REJECT"
+    ],
+    [
+      "P0-39",
+      "grounding_artifact_splice",
+      "one grounding proof references another valid promotion artifact",
+      "REJECT"
+    ],
+    [
+      "P0-40",
+      "grounding_incomplete",
+      "remove one required grounding proof while recomputing outer certificate_id",
+      "REJECT"
+    ],
+    [
+      "P0-41",
+      "grounding_duplicate",
+      "duplicate one grounding pair while recomputing outer certificate_id",
+      "REJECT"
+    ],
+    [
+      "P0-42",
+      "w10_only_success",
+      "simulate W10 ACCEPT and W11 fail-closed; no outer preservation authority",
+      "REJECT"
+    ],
+    [
+      "P0-43",
+      "w11_only_success",
+      "simulate W11 ACCEPT and W10 fail-closed; no outer preservation authority",
+      "REJECT"
+    ],
+    [
+      "P0-44",
+      "inner_chain_reject_outer_self_consistent",
+      "make inner Q0 chain reject while rebuilding a self-consistent promotion artifact and outer W0 certificate",
+      "REJECT"
+    ]
+  ],
+  "counts": {
+    "positive": 8,
+    "negative": 44,
+    "total": 52
+  },
+  "forbidden_repairs": [
+    "Do not change a frozen attack oracle after a candidate promotion checker fails it.",
+    "Do not treat a self-consistent outer W0 certificate as evidence that the inner C3 refinement chain was valid.",
+    "Do not infer native-program authority, broader source semantics, broader downstream proof kinds, or future qualification candidates from this exact MFST A1 qualification.",
+    "Do not modify Q0-qualified W10/W11, W7/W8, W5/W6, C2 semantics, or K1 W0 identity rules to make P0 pass."
+  ],
+  "success_rule": [
+    "Both independently implemented P0 promotion checkers pass all 8 positives and reject/fail-closed all 44 negatives.",
+    "The P0 checkers independently reconstruct the promotion artifact identity, Q0 policy pins, evidence root, expected W0 certificate composition and existing W0 certificate_id.",
+    "The Q0 A1 checker blobs remain exact and unchanged.",
+    "P0 remains non-authoritative until a later promotion decision explicitly changes production proof-kind policy."
+  ],
+  "authority_state": {
+    "production_proof_kind_created": false,
+    "k1_mediated_refinement_v1_registered": false,
+    "preservation_authority_created": false,
+    "q0_checker_pair_modified": false,
+    "k1_semantic_kernel_modified": false
+  }
+}
