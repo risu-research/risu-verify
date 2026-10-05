@@ -1,0 +1,49 @@
+name: K1 C3 P0 promotion preflight
+
+on:
+  push:
+    branches: [k1-closure-c3-production-p0]
+    paths:
+      - 'protocols/RISU_KERNEL_K1_MFST_C3_PRODUCTION_PROMOTION_P0*.json'
+      - 'kernel/k1_checker_w12_promotion.py'
+      - 'kernel/k1_checker_w13_promotion.go'
+      - 'tools/risu_kernel_k1_mfst_c3_p0_*.py'
+      - '.github/workflows/k1-c3-production-p0-preflight.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pin frozen P0 policy and Q0 candidate closure
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object protocols/RISU_KERNEL_K1_MFST_C3_PRODUCTION_PROMOTION_P0.json)" = "163dc414e6410972fcf58c1225a7b31d19762308"
+          test "$(git hash-object protocols/RISU_KERNEL_K1_MFST_C3_PRODUCTION_PROMOTION_P0_AMENDMENT_001.json)" = "21041de11135a05b6c0e2393c905569cf619e676"
+          test "$(git hash-object protocols/RISU_KERNEL_K1_MFST_C3_REFINEMENT_CERTIFICATE_Q0_QUALIFICATION_ANCHOR.json)" = "592afac89231040280e9e29ba26292c18f90b9e6"
+          test "$(git hash-object kernel/k1_checker_w10_refinement_cert.py)" = "5eea6fa26bdb488d60743a4bf3470cd5bd28eab3"
+          test "$(git hash-object kernel/k1_checker_w11_refinement_cert.go)" = "1434a9255d42ad9e9b8d57f9e1c1fa1d47c6a8a0"
+          test "$(git hash-object kernel/k1_checker_w12_promotion.py)" = "cae43f145014a7a62b6aec9541f57ddf94ac423d"
+          test "$(git hash-object kernel/k1_checker_w13_promotion.go)" = "09a50337ac5732d8fab3c75e009737564cff62d9"
+          test "$(git hash-object tools/risu_kernel_k1_mfst_c3_p0_fixture.py)" = "c0133547172ed73f38ffac4c1884a7de3f0335b0"
+          test "$(git hash-object tools/risu_kernel_k1_mfst_c3_p0_preflight.py)" = "29d492e5972d8bddde86568757362dd32bb5cedc"
+      - name: Build exact Q0 checker closure
+        run: bash tools/risu_kernel_k1_mfst_c3_cert_q0_build.sh
+      - name: Build P0 candidate checkers
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile kernel/k1_checker_w12_promotion.py tools/risu_kernel_k1_mfst_c3_p0_fixture.py tools/risu_kernel_k1_mfst_c3_p0_preflight.py
+          test -z "$(gofmt -d kernel/k1_checker_w13_promotion.go)"
+          GO111MODULE=off CGO_ENABLED=0 go vet kernel/k1_checker_w13_promotion.go
+          CGO_ENABLED=0 go build -o build/k1_checker_w13_promotion kernel/k1_checker_w13_promotion.go
+      - name: Execute baseline promotion composition
+        run: |
+          python3 tools/risu_kernel_k1_mfst_c3_p0_preflight.py | tee /tmp/p0.log
+          grep -F "P0_PROMOTION_PREFLIGHT_PASS" /tmp/p0.log
+          grep -F "AUTHORITY_CREATED false" /tmp/p0.log
