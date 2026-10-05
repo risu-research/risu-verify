@@ -1,0 +1,153 @@
+name: K1 C3 refinement certificate Q0 qualification campaign
+
+on:
+  push:
+    branches: [k1-closure-c3-certificate-q0]
+    paths:
+      - 'protocols/RISU_KERNEL_K1_MFST_C3_REFINEMENT_CERTIFICATE_Q0*.json'
+      - 'kernel/k1_checker_w10_refinement_cert.py'
+      - 'kernel/k1_checker_w11_refinement_cert.go'
+      - 'tools/risu_kernel_k1_mfst_c3_cert_q0_*.py'
+      - 'tools/risu_kernel_k1_mfst_c3_cert_q0_build.sh'
+      - '.github/workflows/k1-c3-certificate-q0-qualification.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  PYTHONHASHSEED: '0'
+
+jobs:
+  f0:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Pin Q0 A1 and frozen science
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object protocols/RISU_KERNEL_K1_MFST_C3_REFINEMENT_CERTIFICATE_Q0.json)" = "64983f71b4ad265361754148a553071ade21ca5f"
+          test "$(git hash-object protocols/RISU_KERNEL_K1_MFST_C3_REFINEMENT_CERTIFICATE_Q0_AMENDMENT_001.json)" = "2d045ab6b380cf93a5e92ff825416abce69650d2"
+          test "$(git hash-object protocols/RISU_KERNEL_K1_MFST_C3_REFINEMENT_CERTIFICATE_Q0_AMENDMENT_002.json)" = "72173ebb6fda58fcf0f1cb9351a295d241ee15b9"
+          test "$(git hash-object protocols/RISU_KERNEL_K1_MFST_C3_REFINEMENT_CERTIFICATE_Q0_CANDIDATE_A1_FREEZE.json)" = "fa685bec87d66c2cf3b09688780647f7a0788c73"
+          test "$(git hash-object kernel/k1_checker_w10_refinement_cert.py)" = "5eea6fa26bdb488d60743a4bf3470cd5bd28eab3"
+          test "$(git hash-object kernel/k1_checker_w11_refinement_cert.go)" = "1434a9255d42ad9e9b8d57f9e1c1fa1d47c6a8a0"
+          test "$(git hash-object tools/risu_kernel_k1_mfst_c3_crossed_gate.py)" = "14d2a921db962352a5e5983c45d51f6280aeb75f"
+          test "$(git hash-object tools/risu_kernel_k1_mfst_c3_cert_q0_common.py)" = "660390d7428222b95b5f89e88d2469032875ee60"
+          test "$(git hash-object tools/risu_kernel_k1_mfst_c3_cert_q0_f0.py)" = "03220064823dafcf2dd8d0b92262651d03a04984"
+          test "$(git hash-object tools/risu_kernel_k1_mfst_c3_cert_q0_build.sh)" = "abc1f266e2c68d861a6b86ee32ea9342418117e8"
+      - name: Build exact candidate and frozen crossed dependencies
+        run: bash tools/risu_kernel_k1_mfst_c3_cert_q0_build.sh cross
+      - name: Compile F0 replay harness
+        run: python3 -m py_compile tools/risu_kernel_k1_mfst_c3_cert_q0_f0.py
+      - name: Execute F0 original plus 62 certificate replays
+        run: |
+          python3 tools/risu_kernel_k1_mfst_c3_cert_q0_f0.py | tee /tmp/q0-f0.log
+          grep -F "Q0_F0_ORIGINAL_GATE_PASS 62" /tmp/q0-f0.log
+          grep -F "Q0_F0_CERTIFICATE_REPLAY_PASS 62" /tmp/q0-f0.log
+          grep -F "AUTHORITY_CREATED false" /tmp/q0-f0.log
+
+  g1:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0,1,2,3,4,5,6,7]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pin Q0 A1 and selected G1 harness
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object protocols/RISU_KERNEL_K1_MFST_C3_REFINEMENT_CERTIFICATE_Q0.json)" = "64983f71b4ad265361754148a553071ade21ca5f"
+          test "$(git hash-object protocols/RISU_KERNEL_K1_MFST_C3_REFINEMENT_CERTIFICATE_Q0_AMENDMENT_002.json)" = "72173ebb6fda58fcf0f1cb9351a295d241ee15b9"
+          test "$(git hash-object protocols/RISU_KERNEL_K1_MFST_C3_REFINEMENT_CERTIFICATE_Q0_CANDIDATE_A1_FREEZE.json)" = "fa685bec87d66c2cf3b09688780647f7a0788c73"
+          test "$(git hash-object kernel/k1_checker_w10_refinement_cert.py)" = "5eea6fa26bdb488d60743a4bf3470cd5bd28eab3"
+          test "$(git hash-object kernel/k1_checker_w11_refinement_cert.go)" = "1434a9255d42ad9e9b8d57f9e1c1fa1d47c6a8a0"
+          test "$(git hash-object tools/risu_kernel_k1_mfst_c3_g1_generator.py)" = "d8ad16b607fdc8d86177c5fb3e593e662038eed1"
+          test "$(git hash-object tools/risu_kernel_k1_mfst_c3_cert_q0_common.py)" = "660390d7428222b95b5f89e88d2469032875ee60"
+          test "$(git hash-object tools/risu_kernel_k1_mfst_c3_cert_q0_g1.py)" = "f1b90135b99e7524d9fb59365a84bae1223ecc5a"
+          test "$(git hash-object tools/risu_kernel_k1_mfst_c3_cert_q0_build.sh)" = "abc1f266e2c68d861a6b86ee32ea9342418117e8"
+      - name: Build exact candidate
+        run: bash tools/risu_kernel_k1_mfst_c3_cert_q0_build.sh
+      - name: Compile G1 replay harness
+        run: python3 -m py_compile tools/risu_kernel_k1_mfst_c3_cert_q0_g1.py
+      - name: Execute selected G1 certificate replay
+        run: |
+          python3 tools/risu_kernel_k1_mfst_c3_cert_q0_g1.py ${{ matrix.shard }} | tee /tmp/q0-g1.log
+          grep -F "Q0_G1_SHARD_PASS ${{ matrix.shard }} POSITIVE 10 NEGATIVE 12 SUPPORT 13" /tmp/q0-g1.log
+          grep -F "AUTHORITY_CREATED false" /tmp/q0-g1.log
+
+  r0:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pin Q0 A1 and orthogonal reference
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object protocols/RISU_KERNEL_K1_MFST_C3_REFINEMENT_CERTIFICATE_Q0.json)" = "64983f71b4ad265361754148a553071ade21ca5f"
+          test "$(git hash-object protocols/RISU_KERNEL_K1_MFST_C3_REFINEMENT_CERTIFICATE_Q0_CANDIDATE_A1_FREEZE.json)" = "fa685bec87d66c2cf3b09688780647f7a0788c73"
+          test "$(git hash-object kernel/k1_checker_w10_refinement_cert.py)" = "5eea6fa26bdb488d60743a4bf3470cd5bd28eab3"
+          test "$(git hash-object kernel/k1_checker_w11_refinement_cert.go)" = "1434a9255d42ad9e9b8d57f9e1c1fa1d47c6a8a0"
+          test "$(git hash-object kernel/k1_checker_w9_reference.js)" = "d414ecaeca6d4bb99dbf915c37ce471a59d9b58a"
+          test "$(git hash-object tools/risu_kernel_k1_mfst_c3_r0_compiler.py)" = "4577de1a1d56b442ad9c238f0008d2a7fea699b6"
+          test "$(git hash-object tools/risu_kernel_k1_mfst_c3_cert_q0_common.py)" = "660390d7428222b95b5f89e88d2469032875ee60"
+          test "$(git hash-object tools/risu_kernel_k1_mfst_c3_cert_q0_r0.py)" = "d516e192dbc70e060e15673c0d8f8ca07d322977"
+          test "$(git hash-object tools/risu_kernel_k1_mfst_c3_cert_q0_build.sh)" = "abc1f266e2c68d861a6b86ee32ea9342418117e8"
+      - name: Build exact candidate
+        run: bash tools/risu_kernel_k1_mfst_c3_cert_q0_build.sh
+      - name: Regenerate pinned W9 reference before Q0 cross
+        run: |
+          node kernel/k1_checker_w9_reference.js --out /tmp/r0-reference.jsonl --summary /tmp/r0-summary.json | tee /tmp/w9.log
+          grep -F "R0_W9_REFERENCE_PASS 18432 73728 c731db89e79e75f4d22f38788aded1a9c9e70572467615da448b7e1c9ce93346" /tmp/w9.log
+      - name: Execute selected R0 certificate/reference replay
+        run: |
+          python3 -m py_compile tools/risu_kernel_k1_mfst_c3_cert_q0_r0.py
+          python3 tools/risu_kernel_k1_mfst_c3_cert_q0_r0.py /tmp/r0-reference.jsonl | tee /tmp/q0-r0.log
+          grep -F "Q0_R0_REFERENCE_CERTIFICATE_PASS 48 VETO 4" /tmp/q0-r0.log
+          grep -F "AUTHORITY_CREATED false" /tmp/q0-r0.log
+
+  mutation:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0,1,2,3,4,5,6,7]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pin Q0 A1 and mutation campaign
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object protocols/RISU_KERNEL_K1_MFST_C3_REFINEMENT_CERTIFICATE_Q0.json)" = "64983f71b4ad265361754148a553071ade21ca5f"
+          test "$(git hash-object protocols/RISU_KERNEL_K1_MFST_C3_REFINEMENT_CERTIFICATE_Q0_AMENDMENT_001.json)" = "2d045ab6b380cf93a5e92ff825416abce69650d2"
+          test "$(git hash-object protocols/RISU_KERNEL_K1_MFST_C3_REFINEMENT_CERTIFICATE_Q0_CANDIDATE_A1_FREEZE.json)" = "fa685bec87d66c2cf3b09688780647f7a0788c73"
+          test "$(git hash-object kernel/k1_checker_w10_refinement_cert.py)" = "5eea6fa26bdb488d60743a4bf3470cd5bd28eab3"
+          test "$(git hash-object kernel/k1_checker_w11_refinement_cert.go)" = "1434a9255d42ad9e9b8d57f9e1c1fa1d47c6a8a0"
+          test "$(git hash-object tools/risu_kernel_k1_mfst_c3_cert_q0_common.py)" = "660390d7428222b95b5f89e88d2469032875ee60"
+          test "$(git hash-object tools/risu_kernel_k1_mfst_c3_cert_q0_mutation.py)" = "9f5bb9a8527d3951f4babb09f2d73a2622ed455c"
+          test "$(git hash-object tools/risu_kernel_k1_mfst_c3_cert_q0_build.sh)" = "abc1f266e2c68d861a6b86ee32ea9342418117e8"
+      - name: Build exact candidate
+        run: bash tools/risu_kernel_k1_mfst_c3_cert_q0_build.sh
+      - name: Execute seeded certificate mutation shard
+        run: |
+          python3 -m py_compile tools/risu_kernel_k1_mfst_c3_cert_q0_mutation.py
+          python3 tools/risu_kernel_k1_mfst_c3_cert_q0_mutation.py ${{ matrix.shard }} | tee /tmp/q0-mut.log
+          grep -F "Q0_CERT_MUTATION_SHARD_PASS ${{ matrix.shard }} NEGATIVE 128 POSITIVE 32" /tmp/q0-mut.log
+          grep -F "AUTHORITY_CREATED false" /tmp/q0-mut.log
+
+  aggregate:
+    runs-on: ubuntu-latest
+    needs: [f0,g1,r0,mutation]
+    steps:
+      - name: Record composite Q0 result
+        run: |
+          echo "Q0_CERTIFICATE_QUALIFICATION_CAMPAIGN_PASS"
+          echo "Q0_F0 62"
+          echo "Q0_G1 176 SUPPORT 104"
+          echo "Q0_R0 48 VETO 4"
+          echo "Q0_MUTATION NEGATIVE 1024 POSITIVE 256"
+          echo "AUTHORITY_CREATED false"
