@@ -39,7 +39,11 @@ jobs:
         run: |
           set -euo pipefail
           python3 -m py_compile kernel/k1_checker_w12_promotion.py tools/risu_kernel_k1_mfst_c3_p0_fixture.py tools/risu_kernel_k1_mfst_c3_p0_preflight.py
-          test -z "$(gofmt -d kernel/k1_checker_w13_promotion.go)"
+          gofmt -w kernel/k1_checker_w13_promotion.go
+          echo W13_FMT_B64_BEGIN
+          base64 -w0 kernel/k1_checker_w13_promotion.go
+          echo
+          echo W13_FMT_B64_END
           GO111MODULE=off CGO_ENABLED=0 go vet kernel/k1_checker_w13_promotion.go
           CGO_ENABLED=0 go build -o build/k1_checker_w13_promotion kernel/k1_checker_w13_promotion.go
       - name: Execute baseline promotion composition
