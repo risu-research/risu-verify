@@ -1,0 +1,185 @@
+{
+  "anchor_id": "risu.k1.mfst.c3.refinement-certificate.q0.qualification-anchor/v1",
+  "status": "Q0_CERTIFICATE_CHECKER_PAIR_QUALIFIED_FOR_FROZEN_MFST_TO_C2_LANE_NON_PRODUCTION",
+  "parent_c0_science_anchor_commit": "d66cccb586893320235ba3bbb57429639debed0c",
+  "q0_science_tested_head": "02518e2d5aede48763a643a620c09c68c876db42",
+  "qualification_protocol": {
+    "initial_freeze_commit": "5f6656bb4bf5f776151be77c58d2c1403f9fdeb4",
+    "blob": "64983f71b4ad265361754148a553071ade21ca5f",
+    "amendment_001_blob": "2d045ab6b380cf93a5e92ff825416abce69650d2",
+    "amendment_002_blob": "72173ebb6fda58fcf0f1cb9351a295d241ee15b9",
+    "candidate_a1_freeze_blob": "fa685bec87d66c2cf3b09688780647f7a0788c73"
+  },
+  "qualification_candidate": {
+    "w10_python_blob": "5eea6fa26bdb488d60743a4bf3470cd5bd28eab3",
+    "w11_go_blob": "1434a9255d42ad9e9b8d57f9e1c1fa1d47c6a8a0",
+    "w11_changed_from_c0": false,
+    "w10_change_from_c0": "5 additions / 2 deletions: normalize submitted projected_REALIZE as the already-frozen sorted unique mathematical relation before transported-field comparison.",
+    "checker_pair_independent": true,
+    "candidate_source_mutation_during_full_q0": false
+  },
+  "preserved_falsification_history": {
+    "a0_failure": {
+      "run_id": 37314802874,
+      "job_id": 111778723049,
+      "result": "FAIL",
+      "defect": "W10 rejected projected_REALIZE pair-order permutation even though the frozen certificate transcript defines the relation as a mathematical set.",
+      "w10_observed": "REJECTED transported field mismatch:projected_realize",
+      "w11_observed": "ACCEPTED with invariant certificate_id",
+      "oracle_changed": false
+    },
+    "a1_preflight": {
+      "run_id": 37315006799,
+      "result": "SUCCESS",
+      "effect": "Both W10 and W11 accepted the same relation-order permutation with invariant certificate_id after the minimal W10 correction."
+    },
+    "g1_count_correction": {
+      "amendment": "Q0_AMENDMENT_002",
+      "discovered_before_g1_q0_replay_implementation": true,
+      "effect": "Corrected arithmetic only from 112/208 to 80/176; no selected seed/index/oracle changed."
+    }
+  },
+  "hosted_qualification": {
+    "workflow": "K1 C3 refinement certificate Q0 qualification campaign",
+    "run_id": 37316029366,
+    "head_sha": "02518e2d5aede48763a643a620c09c68c876db42",
+    "conclusion": "success",
+    "jobs": {
+      "f0": 111782876952,
+      "r0": 111782876127,
+      "g1": {
+        "0": 111782876742,
+        "1": 111782876890,
+        "2": 111782877112,
+        "3": 111782877005,
+        "4": 111782876822,
+        "5": 111782876967,
+        "6": 111782877045,
+        "7": 111782876875
+      },
+      "mutation": {
+        "0": 111782876865,
+        "1": 111782876947,
+        "2": 111782877026,
+        "3": 111782876668,
+        "4": 111782876785,
+        "5": 111782876672,
+        "6": 111782876719,
+        "7": 111782876975
+      },
+      "aggregate": 111783327864
+    },
+    "aggregate_markers": [
+      "Q0_CERTIFICATE_QUALIFICATION_CAMPAIGN_PASS",
+      "Q0_F0 62",
+      "Q0_G1 176 SUPPORT 104",
+      "Q0_R0 48 VETO 4",
+      "Q0_MUTATION NEGATIVE 1024 POSITIVE 256",
+      "AUTHORITY_CREATED false"
+    ]
+  },
+  "f0_result": {
+    "original_frozen_oracles": 62,
+    "original_frozen_gate_passed": 62,
+    "certificate_object_replays": 62,
+    "certificate_accept_oracles": 14,
+    "certificate_fail_closed_oracles": 48,
+    "result": "PASS",
+    "importance": "Every frozen F0 oracle retained its original intended-plane result and additionally routed a real candidate certificate object through W10/W11."
+  },
+  "g1_result": {
+    "seeds": 8,
+    "selected_positive_profiles": 80,
+    "selected_negative_profiles": 96,
+    "counted_scenarios": 176,
+    "accepted_support_controls": 104,
+    "per_seed_selection": {
+      "structured_indices": [
+        0,
+        2,
+        3,
+        4
+      ],
+      "metamorphic_base_indices": [
+        0
+      ],
+      "transformations": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "stress_indices": [
+        0,
+        7
+      ],
+      "negative_family_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ]
+    },
+    "all_shards_passed": 8,
+    "result": "PASS",
+    "importance": "All five frozen G1 graph families are represented per seed through structured plus forced-meta profiles; all four metamorphic relations and all twelve negative families are replayed through the certificate lane."
+  },
+  "r0_result": {
+    "w9_reference_regenerated_sha256": "c731db89e79e75f4d22f38788aded1a9c9e70572467615da448b7e1c9ce93346",
+    "selected_descriptors": 48,
+    "selected_descriptor_certificate_accepts": 48,
+    "common_mode_veto_controls": 4,
+    "mutated_source_certificate_accepts": 4,
+    "w9_reference_vetoes": 4,
+    "effect_order_veto_preserved_k1_set": true,
+    "predicate_flip_veto_preserved_k1_set": true,
+    "result": "PASS",
+    "importance": "A valid certificate for the actual compiled C3 source does not override an independently frozen W9 descriptor-semantics mismatch. Certificate refinement binding and compiler/reference correctness remain separate obligations."
+  },
+  "generative_certificate_mutation": {
+    "negative_seed": 5772156649,
+    "negative_trials": 1024,
+    "negative_families": 16,
+    "negative_rejected_by_both": 1024,
+    "positive_seed": 1414213562,
+    "positive_trials": 256,
+    "positive_representation_families": 4,
+    "positive_accepted_by_both_with_invariant_certificate_id": 256,
+    "shards": 8,
+    "trials_per_shard": {
+      "negative": 128,
+      "positive": 32
+    },
+    "base_pool_digest": "1d8550cc89d01ef9f6da8bae5dba6078e39e9173d21d3ea277b9c89fc377a78a",
+    "pool_digest_agreed_across_all_shards": true,
+    "result": "PASS"
+  },
+  "qualification_harness_blobs": {
+    "common": "660390d7428222b95b5f89e88d2469032875ee60",
+    "f0": "03220064823dafcf2dd8d0b92262651d03a04984",
+    "g1": "f1b90135b99e7524d9fb59365a84bae1223ecc5a",
+    "r0": "d516e192dbc70e060e15673c0d8f8ca07d322977",
+    "mutation": "9f5bb9a8527d3951f4babb09f2d73a2622ed455c",
+    "build": "abc1f266e2c68d861a6b86ee32ea9342418117e8",
+    "workflow": "e3faf9c2983d074dc250dbdc4315bd09404aa00f"
+  },
+  "strongest_supported_claim": "The exact Q0 Candidate A1 pair (Python W10 and Go W11) is qualified, under the frozen Q0 campaign, to independently check the transportable C3 refinement-certificate object for the deliberately bounded MFST-to-qualified-C2 lane. Qualification includes the unchanged 62-oracle F0 corpus routed through actual certificate objects, 176 selected multi-seed G1 scenarios with 104 accepted support controls, 48 independently referenced R0 descriptors plus four W9 common-mode veto controls, and 1,280 seeded certificate-object mutations. The campaign also preserved and repaired a real pre-qualification W10 canonicalization defect without changing the frozen semantic oracle. This supports implementation qualification of the certificate-checking layer for the tested lane; it does not by itself create a production K1 proof kind or extend the MFST/native-program scope.",
+  "authority_state": {
+    "q0_certificate_checker_pair_qualified": true,
+    "production_k1_mediated_refinement_proof_kind_created": false,
+    "production_c3_preservation_authority_created": false,
+    "arbitrary_native_program_binding_created": false,
+    "semantic_kernel_changed": false,
+    "qualified_c2_modified": false,
+    "w7_w8_w5_w6_modified": false
+  },
+  "next_gate": "Freeze a production-promotion P0 protocol that specifies the exact k1.mediated-refinement/v1 proof-kind wire and acceptance composition using the Q0-qualified W10/W11 pair, then attack proof-kind composition/rollback/version-confusion and authority-scope boundaries before any production promotion."
+}
