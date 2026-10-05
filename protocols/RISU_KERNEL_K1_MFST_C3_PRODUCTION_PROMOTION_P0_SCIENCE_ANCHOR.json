@@ -1,0 +1,197 @@
+{
+  "anchor_id": "risu.k1.mfst.c3.production-promotion.p0.science-anchor/v1",
+  "status": "P0_PRODUCTION_PROMOTION_COMPOSITION_ANCHORED_NON_AUTHORITATIVE",
+  "parent_q0_qualification_anchor_commit": "a857fe1f72b7341d549354e9ccc330dca22e9c0d",
+  "p0_science_tested_head": "f0699ec60aef8565e136cb43540371068f666961",
+  "prospective_freeze": {
+    "protocol_commit": "75540ff93b5bc5f61fc8859d051b8bf0d32c1ca4",
+    "protocol_blob": "163dc414e6410972fcf58c1225a7b31d19762308",
+    "transitive_pin_amendment_commit": "afe06b1d10e788cc54bc50b8058c0ee5789bc2be",
+    "transitive_pin_amendment_blob": "21041de11135a05b6c0e2393c905569cf619e676",
+    "checker_implementation_existed_when_protocol_frozen": false,
+    "transitive_pin_amendment_preimplementation": true
+  },
+  "candidate_a0": {
+    "freeze_blob": "8ead8120119b8914836a2370183851061454afb0",
+    "w12_python_blob": "1ea971f161a7ee134ca87d538160855a803a5ed8",
+    "w13_go_blob": "a6d689c704951afacace2beccd8e54eb4f857d84",
+    "proof_kind": "k1.mediated-refinement/v1",
+    "proof_format": "risu.k1.mediated-refinement-proof/v1",
+    "authority_scope": "EXACT_MFST_SOURCE_TO_EXACT_QUALIFIED_C2_LOWERING",
+    "production_registered": false
+  },
+  "composition_boundaries": [
+    "Exact promotion artifact bytes are bound by p:sha256 identity; semantic reserialization is a new artifact and requires complete outer rebinding.",
+    "Promotion policy pins Q0 qualification anchor, Candidate A1, W10/W11 exact blobs, MFST source semantics, qualified C2 downstream proof kind and exact authority scope.",
+    "P0 verifies the full transitive source closure for W7/W8/W5/W6 before semantic invocation, preserving the exact Q0-qualified evidence-engine closure.",
+    "Both W10 and W11 must ACCEPT the same exact profile/C3-certificate/program/C2-artifact chain and agree on all authority-relevant returned commitments.",
+    "Only after dual Q0 acceptance may P0 compare the expected outer W0 preservation certificate, grounding completeness, promotion artifact binding, evidence root and unchanged RISU-K1-CERT-W0 certificate identity.",
+    "The outer W0 object cannot repair, override or downgrade a rejected or partial inner C3 chain."
+  ],
+  "preserved_development_evidence": [
+    {
+      "run_id": 37318351500,
+      "conclusion": "failure",
+      "meaning": "Initial W13 candidate failed source-canonical gofmt gate before semantic execution."
+    },
+    {
+      "run_id": 37318454313,
+      "conclusion": "failure",
+      "meaning": "Checkout-local gofmt showed W13 vet/build success; baseline then exposed a W12 CLI spelling mismatch before semantics."
+    },
+    {
+      "run_id": 37318624206,
+      "conclusion": "failure",
+      "meaning": "Source-clean checker build succeeded; baseline exposed W13 transitive-source flag spelling mismatch."
+    },
+    {
+      "run_id": 37318766038,
+      "conclusion": "success",
+      "meaning": "W12/W13 source-clean baseline preflight converged on the same promotion artifact and outer W0 certificate."
+    }
+  ],
+  "baseline_known_answer": {
+    "promotion_artifact_id": "p:sha256:25cc125245d2828cd28e654a6842c5760c0ec6ea54f8f9fe58e531168b6c74e6",
+    "outer_certificate_id": "cert:sha256:da1af20a30b78f3eb04f1598237894752bde5402853124a3b23d9e2662c1c0d0",
+    "c3_certificate_id": "c3cert:sha256:45eb015f13f505ba49590a492fb8829eb308407c6f08d9fc2d9e088ef6d21ed5",
+    "c2_target_id": "t:sha256:1879e1655f2dec6bfc462fedf37ac95df4da42d2f094dfab3b50585dbfa06747",
+    "realize_pair_count": 6,
+    "w12_w13_agreement": true
+  },
+  "hosted_attack": {
+    "workflow": "K1 C3 P0 production-promotion attack",
+    "run_id": 37319258683,
+    "job_id": 111793818923,
+    "head_sha": "f0699ec60aef8565e136cb43540371068f666961",
+    "conclusion": "success",
+    "positive_controls": {
+      "required": 8,
+      "accepted": 8
+    },
+    "negative_vectors": {
+      "required": 50,
+      "rejected_or_fail_closed": 50
+    },
+    "total_vectors": 58,
+    "markers": [
+      "P0_PRODUCTION_PROMOTION_ATTACK_PASS 58",
+      "P0_POSITIVE 8",
+      "P0_NEGATIVE 50",
+      "AUTHORITY_CREATED false"
+    ]
+  },
+  "attacked_failure_classes": {
+    "proof_kind_and_wire_confusion": [
+      "P0-01",
+      "P0-02",
+      "P0-03",
+      "P0-04",
+      "P0-05"
+    ],
+    "artifact_and_outer_identity_staleness": [
+      "P0-06",
+      "P0-07",
+      "P0-08",
+      "P0-09",
+      "P0-10"
+    ],
+    "qualification_rollback_and_mixed_version": [
+      "P0-11",
+      "P0-12",
+      "P0-13",
+      "P0-14",
+      "P0-15",
+      "P0-16",
+      "P0-17",
+      "P0-18"
+    ],
+    "authority_scope_widening": [
+      "P0-19",
+      "P0-20",
+      "P0-21",
+      "P0-22",
+      "P0-23",
+      "P0-24"
+    ],
+    "exact_evidence_substitution": [
+      "P0-25",
+      "P0-26",
+      "P0-27",
+      "P0-28"
+    ],
+    "replay_and_cross_proof_splice": [
+      "P0-29",
+      "P0-30",
+      "P0-31",
+      "P0-32",
+      "P0-33",
+      "P0-34",
+      "P0-35",
+      "P0-36",
+      "P0-37",
+      "P0-38"
+    ],
+    "partial_chain_and_grounding": [
+      "P0-39",
+      "P0-40",
+      "P0-41",
+      "P0-42",
+      "P0-43",
+      "P0-44"
+    ],
+    "transitive_engine_substitution": [
+      "P0-45",
+      "P0-46",
+      "P0-47",
+      "P0-48",
+      "P0-49",
+      "P0-50"
+    ]
+  },
+  "positive_scope_controls": [
+    "Exact F0 baseline.",
+    "Bounded state-progress loop.",
+    "G1 high-complexity stress source.",
+    "R0 independently referenced source.",
+    "Promotion-artifact representation reserialization with complete identity rebinding.",
+    "C3 projected_REALIZE order permutation under set-canonical identity.",
+    "Nonsemantic MFST representation permutation with its own fresh proof.",
+    "Fresh changed-effect-order source accepted only with its own new trace/C2/C3/promotion identities."
+  ],
+  "tooling_blobs": {
+    "promotion_fixture": "c0133547172ed73f38ffac4c1884a7de3f0335b0",
+    "attack_gate": "f3d155e83fc79e0fe323d64b28cd1180d9c8de68",
+    "preflight": "29d492e5972d8bddde86568757362dd32bb5cedc",
+    "preflight_workflow": "bc61380704b3783881e0c3ef34996eb3c1d9eb18",
+    "attack_workflow": "a2d5175534ce3fbaac51a17f4c0d6bfef53e022a"
+  },
+  "repository_integrity": {
+    "base": "a857fe1f72b7341d549354e9ccc330dca22e9c0d",
+    "science_head": "f0699ec60aef8565e136cb43540371068f666961",
+    "ahead_by": 16,
+    "behind_by": 0,
+    "preexisting_files_modified": 0,
+    "q0_checker_pair_modified": false,
+    "w7_w8_w5_w6_modified": false,
+    "qualified_c2_modified": false,
+    "k1_w0_identity_modified": false
+  },
+  "strongest_supported_claim": "For the prospectively frozen P0 composition attack inventory, two independently implemented promotion checkers (Python W12 and Go W13) correctly composed the exact Q0-qualified W10/W11 refinement-certificate pair into a candidate k1.mediated-refinement/v1 W0 preservation proof structure without accepting rollback, proof-kind/version confusion, stale or cross-proof identities, scope widening, claim replay, incomplete grounding, one-checker success, rejected-inner-chain laundering, or transitive W7/W8/W5/W6 source substitution. All eight positive composition controls were accepted and all fifty negative controls failed closed. This is strong falsification evidence for the production-promotion composition boundary, not registration of a production proof kind.",
+  "authority_state": {
+    "production_proof_kind_created": false,
+    "k1_mediated_refinement_v1_registered": false,
+    "preservation_authority_created": false,
+    "q0_checker_pair_modified": false,
+    "semantic_kernel_changed": false,
+    "qualified_c2_modified": false,
+    "p0_is_promotion_science_only": true
+  },
+  "nonclaims": [
+    "P0 does not itself register k1.mediated-refinement/v1 in W0/W1/W2 or any production verifier dispatch table.",
+    "P0 does not widen MFST to arbitrary native programs, containers, services, agents, concurrency, ambient capabilities or unbounded liveness.",
+    "P0 source-blob pinning plus trusted hosted builds is not remote attestation or a hardware-backed executable identity guarantee.",
+    "P0 does not prove absence of all composition bugs or universal correctness of W12/W13.",
+    "P0 does not change K1 semantics or the qualified C2 proof kind."
+  ],
+  "next_gate": "A production-registration R1 decision may now be frozen: either keep k1.mediated-refinement/v1 non-production, or minimally register exactly this P0/Q0-pinned proof kind in a production dispatch layer and require a final add-only qualification replay with no scope widening."
+}
