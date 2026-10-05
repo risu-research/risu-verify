@@ -62,6 +62,21 @@ bash tests/historical_transition_demo.sh
 ```
 
 
+## October 2026 mediated-refinement research checkpoint — post-release
+
+The archived **v0.4.0-rc1** release remains unchanged. Subsequent public research branches test a deliberately bounded MFST → qualified-C2 refinement path using independent source interpreters, bidirectional crossed replay, an orthogonal reference semantics, independently checked refinement certificates, and qualification-time certificate mutation.
+
+Current checkpoint:
+
+- 62 pre-implementation adversarial oracles passed under the crossed gate;
+- 4,288 generated scenarios plus 1,024 full-square controls passed;
+- an orthogonal reference lane exhaustively evaluated 18,432 descriptors across 73,728 boundary executions and vetoed 4/4 deliberately wrong common-mode compiler translations;
+- the independent certificate-checker pair was requalified through F0/G1/R0 replay plus 1,024 negative and 256 representation-preserving positive certificate mutations.
+
+The state remains **research candidate only**: AUTHORITY_CREATED false. No production refinement proof kind has been created, and unrestricted native software remains outside the claim.
+
+See [the October 2026 mediated-refinement checkpoint](docs/MEDIATED_REFINEMENT_CHECKPOINT_2026-10.md) for exact anchors, hosted runs, supported claims, and nonclaims.
+
 ## One-file Browser Workbench handoff — post-release development
 
 RISU Verify run artifacts can be packaged into one content-addressed file for the public browser-local Workbench:
