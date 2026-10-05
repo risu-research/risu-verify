@@ -1,0 +1,38 @@
+{
+  "freeze_id": "risu.k1.mfst.c3.refinement-certificate.q0-candidate-a1/v1",
+  "status": "FROZEN_BEFORE_FULL_Q0_REPLAY_AND_GENERATIVE_MUTATION_IMPLEMENTATION",
+  "protocol_commit": "5f6656bb4bf5f776151be77c58d2c1403f9fdeb4",
+  "protocol_blob": "64983f71b4ad265361754148a553071ade21ca5f",
+  "amendment_001_commit": "09b024c4dac60076222d799d9064f690cce70985",
+  "amendment_001_blob": "2d045ab6b380cf93a5e92ff825416abce69650d2",
+  "preserved_candidate_a0_failure": {
+    "run_id": 37314802874,
+    "job_id": 111778723049,
+    "w10_blob": "1ae9cb6a2a1fd134c53f7c79cbf4290c023889e1",
+    "w11_blob": "1434a9255d42ad9e9b8d57f9e1c1fa1d47c6a8a0",
+    "disposition": "DISQUALIFIED_BY_POSITIVE_REPRESENTATION_ORACLE"
+  },
+  "candidate_a1": {
+    "w10": {
+      "path": "kernel/k1_checker_w10_refinement_cert.py",
+      "blob": "5eea6fa26bdb488d60743a4bf3470cd5bd28eab3"
+    },
+    "w11": {
+      "path": "kernel/k1_checker_w11_refinement_cert.go",
+      "blob": "1434a9255d42ad9e9b8d57f9e1c1fa1d47c6a8a0"
+    },
+    "w11_changed_since_a0": false,
+    "w10_change_scope": "Only normalize/validate submitted projected_REALIZE as a sorted unique relation before comparison with independently derived relation."
+  },
+  "hosted_preflight": {
+    "run_id": 37315006799,
+    "conclusion": "success",
+    "head_sha": "3ddaa8fe9cd891e3ee0b27cf3b4aec05c242d248",
+    "required_oracle": "projected_REALIZE pair-order permutation accepted by both W10/W11 with invariant certificate_id"
+  },
+  "freeze_rule": "Candidate A1 exact checker blobs may not change during full Q0. Any subsequent checker defect requires preserved failing run, numbered amendment, and a new candidate freeze.",
+  "authority_state": {
+    "q0_qualified": false,
+    "production_authority_created": false
+  }
+}
