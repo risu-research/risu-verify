@@ -1,0 +1,29 @@
+{
+  "amendment_id": "RISU_KERNEL_K1_MFST_C3_REFINEMENT_CERTIFICATE_Q0_AMENDMENT_001",
+  "status": "QUALIFICATION_CANDIDATE_CORRECTION_AFTER_PRESERVED_FAILURE",
+  "amends_protocol_commit": "5f6656bb4bf5f776151be77c58d2c1403f9fdeb4",
+  "preserved_failure": {
+    "run_id": 37314802874,
+    "job_id": 111778723049,
+    "candidate_w10_blob": "1ae9cb6a2a1fd134c53f7c79cbf4290c023889e1",
+    "candidate_w11_blob": "1434a9255d42ad9e9b8d57f9e1c1fa1d47c6a8a0",
+    "oracle": "projected_REALIZE pair-order permutation is representation-only and must preserve certificate_id and acceptance",
+    "observed_w10": "REJECTED: transported field mismatch:projected_realize",
+    "observed_w11": "ACCEPTED with invariant certificate_id c3cert:sha256:45eb015f13f505ba49590a492fb8829eb308407c6f08d9fc2d9e088ef6d21ed5"
+  },
+  "diagnosis": "W10 correctly canonicalized projected_realize for certificate_id construction but later compared the submitted raw list order directly against W7's canonical projected_realize list. This accidentally made relation serialization order authoritative even though the frozen C0 transcript defines projected_realize as a mathematical set whose transcript sorts pairs.",
+  "normative_effect": {
+    "oracle_changed": false,
+    "certificate_transcript_changed": false,
+    "wire_changed": false,
+    "w11_changed": false,
+    "required_w10_fix": "Normalize and validate submitted projected_realize to the same sorted unique relation before comparing it with independently derived projected_realize. No other transported field or evidence-chain rule changes.",
+    "old_w10_candidate_disqualified": true,
+    "next_candidate_requires_new_w10_blob": true
+  },
+  "anti_repair": "Do not weaken the positive representation oracle, alter the certificate ID transcript, or special-case the baseline. The same normalization rule must apply to all valid candidate certificates.",
+  "authority_state": {
+    "q0_qualified": false,
+    "production_authority_created": false
+  }
+}
