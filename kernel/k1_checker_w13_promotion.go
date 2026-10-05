@@ -19,6 +19,7 @@ import (
 	"regexp"
 	"sort"
 	"strconv"
+	"strings"
 )
 
 const (
@@ -601,22 +602,22 @@ func main() {
 	flag.StringVar(&a.w6, "w6", "", "")
 	for _, k := range []string{"w10_source", "w11_source", "w7_model_source", "w7_exec_source", "w7_source", "w8_json_source", "w8_model_source", "w8_exec_source", "w8_source", "w5_source", "w6_source"} {
 		v := new(string)
-		flag.StringVar(v, k, "", "")
+		flag.StringVar(v, strings.ReplaceAll(k, "_", "-"), "", "")
 		a.sources[k] = *v
 	}
 	flag.Parse()
 	// flag.StringVar above writes through pointers; reconstruct source values explicitly.
-	a.sources["w10_source"] = flag.Lookup("w10_source").Value.String()
-	a.sources["w11_source"] = flag.Lookup("w11_source").Value.String()
-	a.sources["w7_model_source"] = flag.Lookup("w7_model_source").Value.String()
-	a.sources["w7_exec_source"] = flag.Lookup("w7_exec_source").Value.String()
-	a.sources["w7_source"] = flag.Lookup("w7_source").Value.String()
-	a.sources["w8_json_source"] = flag.Lookup("w8_json_source").Value.String()
-	a.sources["w8_model_source"] = flag.Lookup("w8_model_source").Value.String()
-	a.sources["w8_exec_source"] = flag.Lookup("w8_exec_source").Value.String()
-	a.sources["w8_source"] = flag.Lookup("w8_source").Value.String()
-	a.sources["w5_source"] = flag.Lookup("w5_source").Value.String()
-	a.sources["w6_source"] = flag.Lookup("w6_source").Value.String()
+	a.sources["w10_source"] = flag.Lookup("w10-source").Value.String()
+	a.sources["w11_source"] = flag.Lookup("w11-source").Value.String()
+	a.sources["w7_model_source"] = flag.Lookup("w7-model-source").Value.String()
+	a.sources["w7_exec_source"] = flag.Lookup("w7-exec-source").Value.String()
+	a.sources["w7_source"] = flag.Lookup("w7-source").Value.String()
+	a.sources["w8_json_source"] = flag.Lookup("w8-json-source").Value.String()
+	a.sources["w8_model_source"] = flag.Lookup("w8-model-source").Value.String()
+	a.sources["w8_exec_source"] = flag.Lookup("w8-exec-source").Value.String()
+	a.sources["w8_source"] = flag.Lookup("w8-source").Value.String()
+	a.sources["w5_source"] = flag.Lookup("w5-source").Value.String()
+	a.sources["w6_source"] = flag.Lookup("w6-source").Value.String()
 	out, err := check(a)
 	if err != nil {
 		out = reject(err.Error())
