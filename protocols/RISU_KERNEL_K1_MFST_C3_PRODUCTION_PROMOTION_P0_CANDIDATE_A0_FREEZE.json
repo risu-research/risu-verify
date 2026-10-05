@@ -1,0 +1,49 @@
+{
+  "freeze_id": "risu.k1.mfst.c3.production-promotion.p0-candidate-a0/v1",
+  "status": "FROZEN_BEFORE_58_VECTOR_P0_ATTACK",
+  "parent_protocol_commit": "75540ff93b5bc5f61fc8859d051b8bf0d32c1ca4",
+  "amendment_001_commit": "afe06b1d10e788cc54bc50b8058c0ee5789bc2be",
+  "candidate": {
+    "w12_python_blob": "1ea971f161a7ee134ca87d538160855a803a5ed8",
+    "w13_go_blob": "a6d689c704951afacace2beccd8e54eb4f857d84",
+    "promotion_fixture_blob": "c0133547172ed73f38ffac4c1884a7de3f0335b0"
+  },
+  "preserved_development_history": [
+    {
+      "run_id": 37318351500,
+      "conclusion": "failure",
+      "meaning": "Initial W13 source failed gofmt canonicality before semantic execution."
+    },
+    {
+      "run_id": 37318454313,
+      "conclusion": "failure",
+      "meaning": "Checkout-local gofmt demonstrated W13 vet/build success; baseline then stopped on W12 CLI underscore/hyphen interface mismatch."
+    },
+    {
+      "run_id": 37318766038,
+      "conclusion": "success",
+      "head_sha": "b00d40994c6b58eb33d1dd8cc596be42a1287fc8",
+      "meaning": "Source-clean W12/W13 both independently accepted the exact baseline promotion composition and agreed on promotion artifact, outer W0 certificate, C3 certificate, target and REALIZE cardinality."
+    }
+  ],
+  "baseline_known_answer": {
+    "promotion_artifact_id": "p:sha256:25cc125245d2828cd28e654a6842c5760c0ec6ea54f8f9fe58e531168b6c74e6",
+    "outer_certificate_id": "cert:sha256:da1af20a30b78f3eb04f1598237894752bde5402853124a3b23d9e2662c1c0d0",
+    "c3_certificate_id": "c3cert:sha256:45eb015f13f505ba49590a492fb8829eb308407c6f08d9fc2d9e088ef6d21ed5",
+    "c2_target_id": "t:sha256:1879e1655f2dec6bfc462fedf37ac95df4da42d2f094dfab3b50585dbfa06747",
+    "realize_pair_count": 6,
+    "w12_w13_agreement": true,
+    "authority_created": false
+  },
+  "attack_inventory": {
+    "positive": 8,
+    "negative": 50,
+    "total": 58
+  },
+  "freeze_rule": "W12/W13 exact candidate blobs may not change during the 58-vector attack. Any semantic checker defect requires a preserved failing run, numbered amendment, and a new candidate freeze.",
+  "authority_state": {
+    "production_proof_kind_created": false,
+    "k1_mediated_refinement_v1_registered": false,
+    "preservation_authority_created": false
+  }
+}
