@@ -127,7 +127,7 @@ def check(args):
          ("c2_target_id","t"),("c2_certificate_id","cert"),("certificate_id","c3cert")]
     for k,p in ids:
         if not isinstance(cert.get(k),str) or not PAT[p].fullmatch(cert[k]): raise Reject("certificate: malformed "+k)
-    relation(cert["projected_realize"],"projected_realize")
+    submitted_realize=relation(cert["projected_realize"],"projected_realize")
     claim=loads_strict(Path(args.claim).read_bytes(),"claim")
     if not isinstance(claim,dict) or not isinstance(claim.get("claim_id"),str): raise Reject("claim: missing claim_id")
     with tempfile.TemporaryDirectory() as td0:
@@ -161,11 +161,14 @@ def check(args):
           "c3_source_id":r7["c3_source_id"],"c3_semantic_id":r7["c3_semantic_id"],
           "reachable_graph_id":r7["graph_id"],"ordered_trace_map_id":r7["trace_map_id"],
           "c2_program_sha256":r7["c2_program_sha256"],"c2_artifact_id":r7["c2_artifact_id"],
-          "c2_target_id":r7["c2_target_id"],"projected_realize":r7["projected_realize"],
+          "c2_target_id":r7["c2_target_id"],
           "c2_certificate_id":c2["certificate_id"],"certificate_id":cert["certificate_id"]}
         for k,v in expected.items():
             if k=="certificate_id": continue
             if cert.get(k)!=v: raise Reject("transported field mismatch:"+k)
+        derived_realize=[tuple(x) for x in r7["projected_realize"]]
+        if submitted_realize!=sorted(derived_realize):
+            raise Reject("transported field mismatch:projected_realize")
         cid=c3_certificate_id(cert)
         if cert["certificate_id"]!=cid: raise Reject("C3 certificate_id mismatch")
         return {"checker":"risu-k1-c3-cert-w10","proof_status":"ACCEPTED","semantic_claim":"CANDIDATE_REFINEMENT_CERTIFICATE",
