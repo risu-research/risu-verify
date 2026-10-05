@@ -1,0 +1,66 @@
+{
+  "amendment_id": "RISU_KERNEL_K1_MFST_C3_PRODUCTION_PROMOTION_P0_AMENDMENT_001",
+  "status": "PREIMPLEMENTATION_TRANSITIVE_EVIDENCE_ENGINE_PIN_FREEZE",
+  "amends_commit": "75540ff93b5bc5f61fc8859d051b8bf0d32c1ca4",
+  "reason": "A production promotion checker that pins only W10/W11 but accepts arbitrary W7/W8/W5/W6 evidence-engine implementations would leave a composition downgrade path. Q0 qualification covered exact transitive engines; P0 must preserve that exact closure.",
+  "required_transitive_source_pins": {
+    "kernel/k1_w7_model.py": "3c351fd445b704d693e05ba01efe9cffa6a2801b",
+    "kernel/k1_w7_exec.py": "8b1529dfbd8367e20776f0ab8ec3f5fa6559ca2a",
+    "kernel/k1_checker_w7.py": "c011532efbe9b6dcd6ae440705ce7b38c5dde93b",
+    "kernel/k1_w8_json.go": "4e770c8ef7882b23705bb7068bd877c2cd9c3543",
+    "kernel/k1_w8_model.go": "b53897a82255886d59b9dc05d7fbe8166aca1d35",
+    "kernel/k1_w8_exec.go": "64254a8537d3777848b1d3f8176260c5a1c312e7",
+    "kernel/k1_checker_w8.go": "f3e1e0c42e8106615b0aeeb2a85ceae3046e74a2",
+    "kernel/k1_checker_w5.py": "cf08aff1ce9f9506df37d597c2fc348bfefd6331",
+    "kernel/k1_checker_w6.go": "33464fe4132d6490b1a68cc71ef803d584e597f9"
+  },
+  "added_negative_vectors": [
+    [
+      "P0-45",
+      "w7_checker_source_substitution",
+      "Q0 checker pair remains exact but W7 checker source pin is replaced",
+      "REJECT"
+    ],
+    [
+      "P0-46",
+      "w8_checker_source_substitution",
+      "Q0 checker pair remains exact but W8 checker source pin is replaced",
+      "REJECT"
+    ],
+    [
+      "P0-47",
+      "w5_checker_source_substitution",
+      "Q0 checker pair remains exact but downstream W5 source pin is replaced",
+      "REJECT"
+    ],
+    [
+      "P0-48",
+      "w6_checker_source_substitution",
+      "Q0 checker pair remains exact but downstream W6 source pin is replaced",
+      "REJECT"
+    ],
+    [
+      "P0-49",
+      "w7_support_module_substitution",
+      "W7 model/exec support source differs from the Q0-qualified closure",
+      "REJECT"
+    ],
+    [
+      "P0-50",
+      "w8_support_module_substitution",
+      "one W8 json/model/exec support source differs from the Q0-qualified closure",
+      "REJECT"
+    ]
+  ],
+  "amended_counts": {
+    "positive": 8,
+    "negative": 50,
+    "total": 58
+  },
+  "runtime_rule": "P0 checkers must verify Git-blob identity of the exact supplied source files for W10/W11 and all transitive W7/W8/W5/W6 source modules before semantic invocation. Executable construction remains a trusted packaging/build concern and hosted P0 builds Go binaries from those pinned sources with CGO disabled.",
+  "oracle_changes": false,
+  "authority_state": {
+    "production_authority_created": false,
+    "p0_checker_implementation_started": false
+  }
+}
