@@ -4,7 +4,7 @@ on:
   push:
     branches: [k1-closure-c3-certificate-q0]
     paths:
-      - 'protocols/RISU_KERNEL_K1_MFST_C3_REFINEMENT_CERTIFICATE_Q0.json'
+      - 'protocols/RISU_KERNEL_K1_MFST_C3_REFINEMENT_CERTIFICATE_Q0*.json'
       - 'kernel/k1_checker_w10_refinement_cert.py'
       - 'kernel/k1_checker_w11_refinement_cert.go'
       - 'tools/risu_kernel_k1_mfst_c3_cert_q0_preflight.py'
@@ -24,7 +24,8 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git hash-object protocols/RISU_KERNEL_K1_MFST_C3_REFINEMENT_CERTIFICATE_Q0.json)" = "64983f71b4ad265361754148a553071ade21ca5f"
-          test "$(git hash-object kernel/k1_checker_w10_refinement_cert.py)" = "1ae9cb6a2a1fd134c53f7c79cbf4290c023889e1"
+          test "$(git hash-object protocols/RISU_KERNEL_K1_MFST_C3_REFINEMENT_CERTIFICATE_Q0_AMENDMENT_001.json)" = "2d045ab6b380cf93a5e92ff825416abce69650d2"
+          test "$(git hash-object kernel/k1_checker_w10_refinement_cert.py)" = "5eea6fa26bdb488d60743a4bf3470cd5bd28eab3"
           test "$(git hash-object kernel/k1_checker_w11_refinement_cert.go)" = "1434a9255d42ad9e9b8d57f9e1c1fa1d47c6a8a0"
           test "$(git hash-object tools/risu_kernel_k1_mfst_c3_cert_q0_preflight.py)" = "51ddd2149735c894d69de7804dc24b4ee126d95e"
           test "$(git hash-object kernel/k1_checker_w7.py)" = "c011532efbe9b6dcd6ae440705ce7b38c5dde93b"
