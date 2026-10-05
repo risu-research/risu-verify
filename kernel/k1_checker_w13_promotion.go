@@ -204,15 +204,22 @@ func relation(raw json.RawMessage, where string) ([]Pair, error) {
 	return out, nil
 }
 func pairsEqual(a, b []Pair) bool {
-	if len(a) != len(b) { return false }
+	if len(a) != len(b) {
+		return false
+	}
 	for i := range a {
-		if a[i] != b[i] { return false }
+		if a[i] != b[i] {
+			return false
+		}
 	}
 	return true
 }
 func evidenceRoot(claim, artifact, c3id, target string) string {
 	pre := []byte("RISU-K1-MEDIATED-REFINEMENT-PROOF-V1\x00")
-	for _, tv := range []struct{ t byte; v string }{
+	for _, tv := range []struct {
+		t byte
+		v string
+	}{
 		{'C', claim}, {'A', artifact}, {'R', c3id}, {'T', target},
 		{'Q', q0Commit}, {'X', w10Blob}, {'Y', w11Blob},
 	} {
@@ -223,176 +230,397 @@ func evidenceRoot(claim, artifact, c3id, target string) string {
 	return "e:sha256:" + hex.EncodeToString(h[:])
 }
 
-type proofRef struct { Kind string `json:"kind"`; Artifact string `json:"artifact"` }
-type grounding struct { Pair []string `json:"pair"`; Proof proofRef `json:"proof"` }
+type proofRef struct {
+	Kind     string `json:"kind"`
+	Artifact string `json:"artifact"`
+}
+type grounding struct {
+	Pair  []string `json:"pair"`
+	Proof proofRef `json:"proof"`
+}
 
 func outerCertID(m map[string]json.RawMessage) (string, error) {
-	claim, err := strField(m, "claim_id"); if err != nil { return "", err }
-	target, err := strField(m, "target_id"); if err != nil { return "", err }
-	real, err := relation(m["realize"], "outer.realize"); if err != nil { return "", err }
+	claim, err := strField(m, "claim_id")
+	if err != nil {
+		return "", err
+	}
+	target, err := strField(m, "target_id")
+	if err != nil {
+		return "", err
+	}
+	real, err := relation(m["realize"], "outer.realize")
+	if err != nil {
+		return "", err
+	}
 	var cp proofRef
-	if err := json.Unmarshal(m["closure_proof"], &cp); err != nil { return "", errors.New("outer closure proof") }
+	if err := json.Unmarshal(m["closure_proof"], &cp); err != nil {
+		return "", errors.New("outer closure proof")
+	}
 	var cpm map[string]json.RawMessage
-	if err := json.Unmarshal(m["closure_proof"], &cpm); err != nil || len(cpm)!=2 { return "", errors.New("outer closure proof shape") }
-	if _,ok:=cpm["kind"];!ok{return "",errors.New("outer closure proof shape")}
-	if _,ok:=cpm["artifact"];!ok{return "",errors.New("outer closure proof shape")}
+	if err := json.Unmarshal(m["closure_proof"], &cpm); err != nil || len(cpm) != 2 {
+		return "", errors.New("outer closure proof shape")
+	}
+	if _, ok := cpm["kind"]; !ok {
+		return "", errors.New("outer closure proof shape")
+	}
+	if _, ok := cpm["artifact"]; !ok {
+		return "", errors.New("outer closure proof shape")
+	}
 	var gs []grounding
-	if err := json.Unmarshal(m["grounding_proofs"], &gs); err != nil { return "", errors.New("outer grounding") }
-	type grow struct{W,C,K,A string}
-	gr := make([]grow,0,len(gs))
-	for _,g:=range gs{
-		if len(g.Pair)!=2 || !patterns["w"].MatchString(g.Pair[0]) || !patterns["c"].MatchString(g.Pair[1]) {
+	if err := json.Unmarshal(m["grounding_proofs"], &gs); err != nil {
+		return "", errors.New("outer grounding")
+	}
+	type grow struct{ W, C, K, A string }
+	gr := make([]grow, 0, len(gs))
+	for _, g := range gs {
+		if len(g.Pair) != 2 || !patterns["w"].MatchString(g.Pair[0]) || !patterns["c"].MatchString(g.Pair[1]) {
 			return "", errors.New("outer grounding pair")
 		}
-		gr=append(gr,grow{g.Pair[0],g.Pair[1],g.Proof.Kind,g.Proof.Artifact})
+		gr = append(gr, grow{g.Pair[0], g.Pair[1], g.Proof.Kind, g.Proof.Artifact})
 	}
-	sort.Slice(gr,func(i,j int)bool{
-		a,b:=gr[i],gr[j]
-		if a.W!=b.W{return a.W<b.W};if a.C!=b.C{return a.C<b.C};if a.K!=b.K{return a.K<b.K};return a.A<b.A
+	sort.Slice(gr, func(i, j int) bool {
+		a, b := gr[i], gr[j]
+		if a.W != b.W {
+			return a.W < b.W
+		}
+		if a.C != b.C {
+			return a.C < b.C
+		}
+		if a.K != b.K {
+			return a.K < b.K
+		}
+		return a.A < b.A
 	})
 	var roots []string
-	if err:=json.Unmarshal(m["evidence_roots"],&roots);err!=nil{return "",errors.New("outer roots")}
-	sort.Strings(roots)
-	pre:=[]byte("RISU-K1-CERT-W0\x00")
-	pre=append(pre,'C');pre=append(pre,net(claim)...)
-	pre=append(pre,'T');pre=append(pre,net(target)...)
-	pre=append(pre,'R');pre=append(pre,net(strconv.Itoa(len(real)))...)
-	for _,p:=range real{pre=append(pre,'P');pre=append(pre,net(p.W)...);pre=append(pre,net(p.C)...)}
-	pre=append(pre,'Q');pre=append(pre,net(cp.Kind)...);pre=append(pre,net(cp.Artifact)...)
-	pre=append(pre,'G');pre=append(pre,net(strconv.Itoa(len(gr)))...)
-	for _,g:=range gr{
-		pre=append(pre,'g');pre=append(pre,net(g.W)...);pre=append(pre,net(g.C)...);pre=append(pre,net(g.K)...);pre=append(pre,net(g.A)...)
+	if err := json.Unmarshal(m["evidence_roots"], &roots); err != nil {
+		return "", errors.New("outer roots")
 	}
-	pre=append(pre,'E');pre=append(pre,net(strconv.Itoa(len(roots)))...)
-	for _,r:=range roots{pre=append(pre,'V');pre=append(pre,net(r)...)}
-	h:=sha256.Sum256(pre)
-	return "cert:sha256:"+hex.EncodeToString(h[:]),nil
+	sort.Strings(roots)
+	pre := []byte("RISU-K1-CERT-W0\x00")
+	pre = append(pre, 'C')
+	pre = append(pre, net(claim)...)
+	pre = append(pre, 'T')
+	pre = append(pre, net(target)...)
+	pre = append(pre, 'R')
+	pre = append(pre, net(strconv.Itoa(len(real)))...)
+	for _, p := range real {
+		pre = append(pre, 'P')
+		pre = append(pre, net(p.W)...)
+		pre = append(pre, net(p.C)...)
+	}
+	pre = append(pre, 'Q')
+	pre = append(pre, net(cp.Kind)...)
+	pre = append(pre, net(cp.Artifact)...)
+	pre = append(pre, 'G')
+	pre = append(pre, net(strconv.Itoa(len(gr)))...)
+	for _, g := range gr {
+		pre = append(pre, 'g')
+		pre = append(pre, net(g.W)...)
+		pre = append(pre, net(g.C)...)
+		pre = append(pre, net(g.K)...)
+		pre = append(pre, net(g.A)...)
+	}
+	pre = append(pre, 'E')
+	pre = append(pre, net(strconv.Itoa(len(roots)))...)
+	for _, r := range roots {
+		pre = append(pre, 'V')
+		pre = append(pre, net(r)...)
+	}
+	h := sha256.Sum256(pre)
+	return "cert:sha256:" + hex.EncodeToString(h[:]), nil
 }
 
-func runJSON(name string,args ...string)(map[string]interface{},error){
-	c:=exec.Command(name,args...)
+func runJSON(name string, args ...string) (map[string]interface{}, error) {
+	c := exec.Command(name, args...)
 	var out bytes.Buffer
-	c.Stdout=&out
+	c.Stdout = &out
 	var er bytes.Buffer
-	c.Stderr=&er
-	if err:=c.Run();err!=nil{return nil,fmt.Errorf("inner checker non-success: %v %s",err,er.String())}
+	c.Stderr = &er
+	if err := c.Run(); err != nil {
+		return nil, fmt.Errorf("inner checker non-success: %v %s", err, er.String())
+	}
 	var m map[string]interface{}
-	if err:=json.Unmarshal(out.Bytes(),&m);err!=nil{return nil,errors.New("inner checker malformed output")}
-	return m,nil
+	if err := json.Unmarshal(out.Bytes(), &m); err != nil {
+		return nil, errors.New("inner checker malformed output")
+	}
+	return m, nil
 }
-func sval(m map[string]interface{},k string)string{v,_:=m[k].(string);return v}
-func nval(m map[string]interface{},k string)int{
-	switch v:=m[k].(type){case float64:return int(v);case json.Number:n,_:=v.Int64();return int(n)}
+func sval(m map[string]interface{}, k string) string { v, _ := m[k].(string); return v }
+func nval(m map[string]interface{}, k string) int {
+	switch v := m[k].(type) {
+	case float64:
+		return int(v)
+	case json.Number:
+		n, _ := v.Int64()
+		return int(n)
+	}
 	return -1
 }
 
-type argsT struct{
-	claim,profile,c3cert,program,c2artifact,promo,outer string
-	w10,w11,w7,w8,w5,w6 string
-	sources map[string]string
-}
-func reject(reason string) map[string]interface{}{
-	return map[string]interface{}{"checker":"risu-k1-c3-promotion-w13","proof_status":"REJECTED","semantic_claim":"NONE","authority_created":false,"reason":reason}
+type argsT struct {
+	claim, profile, c3cert, program, c2artifact, promo, outer string
+	w10, w11, w7, w8, w5, w6                                  string
+	sources                                                   map[string]string
 }
 
-func check(a argsT)(map[string]interface{},error){
-	for k,expected:=range sourcePins{
-		raw,err:=read(a.sources[k]);if err!=nil{return nil,fmt.Errorf("source pin read:%s",k)}
-		if gitBlob(raw)!=expected{return nil,fmt.Errorf("source pin mismatch:%s",k)}
-	}
-	claimRaw,err:=read(a.claim);if err!=nil{return nil,err}
-	claim,err:=strictRaw(claimRaw,"claim");if err!=nil{return nil,err}
-	claimID,err:=strField(claim,"claim_id");if err!=nil||!patterns["claim"].MatchString(claimID){return nil,errors.New("claim id")}
-
-	promoRaw,err:=read(a.promo);if err!=nil{return nil,err}
-	promo,err:=strictRaw(promoRaw,"promotion");if err!=nil{return nil,err}
-	if !exactKeys(promo,promoKeys){return nil,errors.New("promotion exact-key violation")}
-	lits:=map[string]string{
-		"proof_format":proofFormat,"proof_kind":proofKind,"source_semantics":sourceSem,
-		"downstream_proof_kind":downstream,"authority_scope":scope,"q0_candidate_id":q0Candidate,
-		"q0_qualification_anchor_commit":q0Commit,"q0_qualification_anchor_blob":q0Blob,
-		"w10_blob":w10Blob,"w11_blob":w11Blob,
-	}
-	for k,v:=range lits{s,e:=strField(promo,k);if e!=nil||s!=v{return nil,fmt.Errorf("promotion policy mismatch:%s",k)}}
-	pClaim,_:=strField(promo,"claim_id");if pClaim!=claimID{return nil,errors.New("promotion claim mismatch")}
-	checkPatterns:=map[string]string{"claim_id":"claim","c3_certificate_id":"c3cert","profile_sha256":"sha","c3_certificate_sha256":"sha","c2_program_sha256":"sha","c2_artifact_id":"p","c2_target_id":"t"}
-	for k,p:=range checkPatterns{s,e:=strField(promo,k);if e!=nil||!patterns[p].MatchString(s){return nil,fmt.Errorf("promotion malformed:%s",k)}}
-
-	profileRaw,_:=read(a.profile);certRaw,_:=read(a.c3cert);progRaw,_:=read(a.program);artRaw,_:=read(a.c2artifact)
-	pProfile,_:=strField(promo,"profile_sha256");if sha256hex(profileRaw)!=pProfile{return nil,errors.New("profile exact-byte mismatch")}
-	pCertHash,_:=strField(promo,"c3_certificate_sha256");if sha256hex(certRaw)!=pCertHash{return nil,errors.New("C3 certificate exact-byte mismatch")}
-	pProg,_:=strField(promo,"c2_program_sha256");if sha256hex(progRaw)!=pProg{return nil,errors.New("C2 program digest mismatch")}
-	pAid,_:=strField(promo,"c2_artifact_id");if "p:sha256:"+sha256hex(artRaw)!=pAid{return nil,errors.New("C2 artifact digest mismatch")}
-
-	inner,err:=strictRaw(certRaw,"C3 certificate");if err!=nil{return nil,err}
-	iClaim,_:=strField(inner,"claim_id");if iClaim!=claimID{return nil,errors.New("inner claim mismatch")}
-	iCID,_:=strField(inner,"certificate_id");pCID,_:=strField(promo,"c3_certificate_id");if iCID!=pCID{return nil,errors.New("promotion C3 certificate id mismatch")}
-	iTarget,_:=strField(inner,"c2_target_id");pTarget,_:=strField(promo,"c2_target_id");if iTarget!=pTarget{return nil,errors.New("promotion target mismatch")}
-	innerReal,err:=relation(inner["projected_realize"],"inner projected_realize");if err!=nil{return nil,err}
-
-	common:=[]string{"--claim",a.claim,"--profile",a.profile,"--certificate",a.c3cert,"--program",a.program,"--artifact",a.c2artifact,"--w7",a.w7,"--w8",a.w8,"--w5",a.w5,"--w6",a.w6}
-	r10,err:=runJSON("python3",append([]string{a.w10},common...)...);if err!=nil{return nil,err}
-	r11,err:=runJSON(a.w11,common...);if err!=nil{return nil,err}
-	if sval(r10,"checker")!="risu-k1-c3-cert-w10"||sval(r11,"checker")!="risu-k1-c3-cert-w11"{return nil,errors.New("inner checker identity")}
-	if sval(r10,"proof_status")!="ACCEPTED"||sval(r11,"proof_status")!="ACCEPTED"{return nil,errors.New("dual Q0 acceptance required")}
-	for _,k:=range []string{"certificate_id","c2_certificate_id","c3_source_id","ordered_trace_map_id","c2_target_id"}{
-		if sval(r10,k)!=sval(r11,k){return nil,fmt.Errorf("W10/W11 disagreement:%s",k)}
-	}
-	if nval(r10,"realize_pair_count")!=nval(r11,"realize_pair_count"){return nil,errors.New("W10/W11 disagreement:realize_pair_count")}
-	if sval(r10,"certificate_id")!=pCID{return nil,errors.New("accepted C3 id mismatch")}
-	if sval(r10,"c2_target_id")!=pTarget{return nil,errors.New("accepted target mismatch")}
-	if nval(r10,"realize_pair_count")!=len(innerReal){return nil,errors.New("accepted REALIZE count mismatch")}
-
-	promoArt:="p:sha256:"+sha256hex(promoRaw)
-	eroot:=evidenceRoot(claimID,promoArt,pCID,pTarget)
-
-	outerRaw,err:=read(a.outer);if err!=nil{return nil,err}
-	outer,err:=strictRaw(outerRaw,"outer");if err!=nil{return nil,err}
-	if !exactKeys(outer,outerKeys){return nil,errors.New("outer exact-key violation")}
-	wire,_:=strField(outer,"wire");kind,_:=strField(outer,"kind")
-	if wire!="risu.k1.w0"||kind!="preservation_certificate"{return nil,errors.New("outer wire/kind")}
-	oClaim,_:=strField(outer,"claim_id");if oClaim!=claimID{return nil,errors.New("outer claim mismatch")}
-	oTarget,_:=strField(outer,"target_id");if oTarget!=pTarget{return nil,errors.New("outer target mismatch")}
-	outerReal,err:=relation(outer["realize"],"outer.realize");if err!=nil{return nil,err}
-	if !pairsEqual(outerReal,innerReal){return nil,errors.New("outer REALIZE mismatch")}
-	var cp proofRef;if err:=json.Unmarshal(outer["closure_proof"],&cp);err!=nil{return nil,errors.New("outer closure proof")}
-	if cp.Kind!=proofKind||cp.Artifact!=promoArt{return nil,errors.New("outer closure proof mismatch")}
-	var gp []grounding;if err:=json.Unmarshal(outer["grounding_proofs"],&gp);err!=nil{return nil,errors.New("outer grounding")}
-	if len(gp)!=len(innerReal){return nil,errors.New("outer grounding completeness")}
-	seen:=map[string]bool{}
-	for _,g:=range gp{
-		if len(g.Pair)!=2||!patterns["w"].MatchString(g.Pair[0])||!patterns["c"].MatchString(g.Pair[1]){return nil,errors.New("outer grounding pair")}
-		key:=g.Pair[0]+"\x00"+g.Pair[1];if seen[key]{return nil,errors.New("outer grounding duplicate")};seen[key]=true
-		if g.Proof.Kind!=proofKind||g.Proof.Artifact!=promoArt{return nil,errors.New("outer grounding proof mismatch")}
-	}
-	for _,p:=range innerReal{if !seen[p.W+"\x00"+p.C]{return nil,errors.New("outer grounding coverage")}}
-	var roots []string;if err:=json.Unmarshal(outer["evidence_roots"],&roots);err!=nil||len(roots)!=1||roots[0]!=eroot{return nil,errors.New("outer evidence root mismatch")}
-	cid,err:=outerCertID(outer);if err!=nil{return nil,err}
-	oCID,_:=strField(outer,"certificate_id");if oCID!=cid{return nil,errors.New("outer certificate_id mismatch")}
-	return map[string]interface{}{"checker":"risu-k1-c3-promotion-w13","proof_status":"ACCEPTED","semantic_claim":"P0_CANDIDATE_MEDIATED_REFINEMENT_COMPOSITION","authority_created":false,"promotion_artifact_id":promoArt,"outer_certificate_id":cid,"c3_certificate_id":pCID,"c2_target_id":pTarget,"realize_pair_count":len(innerReal)},nil
+func reject(reason string) map[string]interface{} {
+	return map[string]interface{}{"checker": "risu-k1-c3-promotion-w13", "proof_status": "REJECTED", "semantic_claim": "NONE", "authority_created": false, "reason": reason}
 }
 
-func main(){
-	a:=argsT{sources:map[string]string{}}
-	flag.StringVar(&a.claim,"claim","","");flag.StringVar(&a.profile,"profile","","");flag.StringVar(&a.c3cert,"c3-certificate","","")
-	flag.StringVar(&a.program,"program","","");flag.StringVar(&a.c2artifact,"c2-artifact","","");flag.StringVar(&a.promo,"promotion-artifact","","");flag.StringVar(&a.outer,"outer-certificate","","")
-	flag.StringVar(&a.w10,"w10","","");flag.StringVar(&a.w11,"w11","","");flag.StringVar(&a.w7,"w7","","");flag.StringVar(&a.w8,"w8","","");flag.StringVar(&a.w5,"w5","","");flag.StringVar(&a.w6,"w6","","")
-	for _,k:=range []string{"w10_source","w11_source","w7_model_source","w7_exec_source","w7_source","w8_json_source","w8_model_source","w8_exec_source","w8_source","w5_source","w6_source"}{
-		v:=new(string);flag.StringVar(v,k,"","");a.sources[k]=*v
+func check(a argsT) (map[string]interface{}, error) {
+	for k, expected := range sourcePins {
+		raw, err := read(a.sources[k])
+		if err != nil {
+			return nil, fmt.Errorf("source pin read:%s", k)
+		}
+		if gitBlob(raw) != expected {
+			return nil, fmt.Errorf("source pin mismatch:%s", k)
+		}
+	}
+	claimRaw, err := read(a.claim)
+	if err != nil {
+		return nil, err
+	}
+	claim, err := strictRaw(claimRaw, "claim")
+	if err != nil {
+		return nil, err
+	}
+	claimID, err := strField(claim, "claim_id")
+	if err != nil || !patterns["claim"].MatchString(claimID) {
+		return nil, errors.New("claim id")
+	}
+
+	promoRaw, err := read(a.promo)
+	if err != nil {
+		return nil, err
+	}
+	promo, err := strictRaw(promoRaw, "promotion")
+	if err != nil {
+		return nil, err
+	}
+	if !exactKeys(promo, promoKeys) {
+		return nil, errors.New("promotion exact-key violation")
+	}
+	lits := map[string]string{
+		"proof_format": proofFormat, "proof_kind": proofKind, "source_semantics": sourceSem,
+		"downstream_proof_kind": downstream, "authority_scope": scope, "q0_candidate_id": q0Candidate,
+		"q0_qualification_anchor_commit": q0Commit, "q0_qualification_anchor_blob": q0Blob,
+		"w10_blob": w10Blob, "w11_blob": w11Blob,
+	}
+	for k, v := range lits {
+		s, e := strField(promo, k)
+		if e != nil || s != v {
+			return nil, fmt.Errorf("promotion policy mismatch:%s", k)
+		}
+	}
+	pClaim, _ := strField(promo, "claim_id")
+	if pClaim != claimID {
+		return nil, errors.New("promotion claim mismatch")
+	}
+	checkPatterns := map[string]string{"claim_id": "claim", "c3_certificate_id": "c3cert", "profile_sha256": "sha", "c3_certificate_sha256": "sha", "c2_program_sha256": "sha", "c2_artifact_id": "p", "c2_target_id": "t"}
+	for k, p := range checkPatterns {
+		s, e := strField(promo, k)
+		if e != nil || !patterns[p].MatchString(s) {
+			return nil, fmt.Errorf("promotion malformed:%s", k)
+		}
+	}
+
+	profileRaw, _ := read(a.profile)
+	certRaw, _ := read(a.c3cert)
+	progRaw, _ := read(a.program)
+	artRaw, _ := read(a.c2artifact)
+	pProfile, _ := strField(promo, "profile_sha256")
+	if sha256hex(profileRaw) != pProfile {
+		return nil, errors.New("profile exact-byte mismatch")
+	}
+	pCertHash, _ := strField(promo, "c3_certificate_sha256")
+	if sha256hex(certRaw) != pCertHash {
+		return nil, errors.New("C3 certificate exact-byte mismatch")
+	}
+	pProg, _ := strField(promo, "c2_program_sha256")
+	if sha256hex(progRaw) != pProg {
+		return nil, errors.New("C2 program digest mismatch")
+	}
+	pAid, _ := strField(promo, "c2_artifact_id")
+	if "p:sha256:"+sha256hex(artRaw) != pAid {
+		return nil, errors.New("C2 artifact digest mismatch")
+	}
+
+	inner, err := strictRaw(certRaw, "C3 certificate")
+	if err != nil {
+		return nil, err
+	}
+	iClaim, _ := strField(inner, "claim_id")
+	if iClaim != claimID {
+		return nil, errors.New("inner claim mismatch")
+	}
+	iCID, _ := strField(inner, "certificate_id")
+	pCID, _ := strField(promo, "c3_certificate_id")
+	if iCID != pCID {
+		return nil, errors.New("promotion C3 certificate id mismatch")
+	}
+	iTarget, _ := strField(inner, "c2_target_id")
+	pTarget, _ := strField(promo, "c2_target_id")
+	if iTarget != pTarget {
+		return nil, errors.New("promotion target mismatch")
+	}
+	innerReal, err := relation(inner["projected_realize"], "inner projected_realize")
+	if err != nil {
+		return nil, err
+	}
+
+	common := []string{"--claim", a.claim, "--profile", a.profile, "--certificate", a.c3cert, "--program", a.program, "--artifact", a.c2artifact, "--w7", a.w7, "--w8", a.w8, "--w5", a.w5, "--w6", a.w6}
+	r10, err := runJSON("python3", append([]string{a.w10}, common...)...)
+	if err != nil {
+		return nil, err
+	}
+	r11, err := runJSON(a.w11, common...)
+	if err != nil {
+		return nil, err
+	}
+	if sval(r10, "checker") != "risu-k1-c3-cert-w10" || sval(r11, "checker") != "risu-k1-c3-cert-w11" {
+		return nil, errors.New("inner checker identity")
+	}
+	if sval(r10, "proof_status") != "ACCEPTED" || sval(r11, "proof_status") != "ACCEPTED" {
+		return nil, errors.New("dual Q0 acceptance required")
+	}
+	for _, k := range []string{"certificate_id", "c2_certificate_id", "c3_source_id", "ordered_trace_map_id", "c2_target_id"} {
+		if sval(r10, k) != sval(r11, k) {
+			return nil, fmt.Errorf("W10/W11 disagreement:%s", k)
+		}
+	}
+	if nval(r10, "realize_pair_count") != nval(r11, "realize_pair_count") {
+		return nil, errors.New("W10/W11 disagreement:realize_pair_count")
+	}
+	if sval(r10, "certificate_id") != pCID {
+		return nil, errors.New("accepted C3 id mismatch")
+	}
+	if sval(r10, "c2_target_id") != pTarget {
+		return nil, errors.New("accepted target mismatch")
+	}
+	if nval(r10, "realize_pair_count") != len(innerReal) {
+		return nil, errors.New("accepted REALIZE count mismatch")
+	}
+
+	promoArt := "p:sha256:" + sha256hex(promoRaw)
+	eroot := evidenceRoot(claimID, promoArt, pCID, pTarget)
+
+	outerRaw, err := read(a.outer)
+	if err != nil {
+		return nil, err
+	}
+	outer, err := strictRaw(outerRaw, "outer")
+	if err != nil {
+		return nil, err
+	}
+	if !exactKeys(outer, outerKeys) {
+		return nil, errors.New("outer exact-key violation")
+	}
+	wire, _ := strField(outer, "wire")
+	kind, _ := strField(outer, "kind")
+	if wire != "risu.k1.w0" || kind != "preservation_certificate" {
+		return nil, errors.New("outer wire/kind")
+	}
+	oClaim, _ := strField(outer, "claim_id")
+	if oClaim != claimID {
+		return nil, errors.New("outer claim mismatch")
+	}
+	oTarget, _ := strField(outer, "target_id")
+	if oTarget != pTarget {
+		return nil, errors.New("outer target mismatch")
+	}
+	outerReal, err := relation(outer["realize"], "outer.realize")
+	if err != nil {
+		return nil, err
+	}
+	if !pairsEqual(outerReal, innerReal) {
+		return nil, errors.New("outer REALIZE mismatch")
+	}
+	var cp proofRef
+	if err := json.Unmarshal(outer["closure_proof"], &cp); err != nil {
+		return nil, errors.New("outer closure proof")
+	}
+	if cp.Kind != proofKind || cp.Artifact != promoArt {
+		return nil, errors.New("outer closure proof mismatch")
+	}
+	var gp []grounding
+	if err := json.Unmarshal(outer["grounding_proofs"], &gp); err != nil {
+		return nil, errors.New("outer grounding")
+	}
+	if len(gp) != len(innerReal) {
+		return nil, errors.New("outer grounding completeness")
+	}
+	seen := map[string]bool{}
+	for _, g := range gp {
+		if len(g.Pair) != 2 || !patterns["w"].MatchString(g.Pair[0]) || !patterns["c"].MatchString(g.Pair[1]) {
+			return nil, errors.New("outer grounding pair")
+		}
+		key := g.Pair[0] + "\x00" + g.Pair[1]
+		if seen[key] {
+			return nil, errors.New("outer grounding duplicate")
+		}
+		seen[key] = true
+		if g.Proof.Kind != proofKind || g.Proof.Artifact != promoArt {
+			return nil, errors.New("outer grounding proof mismatch")
+		}
+	}
+	for _, p := range innerReal {
+		if !seen[p.W+"\x00"+p.C] {
+			return nil, errors.New("outer grounding coverage")
+		}
+	}
+	var roots []string
+	if err := json.Unmarshal(outer["evidence_roots"], &roots); err != nil || len(roots) != 1 || roots[0] != eroot {
+		return nil, errors.New("outer evidence root mismatch")
+	}
+	cid, err := outerCertID(outer)
+	if err != nil {
+		return nil, err
+	}
+	oCID, _ := strField(outer, "certificate_id")
+	if oCID != cid {
+		return nil, errors.New("outer certificate_id mismatch")
+	}
+	return map[string]interface{}{"checker": "risu-k1-c3-promotion-w13", "proof_status": "ACCEPTED", "semantic_claim": "P0_CANDIDATE_MEDIATED_REFINEMENT_COMPOSITION", "authority_created": false, "promotion_artifact_id": promoArt, "outer_certificate_id": cid, "c3_certificate_id": pCID, "c2_target_id": pTarget, "realize_pair_count": len(innerReal)}, nil
+}
+
+func main() {
+	a := argsT{sources: map[string]string{}}
+	flag.StringVar(&a.claim, "claim", "", "")
+	flag.StringVar(&a.profile, "profile", "", "")
+	flag.StringVar(&a.c3cert, "c3-certificate", "", "")
+	flag.StringVar(&a.program, "program", "", "")
+	flag.StringVar(&a.c2artifact, "c2-artifact", "", "")
+	flag.StringVar(&a.promo, "promotion-artifact", "", "")
+	flag.StringVar(&a.outer, "outer-certificate", "", "")
+	flag.StringVar(&a.w10, "w10", "", "")
+	flag.StringVar(&a.w11, "w11", "", "")
+	flag.StringVar(&a.w7, "w7", "", "")
+	flag.StringVar(&a.w8, "w8", "", "")
+	flag.StringVar(&a.w5, "w5", "", "")
+	flag.StringVar(&a.w6, "w6", "", "")
+	for _, k := range []string{"w10_source", "w11_source", "w7_model_source", "w7_exec_source", "w7_source", "w8_json_source", "w8_model_source", "w8_exec_source", "w8_source", "w5_source", "w6_source"} {
+		v := new(string)
+		flag.StringVar(v, k, "", "")
+		a.sources[k] = *v
 	}
 	flag.Parse()
 	// flag.StringVar above writes through pointers; reconstruct source values explicitly.
-	a.sources["w10_source"]=flag.Lookup("w10_source").Value.String()
-	a.sources["w11_source"]=flag.Lookup("w11_source").Value.String()
-	a.sources["w7_model_source"]=flag.Lookup("w7_model_source").Value.String()
-	a.sources["w7_exec_source"]=flag.Lookup("w7_exec_source").Value.String()
-	a.sources["w7_source"]=flag.Lookup("w7_source").Value.String()
-	a.sources["w8_json_source"]=flag.Lookup("w8_json_source").Value.String()
-	a.sources["w8_model_source"]=flag.Lookup("w8_model_source").Value.String()
-	a.sources["w8_exec_source"]=flag.Lookup("w8_exec_source").Value.String()
-	a.sources["w8_source"]=flag.Lookup("w8_source").Value.String()
-	a.sources["w5_source"]=flag.Lookup("w5_source").Value.String()
-	a.sources["w6_source"]=flag.Lookup("w6_source").Value.String()
-	out,err:=check(a);if err!=nil{out=reject(err.Error())}
-	enc,_:=json.Marshal(out);fmt.Println(string(enc))
+	a.sources["w10_source"] = flag.Lookup("w10_source").Value.String()
+	a.sources["w11_source"] = flag.Lookup("w11_source").Value.String()
+	a.sources["w7_model_source"] = flag.Lookup("w7_model_source").Value.String()
+	a.sources["w7_exec_source"] = flag.Lookup("w7_exec_source").Value.String()
+	a.sources["w7_source"] = flag.Lookup("w7_source").Value.String()
+	a.sources["w8_json_source"] = flag.Lookup("w8_json_source").Value.String()
+	a.sources["w8_model_source"] = flag.Lookup("w8_model_source").Value.String()
+	a.sources["w8_exec_source"] = flag.Lookup("w8_exec_source").Value.String()
+	a.sources["w8_source"] = flag.Lookup("w8_source").Value.String()
+	a.sources["w5_source"] = flag.Lookup("w5_source").Value.String()
+	a.sources["w6_source"] = flag.Lookup("w6_source").Value.String()
+	out, err := check(a)
+	if err != nil {
+		out = reject(err.Error())
+	}
+	enc, _ := json.Marshal(out)
+	fmt.Println(string(enc))
 }
