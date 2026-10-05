@@ -1,0 +1,57 @@
+{
+  "amendment_id": "RISU_KERNEL_K1_MFST_C3_REFINEMENT_CERTIFICATE_Q0_AMENDMENT_002",
+  "status": "PRE_G1_Q0_IMPLEMENTATION_ARITHMETIC_CORRECTION",
+  "amends_protocol_commit": "5f6656bb4bf5f776151be77c58d2c1403f9fdeb4",
+  "discovered_before_g1_q0_replay_implementation": true,
+  "error": "The frozen per-shard selection was explicit and unambiguous, but counted_positive_profiles and counted_scenarios were arithmetically overstated.",
+  "frozen_selection_unchanged": {
+    "shards": 8,
+    "structured_indices_per_shard": [
+      0,
+      2,
+      3,
+      4
+    ],
+    "metamorphic_base_indices_per_shard": [
+      0
+    ],
+    "transformations_per_meta_base": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "stress_indices_per_shard": [
+      0,
+      7
+    ],
+    "negative_indices_per_shard": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ]
+  },
+  "correction": {
+    "structured_positive": 32,
+    "metamorphic_positive": 32,
+    "stress_positive": 16,
+    "counted_positive_profiles": 80,
+    "counted_negative_profiles": 96,
+    "counted_scenarios": 176,
+    "support_control_accepts": 104
+  },
+  "normative_effect": "Counts only. No seed, index, mutation family, oracle, certificate rule, checker blob, or qualification threshold changes.",
+  "authority_state": {
+    "q0_qualified": false,
+    "production_authority_created": false
+  }
+}
