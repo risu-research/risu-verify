@@ -217,7 +217,7 @@ def main():
               "w10","w11","w7","w8","w5","w6",
               "w10_source","w11_source","w7_model_source","w7_exec_source","w7_source",
               "w8_json_source","w8_model_source","w8_exec_source","w8_source","w5_source","w6_source"):
-        ap.add_argument("--"+x,required=True)
+        ap.add_argument("--"+x.replace("_","-"),dest=x,required=True)
     a=ap.parse_args()
     try:o=check(a)
     except (Reject,OSError,ValueError) as e:o={"checker":"risu-k1-c3-promotion-w12","proof_status":"REJECTED","semantic_claim":"NONE","authority_created":False,"reason":str(e)}
