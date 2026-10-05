@@ -1,0 +1,235 @@
+{
+  "protocol_id": "RISU_KERNEL_K1_MFST_C3_REFINEMENT_CERTIFICATE_Q0",
+  "status": "QUALIFICATION_CANDIDATE_FROZEN_BEFORE_Q0_REPLAY_OR_MUTATION_IMPLEMENTATION",
+  "parent": {
+    "c0_science_anchor_commit": "d66cccb586893320235ba3bbb57429639debed0c",
+    "c0_science_anchor_blob": "b2ac1b0abc46f23ab8605ed71cdfc9b255403ec0",
+    "r0_parent_commit": "c0894d0a31974b42fdeb85fcd935240731d18391"
+  },
+  "qualification_candidate": {
+    "w10": {
+      "path": "kernel/k1_checker_w10_refinement_cert.py",
+      "blob": "1ae9cb6a2a1fd134c53f7c79cbf4290c023889e1",
+      "language": "Python"
+    },
+    "w11": {
+      "path": "kernel/k1_checker_w11_refinement_cert.go",
+      "blob": "1434a9255d42ad9e9b8d57f9e1c1fa1d47c6a8a0",
+      "language": "Go"
+    },
+    "rule": "These exact blobs are the first Q0 qualification candidate. A failure may not be repaired in place or hidden by changing an oracle. Any implementation correction requires a numbered amendment and new candidate blob identities while preserving the failed hosted run."
+  },
+  "frozen_science_inputs": {
+    "f0": {
+      "protocol_blob": "bb0b335d4a1a84087099afee9c5d60b1f5165d27",
+      "crossed_gate_blob": "14d2a921db962352a5e5983c45d51f6280aeb75f",
+      "oracles": 62
+    },
+    "g1": {
+      "protocol_blob": "dda097cc8945555e9c475cc9656c07c78d8446bf",
+      "generator_blob": "d8ad16b607fdc8d86177c5fb3e593e662038eed1",
+      "seeds": [
+        271828182,
+        314159265,
+        161803398,
+        141421356,
+        173205080,
+        223606797,
+        244948974,
+        264575131
+      ]
+    },
+    "r0": {
+      "protocol_blob": "6e9059a95242db58b94cecd4bca3ae95d75f4a47",
+      "w9_blob": "d414ecaeca6d4bb99dbf915c37ce471a59d9b58a",
+      "compiler_blob": "4577de1a1d56b442ad9c238f0008d2a7fea699b6",
+      "w9_reference_sha256": "c731db89e79e75f4d22f38788aded1a9c9e70572467615da448b7e1c9ce93346"
+    }
+  },
+  "f0_certificate_replay": {
+    "requirement": "Run the unchanged frozen 62-oracle F0 gate first. Then route an actual C3 refinement-certificate object through W10 and W11 for every frozen oracle.",
+    "accept_oracles": 14,
+    "reject_oracles": 48,
+    "accept_rule": "For each F0 ACCEPT oracle, build the exact oracle source, independently derive the exact program/artifact and fresh candidate certificate, and require W10 and W11 ACCEPT with identical C3 certificate_id and C2 certificate_id.",
+    "reject_rule": "For every non-ACCEPT F0 oracle, submit a syntactically valid candidate certificate object through both W10 and W11. Parse/semantic-invalid sources use a valid control certificate against the exact invalid source. Cross-check oracles use the frozen attack meaning (stale/forged trace, source, target, program, artifact, boundary, gas, REALIZE, or checker disagreement) and both certificate checkers must fail closed.",
+    "anti_gaming": "The original F0 oracle must still pass at its frozen intended plane. Certificate-layer rejection alone cannot substitute for the original 62-oracle result."
+  },
+  "g1_certificate_subset": {
+    "shards": 8,
+    "per_shard": {
+      "structured_indices": [
+        0,
+        2,
+        3,
+        4
+      ],
+      "metamorphic_base_indices": [
+        0
+      ],
+      "metamorphic_transform_indices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "stress_indices": [
+        0,
+        7
+      ],
+      "negative_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ]
+    },
+    "counted_positive_profiles": 112,
+    "counted_negative_profiles": 96,
+    "counted_scenarios": 208,
+    "support_control_accepts": 104,
+    "rationale": "Every original G1 seed is represented. Structured indices plus the forced-meta base cover all five frozen graph families; all four metamorphic relations, two high-complexity stress profiles, and each of the twelve negative mutation families are exercised per seed.",
+    "positive_rule": "Every selected valid or metamorphic/stress profile must produce a real candidate certificate accepted independently by W10 and W11 with identical commitments.",
+    "negative_rule": "Every selected negative mutation retains its accepted base as a support control. The negative object is then passed through the certificate lane and must fail closed at the corresponding profile/downstream/certificate plane."
+  },
+  "r0_certificate_reference_subset": {
+    "selection_rule": "For each update index u=0..7 and predicate index p=0..5 choose initial=(u+p)%3, prefix=(u XOR p)%2, true_trace=(2*u+p)%8, false_trace=(u+3*p+1)%8 under the frozen R0 enumeration; this yields 48 descriptors fixed below.",
+    "descriptor_ids": [
+      "R0-00001",
+      "R0-06348",
+      "R0-12567",
+      "R0-00474",
+      "R0-06693",
+      "R0-13032",
+      "R0-06994",
+      "R0-13213",
+      "R0-01120",
+      "R0-07339",
+      "R0-13686",
+      "R0-01465",
+      "R0-13859",
+      "R0-01774",
+      "R0-07985",
+      "R0-14332",
+      "R0-02055",
+      "R0-08394",
+      "R0-02420",
+      "R0-08639",
+      "R0-14914",
+      "R0-02701",
+      "R0-09040",
+      "R0-15259",
+      "R0-09221",
+      "R0-15560",
+      "R0-03347",
+      "R0-09694",
+      "R0-15905",
+      "R0-03820",
+      "R0-16214",
+      "R0-03993",
+      "R0-10340",
+      "R0-16559",
+      "R0-04466",
+      "R0-10685",
+      "R0-04647",
+      "R0-10986",
+      "R0-17205",
+      "R0-05112",
+      "R0-11267",
+      "R0-17614",
+      "R0-11632",
+      "R0-17851",
+      "R0-05702",
+      "R0-11913",
+      "R0-18260",
+      "R0-06047"
+    ],
+    "descriptor_count": 48,
+    "mandatory_common_mode_veto_controls": [
+      {
+        "id": "R0-VETO-PREDICATE-FLIP",
+        "descriptor": "R0-00001",
+        "mutation": "predicate_flip"
+      },
+      {
+        "id": "R0-VETO-PREFIX-DROP",
+        "descriptor": "R0-00065",
+        "mutation": "prefix_drop"
+      },
+      {
+        "id": "R0-VETO-EFFECT-ORDER",
+        "descriptor": "R0-00017",
+        "mutation": "effect_order"
+      },
+      {
+        "id": "R0-VETO-TABLE-ROW",
+        "descriptor": "R0-11009",
+        "mutation": "table_row"
+      }
+    ],
+    "ordinary_rule": "For every selected descriptor, regenerate the full pinned W9 JSONL reference and verify its aggregate digest first; compile the descriptor, require W9 ordered trace equality, generate a real C3 refinement certificate, and require W10/W11 acceptance and identical commitments.",
+    "veto_rule": "Each deliberately mistranslated compiler output must remain internally certificate-valid for its actual mutated C3 source (W10/W11 ACCEPT its freshly generated certificate) while the independently frozen W9 descriptor semantics veto the mismatch. Certificate acceptance must never override the W9 reference veto.",
+    "r0_selected_positive_certificates": 48,
+    "r0_veto_certificate_accepts": 4,
+    "r0_reference_vetoes": 4
+  },
+  "certificate_generative_mutation": {
+    "valid_base_pool": "Deterministic accepted certificate pool drawn from F0 ACCEPT, selected G1 positive profiles, and selected R0 ordinary descriptors; exact pool digest is emitted before mutations.",
+    "negative_seed": 5772156649,
+    "negative_trials": 1024,
+    "negative_families": [
+      "c3_source_id bit mutation with stale outer id",
+      "c3_source_id bit mutation with recomputed outer id",
+      "c3_semantic_id mutation with recomputed outer id",
+      "reachable_graph_id mutation with recomputed outer id",
+      "ordered_trace_map_id mutation with recomputed outer id",
+      "c2_program_sha256 mutation with recomputed outer id",
+      "c2_artifact_id mutation with recomputed outer id",
+      "c2_target_id mutation with recomputed outer id",
+      "c2_certificate_id mutation with recomputed outer id",
+      "projected_REALIZE delete one pair then recompute outer id",
+      "projected_REALIZE add one canonical but false pair then recompute outer id",
+      "projected_REALIZE duplicate pair",
+      "claim_id substitution then recompute outer id",
+      "coherent splice of authority-bearing fields from a different valid certificate then recompute outer id",
+      "unknown top-level authority-like field injection",
+      "duplicate top-level JSON key injection"
+    ],
+    "positive_seed": 1414213562,
+    "positive_trials": 256,
+    "positive_families": [
+      "top-level JSON object-key permutation",
+      "insignificant JSON whitespace/indentation variation",
+      "projected_REALIZE pair-order permutation",
+      "canonical parse-and-reserialize with noncanonical object-key order"
+    ],
+    "positive_semantics": "All positive representation mutations preserve the semantic candidate object. Because projected_REALIZE is frozen as a mathematical set in the C0 certificate transcript, pair-order permutation must preserve certificate_id and acceptance.",
+    "negative_rule": "Every negative trial must be rejected by both exact candidate checkers even when the attacker recomputes the outer C3 certificate_id wherever specified.",
+    "positive_rule": "Every positive trial must be accepted by both exact candidate checkers with the same certificate_id as its unmutated base.",
+    "disagreement_rule": "Any W10/W11 disagreement, crash, malformed output, or skipped trial fails Q0."
+  },
+  "qualification_success_rule": [
+    "W10/W11 exact candidate blob pins pass without source mutation.",
+    "Unchanged frozen F0 gate remains 62/62 and all 62 certificate-object replays satisfy their qualification oracle.",
+    "All 208 selected G1 scenarios plus 104 support controls satisfy the frozen certificate replay rules.",
+    "Pinned W9 reference root is regenerated exactly; all 48 ordinary R0 descriptor certificates pass and all four common-mode mutated compiler outputs are certificate-valid for their actual source but vetoed by W9.",
+    "All 1024 negative certificate mutations reject in both checkers and all 256 positive representation mutations accept in both with invariant certificate_id.",
+    "Qualified C2, K1 semantics, frozen W7/W8/W5/W6, F0/G1/R0 science artifacts remain untouched.",
+    "No qualification status is claimed until a later science/qualification anchor records a fully green hosted run."
+  ],
+  "authority_state": {
+    "production_proof_kind_created": false,
+    "c3_preservation_authority_created": false,
+    "native_binding_created": false,
+    "semantic_kernel_changed": false,
+    "qualified_c2_modified": false,
+    "q0_is_only_a_qualification_candidate": true
+  }
+}
