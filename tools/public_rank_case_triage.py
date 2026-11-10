@@ -44,7 +44,7 @@ above={b for b in pool if rank(b)>cut}
 unselected_high=sorted(above-selected,key=lambda b:(-rank(b),b))
 assert len(unselected_high)==10,("expected_10_high_unselected",len(unselected_high))
 ids="("+",".join(unselected_high)+")"
-reg=get("kj4p-ruqc",{"$select":"buildingid,managementprogram,dobbuildingclassid,boroid,block,lot",
+reg=get("kj4p-ruqc",{"$select":"buildingid,managementprogram,dobbuildingclassid,dobbuildingclass,legalclassa,legalclassb,recordstatus,lifecycle,boroid,block,lot",
  "$where":"buildingid in "+ids,"$limit":100})
 regmap={str(x["buildingid"]):x for x in reg}
 lit=get("59kj-x8nc",{"$select":"buildingid,casetype,caseopendate,casestatus,casejudgement",
@@ -77,12 +77,25 @@ for b in unselected_high:
       "past_heat_sensor_selection":sorted(y for y in past_hsp[b] if y in ("2020","2022")),
       "HPD_management_program_current":regrow.get("managementprogram"),
       "HPD_DOB_class_ID_current":regrow.get("dobbuildingclassid"),
+      "HPD_DOB_class_code_current":regrow.get("dobbuildingclass"),
+      "HPD_legal_class_A_current":regrow.get("legalclassa"),
+      "HPD_legal_class_B_current":regrow.get("legalclassb"),
+      "HPD_building_record_status_current":regrow.get("recordstatus"),
+      "HPD_building_lifecycle_current":regrow.get("lifecycle"),
       "pre_cutoff_7A_litigation_records":len(pre),
       "7A_case_outcomes":collections.Counter(str(x.get("casestatus",""))+"/"+str(x.get("casejudgement","")) for x in pre),
       "legal_citation_screen":dict(counts),
       "matched_source_violations":len(vr),
       "screening_status":"UNRESOLVED: check court-appointed 7A/in-rem, legal citation, historical snapshot"
     })
+
+# Independent positive-control profile for known selected buildings.
+ctrl=get("kj4p-ruqc",{"$select":"buildingid,dobbuildingclass,legalclassa,legalclassb",
+ "$where":"buildingid in ("+",".join(sorted(selected))+")","$limit":100})
+print("POSITIVE_CONTROL",json.dumps({
+ "number_selected_found":len(ctrl),
+ "legalclassa_values":dict(collections.Counter(str(x.get("legalclassa","MISSING")) for x in ctrl)),
+ "building_class_codes":dict(collections.Counter(str(x.get("dobbuildingclass","MISSING")) for x in ctrl))},sort_keys=True),flush=True)
 print("RESULT_BEGIN",flush=True)
 print(json.dumps({"timestamp_utc":datetime.datetime.now(datetime.timezone.utc).isoformat(),
   "above_cutoff_rank":cut,"above_cutoff_total":len(above),
