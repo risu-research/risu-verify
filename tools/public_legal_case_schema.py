@@ -11,7 +11,7 @@ for ds in ["59kj-x8nc","kj4p-ruqc","64uk-42ks"]:
 # Aggregate-only outcome labels for 7A proceedings. Court appointment is NOT inferred from filing.
 import urllib.parse
 params={"$select":"casestatus,casejudgement,count(*) as n",
- "$where":"casetype='7A Proceedings'",
+ "$where":"casetype='7A'",
  "$group":"casestatus,casejudgement","$limit":300}
 q="https://data.cityofnewyork.us/resource/59kj-x8nc.json?"+urllib.parse.urlencode(params)
 try:
