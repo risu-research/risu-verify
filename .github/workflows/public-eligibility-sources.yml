@@ -1,0 +1,19 @@
+name: Public eligibility source checks
+on:
+  push:
+    paths:
+      - 'tools/public_eligibility_sources.py'
+      - '.github/workflows/public-eligibility-sources.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python tools/public_eligibility_sources.py
