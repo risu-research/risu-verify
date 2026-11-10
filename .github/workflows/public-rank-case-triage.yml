@@ -1,0 +1,19 @@
+name: Public administrative case reconciliation
+on:
+  push:
+    paths:
+      - 'tools/public_rank_case_triage.py'
+      - '.github/workflows/public-rank-case-triage.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python tools/public_rank_case_triage.py
