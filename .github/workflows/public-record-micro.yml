@@ -1,0 +1,19 @@
+name: Public records micro-panel QA
+on:
+  push:
+    paths:
+      - 'tools/public_record_micro_validation.py'
+      - '.github/workflows/public-record-micro.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python tools/public_record_micro_validation.py
