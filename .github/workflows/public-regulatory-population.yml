@@ -1,0 +1,19 @@
+name: Public legal population reconstruction
+on:
+  push:
+    paths:
+      - 'tools/public_regulatory_population_check.py'
+      - '.github/workflows/public-regulatory-population.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python tools/public_regulatory_population_check.py
