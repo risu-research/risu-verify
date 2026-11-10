@@ -23,7 +23,7 @@ codes=collections.Counter()
 word=collections.Counter()
 for r in v:
     s=(r.get("novdescription") or "").upper()
-    codes.update(set(re.findall(r"27[-– ]?20(?:28|29)(?:\\(A\\))?",s)))
+    codes.update(set(re.findall(r'27[-– ]?202[89]', s)))
     if "HEAT" in s:word["HEAT"]+=1
     if "HOT WATER" in s:word["HOT WATER"]+=1
     if not s:word["EMPTY_DESCRIPTION"]+=1
