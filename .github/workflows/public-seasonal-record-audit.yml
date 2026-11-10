@@ -1,0 +1,19 @@
+name: Public seasonal record quality audit
+on:
+  push:
+    paths:
+      - 'tools/public_seasonal_record_audit.py'
+      - '.github/workflows/public-seasonal-record-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  aggregates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python tools/public_seasonal_record_audit.py
