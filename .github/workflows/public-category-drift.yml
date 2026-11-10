@@ -1,0 +1,19 @@
+name: Public source category drift QA
+on:
+  push:
+    paths:
+      - 'tools/public_category_drift.py'
+      - '.github/workflows/public-category-drift.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  categories:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python tools/public_category_drift.py
