@@ -1,0 +1,19 @@
+name: Public independent-year exception diagnosis
+on:
+  push:
+    paths:
+      - 'tools/public_holdout_exception.py'
+      - '.github/workflows/public-holdout-exception.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  diagnosis:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python tools/public_holdout_exception.py
