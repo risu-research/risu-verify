@@ -66,8 +66,8 @@ for b in unselected_high:
         s=str(row.get("novdescription") or "").upper()
         if "27-2028" in s:counts["2028_mention"]+=1
         if "27-2029" in s:
-            if re.search(r"27[- ]2029\\s*\\(A\\)",s):counts["2029_explicit_a"]+=1
-            elif re.search(r"27[- ]2029\\s*\\([BCD]\\)",s):counts["2029_explicit_other"]+=1
+            if re.search(r"27[- ]2029\s*\(A\)",s):counts["2029_explicit_a"]+=1
+            elif re.search(r"27[- ]2029\s*\([BCD]\)",s):counts["2029_explicit_other"]+=1
             else:counts["2029_subsection_not_explicit"]+=1
     regrow=regmap.get(b,{})
     classified.append({
