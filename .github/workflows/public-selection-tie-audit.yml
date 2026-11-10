@@ -1,0 +1,19 @@
+name: Public administrative ranking audit
+on:
+  push:
+    paths:
+      - 'tools/public_selection_tie_audit.py'
+      - '.github/workflows/public-selection-tie-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  assess:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python tools/public_selection_tie_audit.py
