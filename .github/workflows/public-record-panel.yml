@@ -1,0 +1,19 @@
+name: Public dataset longitudinal join audit
+on:
+  push:
+    paths:
+      - 'tools/public_record_panel_audit.py'
+      - '.github/workflows/public-record-panel.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  cohort-panel:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python tools/public_record_panel_audit.py --sample
