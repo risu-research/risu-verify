@@ -19,3 +19,9 @@ try:
         print(json.dumps({"7a_proceedings_outcome_labels":json.load(r)},indent=2))
 except Exception as exc:
     print(json.dumps({"7a_outcomes_query_error":type(exc).__name__+":"+str(exc)[:160]}))
+
+# Actual observed case type vocabulary, including spelling/case.
+params={"$select":"casetype,count(*) as n","$group":"casetype","$order":"n DESC","$limit":100}
+q="https://data.cityofnewyork.us/resource/59kj-x8nc.json?"+urllib.parse.urlencode(params)
+with urllib.request.urlopen(urllib.request.Request(q,headers={"User-Agent":"PublicLawDataProvenanceQA/1.0"}),timeout=110) as r:
+    print(json.dumps({"observed_litigation_case_types":json.load(r)},indent=2))
