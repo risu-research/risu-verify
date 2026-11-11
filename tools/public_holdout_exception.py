@@ -50,3 +50,17 @@ for b in sel:
 print(json.dumps({"development_year":"2024","holdout_year":"2025",
  "holdout_listed":len(sel),"cases_missing_from_reconstructed_eligible_population":fail,
  "warnings":["No ranking thresholds or rules modified.","Violation legal-section text is a proxy.","Observation dates and HSP eligibility exclusions are not archived."]},indent=2))
+
+# Frozen score diagnostic: selected buildings ranked below the 2025 proxy cutoff.
+below=[]
+for b in sorted(sel):
+    s23=data["2023"]["v"].get(b,0)
+    s24=data["2024"]["v"].get(b,0)
+    if s23+s24<9:
+        below.append({"case":aid(b),"prior_violation_proxy_total":s23+s24,
+            "season_2023_violations":s23,"season_2024_violations":s24,
+            "2023_distinct_apartment_labels":data["2023"]["c"].get(b,0),
+            "2024_distinct_apartment_labels":data["2024"]["c"].get(b,0),
+            "current_DOB_building_class":reg_by.get(b,{}).get("dobbuildingclass"),
+            "candidate_eligible":True})
+print("BELOW_CUTOFF_SELECTED",json.dumps(below,sort_keys=True),flush=True)
