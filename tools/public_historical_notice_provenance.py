@@ -51,8 +51,22 @@ def check_current(rows,year):
     overlap=set(s1)&set(s2)
     unmatched_notice=sorted(set(s1)-set(s2))
     unmatched_api=sorted(set(s2)-set(s1))
+    units=[]
+    for key in sorted(overlap):
+        try:
+            published=int(str(s1[key][5]).replace(",",""))
+            live=int(str(s2[key].get("total_units","")).replace(",",""))
+            if published!=live:
+                units.append({"borough":key[0],"number":key[1],"street":key[2],
+                  "listed_units":published,"current_API_units":live})
+        except (ValueError,TypeError,IndexError):
+            units.append({"borough":key[0],"number":key[1],"street":key[2],
+                  "status":"missing_or_invalid_unit_number"})
     return {"official_rows":len(s1),"api_cohort_rows":len(relevant),
       "match_normalized_keys":len(overlap),
+      "unit_comparison_exact_match":len(overlap)-len(units),
+      "unit_comparison_mismatches":len(units),
+      "unit_comparison_discrepancy_examples":units[:20],
       "not_matched_official_count":len(unmatched_notice),
       "not_matched_api_count":len(unmatched_api),
       "unmatched_official_examples":unmatched_notice[:8],
