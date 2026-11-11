@@ -19,10 +19,10 @@ OUT=pathlib.Path("build/historical_notices")
 OUT.mkdir(parents=True,exist_ok=True)
 def normalize(value):
     t=re.sub(r"[^A-Z0-9-]+"," ",str(value).upper()).strip()
-    t=re.sub(r"\\bSTREET\\b","ST",t)
-    t=re.sub(r"\\bAVENUE\\b","AVE",t)
-    t=re.sub(r"\\bBOULEVARD\\b","BLVD",t)
-    t=re.sub(r"\\s+"," ",t).strip()
+    t=re.sub(r"\bSTREET\b","ST",t)
+    t=re.sub(r"\bAVENUE\b","AVE",t)
+    t=re.sub(r"\bBOULEVARD\b","BLVD",t)
+    t=re.sub(r"\s+"," ",t).strip()
     return t
 def get(url):
     req=urllib.request.Request(url,headers={"User-Agent":"PublicCivicRecordsProvenance/1.0"})
