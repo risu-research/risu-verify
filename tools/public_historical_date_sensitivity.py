@@ -13,26 +13,34 @@ hits=[v for v in hsp if sig(v.get("building_id"))=="4928681573"]
 assert len(hits)==1
 b=str(hits[0]["building_id"])
 yearwindows={"2023":"2023-10-01T00:00:00/2024-06-01T00:00:00","2024":"2024-10-01T00:00:00/2025-06-01T00:00:00"}
-def counts(col,lo,hi,filter_legal=True):
-    where="buildingid="+b+" AND "+col+" >= '"+lo+"' AND "+col+" < '"+hi+"'"
-    if filter_legal:where+=" AND (novdescription like '%27-2029%' OR novdescription like '%27-2028%')"
-    rows=api("wvxf-dwi5",{"$select":"count(*) as n,count(distinct violationid) as ids",
-                          "$where":where})
-    return {k:int(v) for k,v in rows[0].items()}
+def records_for_case():
+    where=("buildingid="+b+" AND novissueddate >= '2023-10-01T00:00:00' "
+           "AND novissueddate < '2025-06-01T00:00:00'")
+    try:
+        return api("wvxf-dwi5",{"$select":"violationid,novdescription,novissueddate,approveddate,inspectiondate,novtype",
+            "$where":where,"$limit":1000})
+    except Exception as ex:
+        return [{"error":type(ex).__name__+": "+str(ex)[:120]}]
+def local_count(rows,col,lo,hi,filter_legal):
+    picked=[r for r in rows if lo<=str(r.get(col,""))<hi and
+          (not filter_legal or "27-2029" in str(r.get("novdescription","")) or
+           "27-2028" in str(r.get("novdescription","")))]
+    return {"n":len(picked),"ids":len(set(str(r.get("violationid")) for r in picked))}
+rows=records_for_case()
+if len(rows)>=1000:
+    raise RuntimeError("Truncated data")
+if rows and "error" in rows[0]:
+    print("SOURCE_ERROR",rows[0],flush=True)
+    raise SystemExit(0)
 report={"case":"4928681573","source":"NYC public HPD violations dataset",
  "checked_utc":datetime.datetime.now(datetime.timezone.utc).isoformat(),
  "windows":{}}
 for label,w in yearwindows.items():
     lo,hi=w.split("/")
     report["windows"][label]={col:{
-          "legal_citation_screen":counts(col,lo,hi,True),
-          "any_violation":counts(col,lo,hi,False)}
+          "legal_citation_screen":local_count(rows,col,lo,hi,True),
+          "any_violation":local_count(rows,col,lo,hi,False)}
       for col in ("novissueddate","approveddate","inspectiondate")}
-# citation near-variants in 2023 and 2024 lookback
-rows=api("wvxf-dwi5",{"$select":"novdescription,novissueddate,approveddate,inspectiondate,novtype,violationid",
- "$where":"buildingid="+b+" AND novissueddate >= '2023-10-01T00:00:00' AND novissueddate < '2025-06-01T00:00:00'",
- "$limit":2500})
-assert len(rows)<2500
 citation=collections.Counter()
 for r in rows:
     t=str(r.get("novdescription","")).upper()
