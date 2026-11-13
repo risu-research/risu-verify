@@ -43,7 +43,7 @@ jobs:
           set -euo pipefail
           curl -fLsS --retry 3 \
             -o .b23-independent-auditor-code.tar.gz \
-            https://api.github.com/repos/risu-research/risu-probe/tarball/d105cde6a58830fd5f9b15c292f44d5da034d3be
+            https://api.github.com/repos/risu-research/risu-probe/tarball/514a31e89b435038dff495ad66f4bd10f4ac9179
           mkdir -p .b23-independent-auditor-source
           tar -xzf .b23-independent-auditor-code.tar.gz \
             -C .b23-independent-auditor-source --strip-components=1
