@@ -115,8 +115,10 @@ def gh_native_verified(path,source_sha,run_id):
                      type(ts[0].get("timestamp")) is str,
                      "SIGNED_TIME_UNVERIFIED")
                 for sub in st.get("subject",[]):
-                    if type(sub) is dict and type(sub.get("name")) is str and
-                       sub.get("digest",{}).get("sha256")==sha256(path.read_bytes()):
+                    if (type(sub) is dict and
+                        type(sub.get("name")) is str and
+                        type(sub.get("digest")) is dict and
+                        sub["digest"].get("sha256")==sha256(path.read_bytes())):
                         matches.append({
                             "attested_name":sub["name"],
                             "sha256":sha256(path.read_bytes()),
