@@ -69,8 +69,43 @@ jobs:
           assert type(arr) is list and len(arr)==0
           print('B25_ACTUAL_GITHUB_RUN_APPROVALS_EMPTY_NO_DIRECT_HUMAN_APPROVAL_NO_WRITE')
           PY
+      - name: Actual external GitHub rejects direct unreviewed write with this separate read-only job credential
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import os,base64,json,urllib.request,urllib.error
+          url=('https://api.github.com/repos/risu-research/risu-verify/contents/'
+               'benchmarks/p6b25/BEFORE_HUMAN_APPROVAL_MUST_NOT_APPEAR.txt')
+          p={'message':'B25 no human review, agent must not create a file',
+             'content':base64.b64encode(b'benign-denied-b25\\n').decode(),
+             'branch':'qualification/p6b25-real-review-credential-isolation-20261112'}
+          req=urllib.request.Request(url,method='PUT',data=json.dumps(p).encode(),
+             headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],
+                      'Accept':'application/vnd.github+json',
+                      'Content-Type':'application/json',
+                      'User-Agent':'RISU-B25-explicit-unapproved-actual-403'})
+          try:
+            with urllib.request.urlopen(req,timeout=30) as response:status=response.status
+          except urllib.error.HTTPError as e:status=e.code
+          assert status in (401,403),status
+          get=urllib.request.Request(url+'?ref=qualification/p6b25-real-review-credential-isolation-20261112',
+             headers={'User-Agent':'RISU-B25-real-write-denial-audit'})
+          try:
+            with urllib.request.urlopen(get,timeout=30):raise AssertionError('UNAUTHORIZED_FILE_APPEARED')
+          except urllib.error.HTTPError as e:assert e.code==404,e.code
+          with open('.b25-actual-unreviewed-no-write-token-proof.json','w') as f:
+             json.dump({'actual_external_github_put_http_status':status,
+                        'actual_unauthorized_remote_file_exists':False,
+                        'human_reviewer_approval_record_exists':False,
+                        'credential_class':'GITHUB_ACTIONS_CONTENTS_READ_ONLY'},f)
+          print('B25_REAL_PUBLIC_GITHUB_UNREVIEWED_JOB_DIRECT_WRITE_DENIED_403')
+          PY
       - uses: actions/upload-artifact@v4
         with:
           name: b25-independent-preapproval-source-and-no-human-review-evidence
           retention-days: 21
-          path: .b25-actual-no-human-review.json
+          path: |
+            .b25-actual-no-human-review.json
+            .b25-actual-unreviewed-no-write-token-proof.json
