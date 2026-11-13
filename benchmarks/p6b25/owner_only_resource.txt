@@ -1,0 +1,3 @@
+RISU B25 human-reviewed one-file fixture
+state=AWAITING_GITHUB_ENVIRONMENT_REVIEW
+scope=EXACT_ONE_FILE
