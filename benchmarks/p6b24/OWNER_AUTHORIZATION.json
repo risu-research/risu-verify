@@ -1,0 +1,32 @@
+{
+  "schema": "risu-b24-real-github-owner-isolated-credential-broker-v1",
+  "grant_origin": "AUTHENTICATED_GITHUB_ADMIN_ACCOUNT_DELEGATION",
+  "owner_repository": "risu-research/risu-verify",
+  "owner_repository_id": 1350184511,
+  "organization_id": 316025762,
+  "actor_account": "moon10021017",
+  "approved_branch": "qualification/p6b24-owner-authority-20261112",
+  "resource_path": "benchmarks/p6b24/owner_only_resource.txt",
+  "tool": "create_or_update_file",
+  "approved_action": "REPLACE",
+  "pre_git_blob_sha1": "bd6b674299ba329d871bb05790a85cab3a1f4e5f",
+  "pre_raw_sha256": "80b7fab7d10f7e5be558c42d664135f9e07ad45680f7cb3b3d6a6acbceabfd0f",
+  "post_raw_sha256": "b792024d10b7d1611b12dd59c4efde3529e84c7dcaffea29c6bfdf3dbf319774",
+  "original_github_mcp_release": "v2.1.0",
+  "original_github_mcp_linux_x86_64_archive_sha256": "a442f9db287cea01008bcb55fe6bc0292270301046c3edbd1a8b22d6e4157b2b",
+  "validity_utc_start": "2026-11-12T00:00:00Z",
+  "validity_utc_end": "2026-11-15T00:00:00Z",
+  "nonce": "0d4239e1c47070d3203b5f6bb584f02d1d42d3e5bacba5368ef3f9c51d0676f9",
+  "requested_effect": "OWNER_REPOSITORY_FILE_CONTENT_REPLACEMENT",
+  "approved_tool_arguments": {
+    "owner": "risu-research",
+    "repo": "risu-verify",
+    "branch": "qualification/p6b24-owner-authority-20261112",
+    "path": "benchmarks/p6b24/owner_only_resource.txt",
+    "message": "B24 real owner-approved exact resource change via credential-isolated broker",
+    "content": "RISU B24 actual owner-controlled repository fixture\nstatus=OWNER_APPROVED_BROKER_EXECUTION\nscope=exact-one-file\n",
+    "sha": "bd6b674299ba329d871bb05790a85cab3a1f4e5f"
+  },
+  "owner_approval_statement": "The real GitHub repository-admin account delegates this ONE bounded file replacement to a trusted writer job. The untrusted agent job has a distinct READ-ONLY GITHUB_TOKEN and no access to the broker's contents-write token. The owner workflow signs the grant via GitHub OIDC/Sigstore. There was no independent manual human approval.",
+  "limit": "Delegated connected GitHub admin account action and read-only agent capability-isolation experiment. The trusted broker still has repository-scoped contents write, not path-scoped capabilities. No independent third-party human consent."
+}
