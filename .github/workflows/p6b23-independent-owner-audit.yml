@@ -1,0 +1,148 @@
+name: RISU P6-B23 independent read-only audit of real owner grant, original GitHub MCP and remote commit
+on:
+  push:
+    branches: ['qualification/p6b23-owner-grants-*']
+    paths:
+      - '.github/workflows/p6b23-independent-owner-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+  attestations: read
+jobs:
+  no-write-no-oidc-independent-auditor:
+    name: Different runner without write or OIDC checks owner authentic grant, original native wire, physical remote Git blobs
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    permissions:
+      contents: read
+      actions: read
+      attestations: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Retrieve GitHub Sigstore-attested actual authenticated owner grant from previous source run
+        uses: actions/download-artifact@v4
+        with:
+          repository: risu-research/risu-verify
+          run-id: 43336892730
+          github-token: ${{ github.token }}
+          name: b23-owner-github-attested-original-grant
+          path: .b23-independent-owner-grant
+      - name: Retrieve original official Github MCP native stdio / live remote changes from previous executor runner
+        uses: actions/download-artifact@v4
+        with:
+          repository: risu-research/risu-verify
+          run-id: 43336892730
+          github-token: ${{ github.token }}
+          name: b23-github-owner-attested-precall-and-original-backend-effect
+          path: .b23-independent-original-executor
+      - name: Retrieve separately developed pinned RISU independent auditor source only
+        run: |
+          set -euo pipefail
+          curl -fLsS --retry 3 \
+            -o .b23-independent-auditor-code.tar.gz \
+            https://api.github.com/repos/risu-research/risu-probe/tarball/d105cde6a58830fd5f9b15c292f44d5da034d3be
+          mkdir -p .b23-independent-auditor-source
+          tar -xzf .b23-independent-auditor-code.tar.gz \
+            -C .b23-independent-auditor-source --strip-components=1
+          test -f .b23-independent-auditor-source/benchmarks/p6b23/independent_github_owner_audit.py
+      - name: Reacquire independent unmodified official GitHub MCP Server release and exact GitHub published digest
+        run: |
+          set -euo pipefail
+          curl -fLsS --retry 3 \
+            -o .b23-independent-original-github-mcp.tar.gz \
+            https://github.com/github/github-mcp-server/releases/download/v2.1.0/github-mcp-server_Linux_x86_64.tar.gz
+          echo 'a442f9db287cea01008bcb55fe6bc0292270301046c3edbd1a8b22d6e4157b2b  .b23-independent-original-github-mcp.tar.gz' | sha256sum -c -
+      - name: Reverify original owner admin and two GitHub/Sigstore attestations, source-native MCP, single exact file commit via READ ONLY GitHub API
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p .b23-readonly-audit
+          python .b23-independent-auditor-source/benchmarks/p6b23/independent_github_owner_audit.py \
+            --grant .b23-independent-owner-grant/OWNER_AUTHORIZATION.json \
+            --original-result .b23-independent-original-executor/.b23-original-owner-effects/REAL_OWNER_REPOSITORY_ORIGINAL_MCP_RESULT.json \
+            --publisher-tarball .b23-independent-original-github-mcp.tar.gz \
+            --out .b23-readonly-audit/INDEPENDENT_OWNER_ORIGINAL_GITHUB_MCP_AUDIT.json
+          python - <<'PY'
+          import json
+          r=json.load(open('.b23-readonly-audit/INDEPENDENT_OWNER_ORIGINAL_GITHUB_MCP_AUDIT.json'))
+          assert r['owner_repo_id']==1350184511
+          assert r['actual_owner_admin_login']=='moon10021017'
+          assert r['sigstore_verified_owner_workflow_attestations']>=1
+          assert r['original_native_github_mcp_tools_call_count']==1
+          assert r['original_preflight_denials_recorded']==5
+          assert r['actual_commit_modifies_exactly_one_owner_approved_file'] is True
+          assert r['different_github_organization_manual_human_consent']=='NOT_PERFORMED'
+          print('B23_INDEPENDENT_READONLY_GITHUB_PLATFORM_RESOURCE_EFFECT_AND_SIGNED_OWNER_ORIGIN_SUCCESS')
+          PY
+      - name: Independent negative controls reject certificate-grant mismatch, modified raw original MCP wire and fictitious remote SHA
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p .b23-negative
+          cp .b23-independent-owner-grant/OWNER_AUTHORIZATION.json .b23-negative/TAMPERED_OWNER_GRANT.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('.b23-negative/TAMPERED_OWNER_GRANT.json')
+          s=json.loads(p.read_text())
+          s['approved_tool_arguments']['content']='ATTACKER-MODIFIED-ACTION'
+          p.write_text(json.dumps(s,sort_keys=True,indent=2)+'\n')
+          PY
+          if python .b23-independent-auditor-source/benchmarks/p6b23/independent_github_owner_audit.py \
+            --grant .b23-negative/TAMPERED_OWNER_GRANT.json \
+            --original-result .b23-independent-original-executor/.b23-original-owner-effects/REAL_OWNER_REPOSITORY_ORIGINAL_MCP_RESULT.json \
+            --out .b23-negative/MUST_NOT_EXIST.json; then
+            echo 'Altered owner grant wrongly accepted despite invalid Sigstore document digest' >&2
+            exit 3
+          fi
+          cp .b23-independent-original-executor/.b23-original-owner-effects/REAL_OWNER_REPOSITORY_ORIGINAL_MCP_RESULT.json \
+             .b23-negative/TAMPERED_NATIVE_SOURCE.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('.b23-negative/TAMPERED_NATIVE_SOURCE.json')
+          s=json.loads(p.read_text())
+          s['original_result']['original_native_jsonrpc_b64']='e30K'
+          p.write_text(json.dumps(s,sort_keys=True,indent=2)+'\n')
+          PY
+          if python .b23-independent-auditor-source/benchmarks/p6b23/independent_github_owner_audit.py \
+            --grant .b23-independent-owner-grant/OWNER_AUTHORIZATION.json \
+            --original-result .b23-negative/TAMPERED_NATIVE_SOURCE.json \
+            --out .b23-negative/MUST_NOT_EXIST2.json; then
+            echo 'Forged original GitHub MCP stdio wrongly accepted' >&2
+            exit 3
+          fi
+          cp .b23-independent-original-executor/.b23-original-owner-effects/REAL_OWNER_REPOSITORY_ORIGINAL_MCP_RESULT.json \
+             .b23-negative/FICTITIOUS_REMOTE_SHA.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('.b23-negative/FICTITIOUS_REMOTE_SHA.json')
+          s=json.loads(p.read_text())
+          s['remote_post_effect']['git_blob_sha']='0'*40
+          p.write_text(json.dumps(s,sort_keys=True,indent=2)+'\n')
+          PY
+          if python .b23-independent-auditor-source/benchmarks/p6b23/independent_github_owner_audit.py \
+            --grant .b23-independent-owner-grant/OWNER_AUTHORIZATION.json \
+            --original-result .b23-negative/FICTITIOUS_REMOTE_SHA.json \
+            --out .b23-negative/MUST_NOT_EXIST3.json; then
+            echo 'False GitHub remote file effect wrongly accepted' >&2
+            exit 3
+          fi
+          echo B23_INDEPENDENT_SIGNED_GRANT_NATIVE_WIRE_REMOTE_EFFECT_TAMPERS_ALL_REJECTED
+      - name: Preserve original read only auditor and full before/after REST source claims
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: risu-b23-independent-read-only-real-github-owner-and-original-mcp-effect-audit
+          retention-days: 21
+          include-hidden-files: true
+          if-no-files-found: warn
+          path: |
+            .b23-readonly-audit/
+            .b23-independent-auditor-source/benchmarks/p6b23/independent_github_owner_audit.py
