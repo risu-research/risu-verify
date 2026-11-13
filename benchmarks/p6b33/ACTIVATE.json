@@ -1,0 +1,16 @@
+{
+  "schema": "risu-b33-one-time-original-activation-v1",
+  "activation": "RUN_EXACT_SIGNED_CANDIDATE_AND_SEPARATE_CREDENTIAL_ISOLATED_GITHUB_BROKER",
+  "resource": "benchmarks/p6b33/owner_resource.txt",
+  "expected_before_sha256": "3d94021520c4e5cbfe28f22e9a427caafcc8356a551ef54d36ad16c280418870",
+  "expected_after_sha256": "1edde392ee5291509129d34e99b89385edb978c75ef910e6a7b8628bc962f162",
+  "signatures_required": [
+    "candidate source program before candidate execution",
+    "trusted writer before remote effect",
+    "original receipt only after remote effect"
+  ],
+  "remote_audit": "separate dependent read-only job checks native source run actor, three Sigstore signed source receipts, exact original Git pre/post bytes and commit parent",
+  "human_owner_review": false,
+  "write_token_scope": "GitHub Actions job repository contents write, fixed broker imposes one-path constraint",
+  "operator_instruction": "Do not treat this platform-authorized controlled fixture as an independently human approved resource."
+}
