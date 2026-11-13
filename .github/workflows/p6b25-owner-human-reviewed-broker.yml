@@ -139,12 +139,12 @@ jobs:
           set -euo pipefail
           curl --fail --location --show-error --silent --retry 3 \
             -o .b25-trusted-fixed-writer.py \
-            https://raw.githubusercontent.com/risu-research/risu-probe/4fd8b4f9619920401ae373bbe72e88d1da58ee30/src/risu_mcp_human_review_broker.py
+            https://raw.githubusercontent.com/risu-research/risu-probe/669be8b14cb314acf6ba49353fa198c2415a056b/src/risu_mcp_human_review_broker.py
           python - <<'PY'
           import hashlib
           p=open('.b25-trusted-fixed-writer.py','rb').read()
           b=hashlib.sha1(b'blob '+str(len(p)).encode()+bytes([0])+p).hexdigest()
-          assert b=='2ae1e43850d15fb22601ce666aec99dc330a2374',b
+          assert b=='4a0e31affd2ecb27edc17d0b10e64bb40d4d0f45',b
           print('B25_TRUSTED_ONLY_WRITER_CODE_GIT_BLOB_PINNED')
           PY
       - name: Check real GitHub human review history, isolate untrusted UID and perform exactly one owner-approved GitHub PUT
@@ -176,6 +176,7 @@ jobs:
           name: b25-verified-human-review-one-file-exact-github-effect
           retention-days: 21
           if-no-files-found: warn
+          include-hidden-files: true
           path: |
             .b25-human-review-original-remote-result.json
             .b25-verified-external-github-oidc.json
@@ -200,12 +201,12 @@ jobs:
           set -euo pipefail
           curl --fail --location --show-error --silent --retry 3 \
             -o .b25-readonly-auditor.py \
-            https://raw.githubusercontent.com/risu-research/risu-probe/2385136acd542724603a3648c8527e5de6e8d9b9/benchmarks/p6b25/independent_human_review_audit.py
+            https://raw.githubusercontent.com/risu-research/risu-probe/669be8b14cb314acf6ba49353fa198c2415a056b/benchmarks/p6b25/independent_human_review_audit.py
           python - <<'PY'
           import hashlib
           raw=open('.b25-readonly-auditor.py','rb').read()
           b=hashlib.sha1(b'blob '+str(len(raw)).encode()+bytes([0])+raw).hexdigest()
-          assert b=='2be868c34beb8aa2f2bc2936362684d3f04d96dc'
+          assert b=='e877f70b53fb8980f6864674da937bcb271a5589'
           PY
       - name: Independent GitHub REST immutable file blobs, real reviewer and one approved commit
         env:
@@ -231,4 +232,5 @@ jobs:
           name: b25-independent-actual-review-readonly-github-effect-audit
           retention-days: 21
           if-no-files-found: warn
+          include-hidden-files: true
           path: .b25-independent-human-owner-audit.json
