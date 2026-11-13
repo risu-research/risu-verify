@@ -144,13 +144,13 @@ jobs:
           # separate research branch.
           curl -fLsS --retry 3 \
             -o .b23-risu-product-source.tar.gz \
-            https://api.github.com/repos/risu-research/risu-probe/tarball/qualification/p6b23-github-owner-issued-gate-20261112
+            https://api.github.com/repos/risu-research/risu-probe/tarball/2f4a59996b2ba0d7d919072828d19fdc1b0e070f
           mkdir -p .b23-risu-src
           tar -xzf .b23-risu-product-source.tar.gz -C .b23-risu-src --strip-components=1
           python .b23-risu-src/benchmarks/p6b23/run_owner_attested_github_mcp.py \
             --grant .b23-issued-by-owner/OWNER_AUTHORIZATION.json \
-            --original-server-dir .b23-publisher-original \
-            --owner-attestation .b23-owner-GITHUB_SIGNED_VERIFIED_ATTESTATION.json \
+            --original-server .b23-publisher-original/github-mcp-server \
+            --original-archive .b23-github-mcp.tar.gz \
             --authenticating-run "$GITHUB_RUN_ID" \
             --approval-mode "${{ needs.platform-owner-identity-and-grant-attestation.outputs.approval_mode }}" \
             --actor "${{ needs.platform-owner-identity-and-grant-attestation.outputs.authenticated_owner_actor }}" \
