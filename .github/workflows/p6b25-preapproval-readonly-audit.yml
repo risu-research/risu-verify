@@ -106,6 +106,8 @@ jobs:
         with:
           name: b25-independent-preapproval-source-and-no-human-review-evidence
           retention-days: 21
+          include-hidden-files: true
+          if-no-files-found: error
           path: |
             .b25-actual-no-human-review.json
             .b25-actual-unreviewed-no-write-token-proof.json
