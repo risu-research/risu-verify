@@ -93,10 +93,10 @@ jobs:
             original=json.load(response)
           assert original['type']=='file'
           before=base64.b64decode(original['content'])
-          assert before.startswith(b'RISU B23 GitHub-owner resource fixture\\n')
-          post=('RISU B23 GitHub-owner resource fixture\\n'
-                'state=APPROVED_BY_DIRECT_GITHUB_ADMIN_DISPATCH\\n'
-                'purpose=bounded consent gate research\\n')
+          assert before.startswith(b'RISU B23 GitHub-owner resource fixture\n')
+          post=('RISU B23 GitHub-owner resource fixture\n'
+                'state=APPROVED_BY_DIRECT_GITHUB_ADMIN_DISPATCH\n'
+                'purpose=bounded consent gate research\n')
           now=datetime.now(timezone.utc)
           iso=lambda x:x.isoformat(timespec='seconds').replace('+00:00','Z')
           policy['pre_git_blob_sha1']=original['sha']
@@ -115,7 +115,7 @@ jobs:
             'an untrusted agent resisting credential bypass, or arbitrary MCP tool authorization.')
           policy['approved_tool_arguments']['sha']=original['sha']
           policy['approved_tool_arguments']['content']=post
-          grant_path.write_text(json.dumps(policy,sort_keys=True,indent=2)+'\\n')
+          grant_path.write_text(json.dumps(policy,sort_keys=True,indent=2)+'\n')
           print('B23_DIRECT_ACTUAL_GITHUB_ADMIN_EXPLICIT_ONE_TIME_CONSENT_DOCUMENT_PREPARED',
                 original['sha'],policy['post_raw_sha256'])
           PY
