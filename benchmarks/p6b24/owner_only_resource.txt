@@ -1,0 +1,3 @@
+RISU B24 actual owner-controlled repository fixture
+status=AWAITING_OWNER_APPROVED_BROKER
+scope=exact-one-file
