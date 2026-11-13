@@ -1,0 +1,16 @@
+{
+  "schema": "risu-b33-local-platform-authorized-source-effect-intent-v1",
+  "owner_repository": "risu-research/risu-verify",
+  "execution_ref": "refs/heads/qualification/p6b33-signed-execution-effect-live-20261113",
+  "scope_type": "ONE_PREDECLARED_RESOURCE_GITHUB_CONTENTS",
+  "source_program": "benchmarks/p6b33/agent_candidate.py",
+  "trusted_broker": "benchmarks/p6b33/trusted_writer.py",
+  "resource_path": "benchmarks/p6b33/owner_resource.txt",
+  "expected_prior_sha256": "3d94021520c4e5cbfe28f22e9a427caafcc8356a551ef54d36ad16c280418870",
+  "expected_prior_git_blob": "8aadf1603c17e9966a7831c904ee0dcca620337c",
+  "desired_content": "B33 scope-controlled GitHub resource\nstate=SIGNED_PROGRAM_EXECUTED\nscope=ONE_TARGET_PATH\n",
+  "desired_content_sha256": "1edde392ee5291509129d34e99b89385edb978c75ef910e6a7b8628bc962f162",
+  "exact_one_effect_commit": true,
+  "approval_tier": "GITHUB_WORKFLOW_PLATFORM_REPOSITORY_WRITE_AUTHORITY_NO_INDEPENDENT_HUMAN_REVIEW",
+  "limitations": "The repository workflow receives contents:write for the repository; one-file and exact-content restrictions are implemented by its fixed broker. The signed candidate did not receive the write token. Owner approval is policy committed to this qualification branch, not independent human consent."
+}
