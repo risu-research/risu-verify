@@ -139,7 +139,7 @@ jobs:
           set -euo pipefail
           curl --fail --location --show-error --silent --retry 3 \
             -o .b25-trusted-fixed-writer.py \
-            https://raw.githubusercontent.com/risu-research/risu-probe/a81e72024167703036e93a5699f9b2a7c6a0c0ad/src/risu_mcp_human_review_broker.py
+            https://raw.githubusercontent.com/risu-research/risu-probe/4fd8b4f9619920401ae373bbe72e88d1da58ee30/src/risu_mcp_human_review_broker.py
           python - <<'PY'
           import hashlib
           p=open('.b25-trusted-fixed-writer.py','rb').read()
