@@ -144,7 +144,7 @@ jobs:
           import hashlib
           p=open('.b25-trusted-fixed-writer.py','rb').read()
           b=hashlib.sha1(b'blob '+str(len(p)).encode()+bytes([0])+p).hexdigest()
-          assert b=='d94b7c4a05db806a0aac143c12a0c10e10899a49',b
+          assert b=='2ae1e43850d15fb22601ce666aec99dc330a2374',b
           print('B25_TRUSTED_ONLY_WRITER_CODE_GIT_BLOB_PINNED')
           PY
       - name: Check real GitHub human review history, isolate untrusted UID and perform exactly one owner-approved GitHub PUT
