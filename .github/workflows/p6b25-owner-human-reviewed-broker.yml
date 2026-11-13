@@ -1,0 +1,182 @@
+name: RISU B25 real GitHub human reviewer and isolated one-file credential broker
+on:
+  push:
+    branches:
+      - qualification/p6b25-real-review-credential-isolation-20261112
+    paths:
+      - benchmarks/p6b25/REQUEST_HUMAN_REVIEW.txt
+permissions:
+  contents: read
+concurrency:
+  group: b25-exact-resource-owner-human-review
+  cancel-in-progress: false
+jobs:
+  owner-proposal:
+    name: GitHub owner identity and signed specific still-UNAPPROVED request
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+      artifact-metadata: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Pin owner proposal, real GitHub admin and source branch without authorizing any write
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = risu-research/risu-verify
+          test "$GITHUB_REF" = refs/heads/qualification/p6b25-real-review-credential-isolation-20261112
+          test "$(git hash-object benchmarks/p6b25/OWNER_PROPOSED_REQUEST.json)" = c66e2630c0c4edf15ee467fb758f601de6370ede
+          test "$(gh api "repos/$GITHUB_REPOSITORY/collaborators/moon10021017/permission" -q .permission)" = admin
+          python - <<'PY'
+          import json
+          p=json.load(open('benchmarks/p6b25/OWNER_PROPOSED_REQUEST.json'))
+          assert p['proposal_status']=='UNAPPROVED_UNTIL_GITHUB_ENVIRONMENT_REVIEW_EVENT'
+          assert p['owner_repository_id']==1350184511
+          assert p['resource_path']=='benchmarks/p6b25/owner_only_resource.txt'
+          assert p['review_environment']=='risu-b25-human-owner-approval'
+          print('B25_OWNER_PROPOSAL_VERIFIED_BUT_NOT_YET_APPROVED_BY_PERSON')
+          PY
+      - name: OIDC Sigstore provenance of exact proposed document only, not human consent
+        uses: actions/attest@v4
+        with:
+          subject-path: benchmarks/p6b25/OWNER_PROPOSED_REQUEST.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: b25-owner-attested-unapproved-proposal
+          retention-days: 21
+          if-no-files-found: error
+          path: benchmarks/p6b25/OWNER_PROPOSED_REQUEST.json
+
+  untrusted-agent:
+    name: Isolated agent has ONLY contents read, real GitHub PUT is forbidden
+    needs: owner-proposal
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - name: Real API denies unauthorized agent bypass on separate unapproved path
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,os,urllib.request,urllib.error
+          u=('https://api.github.com/repos/risu-research/risu-verify/contents/'
+             'benchmarks/p6b25/UNTRUSTED_DIRECT_WRITE_MUST_NOT_APPEAR.txt')
+          payload={"message":"B25 untrusted direct write should be blocked",
+                   "content":"aGFybWxlc3MK",
+                   "branch":"qualification/p6b25-real-review-credential-isolation-20261112"}
+          req=urllib.request.Request(u,method="PUT",
+             data=json.dumps(payload).encode(),
+             headers={"Authorization":"Bearer "+os.environ["GH_TOKEN"],
+                      "Accept":"application/vnd.github+json",
+                      "Content-Type":"application/json",
+                      "User-Agent":"RISU-B25-READ-ONLY-UNTRUSTED-AGENT"})
+          try:
+              with urllib.request.urlopen(req,timeout=30) as resp:
+                  code=resp.status
+          except urllib.error.HTTPError as e:
+              code=e.code
+          assert code in (401,403),code
+          # Independently check no previously missing source file was created.
+          public=urllib.request.Request(u+'?ref=qualification/p6b25-real-review-credential-isolation-20261112',
+              headers={"Accept":"application/vnd.github+json","User-Agent":"RISU-B25-read-only"})
+          try:
+              with urllib.request.urlopen(public,timeout=30):raise AssertionError('Unauthorized file exists')
+          except urllib.error.HTTPError as e:
+              assert e.code==404,e.code
+          open('UNTRUSTED_AGENT_REAL_403.json','w').write(
+            json.dumps({"real_github_http_put_status":code,
+                       "actual_unauthorized_remote_resource_exists":False,
+                       "job_has_contents_write":False},sort_keys=True)+'\n')
+          print('B25_ACTUAL_UNTRUSTED_SEPARATE_GITHUB_TOKEN_WRITE_403_NO_REMOTE_FILE')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: b25-untrusted-agent-actual-readonly-403
+          retention-days: 21
+          path: UNTRUSTED_AGENT_REAL_403.json
+
+  human-reviewed-one-file-writer:
+    name: Named human GitHub reviewer must approve; only fixed trusted code sees write token
+    needs: [owner-proposal, untrusted-agent]
+    # With no environment configured, GitHub could auto-create it unprotected.
+    # The broker ALSO verifies GitHub's actual run-specific review history,
+    # so an unreviewed deployment always fails BEFORE any API write.
+    environment:
+      name: risu-b25-human-owner-approval
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      actions: read
+      attestations: read
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: b25-owner-attested-unapproved-proposal
+          path: .b25-owner-proposal
+      - name: Verify externally attested exact owner proposal, not yet proof of human approval
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh attestation verify .b25-owner-proposal/OWNER_PROPOSED_REQUEST.json \
+            --repo risu-research/risu-verify \
+            --signer-workflow risu-research/risu-verify/.github/workflows/p6b25-owner-human-reviewed-broker.yml \
+            --source-ref refs/heads/qualification/p6b25-real-review-credential-isolation-20261112 \
+            --format json > .b25-verified-external-github-oidc.json
+          test -s .b25-verified-external-github-oidc.json
+      - name: Download ONLY immutable reviewed code, NEVER checkout the untrusted owner branch into privileged environment
+        run: |
+          set -euo pipefail
+          curl --fail --location --show-error --silent --retry 3 \
+            -o .b25-trusted-fixed-writer.py \
+            https://raw.githubusercontent.com/risu-research/risu-probe/a81e72024167703036e93a5699f9b2a7c6a0c0ad/src/risu_mcp_human_review_broker.py
+          python - <<'PY'
+          import hashlib
+          p=open('.b25-trusted-fixed-writer.py','rb').read()
+          b=hashlib.sha1(b'blob '+str(len(p)).encode()+bytes([0])+p).hexdigest()
+          assert b=='d94b7c4a05db806a0aac143c12a0c10e10899a49',b
+          print('B25_TRUSTED_ONLY_WRITER_CODE_GIT_BLOB_PINNED')
+          PY
+      - name: Check real GitHub human review history, isolate untrusted UID and perform exactly one owner-approved GitHub PUT
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -m 700 .b25-executor-private-ledger
+          python .b25-trusted-fixed-writer.py \
+            --policy .b25-owner-proposal/OWNER_PROPOSED_REQUEST.json \
+            --ledger .b25-executor-private-ledger \
+            --github-run-id "$GITHUB_RUN_ID" \
+            --github-head-sha "$GITHUB_SHA" \
+            --out .b25-human-review-original-remote-result.json
+          python - <<'PY'
+          import json
+          p=json.load(open('.b25-human-review-original-remote-result.json'))
+          assert p['status']=='DIRECT_HUMAN_REVIEWED_EXACT_ONE_FILE_WRITE_VERIFIED'
+          assert p['actual_github_writes']==1 and p['actual_changed_files']==1
+          assert p['review']['reviewer_login']=='moon10021017'
+          assert p['untrusted_mcp_code_executed_with_write_token'] is False
+          assert p['intra_broker_os_uid_token_separation']['token_in_child_env'] is False
+          assert p['intra_broker_os_uid_token_separation']['parent_privileged_env_readable'] is False
+          print('B25_REAL_REVIEW_HISTORY_ONE_EXACT_REMOTE_FILE_AND_OS_CREDENTIAL_ISOLATION_PASS')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: b25-verified-human-review-one-file-exact-github-effect
+          retention-days: 21
+          if-no-files-found: warn
+          path: |
+            .b25-human-review-original-remote-result.json
+            .b25-verified-external-github-oidc.json
+            .b25-owner-proposal/OWNER_PROPOSED_REQUEST.json
