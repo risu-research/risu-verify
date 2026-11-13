@@ -1,0 +1,9 @@
+RISU P6-B25 controlled human review request
+status=REQUESTED_NOT_APPROVED
+review_environment=risu-b25-human-owner-approval
+expected_reviewer=moon10021017
+workflow=p6b25-owner-human-reviewed-broker.yml
+owner_resource=benchmarks/p6b25/owner_only_resource.txt
+scope=ONE_EXISTING_FIXTURE_FILE_ONLY
+purpose=verify actual GitHub required-reviewer approval, trusted writer credential confinement, and independent remote commit effect
+note=Creating this request does not grant consent. The owner must approve the exact deployment in GitHub Actions.
