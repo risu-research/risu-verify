@@ -1,0 +1,32 @@
+{
+  "schema": "risu-b23-real-github-owner-authorized-fixture-v1",
+  "grant_origin": "AUTHENTICATED_GITHUB_ADMIN_ACCOUNT_DELEGATION",
+  "owner_repository": "risu-research/risu-verify",
+  "owner_repository_id": 1350184511,
+  "organization_id": 316025762,
+  "actor_account": "moon10021017",
+  "approved_branch": "qualification/p6b23-owner-grants-20261112",
+  "resource_path": "benchmarks/p6b23/owner_sandbox.txt",
+  "tool": "create_or_update_file",
+  "approved_action": "REPLACE",
+  "pre_git_blob_sha1": "de0b72cd177d6f1bb7153a9925bb3a5bf285d521",
+  "pre_raw_sha256": "63edefc58b885353c97883f1ecd6a70c9063c43b8a80d64585977b35a0e098a1",
+  "post_raw_sha256": "185f90a28d7775a1e91341c6a5f25807a9eeff49be86877f9e8468316580de9d",
+  "original_github_mcp_release": "v2.1.0",
+  "original_github_mcp_linux_x86_64_archive_sha256": "a442f9db287cea01008bcb55fe6bc0292270301046c3edbd1a8b22d6e4157b2b",
+  "validity_utc_start": "2026-11-12T00:00:00Z",
+  "validity_utc_end": "2026-11-15T00:00:00Z",
+  "nonce": "31246833eb98fd7ee4a071b7302af8103370addb1306fe7a3c40bdd4991caf56",
+  "requested_effect": "OWNER_REPOSITORY_FILE_CONTENT_REPLACEMENT",
+  "approved_tool_arguments": {
+    "owner": "risu-research",
+    "repo": "risu-verify",
+    "branch": "qualification/p6b23-owner-grants-20261112",
+    "path": "benchmarks/p6b23/owner_sandbox.txt",
+    "message": "B23 authorized bounded owner repository resource update",
+    "content": "RISU B23 GitHub-owner resource fixture\nstate=APPROVED_BY_REPOSITORY_ADMIN\npurpose=bounded consent gate research\n",
+    "sha": "de0b72cd177d6f1bb7153a9925bb3a5bf285d521"
+  },
+  "owner_approval_statement": "The actual authenticated repository-admin GitHub account delegates this single bounded fixture replacement to the B23 preflight executor. A GitHub OIDC/Sigstore-signed workflow attests the exact grant document, and subsequent execution must not reinterpret it as a separate human's interactive approval.",
+  "limit": "GitHub connector action was delegated to the AI by the authenticated repository administrator. This is genuine GitHub account authorization and repo ownership, not an independently consenting external human."
+}
