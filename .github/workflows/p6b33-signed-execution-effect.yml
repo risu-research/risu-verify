@@ -26,6 +26,12 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - name: Compile all three original Python programs before any privileged resource effect
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile benchmarks/p6b33/agent_candidate.py benchmarks/p6b33/trusted_writer.py benchmarks/p6b33/read_only_auditor.py
+          echo B33_ORIGINAL_THREE_PYTHON_PROGRAMS_SYNTAX_PASS
       - name: Freeze original exact source, owner fixture and expected preimage before signing
         shell: bash
         run: |
