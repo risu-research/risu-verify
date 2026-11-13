@@ -1,9 +1,12 @@
-RISU P6-B25 controlled human review request
+RISU P6-B25.1 controlled human review request
 status=REQUESTED_NOT_APPROVED
 review_environment=risu-b25-human-owner-approval
 expected_reviewer=moon10021017
 workflow=p6b25-owner-human-reviewed-broker.yml
 owner_resource=benchmarks/p6b25/owner_only_resource.txt
 scope=ONE_EXISTING_FIXTURE_FILE_ONLY
-purpose=verify actual GitHub required-reviewer approval, trusted writer credential confinement, and independent remote commit effect
-note=Creating this request does not grant consent. The owner must approve the exact deployment in GitHub Actions.
+purpose=verify actual GitHub required-reviewer approval, strict GitHub Contents API transport, one-file trusted writer, and independent audit
+probe_source_commit=669be8b14cb314acf6ba49353fa198c2415a056b
+prior_run=43354699656
+prior_result=HUMAN_APPROVED_BUT_WRITE_DENIED_BY_B64_LINE_FOLD_PARSE_ERROR
+note=This new request does not grant consent. Prior approval cannot be reused. Only a direct GitHub deployment review for the new run can authorize execution.
