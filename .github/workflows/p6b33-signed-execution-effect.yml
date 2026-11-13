@@ -1,0 +1,136 @@
+name: RISU B33 original signed source to actual isolated GitHub authority and one-resource effect
+on:
+  push:
+    branches:
+      - qualification/p6b33-signed-execution-effect-live-20261113
+    paths:
+      - benchmarks/p6b33/ACTIVATE.json
+permissions:
+  contents: read
+jobs:
+  signed-candidate-execute-one-effect:
+    name: signed-candidate-execute-one-effect
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    permissions:
+      contents: write
+      attestations: write
+      id-token: write
+      actions: read
+      artifact-metadata: write
+    steps:
+      - name: Checkout the exact original source that will be signed, not a mutable branch after write
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Freeze original exact source, owner fixture and expected preimage before signing
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path("benchmarks/p6b33")
+          intent=json.loads((p/"INTENT.json").read_text())
+          assert intent["owner_repository"]=="risu-research/risu-verify"
+          assert intent["execution_ref"]=="refs/heads/qualification/p6b33-signed-execution-effect-live-20261113"
+          assert intent["resource_path"]=="benchmarks/p6b33/owner_resource.txt"
+          assert hashlib.sha256((p/"owner_resource.txt").read_bytes()).hexdigest()==intent["expected_prior_sha256"]
+          assert hashlib.sha256(intent["desired_content"].encode()).hexdigest()==intent["desired_content_sha256"]
+          assert intent["approval_tier"]=="GITHUB_WORKFLOW_PLATFORM_REPOSITORY_WRITE_AUTHORITY_NO_INDEPENDENT_HUMAN_REVIEW"
+          for a in ("agent_candidate.py","trusted_writer.py","INTENT.json"):
+              print("B33_ORIGINAL_UNMODIFIED_INPUT_SHA256",a,hashlib.sha256((p/a).read_bytes()).hexdigest())
+          PY
+      - name: Original Sigstore signed candidate program before execution
+        uses: actions/attest@v4
+        with:
+          subject-path: benchmarks/p6b33/agent_candidate.py
+      - name: Original Sigstore signed fixed trusted broker before any repository write
+        uses: actions/attest@v4
+        with:
+          subject-path: benchmarks/p6b33/trusted_writer.py
+      - name: Execute exact signed candidate with NO GitHub write token in its process
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .b33-evidence
+          python benchmarks/p6b33/agent_candidate.py \
+            --intent benchmarks/p6b33/INTENT.json \
+            --out .b33-evidence/CANDIDATE_EXECUTION.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          v=json.loads(Path(".b33-evidence/CANDIDATE_EXECUTION.json").read_text())
+          assert v["tool_write_credential_available"] is False
+          print("B33_SIGNED_PROGRAM_RUNTIME_ACTUAL_PID",v["runtime_pid"])
+          PY
+      - name: Fixed trusted broker receives repository token ONLY HERE, verifies candidate and exact old state, then executes one scoped PUT
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python benchmarks/p6b33/trusted_writer.py \
+            --intent benchmarks/p6b33/INTENT.json \
+            --candidate .b33-evidence/CANDIDATE_EXECUTION.json \
+            --out .b33-evidence/EXECUTION_RECEIPT.json
+      - name: Sign execution claim receipt only AFTER the original remote GitHub PUT returned a real commit
+        uses: actions/attest@v4
+        with:
+          subject-path: .b33-evidence/EXECUTION_RECEIPT.json
+      - name: Upload signed-witness subject bytes for separate read-only audit, no credentials
+        uses: actions/upload-artifact@v4
+        with:
+          name: risu-b33-original-candidate-and-broker-receipts
+          retention-days: 30
+          include-hidden-files: true
+          if-no-files-found: error
+          path: |
+            .b33-evidence/CANDIDATE_EXECUTION.json
+            .b33-evidence/EXECUTION_RECEIPT.json
+
+  read-only-original-platform-and-sigstore-audit:
+    name: independent-readonly-sigstore-job-git-effect-audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: signed-candidate-execute-one-effect
+    permissions:
+      contents: read
+      actions: read
+      attestations: read
+    steps:
+      - name: Checkout immutable original source commit, NOT post-effect branch
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          ref: ${{ github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Download original run's candidate and post-write signed execution receipt bytes
+        uses: actions/download-artifact@v4
+        with:
+          name: risu-b33-original-candidate-and-broker-receipts
+          path: .b33-evidence
+      - name: Independently verify 3 cryptographic original attestations, native actor/times and actual one-file Git transition
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh version | head -n1
+          python benchmarks/p6b33/read_only_auditor.py
+          echo B33_INDEPENDENT_READONLY_AUDIT_ALL_SOURCE_EXECUTION_GIT_EFFECT_CHECKS_PASS
+      - name: Preserve real separate job audit evidence and original signed subject bytes
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: risu-b33-independent-readonly-source-execution-effect-audit
+          retention-days: 30
+          if-no-files-found: warn
+          include-hidden-files: true
+          path: |
+            .b33-audit/*.json
