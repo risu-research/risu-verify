@@ -11,6 +11,6 @@
 
 승인 대상은 연구 브랜치의 benchmarks/p6b25/owner_only_resource.txt 파일 하나이고, 변경 전후 내용과 Git 해시가 소스에 고정되어 있습니다. GITHUB_TOKEN은 GitHub Actions가 각 작업에 발급하므로 개인 액세스 토큰, GitHub App 키 또는 비밀번호를 보내거나 생성할 필요가 없습니다.
 
-현재 인간 승인은 수행되지 않았습니다. 읽기 전용 job으로 실제 GitHub PUT HTTP 403과 대상 파일 미생성, 기존 코드를 포함한 3개 OS 테스트 538건은 확인했습니다.
+현재 인간 승인은 수행되지 않았습니다. 읽기 전용 job으로 실제 GitHub PUT HTTP 403과 대상 파일 미생성, 기존 코드를 포함한 3개 OS 테스트 539건은 확인했습니다.
 
 이번 테스트에서는 이 계정의 직접 승인을 검증할 수 있으나, 서로 다른 두 사람의 검토는 아직 아닙니다. 사람의 승인 출처는 GitHub Actions의 해당 실행에 대한 review history API로 재검증합니다.
