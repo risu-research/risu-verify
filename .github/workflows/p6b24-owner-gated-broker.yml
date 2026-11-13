@@ -1,0 +1,208 @@
+name: RISU B24 real owner grant / read-only agent / write-token-isolated trusted broker
+on:
+  push:
+    branches: ['qualification/p6b24-owner-authority-20261112']
+    paths:
+      - 'benchmarks/p6b24/OWNER_AUTHORIZATION.json'
+permissions:
+  contents: read
+jobs:
+  owner-provenance:
+    name: Repo administrator owner grant, identity proof via GitHub OIDC Sigstore
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+      artifact-metadata: write
+    outputs:
+      issuer: ${{ steps.verify.outputs.issuer }}
+      issue_mode: ${{ steps.verify.outputs.mode }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Verify organization admin against actual platform and exact bounded owner request
+        id: verify
+        env:
+          GH_TOKEN: ${{ github.token }}
+          OWNER_ACTOR: ${{ github.actor }}
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = risu-research/risu-verify
+          test "$GITHUB_REF" = refs/heads/qualification/p6b24-owner-authority-20261112
+          test "$OWNER_ACTOR" = moon10021017
+          ACCESS="$(gh api "repos/$GITHUB_REPOSITORY/collaborators/$OWNER_ACTOR/permission" -q .permission)"
+          test "$ACCESS" = admin
+          python - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          x=json.loads(Path('benchmarks/p6b24/OWNER_AUTHORIZATION.json').read_text())
+          assert x['schema']=='risu-b24-real-github-owner-isolated-credential-broker-v1'
+          assert x['owner_repository']=='risu-research/risu-verify'
+          assert x['owner_repository_id']==1350184511
+          assert x['organization_id']==316025762
+          assert x['actor_account']=='moon10021017'
+          assert x['approved_branch']=='qualification/p6b24-owner-authority-20261112'
+          assert x['resource_path']=='benchmarks/p6b24/owner_only_resource.txt'
+          assert x['tool']=='create_or_update_file'
+          assert x['approved_action']=='REPLACE'
+          assert x['grant_origin']=='AUTHENTICATED_GITHUB_ADMIN_ACCOUNT_DELEGATION'
+          assert x['approved_tool_arguments']['path']==x['resource_path']
+          assert x['approved_tool_arguments']['branch']==x['approved_branch']
+          print('B24_REAL_ORG_ADMIN_ISSUER_ID_AND_PRECOMMITTED_OWNER_SCOPE_VERIFIED')
+          PY
+          echo "issuer=$OWNER_ACTOR" >> "$GITHUB_OUTPUT"
+          echo "mode=DELEGATED_OWNER_ACCOUNT_GIT_COMMIT_AUTOMATED_DEVELOPMENT" >> "$GITHUB_OUTPUT"
+      - name: Attest exact owner-admin-approved request with GitHub official OIDC/Sigstore provenance
+        uses: actions/attest@v4
+        with:
+          subject-path: benchmarks/p6b24/OWNER_AUTHORIZATION.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: b24-owner-github-oidc-attested-original-grant
+          retention-days: 21
+          if-no-files-found: error
+          path: benchmarks/p6b24/OWNER_AUTHORIZATION.json
+
+  untrusted-agent:
+    name: Separate job READ ONLY token, direct REST PUT and official MCP bypass both refused
+    needs: owner-provenance
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install original GitHub MCP publisher release pinned by actual SHA
+        run: |
+          set -euo pipefail
+          curl -fLsS --retry 3 -o .b24-original-mcp.tar.gz \
+            https://github.com/github/github-mcp-server/releases/download/v2.1.0/github-mcp-server_Linux_x86_64.tar.gz
+          echo 'a442f9db287cea01008bcb55fe6bc0292270301046c3edbd1a8b22d6e4157b2b  .b24-original-mcp.tar.gz' | sha256sum -c -
+          mkdir -p .b24-publisher
+          tar -xzf .b24-original-mcp.tar.gz -C .b24-publisher
+          test -x .b24-publisher/github-mcp-server
+      - name: Fetch frozen independent UNTRUSTED agent test source, no broker or sign credential available
+        run: |
+          set -euo pipefail
+          curl -fLsS --retry 3 -o .b24-untrusted-src.tar.gz \
+            https://api.github.com/repos/risu-research/risu-probe/tarball/080d29b67c0edffe08e026a5283182bbaa6681c1
+          mkdir -p .b24-untrusted-code
+          tar -xzf .b24-untrusted-src.tar.gz -C .b24-untrusted-code --strip-components=1
+          test -f .b24-untrusted-code/benchmarks/p6b24/real_untrusted_agent_bypass.py
+      - name: Attempt direct REST write and direct official GitHub MCP write without broker
+        env:
+          GH_TOKEN: ${{ github.token }}
+          B24_AGENT_CREDENTIAL_CLASS: READ_ONLY
+        run: |
+          set -euo pipefail
+          mkdir -p .b24-agent-evidence
+          python .b24-untrusted-code/benchmarks/p6b24/real_untrusted_agent_bypass.py \
+            --original-server .b24-publisher/github-mcp-server \
+            --original-archive .b24-original-mcp.tar.gz \
+            --out .b24-agent-evidence/UNTRUSTED_AGENT_DIRECT_HTTP_AND_ORIGINAL_MCP_DENIAL.json
+          python - <<'PY'
+          import json
+          r=json.load(open('.b24-agent-evidence/UNTRUSTED_AGENT_DIRECT_HTTP_AND_ORIGINAL_MCP_DENIAL.json'))
+          assert r['direct_authenticated_github_http_put_status'] in (401,403)
+          assert r['direct_http_put_rejected'] and r['original_mcp_write_rejected']
+          assert r['remote_unapproved_http_file_absent']
+          assert r['remote_unapproved_original_mcp_file_absent']
+          assert r['owner_target_unchanged_before_broker']
+          assert r['agent_job_credential_class']=='GITHUB_ACTIONS_JOB_CONTENTS_READ_ONLY'
+          print('B24_REAL_AGENT_NO_WRITE_BOTH_DIRECT_PATHS_DENIED_WITHOUT_BROKER')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: b24-real-agent-readonly-bypass-denied
+          retention-days: 21
+          include-hidden-files: true
+          if-no-files-found: warn
+          path: .b24-agent-evidence/
+
+  trusted-broker:
+    name: ONLY job with short-lived repo-scoped contents WRITE token and exact OIDC-verified owner request
+    needs: [owner-provenance, untrusted-agent]
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    permissions:
+      contents: write
+      attestations: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: b24-owner-github-oidc-attested-original-grant
+          path: .b24-real-owner-issuer
+      - name: Independently authenticate exact owner signature in trusted broker before granting credential to official MCP
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh attestation verify .b24-real-owner-issuer/OWNER_AUTHORIZATION.json \
+            --repo risu-research/risu-verify \
+            --signer-workflow risu-research/risu-verify/.github/workflows/p6b24-owner-gated-broker.yml \
+            --source-ref refs/heads/qualification/p6b24-owner-authority-20261112 \
+            --format json > .b24-external-github-attestation.json
+          test -s .b24-external-github-attestation.json
+          python - <<'PY'
+          import json
+          x=json.load(open('.b24-external-github-attestation.json'))
+          assert isinstance(x,list) and len(x)>0
+          print('B24_BROKER_GITHUB_EXTERNAL_SIGNED_OWNER_GRANT_VERIFIED',len(x))
+          PY
+      - name: Retrieve immutable exact publisher original GitHub MCP server release
+        run: |
+          set -euo pipefail
+          curl -fLsS --retry 3 -o .b24-original-publisher.tar.gz \
+            https://github.com/github/github-mcp-server/releases/download/v2.1.0/github-mcp-server_Linux_x86_64.tar.gz
+          echo 'a442f9db287cea01008bcb55fe6bc0292270301046c3edbd1a8b22d6e4157b2b  .b24-original-publisher.tar.gz' | sha256sum -c -
+          mkdir -p .b24-publisher
+          tar -xzf .b24-original-publisher.tar.gz -C .b24-publisher
+      - name: Execute exact signed single-file original MCP request inside isolated credential broker ONLY
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_PERSONAL_ACCESS_TOKEN: ${{ github.token }}
+          B24_TRUSTED_BROKER_JOB: "yes"
+        run: |
+          set -euo pipefail
+          curl -fLsS --retry 3 -o .b24-broker-src.tar.gz \
+            https://api.github.com/repos/risu-research/risu-probe/tarball/135c79567f1df99ca68e0f8ad40b58a01123140c
+          mkdir -p .b24-broker-src
+          tar -xzf .b24-broker-src.tar.gz -C .b24-broker-src --strip-components=1
+          python .b24-broker-src/benchmarks/p6b24/run_trusted_broker_official_github_mcp.py \
+            --grant .b24-real-owner-issuer/OWNER_AUTHORIZATION.json \
+            --original-server .b24-publisher/github-mcp-server \
+            --original-archive .b24-original-publisher.tar.gz \
+            --authenticating-run "$GITHUB_RUN_ID" \
+            --approval-mode ${{ needs.owner-provenance.outputs.issue_mode }} \
+            --actor ${{ needs.owner-provenance.outputs.issuer }} \
+            --out .b24-real-trusted-broker-evidence
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('.b24-real-trusted-broker-evidence')
+          result=json.load(open(root/'REAL_OWNER_REPOSITORY_ORIGINAL_MCP_RESULT.json'))
+          assert result['original_tool_calls']==1
+          assert result['original_native_mcp_started']
+          assert result['remote_post_effect']['file_sha256']=='b792024d10b7d1611b12dd59c4efde3529e84c7dcaffea29c6bfdf3dbf319774'
+          assert (root/'REPLAY_PRECALL_DENIED.json').is_file()
+          print('B24_ONLY_TRUSTED_BROKER_WRITE_ACTUAL_OWNER_GITHUB_RESOURCE_AND_NATIVE_MCP_VERIFIED')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: b24-real-trusted-broker-original-mcp-only-approved-effect
+          retention-days: 21
+          include-hidden-files: true
+          if-no-files-found: warn
+          path: |
+            .b24-real-trusted-broker-evidence/
+            .b24-external-github-attestation.json
