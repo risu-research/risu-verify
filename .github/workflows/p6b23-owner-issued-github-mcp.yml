@@ -4,7 +4,6 @@ on:
     branches: ['qualification/p6b23-owner-grants-*']
     paths:
       - 'benchmarks/p6b23/OWNER_AUTHORIZATION.json'
-      - '.github/workflows/p6b23-owner-issued-github-mcp.yml'
   workflow_dispatch:
     inputs:
       approve_bounded_fixture_update:
@@ -44,6 +43,7 @@ jobs:
           test "$GITHUB_REF" = "refs/heads/qualification/p6b23-owner-grants-20261112"
           ACTUAL_PERMISSION="$(gh api "repos/$GITHUB_REPOSITORY/collaborators/$ACTOR/permission" -q .permission)"
           test "$ACTUAL_PERMISSION" = admin
+          test "$ACTOR" = moon10021017
           if [[ "$EVENT_KIND" == workflow_dispatch ]]; then
             test "$MANUAL_APPROVAL" = yes
             MODE=DIRECT_AUTHENTICATED_OWNER_ACCOUNT_DISPATCH
@@ -67,6 +67,57 @@ jobs:
           assert p['approved_action']=='REPLACE'
           assert p['grant_origin']=='AUTHENTICATED_GITHUB_ADMIN_ACCOUNT_DELEGATION'
           print('B23_PLATFORM_OWNER_ADMIN_ACCOUNT_AND_SCOPED_GRANT_VERIFIED',p['actor_account'])
+          PY
+      - name: For explicit admin button approval, issue fresh single-use consent for CURRENT actual remote GitHub resource
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import base64,hashlib,json,os,secrets,urllib.request
+          from datetime import datetime,timedelta,timezone
+          from pathlib import Path
+          grant_path=Path('benchmarks/p6b23/OWNER_AUTHORIZATION.json')
+          policy=json.loads(grant_path.read_text())
+          owner='risu-research'
+          repo='risu-verify'
+          branch='qualification/p6b23-owner-grants-20261112'
+          resource='benchmarks/p6b23/owner_sandbox.txt'
+          url=f'https://api.github.com/repos/{owner}/{repo}/contents/{resource}?ref={branch}'
+          req=urllib.request.Request(url,headers={
+            'Authorization':'Bearer '+os.environ['GH_TOKEN'],
+            'Accept':'application/vnd.github+json',
+            'User-Agent':'RISU-B23-real-independent-admin-explicit-grant'})
+          with urllib.request.urlopen(req,timeout=30) as response:
+            original=json.load(response)
+          assert original['type']=='file'
+          before=base64.b64decode(original['content'])
+          assert before.startswith(b'RISU B23 GitHub-owner resource fixture\\n')
+          post=('RISU B23 GitHub-owner resource fixture\\n'
+                'state=APPROVED_BY_DIRECT_GITHUB_ADMIN_DISPATCH\\n'
+                'purpose=bounded consent gate research\\n')
+          now=datetime.now(timezone.utc)
+          iso=lambda x:x.isoformat(timespec='seconds').replace('+00:00','Z')
+          policy['pre_git_blob_sha1']=original['sha']
+          policy['pre_raw_sha256']=hashlib.sha256(before).hexdigest()
+          policy['post_raw_sha256']=hashlib.sha256(post.encode()).hexdigest()
+          policy['nonce']=secrets.token_hex(32)
+          policy['validity_utc_start']=iso(now-timedelta(seconds=30))
+          policy['validity_utc_end']=iso(now+timedelta(minutes=15))
+          policy['owner_approval_statement']=(
+            'The named GitHub administrator directly selected YES in this workflow_dispatch. '
+            'GitHub authenticated the actor, this exact current GitHub resource prestate is '
+            'bound to a one-time owner grant, and GitHub/Sigstore will attest these bytes.')
+          policy['limit']=(
+            'A directly authenticated GitHub admin clicked explicit approval for this '
+            'owner-controlled sandbox resource. It does not evidence a third-party owner, '
+            'an untrusted agent resisting credential bypass, or arbitrary MCP tool authorization.')
+          policy['approved_tool_arguments']['sha']=original['sha']
+          policy['approved_tool_arguments']['content']=post
+          grant_path.write_text(json.dumps(policy,sort_keys=True,indent=2)+'\\n')
+          print('B23_DIRECT_ACTUAL_GITHUB_ADMIN_EXPLICIT_ONE_TIME_CONSENT_DOCUMENT_PREPARED',
+                original['sha'],policy['post_raw_sha256'])
           PY
       - name: GitHub OIDC/Sigstore-signed exact grant file provenance, independent of future executor
         uses: actions/attest@v4
@@ -114,10 +165,14 @@ jobs:
           from pathlib import Path
           source=Path('.b23-issued-by-owner/OWNER_AUTHORIZATION.json')
           checkout=Path('benchmarks/p6b23/OWNER_AUTHORIZATION.json')
-          assert source.read_bytes()==checkout.read_bytes()
+          if '${{ needs.platform-owner-identity-and-grant-attestation.outputs.approval_mode }}' == 'DELEGATED_OWNER_ACCOUNT_GIT_COMMIT_AUTOMATED_DEVELOPMENT':
+            assert source.read_bytes()==checkout.read_bytes()
+          else:
+            assert '${{ needs.platform-owner-identity-and-grant-attestation.outputs.approval_mode }}' == 'DIRECT_AUTHENTICATED_OWNER_ACCOUNT_DISPATCH'
+            assert source.read_bytes()!=checkout.read_bytes()
+            assert b'APPROVED_BY_DIRECT_GITHUB_ADMIN_DISPATCH' in source.read_bytes()
           results=json.load(open('.b23-owner-GITHUB_SIGNED_VERIFIED_ATTESTATION.json'))
           assert isinstance(results,list) and len(results)>0
-          assert hashlib.sha256(source.read_bytes()).hexdigest() == hashlib.sha256(checkout.read_bytes()).hexdigest()
           print('B23_GITHUB_EXTERNAL_SIGSTORE_OWNER_GRANT_VERIFIED',len(results))
           PY
       - name: Install official exact pinned publisher GitHub MCP Server source release, not assistant emulator
