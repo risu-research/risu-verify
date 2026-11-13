@@ -180,3 +180,55 @@ jobs:
             .b25-human-review-original-remote-result.json
             .b25-verified-external-github-oidc.json
             .b25-owner-proposal/OWNER_PROPOSED_REQUEST.json
+
+  independent-readonly-audit:
+    name: Independent GitHub actual human review plus original one-file diff audit, NO write credential
+    needs: human-reviewed-one-file-writer
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      actions: read
+      attestations: read
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: b25-verified-human-review-one-file-exact-github-effect
+          path: .b25-real-original
+      - name: Fetch immutable source-independent auditor that never imports privileged broker
+        run: |
+          set -euo pipefail
+          curl --fail --location --show-error --silent --retry 3 \
+            -o .b25-readonly-auditor.py \
+            https://raw.githubusercontent.com/risu-research/risu-probe/2385136acd542724603a3648c8527e5de6e8d9b9/benchmarks/p6b25/independent_human_review_audit.py
+          python - <<'PY'
+          import hashlib
+          raw=open('.b25-readonly-auditor.py','rb').read()
+          b=hashlib.sha1(b'blob '+str(len(raw)).encode()+bytes([0])+raw).hexdigest()
+          assert b=='2be868c34beb8aa2f2bc2936362684d3f04d96dc'
+          PY
+      - name: Independent GitHub REST immutable file blobs, real reviewer and one approved commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python .b25-readonly-auditor.py \
+            --proposal .b25-real-original/.b25-owner-proposal/OWNER_PROPOSED_REQUEST.json \
+            --broker-report .b25-real-original/.b25-human-review-original-remote-result.json \
+            --out .b25-independent-human-owner-audit.json
+          python - <<'PY'
+          import json
+          x=json.load(open('.b25-independent-human-owner-audit.json'))
+          assert x['actual_review'] is True
+          assert x['reviewed_run_id']==int(__import__('os').environ['GITHUB_RUN_ID'])
+          assert x['git_diff_exactly_one_owner_approved_file'] is True
+          assert x['trusted_credential_isolation_class'].startswith('GITHUB_JOB_SEPARATE_TOKEN')
+          print('B25_REAL_HUMAN_APPROVAL_AND_INDEPENDENT_READONLY_REMOTE_ONE_FILE_DIFF_VERIFIED')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: b25-independent-actual-review-readonly-github-effect-audit
+          retention-days: 21
+          if-no-files-found: warn
+          path: .b25-independent-human-owner-audit.json
