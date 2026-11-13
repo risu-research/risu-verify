@@ -1,0 +1,169 @@
+name: P6-B23 owner-controlled GitHub grant provenance and guarded original MCP execution
+on:
+  push:
+    branches: ['qualification/p6b23-owner-grants-*']
+    paths:
+      - 'benchmarks/p6b23/OWNER_AUTHORIZATION.json'
+      - '.github/workflows/p6b23-owner-issued-github-mcp.yml'
+  workflow_dispatch:
+    inputs:
+      approve_bounded_fixture_update:
+        description: 'I am the repository administrator and approve ONLY the exact bounded B23 fixture operation recorded in OWNER_AUTHORIZATION.json'
+        required: true
+        type: choice
+        options: ['no', 'yes']
+        default: 'no'
+permissions:
+  contents: read
+jobs:
+  platform-owner-identity-and-grant-attestation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+      artifact-metadata: write
+    outputs:
+      approval_mode: ${{ steps.owner.outputs.approval_mode }}
+      authenticated_owner_actor: ${{ steps.owner.outputs.actor }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Verify GitHub-authenticated actor is real repo admin and owner grant is from exact branch
+        id: owner
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ACTOR: ${{ github.actor }}
+          EVENT_KIND: ${{ github.event_name }}
+          MANUAL_APPROVAL: ${{ inputs.approve_bounded_fixture_update }}
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = "risu-research/risu-verify"
+          test "$GITHUB_REF" = "refs/heads/qualification/p6b23-owner-grants-20261112"
+          ACTUAL_PERMISSION="$(gh api "repos/$GITHUB_REPOSITORY/collaborators/$ACTOR/permission" -q .permission)"
+          test "$ACTUAL_PERMISSION" = admin
+          if [[ "$EVENT_KIND" == workflow_dispatch ]]; then
+            test "$MANUAL_APPROVAL" = yes
+            MODE=DIRECT_AUTHENTICATED_OWNER_ACCOUNT_DISPATCH
+          else
+            test "$EVENT_KIND" = push
+            MODE=DELEGATED_OWNER_ACCOUNT_GIT_COMMIT_AUTOMATED_DEVELOPMENT
+          fi
+          echo "approval_mode=$MODE" >> "$GITHUB_OUTPUT"
+          echo "actor=$ACTOR" >> "$GITHUB_OUTPUT"
+          python - <<'PY'
+          import json
+          p=json.load(open('benchmarks/p6b23/OWNER_AUTHORIZATION.json'))
+          assert p['schema']=='risu-b23-real-github-owner-authorized-fixture-v1'
+          assert p['owner_repository']=='risu-research/risu-verify'
+          assert p['owner_repository_id']==1350184511
+          assert p['organization_id']==316025762
+          assert p['approved_branch']=='qualification/p6b23-owner-grants-20261112'
+          assert p['tool']=='create_or_update_file'
+          assert p['resource_path']=='benchmarks/p6b23/owner_sandbox.txt'
+          assert p['actor_account']=='moon10021017'
+          assert p['approved_action']=='REPLACE'
+          assert p['grant_origin']=='AUTHENTICATED_GITHUB_ADMIN_ACCOUNT_DELEGATION'
+          print('B23_PLATFORM_OWNER_ADMIN_ACCOUNT_AND_SCOPED_GRANT_VERIFIED',p['actor_account'])
+          PY
+      - name: GitHub OIDC/Sigstore-signed exact grant file provenance, independent of future executor
+        uses: actions/attest@v4
+        with:
+          subject-path: benchmarks/p6b23/OWNER_AUTHORIZATION.json
+      - name: Archive exactly owner-authorized grant and original source path with SHA-256
+        uses: actions/upload-artifact@v4
+        with:
+          name: b23-owner-github-attested-original-grant
+          include-hidden-files: true
+          retention-days: 21
+          path: |
+            benchmarks/p6b23/OWNER_AUTHORIZATION.json
+            benchmarks/p6b23/owner_sandbox.txt
+  original-github-mcp-precall-gate:
+    name: Different runner with no GitHub signing identity; verify owner Sigstore grant before source MCP execution
+    needs: platform-owner-identity-and-grant-attestation
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: write
+      attestations: read
+      id-token: none
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: b23-owner-github-attested-original-grant
+          path: .b23-issued-by-owner
+      - name: Check independently GitHub/Sigstore-issued signature and immutable owner repository identity
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh attestation verify .b23-issued-by-owner/OWNER_AUTHORIZATION.json \
+            --repo risu-research/risu-verify \
+            --signer-workflow risu-research/risu-verify/.github/workflows/p6b23-owner-issued-github-mcp.yml \
+            --source-ref refs/heads/qualification/p6b23-owner-grants-20261112 \
+            --format json > .b23-owner-GITHUB_SIGNED_VERIFIED_ATTESTATION.json
+          test -s .b23-owner-GITHUB_SIGNED_VERIFIED_ATTESTATION.json
+          python - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          source=Path('.b23-issued-by-owner/OWNER_AUTHORIZATION.json')
+          checkout=Path('benchmarks/p6b23/OWNER_AUTHORIZATION.json')
+          assert source.read_bytes()==checkout.read_bytes()
+          results=json.load(open('.b23-owner-GITHUB_SIGNED_VERIFIED_ATTESTATION.json'))
+          assert isinstance(results,list) and len(results)>0
+          assert hashlib.sha256(source.read_bytes()).hexdigest() == hashlib.sha256(checkout.read_bytes()).hexdigest()
+          print('B23_GITHUB_EXTERNAL_SIGSTORE_OWNER_GRANT_VERIFIED',len(results))
+          PY
+      - name: Install official exact pinned publisher GitHub MCP Server source release, not assistant emulator
+        run: |
+          set -euo pipefail
+          curl -fLsS --retry 3 \
+            -o .b23-github-mcp.tar.gz \
+            https://github.com/github/github-mcp-server/releases/download/v2.1.0/github-mcp-server_Linux_x86_64.tar.gz
+          echo 'a442f9db287cea01008bcb55fe6bc0292270301046c3edbd1a8b22d6e4157b2b  .b23-github-mcp.tar.gz' | sha256sum -c -
+          mkdir -p .b23-publisher-original
+          tar -tzf .b23-github-mcp.tar.gz | tee .b23-original-archive-index.txt
+          tar -xzf .b23-github-mcp.tar.gz -C .b23-publisher-original
+          find .b23-publisher-original -maxdepth 2 -type f
+      - name: Run external-owner-gate and original GitHub MCP with actual GitHub repository file as resource
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_PERSONAL_ACCESS_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python --version
+          python -m pip install --disable-pip-version-check 'cryptography>=43,<49'
+          # Owner's signed grant was verified by GitHub CLI above; the
+          # genuine code of the independent RISU executor is pinned to the
+          # separate research branch.
+          curl -fLsS --retry 3 \
+            -o .b23-risu-product-source.tar.gz \
+            https://api.github.com/repos/risu-research/risu-probe/tarball/qualification/p6b23-github-owner-issued-gate-20261112
+          mkdir -p .b23-risu-src
+          tar -xzf .b23-risu-product-source.tar.gz -C .b23-risu-src --strip-components=1
+          python .b23-risu-src/benchmarks/p6b23/run_owner_attested_github_mcp.py \
+            --grant .b23-issued-by-owner/OWNER_AUTHORIZATION.json \
+            --original-server-dir .b23-publisher-original \
+            --owner-attestation .b23-owner-GITHUB_SIGNED_VERIFIED_ATTESTATION.json \
+            --authenticating-run "$GITHUB_RUN_ID" \
+            --approval-mode "${{ needs.platform-owner-identity-and-grant-attestation.outputs.approval_mode }}" \
+            --actor "${{ needs.platform-owner-identity-and-grant-attestation.outputs.authenticated_owner_actor }}" \
+            --out .b23-original-owner-effects
+      - name: Preserve actual GitHub backend file state, native JSON RPC, source pin and pre-call denial controls
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: b23-github-owner-attested-precall-and-original-backend-effect
+          retention-days: 21
+          include-hidden-files: true
+          if-no-files-found: warn
+          path: |
+            .b23-original-owner-effects/
+            .b23-owner-GITHUB_SIGNED_VERIFIED_ATTESTATION.json
+            .b23-original-archive-index.txt
