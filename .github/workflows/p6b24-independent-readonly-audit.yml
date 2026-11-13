@@ -85,6 +85,49 @@ jobs:
           assert r['external_human_owner_direct_consent']=='NOT_PERFORMED'
           print('B24_INDEPENDENT_REAL_AGENT_DIRECT_HTTP_MCP_BYPASS_DENIED_TRUSTED_BROKER_ONLY_WRITE_VERIFIED')
           PY
+      - name: Independent falsification controls reject mutated owner grant, agent native MCP wire, and GitHub broker effect
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,subprocess,sys
+          from pathlib import Path
+          root=Path('.b24-independent-report')
+          auditor=Path('.b24-auditor/benchmarks/p6b24/independent_readonly_owner_and_broker_audit.py')
+          original={
+            'owner':Path('.b24-owner/OWNER_AUTHORIZATION.json'),
+            'agent':Path('.b24-untrusted/UNTRUSTED_AGENT_DIRECT_HTTP_AND_ORIGINAL_MCP_DENIAL.json'),
+            'broker':Path('.b24-broker/.b24-real-trusted-broker-evidence/REAL_OWNER_REPOSITORY_ORIGINAL_MCP_RESULT.json'),
+          }
+          mutations={
+            'owner':lambda x:x['approved_tool_arguments'].update(content='FALSIFIED_OWNER_GRANT'),
+            'agent':lambda x:x['original_unmodified_publisher_mcp'].update(original_mcp_raw_stdio_b64='e30K'),
+            'broker':lambda x:x['remote_post_effect'].update(git_blob_sha='0'*40),
+          }
+          outcomes=[]
+          for kind,mutator in mutations.items():
+            v=json.loads(original[kind].read_text())
+            mutator(v)
+            altered=root/('SYNTHETIC_MUTATED_'+kind+'.json')
+            altered.write_text(json.dumps(v,indent=2,sort_keys=True)+'\n')
+            args={key:(altered if key==kind else original[key])
+                  for key in original}
+            out=root/('MUST_NOT_EXIST_'+kind+'.json')
+            command=[sys.executable,str(auditor),
+                     '--grant',str(args['owner']),
+                     '--original-result',str(args['broker']),
+                     '--agent-result',str(args['agent']),
+                     '--out',str(out)]
+            result=subprocess.run(command,capture_output=True,text=True,timeout=90)
+            assert result.returncode!=0 and not out.exists(),kind
+            outcomes.append({'mutated_layer':kind,'independent_auditor_rejected':True,
+                'exit_code':result.returncode,
+                'last_error_line':result.stderr.strip().splitlines()[-1][:230]})
+          (root/'INDEPENDENT_FALSIFICATION_CONTROLS.json').write_text(
+              json.dumps(outcomes,sort_keys=True,indent=2)+'\n')
+          print('B24_INDEPENDENT_THREE_ORIGINAL_CREDENTIAL_GRANT_WIRE_REMOTE_EFFECT_FALSIFICATIONS_REJECTED')
+          PY
       - uses: actions/upload-artifact@v4
         if: always()
         with:
