@@ -46,7 +46,7 @@ jobs:
         run: |
           set -euo pipefail
           curl -fLsS --retry 3 -o .b24-independent.tar.gz \
-            https://api.github.com/repos/risu-research/risu-probe/tarball/46dde8170760f2d9b81ec8bcbb046d613f9d0f54
+            https://api.github.com/repos/risu-research/risu-probe/tarball/7f4d91c5d3236c9ec118d3b468c1fa9df31bde39
           mkdir -p .b24-auditor
           tar -xzf .b24-independent.tar.gz -C .b24-auditor --strip-components=1
           test -f .b24-auditor/benchmarks/p6b24/independent_readonly_owner_and_broker_audit.py
