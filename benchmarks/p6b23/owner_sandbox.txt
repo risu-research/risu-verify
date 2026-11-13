@@ -1,0 +1,3 @@
+RISU B23 GitHub-owner resource fixture
+state=UNAPPROVED
+purpose=bounded consent gate research
